@@ -1,0 +1,2882 @@
+// ============================================================================
+// BASE CONFIGURATION
+// ============================================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum InitiatorRole {
+  BUYER
+  SELLER
+}
+
+enum OrderCategory {
+  ELECTRONICS
+  SERVICES
+  DIGITAL_GOODS
+  PHYSICAL_GOODS
+  OTHER
+}
+
+enum Currency {
+  IDR
+  USD
+}
+
+enum FeePayer {
+  BUYER
+  SELLER
+  SPLIT
+  FIFTY_FIFTY
+}
+
+enum OrderStatus {
+  WAITING_COUNTERPARTY
+  PENDING_ACCEPT
+  ACCEPTED
+  PAID
+  COMPLETED
+  CANCELLED
+  DISPUTED
+  REFUNDED
+}
+
+enum EscrowHoldStatus {
+  ACTIVE
+  HELD
+  RELEASED
+  REFUNDED
+  DISPUTED
+  ADJUSTED
+}
+
+enum DisputeStatus {
+  OPEN
+  RESPONDED
+  ESCALATED
+  UNDER_REVIEW
+  UNDER_ARBITRATION
+  AWAITING_RESPONSE
+  DECIDED
+  APPEALED
+  RESOLVED
+  CLOSED
+}
+
+enum DisputeDecision {
+  NONE
+  PENDING
+  BUYER_WINS
+  SELLER_WINS
+  SPLIT
+  CANCELLED
+  RELEASE_ALL_TO_SELLER
+  REFUND_ALL_TO_BUYER
+  SPLIT_SETTLEMENT
+  CANCEL_VOID
+}
+
+enum KYCStatus {
+  NONE
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum PromoTargetType {
+  USER
+  ORDER
+}
+
+enum VoucherType {
+  PERCENTAGE
+  FIXED
+}
+
+enum VoucherStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+enum ActivityType {
+  LOGIN
+  LOGOUT
+  ORDER_CREATE
+  PAYMENT_SUCCESS
+  TRANSACTION_CREATED
+  TRANSACTION_UPDATED
+  PROFILE_UPDATED
+  WALLET_TOPUP
+  WALLET_WITHDRAW
+}
+
+enum LedgerAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum ScheduledJobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum JournalType {
+  TRANSACTION
+  ADJUSTMENT
+  DEPOSIT
+  WITHDRAWAL
+  ESCROW_LOCK
+  ESCROW_RELEASE
+  TRANSFER
+  FEE
+  REFUND
+  ADMIN_CREDIT // Admin menambahkan saldo
+  ADMIN_DEBIT // Admin mengurangi saldo
+  ADMIN_FREEZE // Admin membekukan saldo
+  ADMIN_UNFREEZE // Admin membuka pembekuan saldo
+}
+
+enum PaymentProvider {
+  XENDIT
+  MIDTRANS
+}
+
+enum PaymentType {
+  DEPOSIT
+  WITHDRAWAL
+}
+
+enum PaymentMethod {
+  VIRTUAL_ACCOUNT
+  EWALLET
+  CREDIT_CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+  PROCESSING
+}
+
+enum BankAccountType {
+  SAVINGS
+  CHECKING
+}
+
+enum WithdrawalStatus {
+  PENDING
+  PROCESSING
+  APPROVED
+  COMPLETED
+  FAILED
+  REJECTED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum WebhookStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
+
+enum DepositStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum ReferralStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+}
+
+enum ReferralRewardType {
+  CASHBACK
+  COMMISSION
+}
+
+enum ReferralRewardStatus {
+  PENDING
+  CLAIMED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+enum NotificationType {
+  TRANSACTION
+  DISPUTE
+  PAYMENT
+  SYSTEM
+  WALLET
+  KYC
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  ESCROW_LOCK
+  ESCROW_RELEASE
+  REFUND
+  FEE
+  TRANSFER
+}
+
+enum TransactionStatus {
+  PENDING
+  PAYMENT_CONFIRMED
+  COMPLETED
+  DISPUTED
+  CANCELLED
+  REFUNDED
+}
+
+// ============================================================================
+// PROMO & VOUCHER SYSTEM
+// ============================================================================
+
+model Promo {
+  id          String  @id @default(uuid())
+  code        String  @unique
+  name        String
+  description String? @db.Text
+
+  targetType PromoTargetType @map("target_type")
+
+  // Discount configuration
+  discountType     VoucherType @map("discount_type")
+  discountValue    BigInt?     @map("discount_value") @db.BigInt
+  discountPercent  Decimal?    @map("discount_percent") @db.Decimal(5, 2)
+  maxDiscountMinor BigInt?     @map("max_discount_minor") @db.BigInt
+
+  // Usage limits
+  maxTotalUsages  Int? @map("max_total_usages")
+  maxUsagePerUser Int  @default(1) @map("max_usage_per_user")
+  currentUsages   Int  @default(0) @map("current_usages")
+
+  // Constraints
+  minPurchaseMinor     BigInt? @map("min_purchase_minor") @db.BigInt
+  applicableCategories Json?   @map("applicable_categories")
+
+  // Validity
+  validFrom  DateTime @map("valid_from")
+  validUntil DateTime @map("valid_until")
+
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  assignments PromoAssignment[]
+  vouchers    Voucher[]
+
+  @@index([isActive, validFrom, validUntil])
+  @@index([targetType])
+  @@map("promos")
+}
+
+model PromoAssignment {
+  id      String @id @default(uuid())
+  promoId String @map("promo_id")
+  userId  String @map("user_id")
+
+  assignedAt DateTime  @default(now()) @map("assigned_at")
+  expiresAt  DateTime? @map("expires_at")
+
+  promo Promo @relation(fields: [promoId], references: [id], onDelete: Restrict)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([promoId, userId])
+  @@index([userId])
+  @@index([promoId])
+  @@map("promo_assignments")
+}
+
+model Voucher {
+  id      String  @id @default(uuid())
+  promoId String? @map("promo_id")
+  code    String  @unique
+
+  voucherType VoucherType @map("voucher_type")
+
+  // Value configuration
+  currency         Currency @default(IDR)
+  discountMinor    BigInt?  @map("discount_minor") @db.BigInt
+  discountPercent  Decimal? @map("discount_percent") @db.Decimal(5, 2)
+  maxDiscountMinor BigInt?  @map("max_discount_minor") @db.BigInt
+
+  // Usage limits
+  maxUsages     Int @default(1) @map("max_usages")
+  currentUsages Int @default(0) @map("current_usages")
+
+  // Constraints
+  minPurchaseMinor     BigInt? @map("min_purchase_minor") @db.BigInt
+  applicableCategories Json?   @map("applicable_categories")
+
+  // Validity
+  validFrom  DateTime @map("valid_from")
+  validUntil DateTime @map("valid_until")
+
+  status VoucherStatus @default(ACTIVE)
+
+  // Assignment (optional - for user-specific vouchers)
+  assignedToUserId String? @map("assigned_to_user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  promo          Promo?         @relation(fields: [promoId], references: [id], onDelete: SetNull)
+  assignedToUser User?          @relation("VoucherAssignedTo", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  usages         VoucherUsage[]
+
+  @@index([status, validFrom, validUntil])
+  @@index([assignedToUserId])
+  @@map("vouchers")
+}
+
+model VoucherUsage {
+  id        String  @id @default(uuid())
+  voucherId String  @map("voucher_id")
+  userId    String  @map("user_id")
+  orderId   String? @map("order_id")
+
+  currency      Currency @default(IDR)
+  originalMinor BigInt   @map("original_minor") @db.BigInt
+  discountMinor BigInt   @map("discount_minor") @db.BigInt
+  finalMinor    BigInt   @map("final_minor") @db.BigInt
+
+  usedAt DateTime @default(now()) @map("used_at")
+
+  // Idempotency
+  idempotencyKey String? @unique @map("idempotency_key")
+
+  voucher Voucher @relation(fields: [voucherId], references: [id], onDelete: Restrict)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  // Journal-centric: back relation (optional 1:1)
+  journal LedgerJournal? @relation("VoucherUsageJournal")
+
+  @@index([voucherId, usedAt])
+  @@index([userId])
+  @@map("voucher_usages")
+}
+
+// ============================================================================
+// CORE USER & AUTH MODELS (ENHANCED)
+// ============================================================================
+
+model User {
+  id           String  @id @default(uuid())
+  username     String  @unique
+  email        String  @unique
+  phone        String?
+  passwordHash String  @map("password_hash")
+
+  // Account security
+  passwordUpdatedAt    DateTime? @map("password_updated_at") @db.Timestamptz
+  passwordResetToken   String?   @map("password_reset_token")
+  passwordResetExpires DateTime? @map("password_reset_expires") @db.Timestamptz
+  lastLoginAt          DateTime? @map("last_login_at") @db.Timestamptz
+  lastFailedLoginAt    DateTime? @map("last_failed_login_at") @db.Timestamptz
+  failedLoginCount     Int       @default(0) @map("failed_login_count")
+  lockedUntil          DateTime? @map("locked_until") @db.Timestamptz
+
+  // Account suspension
+  suspendedAt    DateTime? @map("suspended_at") @db.Timestamptz
+  suspendedUntil DateTime? @map("suspended_until") @db.Timestamptz
+  suspendReason  String?   @map("suspend_reason") @db.Text
+
+  // MFA (store encrypted secret; never plaintext)
+  mfaEnabled      Boolean @default(false) @map("mfa_enabled")
+  totpSecretEnc   String? @map("totp_secret_enc") @db.Text
+  backupCodesHash Json?   @map("backup_codes_hash")
+
+  emailVerifiedAt          DateTime? @map("email_verified_at") @db.Timestamptz
+  emailVerificationToken   String?   @map("email_verification_token")
+  emailVerificationExpires DateTime? @map("email_verification_expires") @db.Timestamptz
+  kycStatus                KYCStatus @default(NONE) @map("kyc_status")
+
+  // CRITICAL FIX: Increased precision for reputation score (0.00 to 5.00)
+  reputationScore      Decimal @default(0) @db.Decimal(5, 2)
+  totalTransactions    Int     @default(0) @map("total_transactions")
+  isAdmin              Boolean @default(false) @map("is_admin")
+  avatarUrl            String? @map("avatar_url")
+  notificationSettings Json?   @map("notification_settings")
+
+  // Soft delete with FK to admin user
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
+  deletedByUserId String?   @map("deleted_by_user_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  wallet               Wallet?
+  sessions             Session[]
+  bankAccounts         BankAccount[]
+  ordersInitiated      Order[]              @relation("OrderInitiator")
+  ordersCounterparty   Order[]              @relation("OrderCounterparty")
+  ordersDeleted        Order[]              @relation("OrderDeletedBy")
+  ratingsGiven         Rating[]             @relation("RatingFrom")
+  ratingsReceived      Rating[]             @relation("RatingTo")
+  disputesOpened       Dispute[]            @relation("DisputeOpener")
+  disputesArbitrated   Dispute[]            @relation("DisputeArbitrator")
+  disputeEscalations   Dispute[]            @relation("DisputeEscalation")
+  kycSubmissions       KYCSubmission[]      @relation("KYCUser")
+  kycVerifications     KYCSubmission[]      @relation("KYCVerifier")
+  payments             Payment[]
+  paymentsReconciled   Payment[]            @relation("PaymentReconciler")
+  orderComments        OrderComment[]
+  commentsDeleted      OrderComment[]       @relation("CommentDeleter")
+  auditLogs            AuditLog[]
+  notifications        Notification[]
+  disputeEvidences     DisputeEvidence[]
+  withdrawalsRequested Withdrawal[]         @relation("WithdrawalRequester")
+  withdrawalsApproved  Withdrawal[]         @relation("WithdrawalApprover")
+  withdrawalReviews    Withdrawal[]         @relation("WithdrawalReviewer")
+  withdrawalApprovals  WithdrawalApproval[] @relation("WithdrawalApprovalUser")
+  disputeTimelines     DisputeTimeline[]
+  ratingModerations    Rating[]             @relation("RatingModerator")
+
+  // User deletion actor relation (User deleted by another User)
+  deletedByActions User[] @relation("DeletedBy")
+  deletedBy        User?  @relation("DeletedBy", fields: [deletedByUserId], references: [id], onDelete: SetNull)
+
+  // Referral system
+  referralCode    ReferralCode?
+  referralsUsed   ReferralUsage[]  @relation("ReferredUser")
+  referralsSent   ReferralUsage[]  @relation("ReferrerUser")
+  referralRewards ReferralReward[]
+
+  // Promo & Voucher
+  voucherUsages    VoucherUsage[]
+  promoAssignments PromoAssignment[]
+  vouchersAssigned Voucher[]         @relation("VoucherAssignedTo")
+
+  // Activity Log (CRITICAL FIX: Added relation)
+  activities UserActivity[]
+
+  // Transaction Limits (CRITICAL FIX: Added relations)
+  transactionLimits TransactionLimit[] @relation("TransactionLimitUser")
+  limitOverrides    TransactionLimit[] @relation("LimitOverrider")
+
+  // Order Settlement
+  settlementsAsSeller OrderSettlement[] @relation("SettlementSeller")
+  settlementsAsBuyer  OrderSettlement[] @relation("SettlementBuyer")
+
+  @@index([kycStatus])
+  @@index([kycStatus, emailVerifiedAt])
+  @@index([deletedAt])
+  @@index([isAdmin, deletedAt])
+  @@index([email, emailVerifiedAt])
+  @@index([reputationScore(sort: Desc)])
+  @@map("users")
+}
+
+model Session {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  refreshHash String    @map("refresh_hash")
+  userAgent   String?   @map("user_agent")
+  ipAddress   String?   @map("ip_address")
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Session rotation & token family
+  sessionFamilyId     String?   @map("session_family_id")
+  rotatedAt           DateTime? @map("rotated_at") @db.Timestamptz
+  replacedBySessionId String?   @map("replaced_by_session_id")
+
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replacedBy   Session?  @relation("SessionRotation", fields: [replacedBySessionId], references: [id], onDelete: SetNull)
+  replacements Session[] @relation("SessionRotation")
+
+  @@index([userId, expiresAt])
+  @@index([sessionFamilyId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ============================================================================
+// ACTIVITY LOG
+// ============================================================================
+
+model UserActivity {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  activityType ActivityType @map("activity_type")
+  description  String?
+  metadata     Json?
+
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+  deviceId  String? @map("device_id")
+
+  // Geolocation (optional)
+  country String?
+  city    String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+  @@index([activityType, createdAt])
+  @@index([createdAt])
+  @@map("user_activities")
+}
+
+// ============================================================================
+// NOTIFICATION & COMMUNICATION
+// ============================================================================
+
+model OrderComment {
+  id          String @id @default(uuid())
+  orderId     String @map("order_id")
+  userId      String @map("user_id")
+  message     String @db.Text
+  attachments Json?
+
+  // Soft delete support
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy String?   @map("deleted_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  deleter User? @relation("CommentDeleter", fields: [deletedBy], references: [id], onDelete: SetNull)
+
+  @@index([orderId, createdAt])
+  @@index([deletedAt])
+  @@map("order_comments")
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  type      String
+  title     String
+  message   String    @db.Text
+  metadata  Json?
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+// ============================================================================
+// REAL-TIME MESSAGING SYSTEM
+// Supports: Direct Messages, Order Chat, Group Conversations
+// ============================================================================
+
+enum ConversationType {
+  DIRECT // 1:1 between users
+  ORDER // Tied to a specific order
+  SUPPORT // Support ticket conversation
+  GROUP // Future: Group chats
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM // System-generated messages
+  PAYMENT_REQUEST // Payment-related messages
+  DELIVERY_UPDATE // Delivery status updates
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+model Conversation {
+  id    String           @id @default(uuid())
+  type  ConversationType @default(DIRECT)
+  title String? // Optional title for group/support
+
+  // Reference to order (if ORDER type)
+  orderId String? @unique @map("order_id")
+
+  // Reference to support ticket (if SUPPORT type)
+  supportTicketId String? @unique @map("support_ticket_id")
+
+  // Metadata for additional info
+  metadata Json?
+
+  // Timestamps
+  lastMessageAt DateTime? @map("last_message_at") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Soft delete
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  // Relations
+  participants  ConversationParticipant[]
+  messages      Message[]
+  supportTicket SupportTicket?            @relation(fields: [supportTicketId], references: [id], onDelete: SetNull)
+
+  @@index([type, lastMessageAt])
+  @@index([orderId])
+  @@index([supportTicketId])
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String @id @default(uuid())
+  conversationId String @map("conversation_id")
+  userId         String @map("user_id")
+
+  // Participant settings
+  isMuted Boolean @default(false) @map("is_muted")
+  isAdmin Boolean @default(false) @map("is_admin")
+
+  // Read tracking
+  lastReadAt  DateTime? @map("last_read_at") @db.Timestamptz
+  unreadCount Int       @default(0) @map("unread_count")
+
+  // Timestamps
+  joinedAt DateTime  @default(now()) @map("joined_at") @db.Timestamptz
+  leftAt   DateTime? @map("left_at") @db.Timestamptz
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId, lastReadAt])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String @id @default(uuid())
+  conversationId String @map("conversation_id")
+  senderId       String @map("sender_id")
+
+  // Message content
+  type    MessageType @default(TEXT)
+  content String      @db.Text
+
+  // Attachments (images, files)
+  attachments Json?
+
+  // Reply to another message
+  replyToId String? @map("reply_to_id")
+
+  // Message metadata
+  metadata Json?
+
+  // Edit tracking
+  isEdited Boolean   @default(false) @map("is_edited")
+  editedAt DateTime? @map("edited_at") @db.Timestamptz
+
+  // Soft delete
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy String?   @map("deleted_by")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  conversation Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  replyTo      Message?             @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      Message[]            @relation("MessageReplies")
+  readReceipts MessageReadReceipt[]
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@index([replyToId])
+  @@map("messages")
+}
+
+model MessageReadReceipt {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  userId    String   @map("user_id")
+  readAt    DateTime @default(now()) @map("read_at") @db.Timestamptz
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId, readAt])
+  @@map("message_read_receipts")
+}
+
+// ============================================================================
+// AUDIT & COMPLIANCE
+// ============================================================================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  performedBy String?  @map("performed_by")
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  details     Json
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Tamper-evidence chain
+  rowHash       String? @map("row_hash")
+  prevHash      String? @map("prev_hash")
+  correlationId String? @map("correlation_id")
+
+  user User? @relation(fields: [performedBy], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([performedBy, createdAt])
+  @@index([correlationId])
+  @@map("audit_logs")
+}
+
+// ============================================================================
+// FRAUD DETECTION SYSTEM
+// Risk assessment and fraud prevention
+// ============================================================================
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FraudAlertStatus {
+  PENDING
+  INVESTIGATING
+  CONFIRMED_FRAUD
+  FALSE_POSITIVE
+  RESOLVED
+}
+
+enum FraudRuleType {
+  VELOCITY // Transaction frequency limits
+  AMOUNT // Amount-based rules
+  PATTERN // Behavioral patterns
+  DEVICE // Device fingerprinting
+  LOCATION // Geo-based rules
+  ACCOUNT // Account-based rules
+  NETWORK // Network/relationship rules
+}
+
+model FraudRule {
+  id          String        @id @default(uuid())
+  code        String        @unique
+  name        String
+  description String        @db.Text
+  type        FraudRuleType
+
+  // Rule configuration (JSON for flexibility)
+  conditions Json // Rule conditions
+  actions    Json // Actions when triggered
+
+  // Scoring
+  riskScore Int @default(10) @map("risk_score") // Points added to risk score
+
+  // Settings
+  isActive Boolean @default(true) @map("is_active")
+  priority Int     @default(100) // Lower = higher priority
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  alerts FraudAlert[]
+
+  @@index([type, isActive])
+  @@index([priority])
+  @@map("fraud_rules")
+}
+
+model UserRiskProfile {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Risk scores
+  overallRiskScore     Int @default(0) @map("overall_risk_score")
+  transactionRiskScore Int @default(0) @map("transaction_risk_score")
+  behaviorRiskScore    Int @default(0) @map("behavior_risk_score")
+
+  // Risk level (calculated from scores)
+  riskLevel RiskLevel @default(LOW) @map("risk_level")
+
+  // Flags
+  isWatchlisted   Boolean   @default(false) @map("is_watchlisted")
+  watchlistReason String?   @map("watchlist_reason") @db.Text
+  watchlistedAt   DateTime? @map("watchlisted_at") @db.Timestamptz
+  watchlistedBy   String?   @map("watchlisted_by")
+
+  // Restrictions
+  requiresManualReview  Boolean @default(false) @map("requires_manual_review")
+  maxTransactionAmount  BigInt? @map("max_transaction_amount") @db.BigInt
+  dailyTransactionLimit BigInt? @map("daily_transaction_limit") @db.BigInt
+
+  // Device & Location tracking
+  knownDevices    Json?   @map("known_devices")
+  knownLocations  Json?   @map("known_locations")
+  lastKnownIp     String? @map("last_known_ip")
+  lastKnownDevice String? @map("last_known_device")
+
+  // Stats
+  totalAlerts     Int @default(0) @map("total_alerts")
+  confirmedFrauds Int @default(0) @map("confirmed_frauds")
+
+  // Timestamps
+  lastAssessedAt DateTime? @map("last_assessed_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([riskLevel])
+  @@index([isWatchlisted])
+  @@map("user_risk_profiles")
+}
+
+model FraudAlert {
+  id String @id @default(uuid())
+
+  // Subject
+  userId        String? @map("user_id")
+  orderId       String? @map("order_id")
+  transactionId String? @map("transaction_id")
+
+  // Alert details
+  ruleId    String?   @map("rule_id")
+  alertType String    @map("alert_type")
+  riskLevel RiskLevel @map("risk_level")
+  riskScore Int       @map("risk_score")
+
+  // Description
+  title       String
+  description String @db.Text
+  evidence    Json? // Supporting evidence
+
+  // Status
+  status FraudAlertStatus @default(PENDING)
+
+  // Resolution
+  resolvedAt  DateTime? @map("resolved_at") @db.Timestamptz
+  resolvedBy  String?   @map("resolved_by")
+  resolution  String?   @db.Text
+  actionTaken String?   @map("action_taken") @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  rule FraudRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([status, riskLevel])
+  @@index([createdAt])
+  @@map("fraud_alerts")
+}
+
+model TransactionRiskAssessment {
+  id      String @id @default(uuid())
+  orderId String @unique @map("order_id")
+
+  // Risk assessment
+  riskScore Int       @map("risk_score")
+  riskLevel RiskLevel @map("risk_level")
+
+  // Risk factors (detailed breakdown)
+  riskFactors Json @map("risk_factors")
+
+  // Flags triggered
+  flagsTriggered Json? @map("flags_triggered")
+
+  // Decision
+  isApproved     Boolean   @default(true) @map("is_approved")
+  requiresReview Boolean   @default(false) @map("requires_review")
+  reviewedAt     DateTime? @map("reviewed_at") @db.Timestamptz
+  reviewedBy     String?   @map("reviewed_by")
+  reviewNotes    String?   @map("review_notes") @db.Text
+
+  // Timestamps
+  assessedAt DateTime @default(now()) @map("assessed_at") @db.Timestamptz
+
+  @@index([riskLevel])
+  @@index([requiresReview])
+  @@map("transaction_risk_assessments")
+}
+
+model DeviceFingerprint {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Device info
+  fingerprint String  @unique
+  deviceType  String? @map("device_type") // mobile, desktop, tablet
+  browser     String?
+  os          String?
+
+  // Trust level
+  isTrusted  Boolean @default(false) @map("is_trusted")
+  trustScore Int     @default(0) @map("trust_score")
+
+  // Usage stats
+  firstSeenAt DateTime @default(now()) @map("first_seen_at") @db.Timestamptz
+  lastSeenAt  DateTime @default(now()) @map("last_seen_at") @db.Timestamptz
+  loginCount  Int      @default(1) @map("login_count")
+
+  // Flags
+  isBlocked     Boolean @default(false) @map("is_blocked")
+  blockedReason String? @map("blocked_reason")
+
+  @@index([userId, isTrusted])
+  @@index([fingerprint])
+  @@map("device_fingerprints")
+}
+
+model IpReputation {
+  id        String @id @default(uuid())
+  ipAddress String @unique @map("ip_address")
+
+  // Reputation
+  reputationScore Int       @default(50) @map("reputation_score") // 0-100
+  riskLevel       RiskLevel @default(LOW) @map("risk_level")
+
+  // Flags
+  isVpn        Boolean @default(false) @map("is_vpn")
+  isProxy      Boolean @default(false) @map("is_proxy")
+  isTor        Boolean @default(false) @map("is_tor")
+  isDatacenter Boolean @default(false) @map("is_datacenter")
+
+  // Geo info
+  country String?
+  city    String?
+  isp     String?
+
+  // Stats
+  totalLogins  Int @default(0) @map("total_logins")
+  failedLogins Int @default(0) @map("failed_logins")
+  fraudAlerts  Int @default(0) @map("fraud_alerts")
+
+  // Blocking
+  isBlocked     Boolean   @default(false) @map("is_blocked")
+  blockedReason String?   @map("blocked_reason")
+  blockedAt     DateTime? @map("blocked_at") @db.Timestamptz
+
+  // Timestamps
+  firstSeenAt DateTime @default(now()) @map("first_seen_at") @db.Timestamptz
+  lastSeenAt  DateTime @default(now()) @map("last_seen_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([riskLevel])
+  @@index([isBlocked])
+  @@map("ip_reputations")
+}
+
+// ============================================================================
+// SYSTEM CONFIGURATION
+// ============================================================================
+
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([key, isActive])
+  @@map("system_configs")
+}
+
+model TransactionLimit {
+  id        String    @id @default(uuid())
+  userId    String?   @map("user_id")
+  kycStatus KYCStatus @default(NONE) @map("kyc_status")
+
+  currency Currency @default(IDR)
+
+  // Limits in minor units (non-negative, enforce in application + DB)
+  dailyLimitMinor           BigInt  @map("daily_limit_minor") @db.BigInt
+  perTxLimitMinor           BigInt  @map("per_tx_limit_minor") @db.BigInt
+  monthlyLimitMinor         BigInt? @map("monthly_limit_minor") @db.BigInt
+  dailyWithdrawalLimitMinor BigInt? @map("daily_withdrawal_limit_minor") @db.BigInt
+
+  effectiveFrom  DateTime  @map("effective_from")
+  effectiveUntil DateTime? @map("effective_until")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  // Override tracking
+  isOverridden   Boolean   @default(false) @map("is_overridden")
+  overrideReason String?   @map("override_reason") @db.Text
+  overriddenBy   String?   @map("overridden_by")
+  overriddenAt   DateTime? @map("overridden_at") @db.Timestamptz
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User? @relation("TransactionLimitUser", fields: [userId], references: [id], onDelete: SetNull)
+  overrider User? @relation("LimitOverrider", fields: [overriddenBy], references: [id], onDelete: SetNull)
+
+  @@index([userId, isActive])
+  @@index([kycStatus, isActive])
+  @@index([overriddenBy])
+  @@map("transaction_limits")
+}
+
+model FeeConfig {
+  id            String         @id @default(uuid())
+  name          String
+  orderCategory OrderCategory?
+
+  // Fee structure (non-negative values, enforce in application + DB)
+  minAmountMinor BigInt? @map("min_amount_minor") @db.BigInt
+  maxAmountMinor BigInt? @map("max_amount_minor") @db.BigInt
+  feePercentage  Decimal @map("fee_percentage") @db.Decimal(5, 4)
+  flatFeeMinor   BigInt  @default(0) @map("flat_fee_minor") @db.BigInt
+
+  currency Currency @default(IDR)
+
+  effectiveFrom  DateTime  @map("effective_from")
+  effectiveUntil DateTime? @map("effective_until")
+
+  isActive Boolean @default(true) @map("is_active")
+  priority Int     @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([orderCategory, isActive])
+  @@index([effectiveFrom, effectiveUntil])
+  @@map("fee_configs")
+}
+
+model PlatformAccountKey {
+  key         String            @id
+  description String
+  accountType LedgerAccountType @map("account_type")
+  isActive    Boolean           @default(true) @map("is_active")
+  createdAt   DateTime          @default(now()) @map("created_at")
+
+  @@map("platform_account_keys")
+}
+
+// ============================================================================
+// SUPPORT TICKETING SYSTEM
+// Customer support and issue tracking
+// ============================================================================
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  WAITING_INTERNAL
+  ON_HOLD
+  RESOLVED
+  CLOSED
+  REOPENED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum TicketCategory {
+  GENERAL_INQUIRY
+  ACCOUNT_ISSUE
+  TRANSACTION_ISSUE
+  PAYMENT_ISSUE
+  WITHDRAWAL_ISSUE
+  KYC_VERIFICATION
+  DISPUTE_HELP
+  SECURITY_CONCERN
+  BUG_REPORT
+  FEATURE_REQUEST
+  REFUND_REQUEST
+  OTHER
+}
+
+model SupportTicket {
+  id           String @id @default(uuid())
+  ticketNumber String @unique @map("ticket_number") // e.g., "TKT-2024-001234"
+
+  // Requester
+  userId String @map("user_id")
+
+  // Ticket details
+  subject     String
+  description String         @db.Text
+  category    TicketCategory
+  priority    TicketPriority @default(MEDIUM)
+  status      TicketStatus   @default(OPEN)
+
+  // Related entities
+  orderId      String? @map("order_id")
+  disputeId    String? @map("dispute_id")
+  withdrawalId String? @map("withdrawal_id")
+
+  // Assignment
+  assignedToId String?   @map("assigned_to_id")
+  assignedAt   DateTime? @map("assigned_at") @db.Timestamptz
+
+  // Team/Department
+  department String? @default("SUPPORT")
+
+  // Tags for categorization
+  tags Json?
+
+  // SLA tracking
+  slaDeadline     DateTime? @map("sla_deadline") @db.Timestamptz
+  slaBreach       Boolean   @default(false) @map("sla_breach")
+  firstResponseAt DateTime? @map("first_response_at") @db.Timestamptz
+
+  // Resolution
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz
+  resolvedBy String?   @map("resolved_by")
+  resolution String?   @db.Text
+
+  // Customer satisfaction
+  satisfactionRating   Int?    @map("satisfaction_rating") // 1-5
+  satisfactionFeedback String? @map("satisfaction_feedback") @db.Text
+
+  // Escalation
+  isEscalated      Boolean   @default(false) @map("is_escalated")
+  escalatedAt      DateTime? @map("escalated_at") @db.Timestamptz
+  escalatedTo      String?   @map("escalated_to")
+  escalationReason String?   @map("escalation_reason") @db.Text
+
+  // Timestamps
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  closedAt  DateTime? @map("closed_at") @db.Timestamptz
+
+  // Relations
+  responses    TicketResponse[]
+  attachments  TicketAttachment[]
+  history      TicketHistory[]
+  conversation Conversation?
+
+  @@index([userId, status])
+  @@index([status, priority])
+  @@index([assignedToId, status])
+  @@index([category, status])
+  @@index([createdAt])
+  @@index([slaDeadline, slaBreach])
+  @@map("support_tickets")
+}
+
+model TicketResponse {
+  id       String @id @default(uuid())
+  ticketId String @map("ticket_id")
+
+  // Responder
+  userId  String  @map("user_id")
+  isStaff Boolean @default(false) @map("is_staff")
+
+  // Response content
+  message String @db.Text
+
+  // Internal note (not visible to customer)
+  isInternal Boolean @default(false) @map("is_internal")
+
+  // Timestamps
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  editedAt  DateTime? @map("edited_at") @db.Timestamptz
+
+  // Relations
+  ticket      SupportTicket      @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  attachments TicketAttachment[]
+
+  @@index([ticketId, createdAt])
+  @@index([userId])
+  @@map("ticket_responses")
+}
+
+model TicketAttachment {
+  id         String  @id @default(uuid())
+  ticketId   String  @map("ticket_id")
+  responseId String? @map("response_id")
+
+  // File info
+  fileName String @map("file_name")
+  fileUrl  String @map("file_url")
+  fileSize Int    @map("file_size") // bytes
+  mimeType String @map("mime_type")
+
+  // Uploader
+  uploadedBy String   @map("uploaded_by")
+  uploadedAt DateTime @default(now()) @map("uploaded_at") @db.Timestamptz
+
+  // Relations
+  ticket   SupportTicket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  response TicketResponse? @relation(fields: [responseId], references: [id], onDelete: SetNull)
+
+  @@index([ticketId])
+  @@index([responseId])
+  @@map("ticket_attachments")
+}
+
+model TicketHistory {
+  id       String @id @default(uuid())
+  ticketId String @map("ticket_id")
+
+  // Change info
+  action        String // e.g., "STATUS_CHANGED", "ASSIGNED", "PRIORITY_CHANGED"
+  previousValue String? @map("previous_value")
+  newValue      String? @map("new_value")
+
+  // Actor
+  performedBy String   @map("performed_by")
+  performedAt DateTime @default(now()) @map("performed_at") @db.Timestamptz
+
+  // Additional notes
+  notes String? @db.Text
+
+  // Relations
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, performedAt])
+  @@map("ticket_history")
+}
+
+model CannedResponse {
+  id String @id @default(uuid())
+
+  // Response template
+  title    String
+  content  String          @db.Text
+  category TicketCategory?
+
+  // Usage
+  shortcut   String? @unique // Quick access code
+  isActive   Boolean @default(true) @map("is_active")
+  usageCount Int     @default(0) @map("usage_count")
+
+  // Creator
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([category, isActive])
+  @@map("canned_responses")
+}
+
+model SupportAgent {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Agent info
+  displayName String @map("display_name")
+  department  String @default("SUPPORT")
+
+  // Availability
+  isAvailable    Boolean @default(true) @map("is_available")
+  maxTickets     Int     @default(10) @map("max_tickets") // Max concurrent tickets
+  currentTickets Int     @default(0) @map("current_tickets")
+
+  // Skills/Categories they can handle
+  skills Json? // Array of TicketCategory
+
+  // Stats
+  totalResolved     Int      @default(0) @map("total_resolved")
+  avgResponseTime   Int?     @map("avg_response_time") // minutes
+  avgResolutionTime Int?     @map("avg_resolution_time") // minutes
+  satisfactionScore Decimal? @map("satisfaction_score") @db.Decimal(3, 2)
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([isAvailable, currentTickets])
+  @@index([department])
+  @@map("support_agents")
+}
+
+// ============================================================================
+// SCHEDULED JOBS & AUTOMATION
+// ============================================================================
+
+model ScheduledJob {
+  id         String  @id @default(uuid())
+  jobType    String  @map("job_type")
+  entityType String? @map("entity_type")
+  entityId   String? @map("entity_id")
+
+  scheduledAt DateTime  @map("scheduled_at")
+  executedAt  DateTime? @map("executed_at")
+
+  status     ScheduledJobStatus @default(PENDING)
+  retryCount Int                @default(0) @map("retry_count")
+  maxRetries Int                @default(3) @map("max_retries")
+
+  payload      Json?
+  result       Json?
+  errorMessage String? @map("error_message") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Idempotency
+  idempotencyKey String? @map("idempotency_key")
+
+  @@index([jobType, status, scheduledAt])
+  @@index([scheduledAt, status])
+  @@index([entityType, entityId])
+  @@map("scheduled_jobs")
+}
+
+// ============================================================================
+// PUSH NOTIFICATION SYSTEM
+// Multi-channel notification delivery
+// ============================================================================
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  BOUNCED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model NotificationTemplate {
+  id          String  @id @default(uuid())
+  code        String  @unique // e.g., "ORDER_CREATED", "PAYMENT_RECEIVED"
+  name        String
+  description String? @db.Text
+
+  // Template content per channel
+  inAppTitle String? @map("in_app_title")
+  inAppBody  String? @map("in_app_body") @db.Text
+
+  emailSubject String? @map("email_subject")
+  emailBody    String? @map("email_body") @db.Text
+  emailHtml    String? @map("email_html") @db.Text
+
+  smsBody String? @map("sms_body") @db.Text
+
+  pushTitle String? @map("push_title")
+  pushBody  String? @map("push_body") @db.Text
+
+  whatsappBody       String? @map("whatsapp_body") @db.Text
+  whatsappTemplateId String? @map("whatsapp_template_id")
+
+  // Default settings
+  defaultChannels Json                 @default("[\"IN_APP\"]") @map("default_channels")
+  defaultPriority NotificationPriority @default(NORMAL) @map("default_priority")
+
+  // Settings
+  isActive Boolean @default(true) @map("is_active")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([code])
+  @@map("notification_templates")
+}
+
+model UserNotificationPreference {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Channel preferences
+  inAppEnabled    Boolean @default(true) @map("in_app_enabled")
+  emailEnabled    Boolean @default(true) @map("email_enabled")
+  smsEnabled      Boolean @default(false) @map("sms_enabled")
+  pushEnabled     Boolean @default(true) @map("push_enabled")
+  whatsappEnabled Boolean @default(false) @map("whatsapp_enabled")
+
+  // Category preferences (JSON for flexibility)
+  // e.g., {"transaction": ["IN_APP", "EMAIL"], "marketing": ["EMAIL"]}
+  categoryPreferences Json? @map("category_preferences")
+
+  // Quiet hours
+  quietHoursEnabled Boolean @default(false) @map("quiet_hours_enabled")
+  quietHoursStart   String? @map("quiet_hours_start") // "22:00"
+  quietHoursEnd     String? @map("quiet_hours_end") // "08:00"
+  timezone          String  @default("Asia/Jakarta")
+
+  // Marketing opt-in
+  marketingOptIn Boolean @default(false) @map("marketing_opt_in")
+
+  // Timestamps
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("user_notification_preferences")
+}
+
+model PushSubscription {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Subscription details
+  endpoint String @unique
+  p256dh   String // Public key
+  auth     String // Auth secret
+
+  // Device info
+  deviceType String? @map("device_type") // web, android, ios
+  deviceName String? @map("device_name")
+  browser    String?
+
+  // Status
+  isActive   Boolean  @default(true) @map("is_active")
+  lastUsedAt DateTime @default(now()) @map("last_used_at") @db.Timestamptz
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, isActive])
+  @@map("push_subscriptions")
+}
+
+model NotificationQueue {
+  id String @id @default(uuid())
+
+  // Recipient
+  userId String @map("user_id")
+
+  // Notification details
+  templateCode String?              @map("template_code")
+  channel      NotificationChannel
+  priority     NotificationPriority @default(NORMAL)
+
+  // Content (can override template)
+  title String?
+  body  String  @db.Text
+  data  Json? // Additional data payload
+
+  // Delivery
+  status      NotificationStatus @default(PENDING)
+  scheduledAt DateTime?          @map("scheduled_at") @db.Timestamptz
+  sentAt      DateTime?          @map("sent_at") @db.Timestamptz
+  deliveredAt DateTime?          @map("delivered_at") @db.Timestamptz
+
+  // Error tracking
+  attempts    Int     @default(0)
+  maxAttempts Int     @default(3) @map("max_attempts")
+  lastError   String? @map("last_error") @db.Text
+
+  // External IDs (for tracking)
+  externalId String? @map("external_id") // Provider message ID
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([status, scheduledAt])
+  @@index([userId, createdAt])
+  @@index([channel, status])
+  @@map("notification_queue")
+}
+
+model NotificationLog {
+  id String @id @default(uuid())
+
+  // Reference
+  queueId String? @map("queue_id")
+  userId  String  @map("user_id")
+
+  // Notification details
+  channel      NotificationChannel
+  templateCode String?             @map("template_code")
+  title        String?
+  body         String              @db.Text
+
+  // Delivery status
+  status      NotificationStatus
+  sentAt      DateTime?          @map("sent_at") @db.Timestamptz
+  deliveredAt DateTime?          @map("delivered_at") @db.Timestamptz
+  readAt      DateTime?          @map("read_at") @db.Timestamptz
+
+  // Error info
+  errorMessage String? @map("error_message") @db.Text
+
+  // Engagement tracking
+  clickedAt   DateTime? @map("clicked_at") @db.Timestamptz
+  actionTaken String?   @map("action_taken")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@index([channel, status])
+  @@index([templateCode, createdAt])
+  @@map("notification_logs")
+}
+
+model WhatsappSession {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // WhatsApp number (verified)
+  phoneNumber String    @unique @map("phone_number")
+  isVerified  Boolean   @default(false) @map("is_verified")
+  verifiedAt  DateTime? @map("verified_at") @db.Timestamptz
+
+  // Session status
+  isActive   Boolean   @default(true) @map("is_active")
+  optedOutAt DateTime? @map("opted_out_at") @db.Timestamptz
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("whatsapp_sessions")
+}
+
+// ============================================================================
+// MULTI-FACTOR AUTHENTICATION (MFA)
+// Complete MFA implementation with multiple methods
+// ============================================================================
+
+enum MFAMethod {
+  TOTP // Time-based One-Time Password (Authenticator app)
+  SMS // SMS verification code
+  EMAIL // Email verification code
+  WEBAUTHN // WebAuthn/FIDO2 (hardware keys)
+}
+
+enum MFAStatus {
+  DISABLED
+  PENDING_SETUP
+  ENABLED
+}
+
+model UserMFA {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Overall MFA status
+  status MFAStatus @default(DISABLED)
+
+  // TOTP settings
+  totpEnabled    Boolean   @default(false) @map("totp_enabled")
+  totpSecret     String?   @map("totp_secret") // Encrypted
+  totpVerifiedAt DateTime? @map("totp_verified_at") @db.Timestamptz
+
+  // SMS settings
+  smsEnabled    Boolean   @default(false) @map("sms_enabled")
+  smsPhone      String?   @map("sms_phone")
+  smsVerifiedAt DateTime? @map("sms_verified_at") @db.Timestamptz
+
+  // Email settings (uses user's verified email)
+  emailEnabled Boolean @default(false) @map("email_enabled")
+
+  // Backup codes
+  backupCodes            Json?     @map("backup_codes") // Array of hashed codes
+  backupCodesUsed        Int       @default(0) @map("backup_codes_used")
+  backupCodesGeneratedAt DateTime? @map("backup_codes_generated_at") @db.Timestamptz
+
+  // Preferred method
+  preferredMethod MFAMethod? @map("preferred_method")
+
+  // Recovery
+  recoveryEmail String? @map("recovery_email")
+  recoveryPhone String? @map("recovery_phone")
+
+  // Timestamps
+  enabledAt  DateTime? @map("enabled_at") @db.Timestamptz
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  webauthnCredentials WebAuthnCredential[]
+  mfaLogs             MFALog[]
+
+  @@index([userId])
+  @@map("user_mfa")
+}
+
+model WebAuthnCredential {
+  id        String @id @default(uuid())
+  userMfaId String @map("user_mfa_id")
+
+  // Credential info
+  credentialId String @unique @map("credential_id")
+  publicKey    String @map("public_key") @db.Text
+  counter      BigInt @default(0)
+
+  // Device info
+  deviceName String? @map("device_name")
+  deviceType String? @map("device_type") // platform, cross-platform
+
+  // Attestation
+  aaguid          String?
+  attestationType String? @map("attestation_type")
+
+  // Status
+  isActive   Boolean   @default(true) @map("is_active")
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz
+
+  // Timestamps
+  registeredAt DateTime @default(now()) @map("registered_at") @db.Timestamptz
+
+  userMfa UserMFA @relation(fields: [userMfaId], references: [id], onDelete: Cascade)
+
+  @@index([userMfaId])
+  @@map("webauthn_credentials")
+}
+
+model MFAChallenge {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Challenge info
+  method    MFAMethod
+  challenge String // The challenge/code (hashed for OTP)
+
+  // Delivery info (for SMS/Email)
+  sentTo String?   @map("sent_to")
+  sentAt DateTime? @map("sent_at") @db.Timestamptz
+
+  // Status
+  isUsed Boolean   @default(false) @map("is_used")
+  usedAt DateTime? @map("used_at") @db.Timestamptz
+
+  // Expiration
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+
+  // Attempt tracking
+  attempts    Int @default(0)
+  maxAttempts Int @default(3) @map("max_attempts")
+
+  // Context
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, method, isUsed])
+  @@index([expiresAt])
+  @@map("mfa_challenges")
+}
+
+model MFALog {
+  id        String @id @default(uuid())
+  userMfaId String @map("user_mfa_id")
+
+  // Event info
+  action  String // SETUP, VERIFY, DISABLE, BACKUP_CODE_USED, etc.
+  method  MFAMethod?
+  success Boolean
+
+  // Context
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+
+  // Error info
+  errorMessage String? @map("error_message")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  userMfa UserMFA @relation(fields: [userMfaId], references: [id], onDelete: Cascade)
+
+  @@index([userMfaId, createdAt])
+  @@index([action, success])
+  @@map("mfa_logs")
+}
+
+model TrustedDevice {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Device identification
+  deviceToken       String  @unique @map("device_token")
+  deviceFingerprint String? @map("device_fingerprint")
+
+  // Device info
+  deviceName String? @map("device_name")
+  deviceType String? @map("device_type")
+  browser    String?
+  os         String?
+
+  // Trust settings
+  trustLevel   Int       @default(1) @map("trust_level") // 1-5
+  skipMfaUntil DateTime? @map("skip_mfa_until") @db.Timestamptz
+
+  // Usage tracking
+  lastUsedAt    DateTime @default(now()) @map("last_used_at") @db.Timestamptz
+  lastIpAddress String?  @map("last_ip_address")
+  useCount      Int      @default(1) @map("use_count")
+
+  // Status
+  isActive      Boolean   @default(true) @map("is_active")
+  revokedAt     DateTime? @map("revoked_at") @db.Timestamptz
+  revokedReason String?   @map("revoked_reason")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, isActive])
+  @@index([deviceToken])
+  @@map("trusted_devices")
+}
+
+// ============================================================================
+// WALLET & LEDGER MODELS (IMMUTABLE LEDGER)
+// ============================================================================
+
+model Wallet {
+  id       String   @id @default(uuid())
+  userId   String   @unique @map("user_id")
+  currency Currency @default(IDR)
+
+  // Cached balances (minor units) - must match ledger totals
+  balanceMinor BigInt @default(0) @map("balance_minor") @db.BigInt
+  lockedMinor  BigInt @default(0) @map("locked_minor") @db.BigInt
+  frozenMinor  BigInt @default(0) @map("frozen_minor") @db.BigInt
+
+  // Freeze status
+  isFrozen       Boolean   @default(false) @map("is_frozen")
+  frozenAt       DateTime? @map("frozen_at") @db.Timestamptz
+  frozenReason   String?   @map("frozen_reason") @db.Text
+  frozenByUserId String?   @map("frozen_by_user_id")
+
+  // Reconciliation tracking
+  lastReconciledAt   DateTime? @map("last_reconciled_at")
+  reconciliationHash String?   @map("reconciliation_hash")
+
+  // Optimistic locking
+  version Int @default(0) @map("version")
+
+  // Soft delete (financial data should NOT be hard deleted)
+  deletedAt DateTime? @map("deleted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user              User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  accounts          LedgerAccount[]
+  deposits          Deposit[]
+  withdrawals       Withdrawal[]
+  escrowHoldsBuyer  EscrowHold[]    @relation("BuyerWallet")
+  escrowHoldsSeller EscrowHold[]    @relation("SellerWallet")
+
+  @@index([userId])
+  @@index([lastReconciledAt])
+  @@map("wallets")
+}
+
+model LedgerAccount {
+  id          String            @id @default(uuid())
+  walletId    String?           @map("wallet_id")
+  platformKey String?           @map("platform_key")
+  type        LedgerAccountType
+  currency    Currency          @default(IDR)
+  createdAt   DateTime          @default(now()) @map("created_at")
+
+  wallet  Wallet?       @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  entries LedgerEntry[]
+
+  // Note: Partial unique indexes MUST be created via raw SQL migration:
+  // - Unique per (wallet_id, type, currency) when wallet_id IS NOT NULL
+  // - Unique per (platform_key, type, currency) when platform_key IS NOT NULL
+  // And XOR constraint ensures exactly one owner is set (wallet OR platform).
+
+  @@index([walletId, type, currency])
+  @@index([platformKey, type, currency])
+  @@map("ledger_accounts")
+}
+
+model LedgerJournal {
+  id             String      @id @default(uuid())
+  type           JournalType
+  currency       Currency    @default(IDR)
+  amountMinor    BigInt      @map("amount_minor") @db.BigInt
+  description    String
+  idempotencyKey String?     @unique @map("idempotency_key")
+  createdAt      DateTime    @default(now()) @map("created_at")
+
+  // Journal-centric links (single source of truth)
+  // 1:1 links (unique) where entity produces exactly one journal.
+  depositId         String? @unique @map("deposit_id")
+  withdrawalId      String? @unique @map("withdrawal_id")
+  disputeId         String? @unique @map("dispute_id")
+  referralRewardId  String? @unique @map("referral_reward_id")
+  voucherUsageId    String? @unique @map("voucher_usage_id")
+  orderSettlementId String? @unique @map("order_settlement_id")
+
+  // 1:N links (not unique) where entity may have multiple journals over time.
+  orderId      String? @map("order_id")
+  escrowHoldId String? @map("escrow_hold_id")
+
+  // Relations (named explicitly to avoid ambiguity)
+  deposit         Deposit?         @relation("DepositJournal", fields: [depositId], references: [id], onDelete: Restrict)
+  withdrawal      Withdrawal?      @relation("WithdrawalJournal", fields: [withdrawalId], references: [id], onDelete: Restrict)
+  dispute         Dispute?         @relation("DisputeJournal", fields: [disputeId], references: [id], onDelete: Restrict)
+  referralReward  ReferralReward?  @relation("ReferralRewardJournal", fields: [referralRewardId], references: [id], onDelete: Restrict)
+  voucherUsage    VoucherUsage?    @relation("VoucherUsageJournal", fields: [voucherUsageId], references: [id], onDelete: Restrict)
+  orderSettlement OrderSettlement? @relation("OrderSettlementJournal", fields: [orderSettlementId], references: [id], onDelete: Restrict)
+
+  order      Order?      @relation("OrderJournals", fields: [orderId], references: [id], onDelete: Restrict)
+  escrowHold EscrowHold? @relation("EscrowHoldJournals", fields: [escrowHoldId], references: [id], onDelete: Restrict)
+
+  entries LedgerEntry[]
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+  @@index([depositId])
+  @@index([withdrawalId])
+  @@index([disputeId])
+  @@index([referralRewardId])
+  @@index([voucherUsageId])
+  @@index([orderSettlementId])
+  @@index([orderId])
+  @@index([escrowHoldId])
+  @@index([orderId, createdAt])
+  @@index([escrowHoldId, createdAt])
+  @@map("ledger_journals")
+}
+
+model LedgerEntry {
+  id          String @id @default(uuid())
+  journalId   String @map("journal_id")
+  accountId   String @map("account_id")
+  amountMinor BigInt @map("amount_minor") @db.BigInt
+
+  // Running balance for fast queries (ensure ordering by createdAt, id)
+  runningBalanceMinor BigInt? @map("running_balance_minor") @db.BigInt
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  journal LedgerJournal @relation(fields: [journalId], references: [id], onDelete: Restrict)
+  account LedgerAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([accountId, createdAt, id])
+  @@index([accountId, journalId])
+  @@index([journalId, createdAt])
+  @@map("ledger_entries")
+}
+
+// ============================================================================
+// BANK-GRADE ADMIN & SECURITY SCHEMA
+// Implements: Dual Approval, Password History, Idempotency
+// ============================================================================
+
+// ============================================================================
+// WALLET ADJUSTMENT (Admin Operations - Requires Dual Approval)
+// ============================================================================
+
+enum WalletAdjustmentStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum WalletAdjustmentType {
+  CREDIT
+  DEBIT
+}
+
+model WalletAdjustment {
+  id          String                 @id @default(uuid())
+  userId      String                 @map("user_id")
+  amountMinor BigInt                 @map("amount_minor")
+  type        WalletAdjustmentType
+  reason      String                 @db.Text
+  status      WalletAdjustmentStatus @default(PENDING_APPROVAL)
+
+  // Requester
+  requestedBy String   @map("requested_by")
+  requestedAt DateTime @default(now()) @map("requested_at") @db.Timestamptz
+
+  // Approver (must be different from requester - BANK RULE)
+  approvedBy    String?   @map("approved_by")
+  approvedAt    DateTime? @map("approved_at") @db.Timestamptz
+  approverNotes String?   @map("approver_notes") @db.Text
+
+  // Rejection
+  rejectedBy      String?   @map("rejected_by")
+  rejectedAt      DateTime? @map("rejected_at") @db.Timestamptz
+  rejectionReason String?   @map("rejection_reason") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([userId, status])
+  @@index([status, requestedAt])
+  @@index([requestedBy])
+  @@index([approvedBy])
+  @@map("wallet_adjustments")
+}
+
+// ============================================================================
+// PASSWORD HISTORY (Prevent Reuse - BANK RULE)
+// ============================================================================
+
+model PasswordHistory {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@map("password_history")
+}
+
+// ============================================================================
+// IDEMPOTENCY RECORDS (For Financial Operations)
+// ============================================================================
+
+model IdempotencyRecord {
+  id             String  @id @default(uuid())
+  idempotencyKey String  @unique @map("idempotency_key")
+  userId         String? @map("user_id")
+  endpoint       String
+  method         String
+  requestHash    String  @map("request_hash")
+  status         String  @default("processing")
+  response       Json?
+  errorMessage   String? @map("error_message") @db.Text
+
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+  @@map("idempotency_records")
+}
+
+// ============================================================================
+// MFA BACKUP CODES
+// ============================================================================
+
+model MfaBackupCode {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  codeHash  String    @map("code_hash")
+  usedAt    DateTime? @map("used_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, usedAt])
+  @@map("mfa_backup_codes")
+}
+
+// ============================================================================
+// SECURITY EVENTS (For Monitoring & Alerting)
+// ============================================================================
+
+enum SecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGIN_LOCKED
+  PASSWORD_CHANGED
+  PASSWORD_RESET
+  MFA_ENABLED
+  MFA_DISABLED
+  MFA_FAILED
+  SESSION_REVOKED
+  SUSPICIOUS_ACTIVITY
+  WITHDRAWAL_FLAGGED
+  ADMIN_ACTION
+}
+
+enum SecurityEventSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model SecurityEvent {
+  id        String                @id @default(uuid())
+  userId    String?               @map("user_id")
+  eventType SecurityEventType     @map("event_type")
+  severity  SecurityEventSeverity @default(LOW)
+  ipAddress String?               @map("ip_address")
+  userAgent String?               @map("user_agent")
+  details   Json?
+
+  // For alerting
+  isAlerted Boolean   @default(false) @map("is_alerted")
+  alertedAt DateTime? @map("alerted_at") @db.Timestamptz
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@index([eventType, createdAt])
+  @@index([severity, isAlerted])
+  @@map("security_events")
+}
+
+// ============================================================================
+// PAYMENT MODELS (ENHANCED WITH RECONCILIATION)
+// ============================================================================
+
+model Payment {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  provider          PaymentProvider @default(XENDIT)
+  providerInvoiceId String?         @unique @map("provider_invoice_id")
+
+  paymentType   PaymentType    @map("payment_type")
+  paymentMethod PaymentMethod? @map("payment_method")
+
+  currency    Currency @default(IDR)
+  amountMinor BigInt   @map("amount_minor") @db.BigInt
+
+  status         PaymentStatus @default(PENDING)
+  paymentDetails Json?         @map("payment_details")
+  paidAt         DateTime?     @map("paid_at") @db.Timestamptz
+  expiresAt      DateTime?     @map("expires_at") @db.Timestamptz
+
+  // CRITICAL FIX: Reconciliation tracking
+  isReconciled      Boolean   @default(false) @map("is_reconciled")
+  reconciledAt      DateTime? @map("reconciled_at") @db.Timestamptz
+  reconciledBy      String?   @map("reconciled_by")
+  reconciliationRef String?   @map("reconciliation_ref")
+
+  // Provider settlement tracking
+  settlementDate   DateTime? @map("settlement_date") @db.Timestamptz
+  settlementAmount BigInt?   @map("settlement_amount") @db.BigInt
+  settlementFees   BigInt?   @map("settlement_fees") @db.BigInt
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Link to order if this payment is for order
+  orderId String? @map("order_id")
+
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  order         Order?                 @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  reconciler    User?                  @relation("PaymentReconciler", fields: [reconciledBy], references: [id], onDelete: SetNull)
+  deposit       Deposit?               @relation("PaymentDeposit")
+  statusHistory PaymentStatusHistory[]
+  webhookEvents WebhookEvent[]
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@index([orderId])
+  @@index([provider, providerInvoiceId])
+  @@index([userId, createdAt])
+  @@index([userId, status, createdAt])
+  @@index([isReconciled, settlementDate])
+  @@index([expiresAt, status])
+  @@map("payments")
+}
+
+model PaymentStatusHistory {
+  id             String         @id @default(uuid())
+  paymentId      String         @map("payment_id")
+  fromStatus     PaymentStatus? @map("from_status")
+  toStatus       PaymentStatus  @map("to_status")
+  changedAt      DateTime       @default(now()) @map("changed_at") @db.Timestamptz
+  changedBy      String?        @map("changed_by")
+  reason         String?
+  webhookEventId String?        @map("webhook_event_id")
+
+  payment      Payment       @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  webhookEvent WebhookEvent? @relation(fields: [webhookEventId], references: [id], onDelete: SetNull)
+
+  @@index([paymentId, changedAt])
+  @@index([webhookEventId])
+  @@map("payment_status_history")
+}
+
+model WebhookEvent {
+  id        String          @id @default(uuid())
+  provider  PaymentProvider @default(XENDIT)
+  eventId   String          @unique @map("event_id")
+  eventType String          @map("event_type")
+  payload   Json
+
+  status      WebhookStatus @default(PENDING)
+  retryCount  Int           @default(0) @map("retry_count")
+  maxRetries  Int           @default(3) @map("max_retries")
+  lastRetryAt DateTime?     @map("last_retry_at") @db.Timestamptz
+
+  receivedAt      DateTime  @default(now()) @map("received_at") @db.Timestamptz
+  processedAt     DateTime? @map("processed_at") @db.Timestamptz
+  processingError String?   @map("processing_error") @db.Text
+
+  // CRITICAL FIX: Enforce signature validation (will add SQL NOT NULL constraint)
+  paymentId       String?   @map("payment_id")
+  providerEventAt DateTime? @map("provider_event_at") @db.Timestamptz
+  signatureValid  Boolean   @map("signature_valid") // SQL constraint will enforce NOT NULL + must be TRUE
+  signatureError  String?   @map("signature_error")
+
+  // Request metadata for security
+  requestIp      String? @map("request_ip")
+  requestHeaders Json?   @map("request_headers")
+
+  payment       Payment?               @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  statusHistory PaymentStatusHistory[]
+
+  @@index([provider, receivedAt])
+  @@index([status, retryCount])
+  @@index([eventType])
+  @@index([paymentId])
+  @@index([signatureValid, status])
+  @@map("webhook_events")
+}
+
+model Deposit {
+  id        String @id @default(uuid())
+  walletId  String @map("wallet_id")
+  paymentId String @unique @map("payment_id")
+
+  currency    Currency @default(IDR)
+  amountMinor BigInt   @map("amount_minor") @db.BigInt
+
+  status      DepositStatus @default(PENDING)
+  completedAt DateTime?     @map("completed_at") @db.Timestamptz
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  wallet  Wallet  @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  payment Payment @relation("PaymentDeposit", fields: [paymentId], references: [id], onDelete: Restrict)
+
+  // Journal-centric: back relation (optional 1:1)
+  journal LedgerJournal? @relation("DepositJournal")
+
+  @@index([walletId, status])
+  @@index([createdAt])
+  @@map("deposits")
+}
+
+// ============================================================================
+// BANK & WITHDRAWAL MODELS (ENHANCED WITH LIMITS)
+// ============================================================================
+
+model BankAccount {
+  id       String @id @default(uuid())
+  userId   String @map("user_id")
+  bankName String @map("bank_name")
+
+  // Encrypted data
+  accountNumberEnc   String @map("account_number_enc") @db.Text
+  accountNumberLast4 String @map("account_number_last4")
+  accountNameEnc     String @map("account_name_enc") @db.Text
+  keyVersion         Int    @default(1) @map("key_version")
+
+  isDefault Boolean @default(false) @map("is_default")
+
+  // Verification & status
+  isActive           Boolean   @default(true) @map("is_active")
+  isVerified         Boolean   @default(false) @map("is_verified")
+  verifiedAt         DateTime? @map("verified_at") @db.Timestamptz
+  verificationMethod String?   @map("verification_method")
+  lastUsedAt         DateTime? @map("last_used_at") @db.Timestamptz
+
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  withdrawals Withdrawal[]
+
+  @@index([userId, isDefault])
+  @@index([userId, isActive, isDefault])
+  @@map("bank_accounts")
+}
+
+model Withdrawal {
+  id            String @id @default(uuid())
+  walletId      String @map("wallet_id")
+  userId        String @map("user_id")
+  bankAccountId String @map("bank_account_id")
+
+  currency    Currency @default(IDR)
+  amountMinor BigInt   @map("amount_minor") @db.BigInt
+
+  status WithdrawalStatus @default(PENDING)
+
+  // Review & approval workflow
+  reviewedBy      String?   @map("reviewed_by")
+  reviewStartedAt DateTime? @map("review_started_at") @db.Timestamptz
+  reviewNotes     String?   @map("review_notes") @db.Text
+
+  adminNotes    String?   @map("admin_notes") @db.Text
+  riskHoldUntil DateTime? @map("risk_hold_until") @db.Timestamptz
+
+  // Multi-approval for large amounts
+  requiresMultipleApprovals Boolean @default(false) @map("requires_multiple_approvals")
+  approvalCount             Int     @default(0) @map("approval_count")
+  requiredApprovals         Int     @default(1) @map("required_approvals")
+
+  approvedBy      String?   @map("approved_by")
+  approvedAt      DateTime? @map("approved_at") @db.Timestamptz
+  rejectedAt      DateTime? @map("rejected_at") @db.Timestamptz
+  rejectionReason String?   @map("rejection_reason") @db.Text
+
+  // Provider disbursement
+  providerDisbursementId String? @map("provider_disbursement_id")
+  providerResponse       Json?   @map("provider_response")
+
+  requestedAt DateTime  @default(now()) @map("requested_at") @db.Timestamptz
+  processedAt DateTime? @map("processed_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  // Idempotency
+  idempotencyKey String? @unique @map("idempotency_key")
+
+  // CRITICAL FIX: Velocity & fraud detection
+  velocityScore     Decimal? @map("velocity_score") @db.Decimal(5, 2)
+  isFlaggedBySystem Boolean  @default(false) @map("is_flagged_by_system")
+  flagReason        String?  @map("flag_reason") @db.Text
+
+  // Cooling period tracking
+  coolingPeriodEndsAt DateTime? @map("cooling_period_ends_at") @db.Timestamptz
+  canProcessAfter     DateTime? @map("can_process_after") @db.Timestamptz
+
+  wallet      Wallet               @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  user        User                 @relation("WithdrawalRequester", fields: [userId], references: [id], onDelete: Restrict)
+  bankAccount BankAccount          @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+  approver    User?                @relation("WithdrawalApprover", fields: [approvedBy], references: [id], onDelete: SetNull)
+  reviewer    User?                @relation("WithdrawalReviewer", fields: [reviewedBy], references: [id], onDelete: SetNull)
+  approvals   WithdrawalApproval[]
+
+  // Journal-centric: back relation (optional 1:1)
+  journal LedgerJournal? @relation("WithdrawalJournal")
+
+  @@index([status, requestedAt])
+  @@index([walletId, requestedAt])
+  @@index([requiresMultipleApprovals, approvalCount])
+  @@index([userId, requestedAt])
+  @@index([isFlaggedBySystem, status])
+  @@index([canProcessAfter, status])
+  @@index([coolingPeriodEndsAt])
+  @@map("withdrawals")
+}
+
+model WithdrawalApproval {
+  id           String   @id @default(uuid())
+  withdrawalId String   @map("withdrawal_id")
+  approvedBy   String   @map("approved_by")
+  notes        String?  @db.Text
+  approvedAt   DateTime @default(now()) @map("approved_at") @db.Timestamptz
+
+  withdrawal Withdrawal @relation(fields: [withdrawalId], references: [id], onDelete: Cascade)
+  approver   User       @relation("WithdrawalApprovalUser", fields: [approvedBy], references: [id], onDelete: Restrict)
+
+  @@unique([withdrawalId, approvedBy])
+  @@index([withdrawalId])
+  @@map("withdrawal_approvals")
+}
+
+// ============================================================================
+// ORDER & ESCROW MODELS (ENHANCED WITH TIMEOUT ENFORCEMENT)
+// ============================================================================
+
+model Order {
+  id          String @id @default(uuid())
+  orderNumber String @unique @map("order_number")
+
+  initiatorId    String        @map("initiator_id")
+  counterpartyId String?       @map("counterparty_id")
+  initiatorRole  InitiatorRole @map("initiator_role")
+
+  title       String
+  description String        @db.Text
+  category    OrderCategory
+
+  currency    Currency @default(IDR)
+  amountMinor BigInt   @map("amount_minor") @db.BigInt
+
+  feePayer         FeePayer @map("fee_payer")
+  platformFeeMinor BigInt   @map("platform_fee_minor") @db.BigInt
+
+  holdingPeriodDays Int     @map("holding_period_days")
+  customTerms       String? @map("custom_terms") @db.Text
+
+  status OrderStatus @default(PENDING_ACCEPT)
+
+  inviteToken     String   @unique @map("invite_token")
+  inviteExpiresAt DateTime @map("invite_expires_at") @db.Timestamptz
+
+  acceptedAt DateTime? @map("accepted_at") @db.Timestamptz
+  paidAt     DateTime? @map("paid_at") @db.Timestamptz
+
+  // CRITICAL FIX: Escrow timeout enforcement
+  autoReleaseAt    DateTime? @map("auto_release_at") @db.Timestamptz
+  autoReleaseJobId String?   @unique @map("auto_release_job_id") // Link to scheduled job
+
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  cancelledAt DateTime? @map("cancelled_at") @db.Timestamptz
+
+  // Soft delete with FK
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
+  deletedByUserId String?   @map("deleted_by_user_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  initiator     User  @relation("OrderInitiator", fields: [initiatorId], references: [id], onDelete: Restrict)
+  counterparty  User? @relation("OrderCounterparty", fields: [counterpartyId], references: [id], onDelete: Restrict)
+  deletedByUser User? @relation("OrderDeletedBy", fields: [deletedByUserId], references: [id], onDelete: SetNull)
+
+  escrowHold    EscrowHold?
+  settlement    OrderSettlement?
+  deliveryProof DeliveryProof?
+  dispute       Dispute?
+  ratings       Rating[]
+  comments      OrderComment[]
+  payments      Payment[]
+
+  // Journal-centric: order can have multiple journals across lifecycle
+  journals LedgerJournal[] @relation("OrderJournals")
+
+  @@index([status])
+  @@index([inviteToken])
+  @@index([autoReleaseAt, status])
+  @@index([inviteExpiresAt])
+  @@index([initiatorId, status, createdAt])
+  @@index([counterpartyId, status, createdAt])
+  @@index([status, autoReleaseAt]) // For scheduled job queries
+  @@map("orders")
+}
+
+model EscrowHold {
+  id      String @id @default(uuid())
+  orderId String @unique @map("order_id")
+
+  buyerWalletId  String  @map("buyer_wallet_id")
+  sellerWalletId String? @map("seller_wallet_id")
+
+  currency    Currency @default(IDR)
+  amountMinor BigInt   @map("amount_minor") @db.BigInt
+
+  status EscrowHoldStatus @default(ACTIVE)
+
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz
+
+  // CRITICAL FIX: Timeout enforcement for auto-release
+  timeoutAt    DateTime? @map("timeout_at") @db.Timestamptz
+  timeoutJobId String?   @unique @map("timeout_job_id") // Link to scheduled job
+
+  // Data retention: archival support for compliance
+  isArchived Boolean   @default(false) @map("is_archived")
+  archivedAt DateTime? @map("archived_at") @db.Timestamptz
+
+  order        Order   @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  buyerWallet  Wallet  @relation("BuyerWallet", fields: [buyerWalletId], references: [id], onDelete: Restrict)
+  sellerWallet Wallet? @relation("SellerWallet", fields: [sellerWalletId], references: [id], onDelete: Restrict)
+
+  // Journal-centric: escrow hold lifecycle journals (hold/release/refund/fee/adjustment)
+  journals LedgerJournal[] @relation("EscrowHoldJournals")
+
+  @@index([status, createdAt])
+  @@index([buyerWalletId])
+  @@index([sellerWalletId])
+  @@index([timeoutAt, status]) // For scheduled timeout job queries
+  @@map("escrow_holds")
+}
+
+model OrderSettlement {
+  id      String @id @default(uuid())
+  orderId String @unique @map("order_id")
+
+  currency     Currency @default(IDR)
+  sellerUserId String   @map("seller_user_id")
+  buyerUserId  String   @map("buyer_user_id")
+
+  sellerAmountMinor BigInt @map("seller_amount_minor") @db.BigInt
+  buyerRefundMinor  BigInt @map("buyer_refund_minor") @db.BigInt
+  platformFeeMinor  BigInt @map("platform_fee_minor") @db.BigInt
+
+  settledAt DateTime @default(now()) @map("settled_at") @db.Timestamptz
+
+  order  Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  seller User  @relation("SettlementSeller", fields: [sellerUserId], references: [id], onDelete: Restrict)
+  buyer  User  @relation("SettlementBuyer", fields: [buyerUserId], references: [id], onDelete: Restrict)
+
+  // Journal-centric: optional 1:1 journal for settlement posting/traceability
+  journal LedgerJournal? @relation("OrderSettlementJournal")
+
+  @@index([orderId])
+  @@index([sellerUserId])
+  @@index([buyerUserId])
+  @@index([settledAt])
+  @@map("order_settlements")
+}
+
+model DeliveryProof {
+  id             String   @id @default(uuid())
+  orderId        String   @unique @map("order_id")
+  courier        String?
+  trackingNumber String?  @map("tracking_number")
+  fileUrls       Json     @map("file_urls")
+  notes          String   @db.Text
+  submittedAt    DateTime @default(now()) @map("submitted_at") @db.Timestamptz
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@map("delivery_proofs")
+}
+
+// ============================================================================
+// DISPUTE MODELS
+// ============================================================================
+
+model Dispute {
+  id       String @id @default(uuid())
+  orderId  String @unique @map("order_id")
+  openedBy String @map("opened_by")
+  reason   String @db.Text
+  description String @db.Text
+
+  status DisputeStatus @default(OPEN)
+
+  // Response & escalation tracking
+  responseDeadline DateTime? @map("response_deadline")
+  escalatedAt      DateTime? @map("escalated_at")
+  escalatedTo      String?   @map("escalated_to")
+
+  arbitratorId String?         @map("arbitrator_id")
+  decision     DisputeDecision @default(NONE)
+
+  sellerAmountMinor BigInt? @map("seller_amount_minor") @db.BigInt
+  buyerRefundMinor  BigInt? @map("buyer_refund_minor") @db.BigInt
+
+  adminNotes      String? @map("admin_notes") @db.Text
+  resolutionNotes String? @map("resolution_notes") @db.Text
+
+  // Appeal mechanism
+  canAppeal      Boolean   @default(true) @map("can_appeal")
+  appealDeadline DateTime? @map("appeal_deadline")
+  appealCount    Int       @default(0) @map("appeal_count")
+
+  openedAt  DateTime  @default(now()) @map("opened_at")
+  decidedAt DateTime? @map("decided_at")
+
+  order           Order             @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  opener          User              @relation("DisputeOpener", fields: [openedBy], references: [id], onDelete: Restrict)
+  arbitrator      User?             @relation("DisputeArbitrator", fields: [arbitratorId], references: [id], onDelete: SetNull)
+  escalatedToUser User?             @relation("DisputeEscalation", fields: [escalatedTo], references: [id], onDelete: SetNull)
+  evidences       DisputeEvidence[]
+  timeline        DisputeTimeline[]
+
+  // Journal-centric: back relation (optional 1:1)
+  journal LedgerJournal? @relation("DisputeJournal")
+
+  @@index([status])
+  @@index([responseDeadline])
+  @@index([appealDeadline])
+  @@map("disputes")
+}
+
+model DisputeEvidence {
+  id          String   @id @default(uuid())
+  disputeId   String   @map("dispute_id")
+  submittedBy String   @map("submitted_by")
+  fileUrls    Json     @map("file_urls")
+  description String   @db.Text
+  submittedAt DateTime @default(now()) @map("submitted_at")
+
+  dispute   Dispute @relation(fields: [disputeId], references: [id], onDelete: Restrict)
+  submitter User    @relation(fields: [submittedBy], references: [id], onDelete: Restrict)
+
+  @@index([disputeId, submittedAt])
+  @@map("dispute_evidence")
+}
+
+model DisputeTimeline {
+  id          String   @id @default(uuid())
+  disputeId   String   @map("dispute_id")
+  action      String
+  performedBy String?  @map("performed_by")
+  details     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Restrict)
+  user    User?   @relation(fields: [performedBy], references: [id], onDelete: SetNull)
+
+  @@index([disputeId, createdAt])
+  @@map("dispute_timeline")
+}
+
+// ============================================================================
+// RATING & REPUTATION SYSTEM (ENHANCED MODERATION)
+// ============================================================================
+
+model Rating {
+  id         String @id @default(uuid())
+  orderId    String @map("order_id")
+  fromUserId String @map("from_user_id")
+  toUserId   String @map("to_user_id")
+
+  // Rating score (1-5 stars)
+  score Int @db.SmallInt // 1-5
+
+  // Review text
+  review String? @db.Text
+
+  // Moderation fields (CRITICAL FIX: Complete implementation)
+  isModerated      Boolean   @default(false) @map("is_moderated")
+  moderatedAt      DateTime? @map("moderated_at") @db.Timestamptz
+  moderatedBy      String?   @map("moderated_by")
+  moderationAction String?   @map("moderation_action") // 'approved', 'flagged', 'hidden', 'edited'
+  moderationNotes  String?   @map("moderation_notes") @db.Text
+
+  // Visibility & status
+  isHidden     Boolean @default(false) @map("is_hidden")
+  hiddenReason String? @map("hidden_reason") @db.Text
+
+  // Automated flags
+  containsProfanity Boolean  @default(false) @map("contains_profanity")
+  toxicityScore     Decimal? @map("toxicity_score") @db.Decimal(5, 2) // AI-based toxicity score
+
+  // Response from rated user
+  hasResponse  Boolean   @default(false) @map("has_response")
+  responseText String?   @map("response_text") @db.Text
+  respondedAt  DateTime? @map("responded_at") @db.Timestamptz
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  order     Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  fromUser  User  @relation("RatingFrom", fields: [fromUserId], references: [id], onDelete: Restrict)
+  toUser    User  @relation("RatingTo", fields: [toUserId], references: [id], onDelete: Restrict)
+  moderator User? @relation("RatingModerator", fields: [moderatedBy], references: [id], onDelete: SetNull)
+
+  @@unique([orderId, fromUserId]) // One rating per user per order
+  @@index([toUserId, isHidden, createdAt])
+  @@index([score, createdAt])
+  @@index([isModerated, containsProfanity])
+  @@map("ratings")
+}
+
+// ============================================================================
+// BADGE & REPUTATION SYSTEM
+// Gamification and trust-building features
+// ============================================================================
+
+enum BadgeCategory {
+  TRANSACTION // Transaction milestones
+  VERIFICATION // Identity verification
+  ENGAGEMENT // Platform engagement
+  TRUST // Trust indicators
+  SPECIAL // Special/promotional badges
+}
+
+enum BadgeRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model Badge {
+  id          String        @id @default(uuid())
+  code        String        @unique // e.g., "VERIFIED_SELLER", "100_TRANSACTIONS"
+  name        String
+  description String        @db.Text
+  category    BadgeCategory
+  rarity      BadgeRarity   @default(COMMON)
+
+  // Visual
+  iconUrl String? @map("icon_url")
+  color   String? // Hex color for badge
+
+  // Requirements (JSON for flexible criteria)
+  requirements Json // e.g., {"minTransactions": 100, "minRating": 4.5}
+
+  // Points/XP awarded
+  pointsAwarded Int @default(0) @map("points_awarded")
+
+  // Availability
+  isActive      Boolean @default(true) @map("is_active")
+  isAutoAwarded Boolean @default(true) @map("is_auto_awarded") // Auto-award when criteria met
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  userBadges UserBadge[]
+
+  @@index([category, isActive])
+  @@index([code])
+  @@map("badges")
+}
+
+model UserBadge {
+  id      String @id @default(uuid())
+  userId  String @map("user_id")
+  badgeId String @map("badge_id")
+
+  // Award details
+  awardedAt DateTime @default(now()) @map("awarded_at") @db.Timestamptz
+  awardedBy String?  @map("awarded_by") // Admin who awarded (if manual)
+  reason    String?  @db.Text
+
+  // Display settings
+  isDisplayed  Boolean @default(true) @map("is_displayed") // User can hide badges
+  displayOrder Int     @default(0) @map("display_order")
+
+  // Revocation
+  revokedAt    DateTime? @map("revoked_at") @db.Timestamptz
+  revokedBy    String?   @map("revoked_by")
+  revokeReason String?   @map("revoke_reason") @db.Text
+
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, badgeId])
+  @@index([userId, isDisplayed])
+  @@index([awardedAt])
+  @@map("user_badges")
+}
+
+model ReputationHistory {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Score changes
+  previousScore Decimal @map("previous_score") @db.Decimal(5, 2)
+  newScore      Decimal @map("new_score") @db.Decimal(5, 2)
+  change        Decimal @db.Decimal(5, 2)
+
+  // Reason for change
+  reason        String // e.g., "TRANSACTION_COMPLETED", "RATING_RECEIVED", "DISPUTE_LOST"
+  referenceType String? @map("reference_type") // e.g., "ORDER", "RATING", "DISPUTE"
+  referenceId   String? @map("reference_id")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@index([reason])
+  @@map("reputation_history")
+}
+
+model UserLevel {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Level & XP
+  level     Int @default(1)
+  currentXp Int @default(0) @map("current_xp")
+  totalXp   Int @default(0) @map("total_xp")
+
+  // Level thresholds are defined in config
+
+  // Stats
+  transactionCount Int     @default(0) @map("transaction_count")
+  successRate      Decimal @default(100) @map("success_rate") @db.Decimal(5, 2)
+  responseTime     Int?    @map("response_time") // Average in minutes
+
+  // Timestamps
+  levelUpAt DateTime? @map("level_up_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([level])
+  @@map("user_levels")
+}
+
+model UserAchievement {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Achievement tracking
+  achievementCode String  @map("achievement_code") // e.g., "FIRST_TRANSACTION", "SPEED_DEMON"
+  progress        Int     @default(0)
+  target          Int     @default(1)
+  isCompleted     Boolean @default(false) @map("is_completed")
+
+  // Timestamps
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  @@unique([userId, achievementCode])
+  @@index([userId, isCompleted])
+  @@map("user_achievements")
+}
+
+// ============================================================================
+// KYC MODELS
+// ============================================================================
+
+model KYCSubmission {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Object storage keys
+  idCardObjectKey String @map("id_card_object_key")
+  selfieObjectKey String @map("selfie_object_key")
+
+  // Document integrity
+  idCardHash String @map("id_card_hash")
+  selfieHash String @map("selfie_hash")
+
+  // Encrypted personal data
+  fullNameEnc    String @map("full_name_enc") @db.Text
+  idNumberEnc    String @map("id_number_enc") @db.Text
+  dateOfBirthEnc String @map("date_of_birth_enc") @db.Text
+  addressEnc     String @map("address_enc") @db.Text
+  keyVersion     Int    @default(1) @map("key_version")
+
+  status KYCStatus @default(PENDING)
+
+  // Attempt tracking & expiry
+  attemptNumber Int       @default(1) @map("attempt_number")
+  expiresAt     DateTime? @map("expires_at")
+
+  rejectionReason String?   @map("rejection_reason") @db.Text
+  verifiedBy      String?   @map("verified_by")
+  submittedAt     DateTime  @default(now()) @map("submitted_at")
+  verifiedAt      DateTime? @map("verified_at")
+
+  user     User  @relation("KYCUser", fields: [userId], references: [id], onDelete: Restrict)
+  verifier User? @relation("KYCVerifier", fields: [verifiedBy], references: [id], onDelete: SetNull)
+
+  @@index([status, submittedAt])
+  @@index([userId, attemptNumber])
+  @@index([expiresAt])
+  @@map("kyc_submissions")
+}
+
+// ============================================================================
+// REFERRAL SYSTEM
+// ============================================================================
+
+model ReferralCode {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+  code   String @unique
+
+  // Usage tracking
+  usageCount Int  @default(0) @map("usage_count")
+  maxUsages  Int? @map("max_usages")
+
+  isActive  Boolean   @default(true) @map("is_active")
+  expiresAt DateTime? @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  usages ReferralUsage[]
+
+  @@index([isActive, expiresAt])
+  @@map("referral_codes")
+}
+
+model ReferralUsage {
+  id             String @id @default(uuid())
+  referralCodeId String @map("referral_code_id")
+  referrerId     String @map("referrer_id")
+  referredUserId String @map("referred_user_id")
+
+  status ReferralStatus @default(PENDING)
+
+  // Completion criteria
+  requiredAction String?   @map("required_action")
+  completedAt    DateTime? @map("completed_at")
+  expiresAt      DateTime? @map("expires_at")
+
+  usedAt DateTime @default(now()) @map("used_at")
+
+  referralCode ReferralCode     @relation(fields: [referralCodeId], references: [id], onDelete: Restrict)
+  referrer     User             @relation("ReferrerUser", fields: [referrerId], references: [id], onDelete: Restrict)
+  referredUser User             @relation("ReferredUser", fields: [referredUserId], references: [id], onDelete: Restrict)
+  rewards      ReferralReward[]
+
+  @@unique([referralCodeId, referredUserId])
+  @@index([referrerId, status])
+  @@index([referredUserId])
+  @@index([status, completedAt])
+  @@map("referral_usages")
+}
+
+model ReferralReward {
+  id              String @id @default(uuid())
+  referralUsageId String @map("referral_usage_id")
+  userId          String @map("user_id")
+
+  rewardType  ReferralRewardType @map("reward_type")
+  currency    Currency           @default(IDR)
+  amountMinor BigInt             @map("amount_minor") @db.BigInt
+
+  // Reward metadata
+  tier        Int?
+  description String? @db.Text
+
+  status      ReferralRewardStatus @default(PENDING)
+  processedAt DateTime?            @map("processed_at")
+  expiresAt   DateTime?            @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Idempotency
+  idempotencyKey String? @unique @map("idempotency_key")
+
+  referralUsage ReferralUsage @relation(fields: [referralUsageId], references: [id], onDelete: Restrict)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  // Journal-centric: back relation (optional 1:1)
+  journal LedgerJournal? @relation("ReferralRewardJournal")
+
+  @@index([userId, status])
+  @@index([referralUsageId])
+  @@index([expiresAt])
+  @@map("referral_rewards")
+}
+

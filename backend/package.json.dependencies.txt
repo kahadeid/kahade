@@ -1,0 +1,13 @@
+# Add these dependencies to package.json
+
+## Required for CRITICAL fixes:
+"decimal.js": "^10.4.3"
+
+## Already should be present:
+"@nestjs/throttler": "^5.0.0"
+"nanoid": "^3.3.7"
+
+## Installation command:
+npm install decimal.js
+
+# Note: This is a reference file. Actual package.json needs to be updated manually.

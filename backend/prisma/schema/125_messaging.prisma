@@ -1,0 +1,138 @@
+// ============================================================================
+// REAL-TIME MESSAGING SYSTEM
+// Supports: Direct Messages, Order Chat, Group Conversations
+// ============================================================================
+
+enum ConversationType {
+  DIRECT // 1:1 between users
+  ORDER // Tied to a specific order
+  SUPPORT // Support ticket conversation
+  GROUP // Future: Group chats
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM // System-generated messages
+  PAYMENT_REQUEST // Payment-related messages
+  DELIVERY_UPDATE // Delivery status updates
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+model Conversation {
+  id    String           @id @default(uuid())
+  type  ConversationType @default(DIRECT)
+  title String? // Optional title for group/support
+
+  // Reference to order (if ORDER type)
+  orderId String? @unique @map("order_id")
+
+  // Reference to support ticket (if SUPPORT type)
+  supportTicketId String? @unique @map("support_ticket_id")
+
+  // Metadata for additional info
+  metadata Json?
+
+  // Timestamps
+  lastMessageAt DateTime? @map("last_message_at") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Soft delete
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  // Relations
+  participants  ConversationParticipant[]
+  messages      Message[]
+  supportTicket SupportTicket?            @relation(fields: [supportTicketId], references: [id], onDelete: SetNull)
+
+  @@index([type, lastMessageAt])
+  @@index([orderId])
+  @@index([supportTicketId])
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String @id @default(uuid())
+  conversationId String @map("conversation_id")
+  userId         String @map("user_id")
+
+  // Participant settings
+  isMuted Boolean @default(false) @map("is_muted")
+  isAdmin Boolean @default(false) @map("is_admin")
+
+  // Read tracking
+  lastReadAt  DateTime? @map("last_read_at") @db.Timestamptz
+  unreadCount Int       @default(0) @map("unread_count")
+
+  // Timestamps
+  joinedAt DateTime  @default(now()) @map("joined_at") @db.Timestamptz
+  leftAt   DateTime? @map("left_at") @db.Timestamptz
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId, lastReadAt])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String @id @default(uuid())
+  conversationId String @map("conversation_id")
+  senderId       String @map("sender_id")
+
+  // Message content
+  type    MessageType @default(TEXT)
+  content String      @db.Text
+
+  // Attachments (images, files)
+  attachments Json?
+
+  // Reply to another message
+  replyToId String? @map("reply_to_id")
+
+  // Message metadata
+  metadata Json?
+
+  // Edit tracking
+  isEdited Boolean   @default(false) @map("is_edited")
+  editedAt DateTime? @map("edited_at") @db.Timestamptz
+
+  // Soft delete
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy String?   @map("deleted_by")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  conversation Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  replyTo      Message?             @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      Message[]            @relation("MessageReplies")
+  readReceipts MessageReadReceipt[]
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@index([replyToId])
+  @@map("messages")
+}
+
+model MessageReadReceipt {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  userId    String   @map("user_id")
+  readAt    DateTime @default(now()) @map("read_at") @db.Timestamptz
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId, readAt])
+  @@map("message_read_receipts")
+}

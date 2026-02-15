@@ -1,0 +1,39 @@
+import { ApiProperty } from "@nestjs/swagger";
+
+import { IsString, IsUUID, IsEnum, IsOptional } from "class-validator";
+
+// Define NotificationType locally since it's stored as string in database
+export enum NotificationType {
+  TRANSACTION = "TRANSACTION",
+  ORDER = "ORDER",
+  PAYMENT = "PAYMENT",
+  ESCROW = "ESCROW",
+  WALLET = "WALLET",
+  DISPUTE = "DISPUTE",
+  SYSTEM = "SYSTEM",
+  REFERRAL_COMPLETED = "REFERRAL_COMPLETED",
+}
+
+export class CreateNotificationDto {
+  @ApiProperty({ example: "550e8400-e29b-41d4-a716-446655440000" })
+  @IsUUID()
+  userId: string;
+
+  @ApiProperty({ enum: NotificationType, example: "TRANSACTION" })
+  @IsEnum(NotificationType)
+  type: NotificationType;
+
+  @ApiProperty({ example: "Payment Received" })
+  @IsString()
+  title: string;
+
+  @ApiProperty({ example: "You have received payment for transaction #123" })
+  @IsString()
+  message: string;
+
+  @ApiProperty({ required: false, example: { transactionId: "123" } })
+  @IsOptional()
+  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: any;
+}

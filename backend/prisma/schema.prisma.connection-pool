@@ -1,0 +1,32 @@
+// Add to your datasource configuration in schema.prisma
+
+// HIGH-010: Database Connection Pool Configuration
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  
+  // Connection pool configuration
+  // Format: postgresql://user:password@localhost:5432/db?option=value
+  // Add these to DATABASE_URL query parameters:
+  //
+  // connection_limit=20       - Maximum number of connections (default: unlimited)
+  // pool_timeout=10          - Seconds to wait for connection from pool
+  // connect_timeout=10       - Seconds to wait for database connection
+  // statement_timeout=30000  - Milliseconds before query timeout (30s)
+}
+
+// Example DATABASE_URL with pool configuration:
+// DATABASE_URL="postgresql://user:pass@localhost:5432/kahade?connection_limit=20&pool_timeout=10&connect_timeout=10&statement_timeout=30000"
+
+// Recommended values based on load:
+// - Low traffic (< 100 users): connection_limit=10
+// - Medium traffic (100-1000 users): connection_limit=20
+// - High traffic (> 1000 users): connection_limit=50+
+
+// Benefits:
+// 1. Prevents database connection exhaustion
+// 2. Faster query execution with connection reuse
+// 3. Automatic cleanup of stale connections
+// 4. Prevents hanging queries with timeout
+// 5. Better resource utilization

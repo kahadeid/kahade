@@ -1,0 +1,146 @@
+// ============================================================================
+// BADGE & REPUTATION SYSTEM
+// Gamification and trust-building features
+// ============================================================================
+
+enum BadgeCategory {
+  TRANSACTION // Transaction milestones
+  VERIFICATION // Identity verification
+  ENGAGEMENT // Platform engagement
+  TRUST // Trust indicators
+  SPECIAL // Special/promotional badges
+}
+
+enum BadgeRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model Badge {
+  id          String        @id @default(uuid())
+  code        String        @unique // e.g., "VERIFIED_SELLER", "100_TRANSACTIONS"
+  name        String
+  description String        @db.Text
+  category    BadgeCategory
+  rarity      BadgeRarity   @default(COMMON)
+
+  // Visual
+  iconUrl String? @map("icon_url")
+  color   String? // Hex color for badge
+
+  // Requirements (JSON for flexible criteria)
+  requirements Json // e.g., {"minTransactions": 100, "minRating": 4.5}
+
+  // Points/XP awarded
+  pointsAwarded Int @default(0) @map("points_awarded")
+
+  // Availability
+  isActive      Boolean @default(true) @map("is_active")
+  isAutoAwarded Boolean @default(true) @map("is_auto_awarded") // Auto-award when criteria met
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  userBadges UserBadge[]
+
+  @@index([category, isActive])
+  @@index([code])
+  @@map("badges")
+}
+
+model UserBadge {
+  id      String @id @default(uuid())
+  userId  String @map("user_id")
+  badgeId String @map("badge_id")
+
+  // Award details
+  awardedAt DateTime @default(now()) @map("awarded_at") @db.Timestamptz
+  awardedBy String?  @map("awarded_by") // Admin who awarded (if manual)
+  reason    String?  @db.Text
+
+  // Display settings
+  isDisplayed  Boolean @default(true) @map("is_displayed") // User can hide badges
+  displayOrder Int     @default(0) @map("display_order")
+
+  // Revocation
+  revokedAt    DateTime? @map("revoked_at") @db.Timestamptz
+  revokedBy    String?   @map("revoked_by")
+  revokeReason String?   @map("revoke_reason") @db.Text
+
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, badgeId])
+  @@index([userId, isDisplayed])
+  @@index([awardedAt])
+  @@map("user_badges")
+}
+
+model ReputationHistory {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Score changes
+  previousScore Decimal @map("previous_score") @db.Decimal(5, 2)
+  newScore      Decimal @map("new_score") @db.Decimal(5, 2)
+  change        Decimal @db.Decimal(5, 2)
+
+  // Reason for change
+  reason        String // e.g., "TRANSACTION_COMPLETED", "RATING_RECEIVED", "DISPUTE_LOST"
+  referenceType String? @map("reference_type") // e.g., "ORDER", "RATING", "DISPUTE"
+  referenceId   String? @map("reference_id")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@index([reason])
+  @@map("reputation_history")
+}
+
+model UserLevel {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Level & XP
+  level     Int @default(1)
+  currentXp Int @default(0) @map("current_xp")
+  totalXp   Int @default(0) @map("total_xp")
+
+  // Level thresholds are defined in config
+
+  // Stats
+  transactionCount Int     @default(0) @map("transaction_count")
+  successRate      Decimal @default(100) @map("success_rate") @db.Decimal(5, 2)
+  responseTime     Int?    @map("response_time") // Average in minutes
+
+  // Timestamps
+  levelUpAt DateTime? @map("level_up_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([level])
+  @@map("user_levels")
+}
+
+model UserAchievement {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Achievement tracking
+  achievementCode String  @map("achievement_code") // e.g., "FIRST_TRANSACTION", "SPEED_DEMON"
+  progress        Int     @default(0)
+  target          Int     @default(1)
+  isCompleted     Boolean @default(false) @map("is_completed")
+
+  // Timestamps
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  @@unique([userId, achievementCode])
+  @@index([userId, isCompleted])
+  @@map("user_achievements")
+}

@@ -1,0 +1,243 @@
+# ============================================================================
+# KAHADE BACKEND - COMPREHENSIVE .GITIGNORE
+# Security-First Configuration for Production Deployment
+# ============================================================================
+
+# ============================================================================
+# CRITICAL SECURITY - NEVER COMMIT THESE
+# ============================================================================
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+.env.staging
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Credentials & Secrets
+secrets/
+credentials/
+*secret*
+*password*
+*token*
+*apikey*
+*api-key*
+*.credentials
+.aws/
+.gcp/
+.azure/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+data/
+db/
+database/
+
+# ============================================================================
+# NODE.JS & NPM/PNPM/YARN
+# ============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ============================================================================
+# BUILD & DIST
+# ============================================================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.webpack/
+coverage/
+*.tsbuildinfo
+
+# ============================================================================
+# TESTING
+# ============================================================================
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+.jest/
+
+# ============================================================================
+# LOGS & MONITORING
+# ============================================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+*.log.*
+combined.log
+error.log
+access.log
+
+# PM2
+.pm2/
+pm2.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================================================
+# PRISMA
+# ============================================================================
+prisma/migrations/**/migration.sql
+!prisma/migrations/
+.prisma/
+prisma/.env
+
+# ============================================================================
+# REDIS
+# ============================================================================
+dump.rdb
+*.rdb
+redis-data/
+
+# ============================================================================
+# DOCKER
+# ============================================================================
+docker-compose.override.yml
+.dockerignore
+*.tar
+*.tar.gz
+
+# ============================================================================
+# IDE & EDITORS
+# ============================================================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================================
+# OPERATING SYSTEMS
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+
+# ============================================================================
+# TEMPORARY FILES
+# ============================================================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.cache/
+tmp/
+temp/
+
+# ============================================================================
+# UPLOADS & USER CONTENT
+# ============================================================================
+uploads/
+public/uploads/
+storage/
+files/
+media/
+
+# ============================================================================
+# BACKUPS
+# ============================================================================
+*.backup
+*.bak
+*.old
+backup/
+backups/
+
+# ============================================================================
+# CI/CD & DEPLOYMENT
+# ============================================================================
+.terraform/
+*.tfstate
+*.tfstate.backup
+.serverless/
+.vercel/
+.netlify/
+
+# ============================================================================
+# MISCELLANEOUS
+# ============================================================================
+.turbo/
+.eslintcache
+.stylelintcache
+*.tgz
+*.zip
+*.rar
+*.7z
+.history/
+.vs/
+
+# ============================================================================
+# KEEP THESE FILES (Explicitly NOT ignored)
+# ============================================================================
+!.gitkeep
+!.env.example
+!.env.template

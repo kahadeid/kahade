@@ -1,0 +1,213 @@
+// ============================================================================
+// PUSH NOTIFICATION SYSTEM
+// Multi-channel notification delivery
+// ============================================================================
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  BOUNCED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model NotificationTemplate {
+  id          String  @id @default(uuid())
+  code        String  @unique // e.g., "ORDER_CREATED", "PAYMENT_RECEIVED"
+  name        String
+  description String? @db.Text
+
+  // Template content per channel
+  inAppTitle String? @map("in_app_title")
+  inAppBody  String? @map("in_app_body") @db.Text
+
+  emailSubject String? @map("email_subject")
+  emailBody    String? @map("email_body") @db.Text
+  emailHtml    String? @map("email_html") @db.Text
+
+  smsBody String? @map("sms_body") @db.Text
+
+  pushTitle String? @map("push_title")
+  pushBody  String? @map("push_body") @db.Text
+
+  whatsappBody       String? @map("whatsapp_body") @db.Text
+  whatsappTemplateId String? @map("whatsapp_template_id")
+
+  // Default settings
+  defaultChannels Json                 @default("[\"IN_APP\"]") @map("default_channels")
+  defaultPriority NotificationPriority @default(NORMAL) @map("default_priority")
+
+  // Settings
+  isActive Boolean @default(true) @map("is_active")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([code])
+  @@map("notification_templates")
+}
+
+model UserNotificationPreference {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Channel preferences
+  inAppEnabled    Boolean @default(true) @map("in_app_enabled")
+  emailEnabled    Boolean @default(true) @map("email_enabled")
+  smsEnabled      Boolean @default(false) @map("sms_enabled")
+  pushEnabled     Boolean @default(true) @map("push_enabled")
+  whatsappEnabled Boolean @default(false) @map("whatsapp_enabled")
+
+  // Category preferences (JSON for flexibility)
+  // e.g., {"transaction": ["IN_APP", "EMAIL"], "marketing": ["EMAIL"]}
+  categoryPreferences Json? @map("category_preferences")
+
+  // Quiet hours
+  quietHoursEnabled Boolean @default(false) @map("quiet_hours_enabled")
+  quietHoursStart   String? @map("quiet_hours_start") // "22:00"
+  quietHoursEnd     String? @map("quiet_hours_end") // "08:00"
+  timezone          String  @default("Asia/Jakarta")
+
+  // Marketing opt-in
+  marketingOptIn Boolean @default(false) @map("marketing_opt_in")
+
+  // Timestamps
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("user_notification_preferences")
+}
+
+model PushSubscription {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Subscription details
+  endpoint String @unique
+  p256dh   String // Public key
+  auth     String // Auth secret
+
+  // Device info
+  deviceType String? @map("device_type") // web, android, ios
+  deviceName String? @map("device_name")
+  browser    String?
+
+  // Status
+  isActive   Boolean  @default(true) @map("is_active")
+  lastUsedAt DateTime @default(now()) @map("last_used_at") @db.Timestamptz
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, isActive])
+  @@map("push_subscriptions")
+}
+
+model NotificationQueue {
+  id String @id @default(uuid())
+
+  // Recipient
+  userId String @map("user_id")
+
+  // Notification details
+  templateCode String?              @map("template_code")
+  channel      NotificationChannel
+  priority     NotificationPriority @default(NORMAL)
+
+  // Content (can override template)
+  title String?
+  body  String  @db.Text
+  data  Json? // Additional data payload
+
+  // Delivery
+  status      NotificationStatus @default(PENDING)
+  scheduledAt DateTime?          @map("scheduled_at") @db.Timestamptz
+  sentAt      DateTime?          @map("sent_at") @db.Timestamptz
+  deliveredAt DateTime?          @map("delivered_at") @db.Timestamptz
+
+  // Error tracking
+  attempts    Int     @default(0)
+  maxAttempts Int     @default(3) @map("max_attempts")
+  lastError   String? @map("last_error") @db.Text
+
+  // External IDs (for tracking)
+  externalId String? @map("external_id") // Provider message ID
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([status, scheduledAt])
+  @@index([userId, createdAt])
+  @@index([channel, status])
+  @@map("notification_queue")
+}
+
+model NotificationLog {
+  id String @id @default(uuid())
+
+  // Reference
+  queueId String? @map("queue_id")
+  userId  String  @map("user_id")
+
+  // Notification details
+  channel      NotificationChannel
+  templateCode String?             @map("template_code")
+  title        String?
+  body         String              @db.Text
+
+  // Delivery status
+  status      NotificationStatus
+  sentAt      DateTime?          @map("sent_at") @db.Timestamptz
+  deliveredAt DateTime?          @map("delivered_at") @db.Timestamptz
+  readAt      DateTime?          @map("read_at") @db.Timestamptz
+
+  // Error info
+  errorMessage String? @map("error_message") @db.Text
+
+  // Engagement tracking
+  clickedAt   DateTime? @map("clicked_at") @db.Timestamptz
+  actionTaken String?   @map("action_taken")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt])
+  @@index([channel, status])
+  @@index([templateCode, createdAt])
+  @@map("notification_logs")
+}
+
+model WhatsappSession {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // WhatsApp number (verified)
+  phoneNumber String    @unique @map("phone_number")
+  isVerified  Boolean   @default(false) @map("is_verified")
+  verifiedAt  DateTime? @map("verified_at") @db.Timestamptz
+
+  // Session status
+  isActive   Boolean   @default(true) @map("is_active")
+  optedOutAt DateTime? @map("opted_out_at") @db.Timestamptz
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("whatsapp_sessions")
+}

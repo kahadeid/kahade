@@ -1,0 +1,399 @@
+/**
+ * Auth Service Unit Tests
+ *
+ * QUALITY FIX [H004]: Added comprehensive test coverage for authentication
+ * Tests: registration, login, logout, token refresh, password validation, brute force protection
+ */
+
+import { Test, TestingModule } from "@nestjs/testing";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { AuthService } from "../../src/core/auth/auth.service";
+import { UserService } from "../../src/core/user/user.service";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { TokenBlacklistService } from "../../src/core/auth/token-blacklist.service";
+import { SessionRepository } from "../../src/core/auth/session.repository";
+import { MFAService } from "../../src/core/auth/mfa.service";
+import { PrismaService } from "../../src/infrastructure/database/prisma.service";
+import {
+  BadRequestException,
+  UnauthorizedException,
+  ForbiddenException,
+} from "@nestjs/common";
+import { BruteForceService } from "../../src/core/auth/brute-force.service";
+import * as bcrypt from "bcrypt";
+
+describe("AuthService", () => {
+  let service: AuthService;
+  let module: TestingModule;
+  let userService: jest.Mocked<UserService>;
+  let jwtService: jest.Mocked<JwtService>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let _configService: jest.Mocked<ConfigService>;
+  let tokenBlacklistService: jest.Mocked<TokenBlacklistService>;
+  let sessionRepository: jest.Mocked<SessionRepository>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let _mfaService: jest.Mocked<MFAService>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let _prismaService: jest.Mocked<PrismaService>;
+
+  const mockUser = {
+    id: "user-123",
+    email: "test@example.com",
+    username: "testuser",
+    passwordHash: "$2b$10$hashedpassword",
+    isAdmin: false,
+    mfaEnabled: false,
+    emailVerifiedAt: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  beforeEach(async () => {
+    module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UserService,
+          useValue: {
+            findByEmail: jest.fn(),
+            findById: jest.fn(),
+            create: jest.fn(),
+            updateLastLogin: jest.fn(),
+            sanitizeUser: jest.fn((user) => ({
+              id: user.id,
+              email: user.email,
+              username: user.username,
+              isAdmin: user.isAdmin,
+            })),
+          },
+        },
+        {
+          provide: JwtService,
+          useValue: {
+            signAsync: jest.fn(),
+            verifyAsync: jest.fn(),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            get: jest.fn((key: string, defaultValue?: any) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const config: Record<string, any> = {
+                "jwt.secret": "test-secret-key-for-jwt-signing-32chars",
+                "jwt.refreshSecret": "test-refresh-secret-key-32chars",
+                "jwt.expiresIn": "15m",
+                "jwt.refreshExpiresIn": "7d",
+              };
+              return config[key] ?? defaultValue;
+            }),
+          },
+        },
+        {
+          provide: TokenBlacklistService,
+          useValue: {
+            isBlacklisted: jest.fn(),
+            blacklistToken: jest.fn(),
+            validateRefreshToken: jest.fn(),
+            revokeRefreshToken: jest.fn(),
+            storeRefreshToken: jest.fn(),
+          },
+        },
+        {
+          provide: SessionRepository,
+          useValue: {
+            create: jest.fn(),
+            findByToken: jest.fn(),
+            revokeByUserId: jest.fn(),
+            revoke: jest.fn(),
+          },
+        },
+        {
+          provide: MFAService,
+          useValue: {
+            verifyTOTP: jest.fn(),
+            verifyBackupCode: jest.fn(),
+          },
+        },
+        {
+          provide: PrismaService,
+          useValue: {
+            user: {
+              findUnique: jest.fn(),
+              update: jest.fn(),
+            },
+          },
+        },
+        {
+          provide: BruteForceService,
+          useValue: {
+            checkLoginAttempt: jest.fn().mockResolvedValue(undefined),
+            recordFailedAttempt: jest.fn().mockResolvedValue(undefined),
+            clearFailedAttempts: jest.fn().mockResolvedValue(undefined),
+            isLocked: jest.fn().mockResolvedValue(false),
+            checkAccountLock: jest.fn().mockResolvedValue({ isLocked: false }),
+            recordLoginAttempt: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+      ],
+    }).compile();
+
+    service = module.get<AuthService>(AuthService);
+    userService = module.get(UserService);
+    jwtService = module.get(JwtService);
+    _configService = module.get(ConfigService);
+    tokenBlacklistService = module.get(TokenBlacklistService);
+    sessionRepository = module.get(SessionRepository);
+    _mfaService = module.get(MFAService);
+    _prismaService = module.get(PrismaService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("register", () => {
+    const registerDto = {
+      email: "newuser@example.com",
+      username: "newuser",
+      password: "SecurePass123!",
+      phone: "+6281234567890",
+    };
+
+    it("should register a new user successfully", async () => {
+      userService.findByEmail.mockResolvedValue(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.create.mockResolvedValue(mockUser as any);
+      jwtService.signAsync.mockResolvedValue("mock-token");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessionRepository.create.mockResolvedValue({} as any);
+      tokenBlacklistService.storeRefreshToken.mockResolvedValue(undefined);
+
+      const result = await service.register(registerDto);
+
+      expect(userService.findByEmail).toHaveBeenCalledWith(registerDto.email);
+      expect(userService.create).toHaveBeenCalled();
+      expect(result).toHaveProperty("accessToken");
+      expect(result).toHaveProperty("refreshToken");
+      expect(result).toHaveProperty("user");
+    });
+
+    it("should throw BadRequestException if email already exists", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.findByEmail.mockResolvedValue(mockUser as any);
+
+      await expect(service.register(registerDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(userService.create).not.toHaveBeenCalled();
+    });
+
+    it("should throw BadRequestException for weak password", async () => {
+      const weakPasswordDto = { ...registerDto, password: "123" };
+
+      await expect(service.register(weakPasswordDto)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it("should normalize email to lowercase", async () => {
+      const upperCaseEmailDto = { ...registerDto, email: "USER@EXAMPLE.COM" };
+      userService.findByEmail.mockResolvedValue(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.create.mockResolvedValue(mockUser as any);
+      jwtService.signAsync.mockResolvedValue("mock-token");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessionRepository.create.mockResolvedValue({} as any);
+      tokenBlacklistService.storeRefreshToken.mockResolvedValue(undefined);
+
+      await service.register(upperCaseEmailDto);
+
+      expect(userService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: "user@example.com",
+        }),
+      );
+    });
+  });
+
+  describe("login", () => {
+    const loginDto = {
+      email: "test@example.com",
+      password: "SecurePass123!",
+    };
+
+    beforeEach(() => {
+      // Reset failed attempts before each test
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (service as any).failedAttempts.clear();
+    });
+
+    it("should login successfully with valid credentials", async () => {
+      const hashedPassword = await bcrypt.hash(loginDto.password, 10);
+      const userWithHash = { ...mockUser, passwordHash: hashedPassword };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.findByEmail.mockResolvedValue(userWithHash as any);
+      jwtService.signAsync.mockResolvedValue("mock-token");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessionRepository.create.mockResolvedValue({} as any);
+      tokenBlacklistService.storeRefreshToken.mockResolvedValue(undefined);
+
+      const result = await service.login(loginDto);
+
+      expect(result).toHaveProperty("accessToken");
+      expect(result).toHaveProperty("refreshToken");
+      expect(result.user.email).toBe(mockUser.email);
+    });
+
+    it("should throw UnauthorizedException for invalid email", async () => {
+      userService.findByEmail.mockResolvedValue(null);
+
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it("should throw UnauthorizedException for invalid password", async () => {
+      const wrongPasswordDto = { ...loginDto, password: "wrongpassword" };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.findByEmail.mockResolvedValue(mockUser as any);
+
+      await expect(service.login(wrongPasswordDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it("should lock account after max failed attempts", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.findByEmail.mockResolvedValue(mockUser as any);
+      const wrongPasswordDto = { ...loginDto, password: "wrongpassword" };
+      const bruteForceService = module.get(BruteForceService);
+
+      // Mock that account is locked after multiple failed attempts
+      (bruteForceService.checkAccountLock as jest.Mock).mockResolvedValue({
+        isLocked: true,
+        remainingTime: 300,
+      });
+
+      // Attempt should be blocked due to account lock
+      await expect(service.login(wrongPasswordDto)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+  });
+
+  describe("logout", () => {
+    it("should logout successfully", async () => {
+      const userId = "user-123";
+      const refreshToken = "valid-refresh-token";
+
+      tokenBlacklistService.blacklistToken.mockResolvedValue(undefined);
+      sessionRepository.revoke.mockResolvedValue({ count: 1 });
+
+      await expect(service.logout(userId, refreshToken)).resolves.not.toThrow();
+      expect(tokenBlacklistService.blacklistToken).toHaveBeenCalled();
+    });
+  });
+
+  describe("refreshTokens", () => {
+    it("should refresh tokens successfully", async () => {
+      const oldRefreshToken = "old-refresh-token";
+      const session = {
+        id: "session-123",
+        userId: "user-123",
+        refreshHash: await bcrypt.hash(oldRefreshToken, 10),
+        expiresAt: new Date(Date.now() + 86400000),
+        revokedAt: null,
+      };
+
+      // Mock validateRefreshToken to return userId
+      tokenBlacklistService.validateRefreshToken.mockResolvedValue("user-123");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessionRepository.findByToken.mockResolvedValue(session as any);
+      // Mock JWT verify
+      jwtService.verifyAsync.mockResolvedValue({ sub: "user-123" });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (jwtService as any).verify = jest
+        .fn()
+        .mockReturnValue({ sub: "user-123" });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      userService.findById.mockResolvedValue(mockUser as any);
+      jwtService.signAsync.mockResolvedValue("new-token");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessionRepository.create.mockResolvedValue({} as any);
+      tokenBlacklistService.revokeRefreshToken.mockResolvedValue(undefined);
+      sessionRepository.revoke.mockResolvedValue({ count: 1 });
+      tokenBlacklistService.storeRefreshToken.mockResolvedValue(undefined);
+
+      const result = await service.refreshToken(oldRefreshToken);
+
+      expect(result).toHaveProperty("accessToken");
+      expect(result).toHaveProperty("refreshToken");
+    });
+
+    it("should throw UnauthorizedException for invalid refresh token", async () => {
+      tokenBlacklistService.validateRefreshToken.mockResolvedValue(null);
+
+      await expect(service.refreshToken("invalid-token")).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it("should throw UnauthorizedException for expired session", async () => {
+      const expiredSession = {
+        id: "session-123",
+        userId: "user-123",
+        expiresAt: new Date(Date.now() - 86400000), // Expired
+        revokedAt: null,
+      };
+
+      tokenBlacklistService.validateRefreshToken.mockResolvedValue("user-123");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessionRepository.findByToken.mockResolvedValue(expiredSession as any);
+
+      await expect(service.refreshToken("expired-token")).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe("validatePasswordStrength", () => {
+    it("should accept strong passwords", () => {
+      const strongPasswords = [
+        "SecurePass123!",
+        "MyP@ssw0rd!2024",
+        "C0mpl3x!Pass",
+      ];
+
+      strongPasswords.forEach((password) => {
+        expect(() =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (service as any).validatePasswordStrength(password),
+        ).not.toThrow();
+      });
+    });
+
+    it("should reject weak passwords", () => {
+      const weakPasswords = [
+        "12345678", // No letters
+        "password", // No numbers or special chars
+        "Pass1!", // Too short
+        "abcdefgh", // No numbers or special chars
+      ];
+
+      weakPasswords.forEach((password) => {
+        expect(() =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (service as any).validatePasswordStrength(password),
+        ).toThrow(BadRequestException);
+      });
+    });
+  });
+
+  // Note: MFA verification tests are complex due to internal service dependencies.
+  // The MFA functionality is tested separately in mfa.service.spec.ts.
+  // Integration tests should be added to test the full MFA login flow.
+});

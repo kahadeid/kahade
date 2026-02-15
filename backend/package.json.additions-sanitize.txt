@@ -1,0 +1,21 @@
+# Add these dependencies for sanitization and security
+
+## Production Dependencies:
+"sanitize-html": "^2.11.0"
+
+## Why sanitize-html?
+- CRIT-012: Input sanitization for XSS prevention
+- Strips malicious HTML/JavaScript from user input
+- Configurable whitelist of allowed tags
+- Prevents stored XSS attacks
+
+## Installation:
+npm install sanitize-html
+
+## Usage:
+import * as sanitizeHtml from 'sanitize-html';
+
+const clean = sanitizeHtml(userInput, {
+  allowedTags: ['b', 'i', 'em', 'strong'],
+  allowedAttributes: {},
+});

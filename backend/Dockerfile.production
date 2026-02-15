@@ -1,0 +1,90 @@
+# ============================================================================
+# KAHADE BACKEND - PRODUCTION DOCKERFILE
+# ============================================================================
+# Multi-stage build for optimized production image
+# ============================================================================
+
+# Stage 1: Build
+FROM node:20-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git \
+    openssl \
+    postgresql-client
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
+
+# Install pnpm
+RUN npm install -g pnpm@latest
+
+# Install dependencies (production + dev for build)
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build the application
+RUN pnpm run build
+
+# Remove dev dependencies
+RUN pnpm prune --prod
+
+# ============================================================================
+# Stage 2: Production Runtime
+# ============================================================================
+FROM node:20-alpine AS production
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    openssl \
+    ca-certificates \
+    postgresql-client \
+    tini \
+    dumb-init
+
+# Create app user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
+
+# Create necessary directories
+RUN mkdir -p /app /var/log/kahade /var/www/kahade/uploads && \
+    chown -R nestjs:nodejs /app /var/log/kahade /var/www/kahade
+
+WORKDIR /app
+
+# Copy built application from builder
+COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nestjs:nodejs /app/prisma ./prisma
+
+# Copy startup script
+COPY --chown=nestjs:nodejs docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Switch to non-root user
+USER nestjs
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3000/api/v1/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Start the application
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

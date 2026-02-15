@@ -1,0 +1,579 @@
+import { ConfigService } from "@nestjs/config";
+
+import * as crypto from "crypto";
+
+import {
+import { IpUtil } from "@common/utils/ip.util";
+import { PaymentStatus, WebhookStatus } from "@prisma/client";
+import { PrismaService } from "@infrastructure/database/prisma.service";
+import { Request } from "express";
+
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  UnauthorizedException,
+  BadRequestException,
+  Req,
+} from "@nestjs/common";
+
+interface MidtransNotificationPayload {
+  transaction_time: string;
+  transaction_status: string;
+  transaction_id: string;
+  status_message: string;
+  status_code: string;
+  signature_key: string;
+  settlement_time?: string;
+  payment_type: string;
+  order_id: string;
+  merchant_id: string;
+  gross_amount: string;
+  fraud_status?: string;
+  currency: string;
+  approval_code?: string;
+  acquirer?: string;
+  [key: string]: any;
+}
+
+@Controller("webhooks/midtrans")
+export class MidtransWebhookController {
+  private readonly logger = new Logger(MidtransWebhookController.name);
+  private readonly serverKey: string;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {
+    this.serverKey = this.configService.get<string>("MIDTRANS_SERVER_KEY", "");
+
+    if (!this.serverKey) {
+      this.logger.warn(
+        "⚠️  MIDTRANS_SERVER_KEY not set! Webhook signature verification will fail.",
+      );
+    }
+  }
+
+  @Post("notification")
+  @HttpCode(HttpStatus.OK)
+  async handleNotification(
+    @Body() payload: MidtransNotificationPayload,
+    @Req() req: Request,
+  ): Promise<{ status: string; message: string }> {
+    if (
+      !payload ||
+      !payload.transaction_id ||
+      !payload.order_id ||
+      !payload.transaction_status ||
+      !payload.signature_key
+    ) {
+      this.logger.warn(
+        "Invalid Midtrans webhook payload: missing required fields",
+      );
+      throw new BadRequestException(
+        "Invalid webhook payload: missing required fields",
+      );
+    }
+
+    const requestIp = IpUtil.extractClientIp(req);
+    const eventId = payload.transaction_id || `midtrans-${Date.now()}`;
+
+    this.logger.log(
+      `Received Midtrans notification: ${eventId}, status: ${payload.transaction_status}`,
+    );
+
+    const signatureValid = this.verifySignature(payload);
+
+    const webhookEvent = await this.prisma.webhookEvent.create({
+      data: {
+        provider: "MIDTRANS",
+        eventId,
+        eventType: `payment.${payload.transaction_status}`,
+        payload: payload as any,
+        status: WebhookStatus.PENDING,
+        signatureValid,
+        signatureError: signatureValid ? null : "Invalid signature key",
+        requestIp,
+        requestHeaders: this.sanitizeHeaders(req.headers),
+        providerEventAt: payload.transaction_time
+          ? new Date(payload.transaction_time)
+          : null,
+      },
+    });
+
+    if (!signatureValid) {
+      this.logger.error(
+        `Invalid Midtrans signature for transaction ${payload.transaction_id}`,
+      );
+
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.FAILED,
+          processingError: "Invalid signature key",
+          processedAt: new Date(),
+        },
+      });
+
+      throw new UnauthorizedException("Invalid webhook signature");
+    }
+
+    const existingEvent = await this.prisma.webhookEvent.findFirst({
+      where: {
+        eventId,
+        status: WebhookStatus.PROCESSED,
+        id: { not: webhookEvent.id },
+      },
+    });
+
+    if (existingEvent) {
+      this.logger.warn(`Duplicate Midtrans notification: ${eventId}`);
+      return { status: "ok", message: "Already processed" };
+    }
+
+    try {
+      await this.processNotification(payload, webhookEvent.id);
+
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.PROCESSED,
+          processedAt: new Date(),
+        },
+      });
+
+      return { status: "ok", message: "Processed successfully" };
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to process Midtrans notification ${eventId}: ${(error as Error).message}`,
+      );
+
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.FAILED,
+          processingError: (error as Error).message,
+          retryCount: { increment: 1 },
+          lastRetryAt: new Date(),
+        },
+      });
+
+      return { status: "error", message: "Processing failed, will retry" };
+    }
+  }
+
+  @Post("recurring")
+  @HttpCode(HttpStatus.OK)
+  async handleRecurringNotification(
+    @Body() payload: any,
+    @Req() req: Request,
+  ): Promise<{ status: string; message: string }> {
+    const requestIp = IpUtil.extractClientIp(req);
+    const eventId =
+      payload.transaction_id || `midtrans-recurring-${Date.now()}`;
+
+    this.logger.log(`Received Midtrans recurring notification: ${eventId}`);
+
+    const signatureValid = this.verifySignature(payload);
+
+    const webhookEvent = await this.prisma.webhookEvent.create({
+      data: {
+        provider: "MIDTRANS",
+        eventId,
+        eventType: "recurring.notification",
+        payload: payload as any,
+        status: WebhookStatus.PENDING,
+        signatureValid,
+        signatureError: signatureValid ? null : "Invalid signature",
+        requestIp,
+        requestHeaders: this.sanitizeHeaders(req.headers),
+      },
+    });
+
+    if (!signatureValid) {
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.FAILED,
+          processingError: "Invalid signature",
+        },
+      });
+      throw new UnauthorizedException("Invalid webhook signature");
+    }
+
+    try {
+      await this.processNotification(payload, webhookEvent.id);
+
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: { status: WebhookStatus.PROCESSED, processedAt: new Date() },
+      });
+
+      return { status: "ok", message: "Processed successfully" };
+    } catch (error: unknown) {
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.FAILED,
+          processingError: (error as Error).message,
+          retryCount: { increment: 1 },
+        },
+      });
+      return { status: "error", message: "Processing failed" };
+    }
+  }
+
+  @Post("payout")
+  @HttpCode(HttpStatus.OK)
+  async handlePayoutNotification(
+    @Body() payload: any,
+    @Req() req: Request,
+  ): Promise<{ status: string; message: string }> {
+    const requestIp = IpUtil.extractClientIp(req);
+    const eventId = payload.reference_no || `midtrans-payout-${Date.now()}`;
+
+    this.logger.log(`Received Midtrans payout notification: ${eventId}`);
+
+    const signatureValid = this.verifyPayoutSignature(payload);
+
+    const webhookEvent = await this.prisma.webhookEvent.create({
+      data: {
+        provider: "MIDTRANS",
+        eventId,
+        eventType: "payout.notification",
+        payload: payload as any,
+        status: WebhookStatus.PENDING,
+        signatureValid,
+        signatureError: signatureValid ? null : "Invalid payout signature",
+        requestIp,
+        requestHeaders: this.sanitizeHeaders(req.headers),
+      },
+    });
+
+    if (!signatureValid) {
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.FAILED,
+          processingError: "Invalid signature",
+        },
+      });
+      throw new UnauthorizedException("Invalid webhook signature");
+    }
+
+    try {
+      await this.processPayoutNotification(payload, webhookEvent.id);
+
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: { status: WebhookStatus.PROCESSED, processedAt: new Date() },
+      });
+
+      return { status: "ok", message: "Processed successfully" };
+    } catch (error: unknown) {
+      await this.prisma.webhookEvent.update({
+        where: { id: webhookEvent.id },
+        data: {
+          status: WebhookStatus.FAILED,
+          processingError: (error as Error).message,
+          retryCount: { increment: 1 },
+        },
+      });
+      return { status: "error", message: "Processing failed" };
+    }
+  }
+
+  private _verifySignature(payload: MidtransNotificationPayload): boolean {
+    if (!this.serverKey) {
+      this.logger.error("Server key not configured");
+      return false;
+    }
+
+    if (!payload.signature_key) {
+      this.logger.error("No signature key in payload");
+      return false;
+    }
+
+    const { order_id, status_code, gross_amount, signature_key } = payload;
+
+    const signatureString = `${order_id}${status_code}${gross_amount}${this.serverKey}`;
+
+    const expectedSignature = crypto
+      .createHash("sha512")
+      .update(signatureString)
+      .digest("hex");
+
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(signature_key),
+        Buffer.from(expectedSignature),
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  private _verifyPayoutSignature(payload: any): boolean {
+    if (!this.serverKey) {
+      return false;
+    }
+
+    const signatureString = `${payload.reference_no}${payload.status}${this.serverKey}`;
+    const expectedSignature = crypto
+      .createHash("sha512")
+      .update(signatureString)
+      .digest("hex");
+
+    if (!payload.signature_key) {
+      return false;
+    }
+
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(payload.signature_key),
+        Buffer.from(expectedSignature),
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  private async processNotification(
+    payload: MidtransNotificationPayload,
+    webhookEventId: string,
+  ): Promise<void> {
+    const { order_id, transaction_status, fraud_status } = payload;
+
+    const payment = await this.prisma.payment.findFirst({
+      where: {
+        OR: [
+          { providerInvoiceId: payload.transaction_id },
+          {
+            paymentDetails: {
+              path: ["order_id"],
+              equals: order_id,
+            },
+          },
+        ],
+      },
+    });
+
+    if (!payment) {
+      throw new BadRequestException(`Payment not found for order ${order_id}`);
+    }
+
+    if (fraud_status === "deny") {
+      this.logger.warn(`Payment ${payment.id} flagged as fraud`);
+    }
+
+    const newStatus = this.mapMidtransStatus(transaction_status, fraud_status);
+
+    await this.prisma.$transaction(async (tx: any) => {
+      await tx.paymentStatusHistory.create({
+        data: {
+          paymentId: payment.id,
+          fromStatus: payment.status,
+          toStatus: newStatus,
+          webhookEventId,
+          reason: `Midtrans: ${transaction_status}${fraud_status ? ` (fraud: ${fraud_status})` : ""}`,
+        },
+      });
+
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: newStatus,
+          paidAt:
+            newStatus === PaymentStatus.SUCCESS
+              ? new Date(payload.settlement_time || payload.transaction_time)
+              : null,
+          paymentDetails: {
+            ...(payment.paymentDetails as object),
+            midtrans_status: transaction_status,
+            fraud_status,
+            settlement_time: payload.settlement_time,
+            callback_received_at: new Date().toISOString(),
+          },
+        },
+      });
+
+      await tx.webhookEvent.update({
+        where: { id: webhookEventId },
+        data: { paymentId: payment.id },
+      });
+
+      if (newStatus === PaymentStatus.SUCCESS) {
+        await this.handlePaymentCompleted(payment.id, tx);
+      }
+
+      if (
+        newStatus === PaymentStatus.FAILED ||
+        newStatus === PaymentStatus.EXPIRED
+      ) {
+        await this.handlePaymentFailed(payment.id, tx);
+      }
+    });
+
+    this.logger.log(
+      `Processed Midtrans notification for payment ${payment.id}: ${transaction_status}`,
+    );
+  }
+
+  private async processPayoutNotification(
+    payload: any,
+    _webhookEventId: string,
+  ): Promise<void> {
+    const { reference_no, status } = payload;
+
+    const withdrawal = await this.prisma.withdrawal.findFirst({
+      where: { providerDisbursementId: reference_no },
+    });
+
+    if (!withdrawal) {
+      this.logger.warn(`Withdrawal not found for payout ${reference_no}`);
+      return;
+    }
+
+    const newStatus = this.mapPayoutStatus(status);
+
+    await this.prisma.$transaction(async (tx: any) => {
+      await tx.withdrawal.update({
+        where: { id: withdrawal.id },
+        data: {
+          status: newStatus,
+          processedAt: new Date(),
+          completedAt: status === "success" ? new Date() : null,
+          providerResponse: payload,
+        },
+      });
+
+      if (status === "failed") {
+        await tx.wallet.update({
+          where: { id: withdrawal.walletId },
+          data: {
+            lockedMinor: { decrement: withdrawal.amountMinor },
+          },
+        });
+      }
+
+      if (status === "success") {
+        await tx.wallet.update({
+          where: { id: withdrawal.walletId },
+          data: {
+            balanceMinor: { decrement: withdrawal.amountMinor },
+            lockedMinor: { decrement: withdrawal.amountMinor },
+          },
+        });
+      }
+    });
+
+    this.logger.log(
+      `Processed payout notification for withdrawal ${withdrawal.id}: ${status}`,
+    );
+  }
+
+  private async handlePaymentCompleted(
+    paymentId: string,
+    tx: any,
+  ): Promise<void> {
+    const payment = await tx.payment.findUnique({
+      where: { id: paymentId },
+      include: { deposit: true, order: true },
+    });
+
+    if (!payment) return;
+
+    if (payment.deposit) {
+      await tx.deposit.update({
+        where: { id: payment.deposit.id },
+        data: {
+          status: "COMPLETED",
+          completedAt: new Date(),
+        },
+      });
+
+      await tx.wallet.update({
+        where: { id: payment.deposit.walletId },
+        data: {
+          balanceMinor: { increment: payment.deposit.amountMinor },
+        },
+      });
+    }
+
+    if (payment.order) {
+      await tx.order.update({
+        where: { id: payment.order.id },
+        data: {
+          status: "PAID",
+          paidAt: new Date(),
+        },
+      });
+    }
+  }
+
+  private async handlePaymentFailed(paymentId: string, tx: any): Promise<void> {
+    const payment = await tx.payment.findUnique({
+      where: { id: paymentId },
+      include: { deposit: true, order: true },
+    });
+
+    if (!payment) return;
+
+    if (payment.deposit) {
+      await tx.deposit.update({
+        where: { id: payment.deposit.id },
+        data: { status: "FAILED" },
+      });
+    }
+
+    if (payment.order) {
+      await tx.order.update({
+        where: { id: payment.order.id },
+        data: { status: "EXPIRED" },
+      });
+    }
+  }
+
+  private _mapMidtransStatus(
+    transactionStatus: string,
+    fraudStatus?: string,
+  ): PaymentStatus {
+    if (fraudStatus === "deny") {
+      return PaymentStatus.FAILED;
+    }
+
+    const statusMap: Record<string, PaymentStatus> = {
+      capture: PaymentStatus.SUCCESS,
+      settlement: PaymentStatus.SUCCESS,
+      pending: PaymentStatus.PENDING,
+      deny: PaymentStatus.FAILED,
+      cancel: PaymentStatus.FAILED,
+      expire: PaymentStatus.EXPIRED,
+      failure: PaymentStatus.FAILED,
+      refund: PaymentStatus.FAILED,
+      partial_refund: PaymentStatus.FAILED,
+    };
+
+    return statusMap[transactionStatus] ?? PaymentStatus.PENDING;
+  }
+
+  private _mapPayoutStatus(status: string): string {
+    const statusMap: Record<string, string> = {
+      success: "COMPLETED",
+      pending: "PROCESSING",
+      failed: "FAILED",
+      queued: "PENDING",
+    };
+
+    return statusMap[status] ?? "PENDING";
+  }
+
+  private _sanitizeHeaders(headers: any): any {
+    const sanitized = { ...headers };
+    delete sanitized["authorization"];
+    delete sanitized["cookie"];
+    return sanitized;
+  }
+}

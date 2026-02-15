@@ -1,0 +1,22 @@
+import { HttpModule } from "@nestjs/axios";
+import { Module } from "@nestjs/common";
+import { TerminusModule } from "@nestjs/terminus";
+
+import { DatabaseModule } from "@infrastructure/database/database.module";
+import { HealthController } from "./health.controller";
+import { PrismaHealthIndicator } from "./prisma-health.indicator";
+import { RedisHealthIndicator } from "./redis-health.indicator";
+
+// ============================================================================
+// HEALTH MODULE
+// ============================================================================
+// Provides health check endpoints for monitoring and orchestration
+// ============================================================================
+
+@Module({
+  imports: [TerminusModule, HttpModule, DatabaseModule],
+  controllers: [HealthController],
+  providers: [PrismaHealthIndicator, RedisHealthIndicator],
+  exports: [PrismaHealthIndicator, RedisHealthIndicator],
+})
+export class HealthModule {}

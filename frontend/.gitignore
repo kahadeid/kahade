@@ -1,0 +1,170 @@
+# ============================================================================
+# KAHADE FRONTEND - COMPREHENSIVE .GITIGNORE
+# Security-First Configuration for Production Deployment
+# ============================================================================
+
+# ============================================================================
+# CRITICAL SECURITY - NEVER COMMIT THESE
+# ============================================================================
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+.env.staging
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# API Keys & Secrets
+*secret*
+*token*
+*apikey*
+*api-key*
+*.credentials
+
+# ============================================================================
+# NODE.JS & PACKAGE MANAGERS
+# ============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json
+yarn.lock
+
+# ============================================================================
+# BUILD & DIST
+# ============================================================================
+dist/
+dist-ssr/
+build/
+out/
+.output/
+.vite/
+.next/
+.nuxt/
+.cache/
+*.local
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ============================================================================
+# TESTING
+# ============================================================================
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
+e2e/screenshots/
+e2e/videos/
+
+# ============================================================================
+# LOGS
+# ============================================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================================================
+# IDE & EDITORS
+# ============================================================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ============================================================================
+# OPERATING SYSTEMS
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+
+# ============================================================================
+# TEMPORARY FILES
+# ============================================================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+tmp/
+temp/
+
+# ============================================================================
+# STORYBOOK
+# ============================================================================
+storybook-static/
+.storybook-out/
+
+# ============================================================================
+# MISCELLANEOUS
+# ============================================================================
+.turbo/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.webpack/
+*.tsbuildinfo
+.history/
+.vs/
+
+# ============================================================================
+# PUBLIC UPLOADS (if any)
+# ============================================================================
+public/uploads/
+public/temp/
+
+# ============================================================================
+# KEEP THESE FILES (Explicitly NOT ignored)
+# ============================================================================
+!.gitkeep
+!.env.example
+!.env.template
