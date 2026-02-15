@@ -8,6 +8,10 @@
 
 set -e
 
+# Get script directory and project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -45,6 +49,8 @@ API_DOMAIN="api.kahade.id"
 # ============================================================================
 
 log_info "Starting Kahade deployment..."
+log_info "Script directory: $SCRIPT_DIR"
+log_info "Project root: $PROJECT_ROOT"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
@@ -60,6 +66,17 @@ if ! grep -q "Ubuntu 24.04" /etc/os-release; then
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         exit 1
     fi
+fi
+
+# Verify backend and frontend directories exist
+if [ ! -d "$PROJECT_ROOT/backend" ]; then
+    log_error "Backend directory not found at: $PROJECT_ROOT/backend"
+    exit 1
+fi
+
+if [ ! -d "$PROJECT_ROOT/frontend" ]; then
+    log_error "Frontend directory not found at: $PROJECT_ROOT/frontend"
+    exit 1
 fi
 
 # ============================================================================
@@ -297,9 +314,12 @@ fi
 
 log_info "Deploying application files..."
 
-# Copy files
-cp -r ../backend/* $DEPLOY_DIR/backend/
-cp -r ../frontend/* $DEPLOY_DIR/frontend/
+# Copy files using absolute paths from project root
+log_info "Copying backend from: $PROJECT_ROOT/backend/"
+cp -r "$PROJECT_ROOT/backend/"* "$DEPLOY_DIR/backend/"
+
+log_info "Copying frontend from: $PROJECT_ROOT/frontend/"
+cp -r "$PROJECT_ROOT/frontend/"* "$DEPLOY_DIR/frontend/"
 
 # Set ownership
 chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR
@@ -310,7 +330,7 @@ log_success "Application files deployed"
 # BACKEND SETUP
 # ============================================================================
 
-log_info "Setting up backend..."
+log_info "Settings up backend..."
 
 # Create .env file
 cat > $DEPLOY_DIR/backend/.env.production << EOF
@@ -368,9 +388,14 @@ log_success "Frontend build complete"
 
 log_info "Configuring Nginx..."
 
-# Copy nginx configs
-cp ../nginx/nginx.conf /etc/nginx/nginx.conf
-cp ../nginx/conf.d/*.conf /etc/nginx/conf.d/
+# Copy nginx configs using absolute paths
+if [ -f "$PROJECT_ROOT/nginx/nginx.conf" ]; then
+    cp "$PROJECT_ROOT/nginx/nginx.conf" /etc/nginx/nginx.conf
+fi
+
+if [ -d "$PROJECT_ROOT/nginx/conf.d" ]; then
+    cp "$PROJECT_ROOT/nginx/conf.d/"*.conf /etc/nginx/conf.d/ 2>/dev/null || log_warning "No nginx conf.d files found"
+fi
 
 # Test nginx configuration
 nginx -t
@@ -388,11 +413,14 @@ log_success "Nginx configured"
 log_info "Setting up PM2..."
 
 cd $DEPLOY_DIR/backend
-sudo -u $DEPLOY_USER pm2 start ecosystem.config.prod.js
-sudo -u $DEPLOY_USER pm2 save
-pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
-
-log_success "PM2 configured"
+if [ -f "ecosystem.config.prod.js" ]; then
+    sudo -u $DEPLOY_USER pm2 start ecosystem.config.prod.js
+    sudo -u $DEPLOY_USER pm2 save
+    pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
+    log_success "PM2 configured"
+else
+    log_warning "ecosystem.config.prod.js not found, skipping PM2 setup"
+fi
 
 # ============================================================================
 # MONITORING SETUP
