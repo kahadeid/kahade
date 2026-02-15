@@ -351,12 +351,21 @@ APP_URL=https://$DOMAIN
 API_URL=https://$API_DOMAIN
 EOF
 
-# Install dependencies and build
+# Install dependencies
+log_info "Installing backend dependencies..."
 cd $DEPLOY_DIR/backend
 sudo -u $DEPLOY_USER pnpm install --no-frozen-lockfile
+
+# Generate Prisma Client BEFORE build
+log_info "Generating Prisma Client..."
+sudo -u $DEPLOY_USER npx prisma generate
+
+# Build backend
+log_info "Building backend..."
 sudo -u $DEPLOY_USER pnpm run build
 
 # Run migrations
+log_info "Running database migrations..."
 sudo -u $DEPLOY_USER npx prisma migrate deploy
 
 log_success "Backend setup complete"
