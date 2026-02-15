@@ -167,7 +167,7 @@ EOF"
 log_success "PostgreSQL configured"
 
 # ============================================================================
-# REDIS SETUP (FIXED VERSION)
+# REDIS SETUP (FIXED VERSION - Using | as delimiter)
 # ============================================================================
 
 log_info "Configuring Redis..."
@@ -182,45 +182,45 @@ if [ -f /etc/redis/redis.conf ]; then
 fi
 
 # Modify existing config instead of replacing entire file
-# This preserves all default settings while only changing what we need
+# FIXED: Using | as delimiter to avoid conflicts with / in base64 passwords
 if grep -q "^requirepass" /etc/redis/redis.conf; then
-    sed -i "s/^requirepass .*/requirepass $REDIS_PASSWORD/" /etc/redis/redis.conf
+    sed -i "s|^requirepass .*|requirepass $REDIS_PASSWORD|" /etc/redis/redis.conf
 elif grep -q "^# requirepass" /etc/redis/redis.conf; then
-    sed -i "s/^# requirepass .*/requirepass $REDIS_PASSWORD/" /etc/redis/redis.conf
+    sed -i "s|^# requirepass .*|requirepass $REDIS_PASSWORD|" /etc/redis/redis.conf
 else
     echo "requirepass $REDIS_PASSWORD" >> /etc/redis/redis.conf
 fi
 
 # Set maxmemory
 if grep -q "^maxmemory" /etc/redis/redis.conf; then
-    sed -i "s/^maxmemory .*/maxmemory 256mb/" /etc/redis/redis.conf
+    sed -i "s|^maxmemory .*|maxmemory 256mb|" /etc/redis/redis.conf
 elif grep -q "^# maxmemory" /etc/redis/redis.conf; then
-    sed -i "s/^# maxmemory .*/maxmemory 256mb/" /etc/redis/redis.conf
+    sed -i "s|^# maxmemory .*|maxmemory 256mb|" /etc/redis/redis.conf
 else
     echo "maxmemory 256mb" >> /etc/redis/redis.conf
 fi
 
 # Set maxmemory-policy
 if grep -q "^maxmemory-policy" /etc/redis/redis.conf; then
-    sed -i "s/^maxmemory-policy .*/maxmemory-policy allkeys-lru/" /etc/redis/redis.conf
+    sed -i "s|^maxmemory-policy .*|maxmemory-policy allkeys-lru|" /etc/redis/redis.conf
 elif grep -q "^# maxmemory-policy" /etc/redis/redis.conf; then
-    sed -i "s/^# maxmemory-policy .*/maxmemory-policy allkeys-lru/" /etc/redis/redis.conf
+    sed -i "s|^# maxmemory-policy .*|maxmemory-policy allkeys-lru|" /etc/redis/redis.conf
 else
     echo "maxmemory-policy allkeys-lru" >> /etc/redis/redis.conf
 fi
 
 # Enable appendonly
 if grep -q "^appendonly" /etc/redis/redis.conf; then
-    sed -i "s/^appendonly .*/appendonly yes/" /etc/redis/redis.conf
+    sed -i "s|^appendonly .*|appendonly yes|" /etc/redis/redis.conf
 elif grep -q "^# appendonly" /etc/redis/redis.conf; then
-    sed -i "s/^# appendonly .*/appendonly yes/" /etc/redis/redis.conf
+    sed -i "s|^# appendonly .*|appendonly yes|" /etc/redis/redis.conf
 else
     echo "appendonly yes" >> /etc/redis/redis.conf
 fi
 
 # Ensure bind to localhost
 if ! grep -q "^bind 127.0.0.1" /etc/redis/redis.conf; then
-    sed -i "s/^bind .*/bind 127.0.0.1/" /etc/redis/redis.conf
+    sed -i "s|^bind .*|bind 127.0.0.1|" /etc/redis/redis.conf
 fi
 
 # Enable and restart Redis
