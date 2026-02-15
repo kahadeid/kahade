@@ -330,7 +330,7 @@ log_success "Application files deployed"
 # BACKEND SETUP
 # ============================================================================
 
-log_info "Settings up backend..."
+log_info "Setting up backend..."
 
 # Create .env file
 cat > $DEPLOY_DIR/backend/.env.production << EOF
@@ -353,7 +353,7 @@ EOF
 
 # Install dependencies and build
 cd $DEPLOY_DIR/backend
-sudo -u $DEPLOY_USER pnpm install --frozen-lockfile
+sudo -u $DEPLOY_USER pnpm install --no-frozen-lockfile
 sudo -u $DEPLOY_USER pnpm run build
 
 # Run migrations
@@ -377,7 +377,7 @@ VITE_WS_URL=wss://$API_DOMAIN
 EOF
 
 # Install and build
-sudo -u $DEPLOY_USER pnpm install --frozen-lockfile
+sudo -u $DEPLOY_USER pnpm install --no-frozen-lockfile
 sudo -u $DEPLOY_USER pnpm run build
 
 log_success "Frontend build complete"
