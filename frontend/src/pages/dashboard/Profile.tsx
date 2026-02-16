@@ -48,7 +48,7 @@ function MenuItem({ icon, label, subtitle, href, onClick, badge, badgeColor = 'b
         {subtitle && <div className="text-xs text-neutral-600 mt-0.5">{subtitle}</div>}
       </div>
       {badge && <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${badgeColor}`}>{badge}</span>}
-      <CaretRight className="w-5 aria-hidden="true" h-5 text-neutral-500" weight="regular" aria-hidden="true" />
+      <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
     </div>
   );
 
@@ -135,7 +135,7 @@ export default function Profile() {
       <DashboardLayout title="Profil" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Memuat profil...</p>
           </div>
         </div>
@@ -156,18 +156,18 @@ export default function Profile() {
                   {user?.avatarUrl ? (
                     <img src={user.avatarUrl} alt="Avatar" className="w-full h-full rounded-full object-cover" />
                   ) : (
-                    <User className="w-8 aria-hidden="true" h-8 text-white" weight="regular" aria-hidden="true" />
+                    <User className="w-8 h-8 text-white" aria-hidden="true" weight="regular" aria-hidden="true" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h2 className="text-lg font-bold truncate">{user?.username || 'User'}</h2>
-                    {user?.kycStatus === 'VERIFIED' && <ShieldCheck className="w-5 aria-hidden="true" h-5 text-emerald-300" weight="fill" aria-hidden="true" />}
+                    {user?.kycStatus === 'VERIFIED' && <ShieldCheck className="w-5 h-5 text-emerald-300" aria-hidden="true" weight="fill" aria-hidden="true" />}
                   </div>
                   <p className="text-sm text-white/75 truncate">{user?.email || ''}</p>
                   <p className="text-xs text-white/55 mt-0.5">ID: {user?.id?.slice(0, 8) || '---'}</p>
                 </div>
-                <CaretRight className="w-5 aria-hidden="true" h-5 text-white/70" weight="regular" aria-hidden="true" />
+                <CaretRight className="w-5 h-5 text-white/70" aria-hidden="true" weight="regular" aria-hidden="true" />
               </div>
 
               <div className="grid grid-cols-3 gap-2 mt-4">
@@ -192,15 +192,15 @@ export default function Profile() {
           <SectionHeader title="Quick Access" />
           <div className="grid grid-cols-3 gap-2 px-4 py-3">
             <Link href="/wallet" className="rounded-xl border border-neutral-200 p-2 hover:bg-neutral-50">
-              <Wallet className="w-5 aria-hidden="true" h-5 text-neutral-900 mb-2" weight="regular" aria-hidden="true" />
+              <Wallet className="w-5 h-5 text-neutral-900 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
               <p className="text-xs font-medium">Wallet</p>
             </Link>
             <Link href="/transactions" className="rounded-xl border border-neutral-200 p-2 hover:bg-neutral-50">
-              <Receipt className="w-5 aria-hidden="true" h-5 text-neutral-900 mb-2" weight="regular" aria-hidden="true" />
+              <Receipt className="w-5 h-5 text-neutral-900 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
               <p className="text-xs font-medium">Pesanan</p>
             </Link>
             <Link href="/activity" className="rounded-xl border border-neutral-200 p-2 hover:bg-neutral-50">
-              <TrendUp className="w-5 aria-hidden="true" h-5 text-neutral-900 mb-2" weight="regular" aria-hidden="true" />
+              <TrendUp className="w-5 h-5 text-neutral-900 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
               <p className="text-xs font-medium">Aktivitas</p>
             </Link>
           </div>
@@ -208,46 +208,46 @@ export default function Profile() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
           <SectionHeader title="Detail Akun" />
-          <MenuItem icon={<UserCircle className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Informasi Akun" subtitle="Nama, email, nomor telepon" href="/profile/edit" />
+          <MenuItem icon={<UserCircle className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Informasi Akun" subtitle="Nama, email, nomor telepon" href="/profile/edit" />
           <Divider />
-          <MenuItem icon={<IdentificationCard className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Verifikasi Identitas" subtitle="KYC untuk limit lebih tinggi" href="/kyc" badge={kycBadge.label} badgeColor={kycBadge.color} />
+          <MenuItem icon={<IdentificationCard className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Verifikasi Identitas" subtitle="KYC untuk limit lebih tinggi" href="/kyc" badge={kycBadge.label} badgeColor={kycBadge.color} />
           <Divider />
-          <MenuItem icon={<Receipt className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Riwayat Transaksi" subtitle={`${stats.totalTransactions} transaksi`} href="/transactions" />
+          <MenuItem icon={<Receipt className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Riwayat Transaksi" subtitle={`${stats.totalTransactions} transaksi`} href="/transactions" />
           <Divider />
-          <MenuItem icon={<Bank className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Rekening Bank" subtitle="Kelola rekening penarikan" href="/bank-accounts" />
+          <MenuItem icon={<Bank className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Rekening Bank" subtitle="Kelola rekening penarikan" href="/bank-accounts" />
           <Divider />
-          <MenuItem icon={<ClockCounterClockwise className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Laporan / Activity Log" subtitle="Riwayat aktivitas akun" href="/activity" />
+          <MenuItem icon={<ClockCounterClockwise className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Laporan / Activity Log" subtitle="Riwayat aktivitas akun" href="/activity" />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
           <SectionHeader title="Rewards" />
-          <MenuItem icon={<Star className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Points" subtitle="Kumpulkan poin dari transaksi" href="/rewards/points" badge={`${userPoints} pts`} badgeColor="bg-amber-100 text-amber-700" />
+          <MenuItem icon={<Star className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Points" subtitle="Kumpulkan poin dari transaksi" href="/rewards/points" badge={`${userPoints} pts`} badgeColor="bg-amber-100 text-amber-700" />
           <Divider />
-          <MenuItem icon={<Trophy className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Rank" subtitle="Level keanggotaan Anda" href="/rewards/rank" badge={rankInfo.name} badgeColor={`${rankInfo.bg} ${rankInfo.color}`} />
+          <MenuItem icon={<Trophy className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Rank" subtitle="Level keanggotaan Anda" href="/rewards/rank" badge={rankInfo.name} badgeColor={`${rankInfo.bg} ${rankInfo.color}`} />
           <Divider />
-          <MenuItem icon={<UserPlus className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Undang Teman" subtitle={`${referralStats?.totalReferrals || 0} referral berhasil`} href="/referrals" />
+          <MenuItem icon={<UserPlus className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Undang Teman" subtitle={`${referralStats?.totalReferrals || 0} referral berhasil`} href="/referrals" />
           <Divider />
-          <MenuItem icon={<Target className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Misi" subtitle="Selesaikan misi, dapatkan hadiah" href="/rewards/missions" />
+          <MenuItem icon={<Target className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Misi" subtitle="Selesaikan misi, dapatkan hadiah" href="/rewards/missions" />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
           <SectionHeader title="Support" />
-          <MenuItem icon={<Question className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Pusat Bantuan" subtitle="FAQ dan panduan penggunaan" href="/support" />
+          <MenuItem icon={<Question className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Pusat Bantuan" subtitle="FAQ dan panduan penggunaan" href="/support" />
           <Divider />
-          <MenuItem icon={<Headset className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Hubungi Kami" subtitle="Chat dengan tim support" href="https://wa.me/6281234567890" external />
+          <MenuItem icon={<Headset className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Hubungi Kami" subtitle="Chat dengan tim support" href="https://wa.me/6281234567890" external />
           <Divider />
-          <MenuItem icon={<ChatCircle className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Kirim Masukan" subtitle="Saran dan kritik untuk kami" href="mailto:support@kahade.id" external />
+          <MenuItem icon={<ChatCircle className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Kirim Masukan" subtitle="Saran dan kritik untuk kami" href="mailto:support@kahade.id" external />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
           <SectionHeader title="Pengaturan" />
-          <MenuItem icon={<Bell className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Notifikasi" subtitle="Atur preferensi notifikasi" href="/settings?tab=notifications" />
+          <MenuItem icon={<Bell className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Notifikasi" subtitle="Atur preferensi notifikasi" href="/settings?tab=notifications" />
           <Divider />
-          <MenuItem icon={<LockKey className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Keamanan" subtitle="Password, 2FA, dan sesi aktif" href="/settings?tab=security" />
+          <MenuItem icon={<LockKey className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Keamanan" subtitle="Password, 2FA, dan sesi aktif" href="/settings?tab=security" />
           <Divider />
-          <MenuItem icon={<Globe className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Bahasa" subtitle="Bahasa Indonesia" href="/settings?tab=profile" />
+          <MenuItem icon={<Globe className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Bahasa" subtitle="Bahasa Indonesia" href="/settings?tab=profile" />
           <Divider />
-          <MenuItem icon={<MoonStars className="w-6 aria-hidden="true" h-6 text-foreground" weight="regular" aria-hidden="true" />} label="Tampilan" subtitle="Mode terang / gelap" href="/settings?tab=profile" />
+          <MenuItem icon={<MoonStars className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />} label="Tampilan" subtitle="Mode terang / gelap" href="/settings?tab=profile" />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="pt-2 pb-4">
@@ -258,7 +258,7 @@ export default function Profile() {
           </div>
 
           <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-3.5 mx-auto max-w-xs bg-white border border-neutral-200 rounded-xl text-red-600 font-medium hover:bg-red-50 hover:border-red-200 transition-colors">
-            <SignOut className="w-5 aria-hidden="true" h-5" weight="regular" aria-hidden="true" />
+            <SignOut className="w-5 h-5" aria-hidden="true" weight="regular" aria-hidden="true" />
             <span>Keluar</span>
           </button>
 

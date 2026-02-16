@@ -175,11 +175,11 @@ export default function HowItWorks() {
               <Link href="/register">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-black text-white hover:bg-black/90 font-semibold rounded-xl btn-hover-lift">
                   Mulai Gratis
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
               <Button variant="outline" className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 font-semibold rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
-                <Play className="mr-2 w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                <Play className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Lihat Demo
               </Button>
             </div>
@@ -245,7 +245,7 @@ export default function HowItWorks() {
                           transition={{ delay: i * 0.05 }}
                           className="flex items-start gap-2 text-xs md:text-sm"
                         >
-                          <Check className="w-4 aria-hidden="true" h-4 text-green-600 shrink-0 mt-0.5" weight="bold" aria-hidden="true" />
+                          <Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" aria-hidden="true" weight="bold" aria-hidden="true" />
                           <span className="text-neutral-600">{detail}</span>
                         </motion.li>
                       ))}
@@ -356,7 +356,7 @@ export default function HowItWorks() {
               <Link href="/faq">
                 <Button variant="outline" className="h-11 md:h-12 px-6 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 font-semibold rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
                   Lihat Semua FAQ
-                  <ArrowRight className="ml-2 w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
             </div>
@@ -388,7 +388,7 @@ export default function HowItWorks() {
               transition={{ duration: 0.2 }}
               className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
             >
-              <ShieldCheck className="w-7 h-7 md:w-8 aria-hidden="true" md:h-8 text-white" weight="bold" aria-hidden="true" />
+              <ShieldCheck className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Siap Memulai?
@@ -401,7 +401,7 @@ export default function HowItWorks() {
               <Link href="/register">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
                   Daftar Gratis
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
               <Link href="/contact">

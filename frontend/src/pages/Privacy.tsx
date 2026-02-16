@@ -229,12 +229,12 @@ export default function Privacy() {
             </h1>
             <div className="flex flex-wrap items-center gap-4 md:gap-4 text-sm text-neutral-600">
               <span className="flex items-center gap-2">
-                <Calendar className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 Terakhir diperbarui: 1 Januari 2026
               </span>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button variant="ghost" size="sm" className="gap-2 text-neutral-600 hover:text-neutral-900" onClick={() => window.print()}>
-                  <Printer className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                  <Printer className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                   Cetak
                 </Button>
               </motion.div>
@@ -253,11 +253,11 @@ export default function Privacy() {
               onClick={() => setShowToc(!showToc)}
             >
               <span className="flex items-center gap-2">
-                <List className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                <List className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
                 Daftar Isi
               </span>
               <motion.div animate={{ rotate: showToc ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                <CaretDown className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                <CaretDown className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               </motion.div>
             </Button>
           </motion.div>
@@ -304,7 +304,7 @@ export default function Privacy() {
             >
               <div className="sticky top-24 bg-white rounded-xl md:rounded-2xl border border-neutral-200 p-4 md:p-6">
                 <h3 className="font-bold mb-4 text-black flex items-center gap-2">
-                  <ShieldCheck className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ShieldCheck className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Daftar Isi
                 </h3>
                 <nav className="space-y-2">

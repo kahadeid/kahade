@@ -148,7 +148,7 @@ export default function AdminWithdrawals() {
     return (
       <AdminLayout title="Withdrawals" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 aria-hidden="true" h-8 animate-spin text-black" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
         </div>
       </AdminLayout>
     );
@@ -165,7 +165,7 @@ export default function AdminWithdrawals() {
             className="bg-amber-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <Clock className="w-8 aria-hidden="true" h-8 text-amber-600" weight="duotone" aria-hidden="true" />
+              <Clock className="w-8 h-8 text-amber-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               <div>
                 <div className="text-2xl font-bold text-amber-700">{stats.pending}</div>
                 <div className="text-sm text-amber-600">Pending</div>
@@ -180,7 +180,7 @@ export default function AdminWithdrawals() {
             className="bg-blue-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <CurrencyDollar className="w-8 aria-hidden="true" h-8 text-blue-600" weight="duotone" aria-hidden="true" />
+              <CurrencyDollar className="w-8 h-8 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               <div>
                 <div className="text-lg font-bold text-blue-700">{formatCurrency(stats.pendingAmount)}</div>
                 <div className="text-sm text-blue-600">Pending Amount</div>
@@ -195,7 +195,7 @@ export default function AdminWithdrawals() {
             className="bg-emerald-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <CheckCircle className="w-8 aria-hidden="true" h-8 text-emerald-600" weight="duotone" aria-hidden="true" />
+              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               <div>
                 <div className="text-2xl font-bold text-emerald-700">{stats.completed}</div>
                 <div className="text-sm text-emerald-600">Completed</div>
@@ -210,7 +210,7 @@ export default function AdminWithdrawals() {
             className="bg-red-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <XCircle className="w-8 aria-hidden="true" h-8 text-red-600" weight="duotone" aria-hidden="true" />
+              <XCircle className="w-8 h-8 text-red-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               <div>
                 <div className="text-2xl font-bold text-red-700">{stats.rejected}</div>
                 <div className="text-sm text-red-600">Rejected</div>
@@ -222,7 +222,7 @@ export default function AdminWithdrawals() {
         {/* Filters */}
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -231,8 +231,8 @@ export default function AdminWithdrawals() {
             />
           </div>
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-4 aria-hidden="true"8">
-              <Funnel className="w-4 aria-hidden="true" h-4 mr-2" weight="regular" aria-hidden="true" />
+            <SelectTrigger className="w-48" aria-hidden="true">
+              <Funnel className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -254,7 +254,7 @@ export default function AdminWithdrawals() {
         >
           {filteredWithdrawals.length === 0 ? (
             <div className="text-center py-12">
-              <ArrowDown className="w-1 aria-hidden="true"6 h-16 mx-auto mb-4 text-neutral-500" weight="duotone" aria-hidden="true" />
+              <ArrowDown className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" aria-hidden="true" />
               <h4 className="text-lg font-semibold text-black mb-2">No Withdrawals</h4>
               <p className="text-neutral-600">No withdrawal requests found</p>
             </div>
@@ -279,7 +279,7 @@ export default function AdminWithdrawals() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">
-                              <User className="w-4 aria-hidden="true" h-4 text-black" weight="regular" aria-hidden="true" />
+                              <User className="w-4 h-4 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
                             </div>
                             <div>
                               <div className="font-medium text-black">{withdrawal.user.username}</div>
@@ -293,7 +293,7 @@ export default function AdminWithdrawals() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <Bank className="w-4 aria-hidden="true" h-4 text-neutral-600" weight="regular" aria-hidden="true" />
+                            <Bank className="w-4 h-4 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                             <div>
                               <div className="text-black">{withdrawal.bankAccount.bankName}</div>
                               <div className="text-sm text-neutral-600">****{withdrawal.bankAccount.accountNumberLast4}</div>
@@ -326,7 +326,7 @@ export default function AdminWithdrawals() {
                                   setIsRejectOpen(true);
                                 }}
                               >
-                                <XCircle className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                                <XCircle className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
                               </Button>
                               <Button
                                 size="sm"
@@ -334,7 +334,7 @@ export default function AdminWithdrawals() {
                                 onClick={() => handleApprove(withdrawal)}
                                 disabled={isSubmitting}
                               >
-                                <CheckCircle className="w-4 aria-hidden="true" h-4 mr-1" weight="bold" aria-hidden="true" />
+                                <CheckCircle className="w-4 h-4 mr-1" aria-hidden="true" weight="bold" aria-hidden="true" />
                                 Approve
                               </Button>
                             </div>

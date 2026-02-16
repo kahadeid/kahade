@@ -167,7 +167,7 @@ export default function Dashboard() {
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Memuat dashboard...</p>
           </div>
         </div>
@@ -194,18 +194,18 @@ export default function Dashboard() {
             <div className="flex items-center gap-1">
               <Link href="/help">
                 <button className="p-2.5 rounded-xl hover:bg-neutral-100 transition-colors">
-                  <Headset className="w-6 aria-hidden="true" h-6 text-black" weight="regular" aria-hidden="true" />
+                  <Headset className="w-6 h-6 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </button>
               </Link>
               <Link href="/notifications">
                 <button className="relative p-2.5 rounded-xl hover:bg-neutral-100 transition-colors">
-                  <Bell className="w-6 aria-hidden="true" h-6 text-black" weight="regular" aria-hidden="true" />
+                  <Bell className="w-6 h-6 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
                   <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
                 </button>
               </Link>
               <Link href="/messages">
                 <button className="p-2.5 rounded-xl hover:bg-neutral-100 transition-colors">
-                  <ChatCircle className="w-6 aria-hidden="true" h-6 text-black" weight="regular" aria-hidden="true" />
+                  <ChatCircle className="w-6 h-6 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </button>
               </Link>
             </div>
@@ -236,7 +236,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Wallet className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                <Wallet className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <span className="text-sm font-medium text-neutral-600">Total Saldo</span>
               </div>
               <button 
@@ -244,9 +244,9 @@ export default function Dashboard() {
                 className="p-1.5 hover:bg-neutral-200 rounded-lg transition-colors"
               >
                 {showBalance ? (
-                  <Eye className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                  <Eye className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 ) : (
-                  <EyeSlash className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                  <EyeSlash className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 )}
               </button>
             </div>
@@ -257,7 +257,7 @@ export default function Dashboard() {
             
             {balance?.locked && balance.locked > 0 && (
               <div className="flex items-center gap-2 mt-2 text-sm text-neutral-600">
-                <Clock className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <Clock className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <span>{formatCurrency(balance.locked)} dalam escrow</span>
               </div>
             )}
@@ -266,7 +266,7 @@ export default function Dashboard() {
             <Link href="/wallet">
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-200 hover:bg-neutral-100 -mx-5 px-5 py-2 transition-colors cursor-pointer">
                 <span className="text-sm font-medium text-foreground">Kelola Saldo</span>
-                <CaretRight className="w-5 aria-hidden="true" h-5 text-neutral-500" weight="regular" aria-hidden="true" />
+                <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
               </div>
             </Link>
           </motion.div>
@@ -290,7 +290,7 @@ export default function Dashboard() {
               {/* Total Transaksi */}
               <div className="bg-white rounded-xl p-4 border border-neutral-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <Receipt className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                  <Receipt className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-foreground">{stats.total}</div>
                 <div className="text-xs text-neutral-600 mt-1">Total Transaksi</div>
@@ -299,7 +299,7 @@ export default function Dashboard() {
               {/* Sedang Berjalan */}
               <div className="bg-white rounded-xl p-4 border border-neutral-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                  <Clock className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-foreground">{stats.inProgress}</div>
                 <div className="text-xs text-neutral-600 mt-1">Sedang Berjalan</div>
@@ -308,7 +308,7 @@ export default function Dashboard() {
               {/* Selesai Bulan Ini */}
               <div className="bg-white rounded-xl p-4 border border-neutral-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                  <CheckCircle className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-foreground">{stats.completedThisMonth}</div>
                 <div className="text-xs text-neutral-600 mt-1">Selesai Bulan Ini</div>
@@ -317,7 +317,7 @@ export default function Dashboard() {
               {/* Rating */}
               <div className="bg-white rounded-xl p-4 border border-neutral-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <Star className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+                  <Star className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </div>
                 <div className="text-2xl font-bold text-foreground flex items-center gap-1">
                   {userStats?.rating?.toFixed(1) || '5.0'}
@@ -354,11 +354,11 @@ export default function Dashboard() {
                         Dapatkan Rp 10.000 + 25% komisi untuk setiap teman yang bergabung
                       </p>
                       <div className="inline-flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5 text-sm font-medium">
-                        <TrendUp className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                        <TrendUp className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
                         Mulai Undang
                       </div>
                     </div>
-                    <CaretRight className="w-6 aria-hidden="true" h-6 text-white/50" weight="bold" aria-hidden="true" />
+                    <CaretRight className="w-6 h-6 text-white/50" aria-hidden="true" weight="bold" aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -376,7 +376,7 @@ export default function Dashboard() {
               <Link href="/transactions">
                 <span className="text-sm text-neutral-600 hover:text-foreground transition-colors flex items-center gap-1">
                   Lihat Semua
-                  <ArrowRight className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </span>
               </Link>
             </div>
@@ -385,7 +385,7 @@ export default function Dashboard() {
               {transactions.length === 0 ? (
                 <div className="text-center py-10 px-4">
                   <div className="w-14 h-14 rounded-2xl bg-neutral-200 flex items-center justify-center mx-auto mb-4">
-                    <Receipt className="w-7 aria-hidden="true" h-7 text-neutral-500" weight="regular" aria-hidden="true" />
+                    <Receipt className="w-7 h-7 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-1">Belum ada transaksi</h3>
                   <p className="text-sm text-neutral-600 mb-4">
@@ -440,7 +440,7 @@ export default function Dashboard() {
                           </div>
                           
                           {/* Arrow */}
-                          <CaretRight className="w-4 aria-hidden="true" h-4 text-neutral-300 shrink-0" weight="regular" aria-hidden="true" />
+                          <CaretRight className="w-4 h-4 text-neutral-300 shrink-0" aria-hidden="true" weight="regular" aria-hidden="true" />
                         </motion.div>
                       </Link>
                     );

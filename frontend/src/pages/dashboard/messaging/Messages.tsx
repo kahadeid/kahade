@@ -155,7 +155,7 @@ export default function Messages() {
         <div className="p-4 border-b">
           <h1 className="text-xl font-semibold text-gray-800 mb-4">Pesan</h1>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 aria-hidden="true" text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
             <input
               type="text"
               placeholder="Cari percakapan..."
@@ -174,7 +174,7 @@ export default function Messages() {
             </div>
           ) : filteredConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-              <MessageCircle className="h-12 w-1 aria-hidden="true"2 mb-4" />
+              <MessageCircle className="h-12 w-12 mb-4" aria-hidden="true" />
               <p>Belum ada percakapan</p>
             </div>
           ) : (
@@ -249,7 +249,7 @@ export default function Messages() {
                 onClick={() => navigate("/dashboard/messages")}
                 className="md:hidden mr-3 p-1 hover:bg-gray-100 rounded"
               >
-                <ArrowLeft className="h-5 w-5 aria-hidden="true"" />
+                <ArrowLeft className="h-5 w-5" aria-hidden="true" />
               </button>
               <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                 {getOtherParticipant(selectedConversation).avatarUrl ? (
@@ -272,7 +272,7 @@ export default function Messages() {
                 <p className="text-xs text-green-500">Online</p>
               </div>
               <button className="p-2 hover:bg-gray-100 rounded-full">
-                <MoreVertical className="h-5 w-5 aria-hidden="true" text-gray-500" />
+                <MoreVertical className="h-5 w-5 text-gray-500" aria-hidden="true" />
               </button>
             </div>
 
@@ -307,9 +307,9 @@ export default function Messages() {
                         </span>
                         {isOwn && (
                           message.isRead ? (
-                            <CheckCheck className="h-4 w-4 aria-hidden="true"" />
+                            <CheckCheck className="h-4 w-4" aria-hidden="true" />
                           ) : (
-                            <Check className="h-4 w-4 aria-hidden="true"" />
+                            <Check className="h-4 w-4" aria-hidden="true" />
                           )
                         )}
                       </div>
@@ -327,13 +327,13 @@ export default function Messages() {
                   type="button"
                   className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
                 >
-                  <Paperclip className="h-5 w-5 aria-hidden="true"" />
+                  <Paperclip className="h-5 w-5" aria-hidden="true" />
                 </button>
                 <button
                   type="button"
                   className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
                 >
-                  <Image className="h-5 w-5 aria-hidden="true"" />
+                  <Image className="h-5 w-5" aria-hidden="true" />
                 </button>
                 <input
                   type="text"
@@ -346,21 +346,21 @@ export default function Messages() {
                   type="button"
                   className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
                 >
-                  <Smile className="h-5 w-5 aria-hidden="true"" />
+                  <Smile className="h-5 w-5" aria-hidden="true" />
                 </button>
                 <button
                   type="submit"
                   disabled={!newMessage.trim()}
                   className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send className="h-5 w-5 aria-hidden="true"" />
+                  <Send className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
             </form>
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
-            <MessageCircle className="h-16 w-1 aria-hidden="true"6 mb-4" />
+            <MessageCircle className="h-16 w-16 mb-4" aria-hidden="true" />
             <h2 className="text-xl font-semibold mb-2">Pilih Percakapan</h2>
             <p>Pilih percakapan dari daftar untuk mulai mengobrol</p>
           </div>

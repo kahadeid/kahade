@@ -197,7 +197,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
             {/* Error Icon */}
             <div className="mb-4 flex justify-center">
               <div className="rounded-full bg-red-100 p-3">
-                <AlertTriangle className="h-8 w-8 aria-hidden="true" text-red-600" />
+                <AlertTriangle className="h-8 w-8 text-red-600" aria-hidden="true" />
               </div>
             </div>
 
@@ -237,7 +237,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
                 onClick={this.resetError}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-medium text-white transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
-                <RefreshCw className="h-5 w-5 aria-hidden="true"" />
+                <RefreshCw className="h-5 w-5" aria-hidden="true" />
                 Coba Lagi
               </button>
 

@@ -49,7 +49,7 @@ export default function MobileApp() {
               className="text-center lg:text-left"
             >
               <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
-                <Sparkle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Coming Soon
               </span>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-black leading-tight">
@@ -63,14 +63,14 @@ export default function MobileApp() {
               {/* App Store Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 md:gap-4 mb-8 justify-center lg:justify-start">
                 <Button className="bg-black hover:bg-black/90 text-white px-5 md:px-6 py-3 md:py-4 h-auto rounded-xl gap-3">
-                  <AppleLogo className="w-5 h-5 md:w-6 aria-hidden="true" md:h-6" weight="fill" aria-hidden="true" />
+                  <AppleLogo className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" weight="fill" aria-hidden="true" />
                   <div className="text-left">
                     <div className="text-[10px] md:text-xs opacity-80">Download on the</div>
                     <div className="font-semibold text-sm md:text-base">App Store</div>
                   </div>
                 </Button>
                 <Button className="border-2 border-neutral-200 bg-white text-black hover:bg-neutral-100 px-5 md:px-6 py-3 md:py-4 h-auto rounded-xl gap-3">
-                  <GooglePlayLogo className="w-5 h-5 md:w-6 aria-hidden="true" md:h-6" weight="fill" aria-hidden="true" />
+                  <GooglePlayLogo className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" weight="fill" aria-hidden="true" />
                   <div className="text-left">
                     <div className="text-[10px] md:text-xs opacity-80">Get it on</div>
                     <div className="font-semibold text-sm md:text-base">Google Play</div>
@@ -81,7 +81,7 @@ export default function MobileApp() {
               {/* QR Code */}
               <div className="hidden md:flex items-center gap-4 p-4 rounded-xl bg-neutral-100 max-w-sm mx-auto lg:mx-0">
                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-white flex items-center justify-center border border-neutral-200">
-                  <QrCode className="w-10 h-10 md:w-1 aria-hidden="true"2 md:h-12 text-black" weight="regular" aria-hidden="true" />
+                  <QrCode className="w-10 h-10 md:w-12 md:h-12 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
                 </div>
                 <div>
                   <div className="font-semibold text-sm md:text-base text-black">Scan to Download</div>
@@ -102,7 +102,7 @@ export default function MobileApp() {
                 <div className="w-full h-full bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center">
                   <div className="text-center">
                     <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-black flex items-center justify-center mx-auto mb-3 md:mb-4">
-                      <DeviceMobile className="w-7 h-7 md:w-1 aria-hidden="true"0 md:h-10 text-white" weight="fill" aria-hidden="true" />
+                      <DeviceMobile className="w-7 h-7 md:w-10 md:h-10 text-white" aria-hidden="true" weight="fill" aria-hidden="true" />
                     </div>
                     <div className="font-bold text-base md:text-lg text-black">Kahade Mobile</div>
                     <div className="text-xs md:text-sm text-neutral-600">Coming Soon</div>
@@ -207,7 +207,7 @@ export default function MobileApp() {
             className="text-center max-w-2xl mx-auto px-4"
           >
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6">
-              <DeviceMobile className="w-7 h-7 md:w-8 aria-hidden="true" md:h-8 text-white" weight="bold" aria-hidden="true" />
+              <DeviceMobile className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Get Notified When We Launch
@@ -219,7 +219,7 @@ export default function MobileApp() {
               <Link href="/register">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl">
                   Create Account
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
               <Link href="/contact">

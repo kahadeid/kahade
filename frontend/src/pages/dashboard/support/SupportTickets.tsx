@@ -118,7 +118,7 @@ export default function SupportTickets() {
           onClick={() => setShowCreateModal(true)}
           className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
-          <Plus className="h-5 w-5 aria-hidden="true"" />
+          <Plus className="h-5 w-5" aria-hidden="true" />
           <span>Buat Tiket Baru</span>
         </button>
       </div>
@@ -127,7 +127,7 @@ export default function SupportTickets() {
       <div className="bg-white rounded-xl shadow-sm border p-4 mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 aria-hidden="true" text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" aria-hidden="true" />
             <input
               type="text"
               placeholder="Cari tiket..."
@@ -137,7 +137,7 @@ export default function SupportTickets() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="h-5 w-5 aria-hidden="true" text-gray-400" />
+            <Filter className="h-5 w-5 text-gray-400" aria-hidden="true" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -161,7 +161,7 @@ export default function SupportTickets() {
         </div>
       ) : filteredTickets.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
-          <Ticket className="h-16 w-1 aria-hidden="true"6 text-gray-300 mx-auto mb-4" />
+          <Ticket className="h-16 w-16 text-gray-300 mx-auto mb-4" aria-hidden="true" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">Belum ada tiket</h3>
           <p className="text-gray-500 mb-6">
             Buat tiket baru jika Anda memerlukan bantuan
@@ -170,7 +170,7 @@ export default function SupportTickets() {
             onClick={() => setShowCreateModal(true)}
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            <Plus className="h-5 w-5 aria-hidden="true"" />
+            <Plus className="h-5 w-5" aria-hidden="true" />
             <span>Buat Tiket Baru</span>
           </button>
         </div>
@@ -194,7 +194,7 @@ export default function SupportTickets() {
                         {ticket.ticketNumber}
                       </span>
                       <span className={`px-2 py-0.5 text-xs rounded-full ${statusConfig.color}`}>
-                        <StatusIcon className="inline h-3 w-3 aria-hidden="true" mr-1" />
+                        <StatusIcon className="inline h-3 w-3 mr-1" aria-hidden="true" />
                         {statusConfig.label}
                       </span>
                       <span className={`px-2 py-0.5 text-xs rounded-full ${priorityConfig.color}`}>
@@ -209,20 +209,20 @@ export default function SupportTickets() {
                     </p>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
-                        <Ticket className="h-4 w-4 aria-hidden="true"" />
+                        <Ticket className="h-4 w-4" aria-hidden="true" />
                         {CATEGORY_LABELS[ticket.category] || ticket.category}
                       </span>
                       <span className="flex items-center gap-1">
-                        <MessageSquare className="h-4 w-4 aria-hidden="true"" />
+                        <MessageSquare className="h-4 w-4" aria-hidden="true" />
                         {ticket.responseCount} balasan
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 aria-hidden="true"" />
+                        <Clock className="h-4 w-4" aria-hidden="true" />
                         {formatDistanceToNow(new Date(ticket.createdAt))}
                       </span>
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 aria-hidden="true" text-gray-400 flex-shrink-0" />
+                  <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
                 </div>
               </div>
             );

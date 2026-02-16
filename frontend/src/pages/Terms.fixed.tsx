@@ -153,12 +153,12 @@ export default function Terms() {
             {/* Meta Information - FIXED: Removed hardcoded colors */}
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-4 text-sm text-neutral-600">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <span>Terakhir diperbarui: {lastUpdated}</span>
               </div>
               <div className="hidden md:block w-1 h-1 rounded-full bg-neutral-400" aria-hidden="true" />
               <div className="flex items-center gap-2">
-                <FileText className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <FileText className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <span>Versi 2.0</span>
               </div>
               <div className="hidden md:block w-1 h-1 rounded-full bg-neutral-400" aria-hidden="true" />
@@ -169,7 +169,7 @@ export default function Terms() {
                 onClick={() => window.print()}
                 aria-label="Print terms of service"
               >
-                <Printer className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <Printer className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <span>Cetak</span>
               </Button>
             </div>
@@ -189,7 +189,7 @@ export default function Terms() {
             aria-label="Toggle table of contents"
           >
             <span className="flex items-center gap-2">
-              <List className="w-5 aria-hidden="true" h-5" weight="regular" aria-hidden="true" />
+              <List className="w-5 h-5" aria-hidden="true" weight="regular" aria-hidden="true" />
               <span className="text-sm font-medium">Daftar Isi</span>
             </span>
             <CaretDown
@@ -239,7 +239,7 @@ export default function Terms() {
                 aria-label="Table of contents"
               >
                 <div className="flex items-center gap-2 mb-4 pb-4 border-b border-neutral-200">
-                  <List className="w-5 aria-hidden="true" h-5 text-black" weight="duotone" aria-hidden="true" />
+                  <List className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
                   <h2 className="font-semibold text-neutral-900">Daftar Isi</h2>
                 </div>
                 <ul className="space-y-2" role="list">

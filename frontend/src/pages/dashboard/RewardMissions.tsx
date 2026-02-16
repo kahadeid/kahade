@@ -20,7 +20,7 @@ export default function RewardMissions() {
               <h2 className="text-2xl font-bold">3 Misi</h2>
               <p className="text-sm text-neutral-600 mt-1">Capai semua misi untuk bonus tambahan +300 pts.</p>
             </div>
-            <Target className="w-9 aria-hidden="true" h-9" weight="duotone" aria-hidden="true" />
+            <Target className="w-9 h-9" aria-hidden="true" weight="duotone" aria-hidden="true" />
           </div>
         </section>
 
@@ -33,7 +33,7 @@ export default function RewardMissions() {
                 <p className="text-sm text-emerald-600 mt-1">Reward {mission.reward}</p>
               </div>
               {mission.done ? (
-                <div className="text-sm text-emerald-600 flex items-center gap-1.5"><CheckCircle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" /> Selesai</div>
+                <div className="text-sm text-emerald-600 flex items-center gap-1.5"><CheckCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" /> Selesai</div>
               ) : (
                 <Button variant="outline" className="rounded-xl">Lanjutkan</Button>
               )}
@@ -43,12 +43,12 @@ export default function RewardMissions() {
 
         <section className="grid md:grid-cols-2 gap-4">
           <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-4">
-            <RocketLaunch className="w-5 aria-hidden="true" h-5 mb-2" weight="regular" aria-hidden="true" />
+            <RocketLaunch className="w-5 h-5 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
             <h4 className="font-semibold text-sm">Boost mingguan</h4>
             <p className="text-sm text-neutral-600 mt-1">Aktivitas transaksi stabil 7 hari berturut-turut = bonus 75 poin.</p>
           </div>
           <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-4">
-            <CalendarCheck className="w-5 aria-hidden="true" h-5 mb-2" weight="regular" aria-hidden="true" />
+            <CalendarCheck className="w-5 h-5 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
             <h4 className="font-semibold text-sm">Deadline misi</h4>
             <p className="text-sm text-neutral-600 mt-1">Semua misi diperbarui setiap hari Senin pukul 00:00 WIB.</p>
           </div>

@@ -73,7 +73,7 @@ export default function Help() {
             
             {/* Search */}
             <div className="relative max-w-xl mx-auto">
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
               <Input
                 placeholder="Cari artikel bantuan..."
                 value={searchQuery}
@@ -125,7 +125,7 @@ export default function Help() {
                       <span className="text-xs md:text-sm text-muted-foreground">
                         {category.articles} artikel
                       </span>
-                      <CaretRight className="w-5 aria-hidden="true" h-5 text-black opacity-0 group-hover:opacity-100 transition-opacity" weight="bold" aria-hidden="true" />
+                      <CaretRight className="w-5 h-5 text-black opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" weight="bold" aria-hidden="true" />
                     </div>
                   </div>
                 </Link>
@@ -164,7 +164,7 @@ export default function Help() {
                 >
                   <div className="flex items-center gap-4 md:gap-4">
                     <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0">
-                      <Book className="w-4 h-4 md:w-5 aria-hidden="true" md:h-5 text-black" weight="regular" aria-hidden="true" />
+                      <Book className="w-4 h-4 md:w-5 md:h-5 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold text-sm md:text-base text-black group-hover:text-neutral-600 transition-colors">
@@ -175,7 +175,7 @@ export default function Help() {
                       </div>
                     </div>
                   </div>
-                  <ArrowRight className="w-5 aria-hidden="true" h-5 text-muted-foreground group-hover:text-neutral-900 transition-colors shrink-0" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-neutral-900 transition-colors shrink-0" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </motion.div>
               ))}
             </div>
@@ -215,7 +215,7 @@ export default function Help() {
                 <h3 className="font-bold text-base md:text-lg mb-2 text-black">{option.title}</h3>
                 <p className="text-xs md:text-sm text-neutral-600 mb-2">{option.description}</p>
                 <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-4">
-                  <Clock className="w-3 aria-hidden="true" h-3" weight="regular" aria-hidden="true" />
+                  <Clock className="w-3 h-3" aria-hidden="true" weight="regular" aria-hidden="true" />
                   {option.availability}
                 </div>
                 <Button className="w-full h-10 md:h-11 bg-black text-white hover:bg-black/90 font-semibold rounded-xl">
@@ -238,7 +238,7 @@ export default function Help() {
             className="text-center max-w-2xl mx-auto px-4"
           >
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6">
-              <Question className="w-7 h-7 md:w-8 aria-hidden="true" md:h-8 text-white" weight="bold" aria-hidden="true" />
+              <Question className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Butuh Jawaban Cepat?
@@ -249,7 +249,7 @@ export default function Help() {
             <Link href="/faq">
               <Button className="h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl">
                 Lihat FAQ
-                <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
               </Button>
             </Link>
           </motion.div>

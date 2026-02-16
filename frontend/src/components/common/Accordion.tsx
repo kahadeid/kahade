@@ -295,13 +295,13 @@ export function AccordionItem({
 //     {
 //       id: '1',
 //       title: 'Account Settings',
-//       icon: <Settings className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Settings className="w-5 h-5" aria-hidden="true" />,
 //       content: <AccountSettingsForm />
 //     },
 //     {
 //       id: '2',
 //       title: 'Security',
-//       icon: <Shield className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Shield className="w-5 h-5" aria-hidden="true" />,
 //       content: <SecuritySettings />
 //     },
 //   ]}

@@ -63,7 +63,7 @@ export default function Feedback() {
               className="max-w-lg mx-auto text-center px-4"
             >
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-black flex items-center justify-center mx-auto mb-5 md:mb-6">
-                <CheckCircle className="w-8 h-8 md:w-1 aria-hidden="true"0 md:h-10 text-white" weight="fill" aria-hidden="true" />
+                <CheckCircle className="w-8 h-8 md:w-10 md:h-10 text-white" aria-hidden="true" weight="fill" aria-hidden="true" />
               </div>
               <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-black">Terima Kasih!</h1>
               <p className="text-sm md:text-base text-neutral-600 mb-6 md:mb-8">
@@ -230,7 +230,7 @@ export default function Feedback() {
                   'Mengirim...'
                 ) : (
                   <>
-                    <PaperPlaneTilt className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                    <PaperPlaneTilt className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Kirim Feedback
                   </>
                 )}

@@ -18,11 +18,11 @@ export function Skeleton({ className, ...props }: SkeletonProps) {
 export function SkeletonCard() {
   return (
     <div className="rounded-2xl border border-black/5 p-6 space-y-4">
-      <Skeleton className="h-14 w-1 aria-hidden="true"4 rounded-xl" />
+      <Skeleton className="h-14 w-14 rounded-xl" aria-hidden="true" />
       <div className="space-y-2">
-        <Skeleton className="h-6 w-3 aria-hidden="true"/4" />
+        <Skeleton className="h-6 w-3 /4" aria-hidden="true" />
         <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5 aria-hidden="true"/6" />
+        <Skeleton className="h-4 w-5 /6" aria-hidden="true" />
       </div>
     </div>
   );

@@ -134,7 +134,7 @@ export default function AdminDeposits() {
     return (
       <AdminLayout title="Deposits" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 aria-hidden="true" h-8 animate-spin text-accent" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
         </div>
       </AdminLayout>
     );
@@ -152,7 +152,7 @@ export default function AdminDeposits() {
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <ArrowUp className="w-5 aria-hidden="true" h-5 text-accent" weight="bold" aria-hidden="true" />
+                <ArrowUp className="w-5 h-5 text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-2xl font-bold">{stats.total}</div>
@@ -169,7 +169,7 @@ export default function AdminDeposits() {
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                <Clock className="w-5 aria-hidden="true" h-5 text-amber-600" weight="bold" aria-hidden="true" />
+                <Clock className="w-5 h-5 text-amber-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-2xl font-bold text-amber-600">{stats.pending}</div>
@@ -186,7 +186,7 @@ export default function AdminDeposits() {
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <CheckCircle className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="bold" aria-hidden="true" />
+                <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-2xl font-bold text-emerald-600">{stats.completed}</div>
@@ -203,7 +203,7 @@ export default function AdminDeposits() {
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
-                <CurrencyDollar className="w-5 aria-hidden="true" h-5 text-violet-600" weight="bold" aria-hidden="true" />
+                <CurrencyDollar className="w-5 h-5 text-violet-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-lg font-bold text-violet-600">{formatCurrency(stats.totalAmount)}</div>
@@ -216,7 +216,7 @@ export default function AdminDeposits() {
         {/* Filters */}
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -225,8 +225,8 @@ export default function AdminDeposits() {
             />
           </div>
           <Select value={filter} onValueChange={(v) => { setFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-4 aria-hidden="true"8">
-              <Funnel className="w-4 aria-hidden="true" h-4 mr-2" weight="regular" aria-hidden="true" />
+            <SelectTrigger className="w-48" aria-hidden="true">
+              <Funnel className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -248,7 +248,7 @@ export default function AdminDeposits() {
         >
           {filteredDeposits.length === 0 ? (
             <div className="text-center py-12">
-              <ArrowUp className="w-1 aria-hidden="true"6 h-16 mx-auto mb-4 text-muted-foreground opacity-50" weight="duotone" aria-hidden="true" />
+              <ArrowUp className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" aria-hidden="true" weight="duotone" aria-hidden="true" />
               <h4 className="text-lg font-semibold mb-2">No Deposits</h4>
               <p className="text-muted-foreground">No deposit transactions found</p>
             </div>
@@ -276,7 +276,7 @@ export default function AdminDeposits() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                              <User className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                              <User className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                             </div>
                             <div>
                               <div className="font-medium">{deposit.user?.username || 'Unknown'}</div>
@@ -289,7 +289,7 @@ export default function AdminDeposits() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <MethodIcon className="w-4 aria-hidden="true" h-4 text-muted-foreground" weight="regular" aria-hidden="true" />
+                            <MethodIcon className="w-4 h-4 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
                             <span className="text-sm">{deposit.method?.replace('_', ' ') || 'Unknown'}</span>
                           </div>
                         </td>
@@ -301,7 +301,7 @@ export default function AdminDeposits() {
                                 onClick={() => copyToClipboard(deposit.reference)}
                                 className="text-muted-foreground hover:text-foreground"
                               >
-                                <Copy className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                                <Copy className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                               </button>
                             )}
                           </div>
@@ -320,7 +320,7 @@ export default function AdminDeposits() {
                             size="sm"
                             onClick={() => setSelectedDeposit(deposit)}
                           >
-                            <Eye className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                            <Eye className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                           </Button>
                         </td>
                       </tr>

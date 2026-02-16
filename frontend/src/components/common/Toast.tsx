@@ -128,10 +128,10 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
 
   // Icons
   const icons = {
-    success: <CheckCircle className="w-5 aria-hidden="true" h-5" />,
-    error: <XCircle className="w-5 aria-hidden="true" h-5" />,
-    warning: <AlertTriangle className="w-5 aria-hidden="true" h-5" />,
-    info: <Info className="w-5 aria-hidden="true" h-5" />,
+    success: <CheckCircle className="w-5 h-5" aria-hidden="true" />,
+    error: <XCircle className="w-5 h-5" aria-hidden="true" />,
+    warning: <AlertTriangle className="w-5 h-5" aria-hidden="true" />,
+    info: <Info className="w-5 h-5" aria-hidden="true" />,
   };
 
   return (

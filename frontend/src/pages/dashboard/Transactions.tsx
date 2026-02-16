@@ -244,7 +244,7 @@ export default function Transactions() {
       <DashboardLayout title="Orders" subtitle="Manage your transactions">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Loading your orders...</p>
           </div>
         </div>
@@ -257,7 +257,7 @@ export default function Transactions() {
       <div className="space-y-4">
         {/* ========== SEARCH BAR ========== */}
         <div className="relative">
-          <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-neutral-500" weight="regular" aria-hidden="true" />
+          <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
           <Input
             placeholder="Search orders by title, order number, or counterparty..."
             value={searchQuery}
@@ -318,9 +318,9 @@ export default function Transactions() {
                                   isBuyer ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'
                                 }`}>
                                   {isBuyer ? (
-                                    <ArrowUpRight className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                                    <ArrowUpRight className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                                   ) : (
-                                    <ArrowDownRight className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                                    <ArrowDownRight className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                                   )}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -341,7 +341,7 @@ export default function Transactions() {
                                     </span>
                                   </div>
                                 </div>
-                                <CaretRight className="w-5 aria-hidden="true" h-5 text-neutral-300 group-hover:text-neutral-900 transition-colors shrink-0 mt-3" weight="bold" aria-hidden="true" />
+                                <CaretRight className="w-5 h-5 text-neutral-300 group-hover:text-neutral-900 transition-colors shrink-0 mt-3" aria-hidden="true" weight="bold" aria-hidden="true" />
                               </div>
                             </div>
 
@@ -352,9 +352,9 @@ export default function Transactions() {
                                   isBuyer ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'
                                 }`}>
                                   {isBuyer ? (
-                                    <ArrowUpRight className="w-6 aria-hidden="true" h-6" weight="bold" aria-hidden="true" />
+                                    <ArrowUpRight className="w-6 h-6" aria-hidden="true" weight="bold" aria-hidden="true" />
                                   ) : (
-                                    <ArrowDownRight className="w-6 aria-hidden="true" h-6" weight="bold" aria-hidden="true" />
+                                    <ArrowDownRight className="w-6 h-6" aria-hidden="true" weight="bold" aria-hidden="true" />
                                   )}
                                 </div>
                                 <div className="min-w-0">
@@ -391,7 +391,7 @@ export default function Transactions() {
                               </div>
 
                               <div className="col-span-1 text-right">
-                                <CaretRight className="w-5 aria-hidden="true" h-5 text-neutral-300 group-hover:text-neutral-900 transition-colors inline-block" weight="bold" aria-hidden="true" />
+                                <CaretRight className="w-5 h-5 text-neutral-300 group-hover:text-neutral-900 transition-colors inline-block" aria-hidden="true" weight="bold" aria-hidden="true" />
                               </div>
                             </div>
                           </div>
@@ -434,7 +434,7 @@ export default function Transactions() {
           ) : (
             <div className="text-center py-16">
               <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                <Package className="w-8 aria-hidden="true" h-8 text-neutral-500" weight="regular" aria-hidden="true" />
+                <Package className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-black">No orders found</h3>
               <p className="text-neutral-600 mb-6 max-w-sm mx-auto">

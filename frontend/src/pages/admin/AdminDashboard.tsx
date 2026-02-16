@@ -191,7 +191,7 @@ export default function AdminDashboard() {
       <AdminLayout title="Dashboard" subtitle="Platform Overview">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-accent mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-accent mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-muted-foreground">Loading dashboard...</p>
           </div>
         </div>
@@ -212,10 +212,10 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 flex items-center gap-3">
-            <Warning className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+            <Warning className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
             {error}
             <Button variant="ghost" size="sm" onClick={fetchDashboardData} className="ml-auto">
-              <ArrowsClockwise className="w-4 aria-hidden="true" h-4 mr-2" />
+              <ArrowsClockwise className="w-4 h-4 mr-2" aria-hidden="true" />
               Retry
             </Button>
           </div>
@@ -230,10 +230,10 @@ export default function AdminDashboard() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center">
-                <Users className="w-6 aria-hidden="true" h-6 text-accent" weight="duotone" aria-hidden="true" />
+                <Users className="w-6 h-6 text-accent" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
               <div className="flex items-center gap-1 text-xs font-medium text-emerald-600">
-                <TrendUp className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" />
+                <TrendUp className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" />
                 +{analytics?.users.today || 0} today
               </div>
             </div>
@@ -252,10 +252,10 @@ export default function AdminDashboard() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 flex items-center justify-center">
-                <ArrowsLeftRight className="w-6 aria-hidden="true" h-6 text-emerald-600" weight="duotone" aria-hidden="true" />
+                <ArrowsLeftRight className="w-6 h-6 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
               <div className={`flex items-center gap-1 text-xs font-medium ${Number(analytics?.transactions.change || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                {Number(analytics?.transactions.change || 0) >= 0 ? <TrendUp className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" /> : <TrendDown className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" />}
+                {Number(analytics?.transactions.change || 0) >= 0 ? <TrendUp className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" /> : <TrendDown className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" />}
                 {analytics?.transactions.change || 0}%
               </div>
             </div>
@@ -274,10 +274,10 @@ export default function AdminDashboard() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-500/10 flex items-center justify-center">
-                <CurrencyCircleDollar className="w-6 aria-hidden="true" h-6 text-violet-600" weight="duotone" aria-hidden="true" />
+                <CurrencyCircleDollar className="w-6 h-6 text-violet-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
               <div className={`flex items-center gap-1 text-xs font-medium ${Number(analytics?.volume.change || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                {Number(analytics?.volume.change || 0) >= 0 ? <TrendUp className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" /> : <TrendDown className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" />}
+                {Number(analytics?.volume.change || 0) >= 0 ? <TrendUp className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" /> : <TrendDown className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" />}
                 {analytics?.volume.change || 0}%
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function AdminDashboard() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500/20 to-red-500/10 flex items-center justify-center">
-                <Bell className="w-6 aria-hidden="true" h-6 text-red-600" weight="duotone" aria-hidden="true" />
+                <Bell className="w-6 h-6 text-red-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
               {totalAlerts > 0 && (
                 <Badge className="bg-red-100 text-red-600 border-0">
@@ -322,7 +322,7 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Lightning className="w-5 aria-hidden="true" h-5 text-amber-500" weight="fill" aria-hidden="true" />
+                <Lightning className="w-5 h-5 text-amber-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Action Required
               </h3>
             </div>
@@ -331,13 +331,13 @@ export default function AdminDashboard() {
                 <Link href="/disputes">
                   <div className="flex items-center gap-4 p-4 rounded-lg bg-red-50 hover:bg-red-100 transition-colors cursor-pointer">
                     <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
-                      <Warning className="w-5 aria-hidden="true" h-5 text-red-600" weight="fill" aria-hidden="true" />
+                      <Warning className="w-5 h-5 text-red-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold text-red-700">{analytics?.alerts.disputes} Disputes</div>
                       <div className="text-sm text-red-600">Need resolution</div>
                     </div>
-                    <CaretRight className="w-5 aria-hidden="true" h-5 text-red-400 ml-auto" />
+                    <CaretRight className="w-5 h-5 text-red-400 ml-auto" aria-hidden="true" />
                   </div>
                 </Link>
               )}
@@ -345,13 +345,13 @@ export default function AdminDashboard() {
                 <Link href="/withdrawals">
                   <div className="flex items-center gap-4 p-4 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer">
                     <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <ArrowDown className="w-5 aria-hidden="true" h-5 text-amber-600" weight="bold" aria-hidden="true" />
+                      <ArrowDown className="w-5 h-5 text-amber-600" aria-hidden="true" weight="bold" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold text-amber-700">{analytics?.alerts.pendingWithdrawals} Withdrawals</div>
                       <div className="text-sm text-amber-600">Pending approval</div>
                     </div>
-                    <CaretRight className="w-5 aria-hidden="true" h-5 text-amber-400 ml-auto" />
+                    <CaretRight className="w-5 h-5 text-amber-400 ml-auto" aria-hidden="true" />
                   </div>
                 </Link>
               )}
@@ -359,13 +359,13 @@ export default function AdminDashboard() {
                 <Link href="/kyc">
                   <div className="flex items-center gap-4 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <IdentificationCard className="w-5 aria-hidden="true" h-5 text-blue-600" weight="fill" aria-hidden="true" />
+                      <IdentificationCard className="w-5 h-5 text-blue-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="font-semibold text-blue-700">{analytics?.alerts.pendingKYC} KYC</div>
                       <div className="text-sm text-blue-600">Pending review</div>
                     </div>
-                    <CaretRight className="w-5 aria-hidden="true" h-5 text-blue-400 ml-auto" />
+                    <CaretRight className="w-5 h-5 text-blue-400 ml-auto" aria-hidden="true" />
                   </div>
                 </Link>
               )}
@@ -383,7 +383,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold">Transaction Overview</h3>
             <Select value={chartPeriod} onValueChange={setChartPeriod}>
-              <SelectTrigger className="w-3 aria-hidden="true"2">
+              <SelectTrigger className="w-32" aria-hidden="true">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -442,14 +442,14 @@ export default function AdminDashboard() {
               <Link href="/transactions">
                 <Button variant="ghost" size="sm" className="text-accent">
                   View All
-                  <CaretRight className="w-4 aria-hidden="true" h-4 ml-1" weight="bold" aria-hidden="true" />
+                  <CaretRight className="w-4 h-4 ml-1" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
             </div>
             <div className="space-y-3">
               {(!stats?.recentTransactions || stats.recentTransactions.length === 0) ? (
                 <div className="text-center py-8">
-                  <ArrowsLeftRight className="w-1 aria-hidden="true"2 h-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+                  <ArrowsLeftRight className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-50" aria-hidden="true" />
                   <p className="text-muted-foreground">No transactions yet</p>
                 </div>
               ) : (
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center justify-between py-3 px-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                            <Handshake className="w-5 aria-hidden="true" h-5 text-muted-foreground" weight="duotone" aria-hidden="true" />
+                            <Handshake className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="duotone" aria-hidden="true" />
                           </div>
                           <div>
                             <div className="font-medium text-sm">{tx.orderNumber}</div>
@@ -495,14 +495,14 @@ export default function AdminDashboard() {
               <Link href="/disputes">
                 <Button variant="ghost" size="sm" className="text-accent">
                   View All
-                  <CaretRight className="w-4 aria-hidden="true" h-4 ml-1" weight="bold" aria-hidden="true" />
+                  <CaretRight className="w-4 h-4 ml-1" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
             </div>
             <div className="space-y-3">
               {recentDisputes.length === 0 ? (
                 <div className="text-center py-8">
-                  <CheckCircle className="w-1 aria-hidden="true"2 h-12 mx-auto mb-3 text-emerald-500 opacity-50" />
+                  <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-500 opacity-50" aria-hidden="true" />
                   <p className="text-muted-foreground">No open disputes</p>
                   <p className="text-sm text-muted-foreground">All disputes have been resolved</p>
                 </div>
@@ -514,7 +514,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center justify-between py-3 px-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
-                            <Warning className="w-5 aria-hidden="true" h-5 text-red-600" weight="fill" aria-hidden="true" />
+                            <Warning className="w-5 h-5 text-red-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                           </div>
                           <div>
                             <div className="font-medium text-sm">{dispute.order?.orderNumber || dispute.id.slice(0, 8)}</div>
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
           <div className="glass-card p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <ArrowUp className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="bold" aria-hidden="true" />
+                <ArrowUp className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-lg font-bold">{formatCompact(stats?.stats.todayVolume || 0)}</div>
@@ -562,7 +562,7 @@ export default function AdminDashboard() {
           <div className="glass-card p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <UserPlus className="w-5 aria-hidden="true" h-5 text-blue-600" weight="bold" aria-hidden="true" />
+                <UserPlus className="w-5 h-5 text-blue-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-lg font-bold">{analytics?.users.week || 0}</div>
@@ -574,7 +574,7 @@ export default function AdminDashboard() {
           <div className="glass-card p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                <Clock className="w-5 aria-hidden="true" h-5 text-amber-600" weight="bold" aria-hidden="true" />
+                <Clock className="w-5 h-5 text-amber-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-lg font-bold">{stats?.stats.pendingWithdrawals || 0}</div>
@@ -586,7 +586,7 @@ export default function AdminDashboard() {
           <div className="glass-card p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
-                <Database className="w-5 aria-hidden="true" h-5 text-violet-600" weight="bold" aria-hidden="true" />
+                <Database className="w-5 h-5 text-violet-600" aria-hidden="true" weight="bold" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-lg font-bold">{formatCompact(stats?.stats.totalVolume || 0)}</div>

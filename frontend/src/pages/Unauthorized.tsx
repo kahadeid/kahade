@@ -34,7 +34,7 @@ export default function Unauthorized() {
           </h1>
           <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
             <div className="w-24 h-24 rounded-lg bg-red-500 flex items-center justify-center">
-              <ShieldWarning className="w-1 aria-hidden="true"2 h-12 text-white" weight="bold" aria-hidden="true" />
+              <ShieldWarning className="w-12 h-12 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -52,14 +52,14 @@ export default function Unauthorized() {
             className="btn-primary gap-2"
             onClick={handleGoToApp}
           >
-            <ArrowLeft className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
             Go to User Dashboard
           </Button>
           <Button 
             className="btn-secondary gap-2"
             onClick={handleLogout}
           >
-            <SignOut className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+            <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
             Logout
           </Button>
         </div>

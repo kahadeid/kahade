@@ -122,7 +122,7 @@ export default function ResetPassword() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+          <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
           <p className="text-neutral-600">Validating reset link...</p>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function ResetPassword() {
           className="max-w-md w-full text-center"
         >
           <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
-            <Warning className="w-1 aria-hidden="true"0 h-10 text-red-600" weight="duotone" aria-hidden="true" />
+            <Warning className="w-10 h-10 text-red-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
           </div>
           <h1 className="text-3xl font-bold text-black mb-4">Invalid or Expired Link</h1>
           <p className="text-neutral-600 mb-8">
@@ -149,12 +149,12 @@ export default function ResetPassword() {
             <Link href="/forgot-password">
               <Button className="w-full h-12 bg-black text-white hover:bg-black/90">
                 Request New Link
-                <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
               </Button>
             </Link>
             <Link href="/login">
               <Button variant="outline" className="w-full h-12 border-neutral-200">
-                <ArrowLeft className="mr-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                <ArrowLeft className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 Back to Login
               </Button>
             </Link>
@@ -174,7 +174,7 @@ export default function ResetPassword() {
           className="max-w-md w-full text-center"
         >
           <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-1 aria-hidden="true"0 h-10 text-emerald-600" weight="duotone" aria-hidden="true" />
+            <CheckCircle className="w-10 h-10 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
           </div>
           <h1 className="text-3xl font-bold text-black mb-4">Password Reset Complete</h1>
           <p className="text-neutral-600 mb-8">
@@ -183,7 +183,7 @@ export default function ResetPassword() {
           <Link href="/login">
             <Button className="w-full h-12 bg-black text-white hover:bg-black/90">
               Sign In
-              <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+              <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
             </Button>
           </Link>
         </motion.div>
@@ -202,7 +202,7 @@ export default function ResetPassword() {
           </Link>
 
           <div className="w-16 h-16 rounded-lg bg-black flex items-center justify-center mb-6">
-            <Key className="w-8 aria-hidden="true" h-8 text-white" weight="duotone" aria-hidden="true" />
+            <Key className="w-8 h-8 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
           </div>
           
           <h1 className="text-3xl font-bold mb-2 text-black">Create new password</h1>
@@ -214,7 +214,7 @@ export default function ResetPassword() {
             <div className="space-y-2">
               <Label htmlFor="password" className="text-black font-medium">New Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-neutral-500" weight="regular" aria-hidden="true" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -231,12 +231,12 @@ export default function ResetPassword() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-900 transition-colors"
                 >
-                  {showPassword ? <EyeSlash className="w-5 aria-hidden="true" h-5" weight="regular" aria-hidden="true" /> : <Eye className="w-5 aria-hidden="true" h-5" weight="regular" aria-hidden="true" />}
+                  {showPassword ? <EyeSlash className="w-5 h-5" aria-hidden="true" weight="regular" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" weight="regular" aria-hidden="true" />}
                 </button>
               </div>
               {errors.password && (
                 <p className="text-sm text-red-500 flex items-center gap-1">
-                  <Warning className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                  <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                   {errors.password}
                 </p>
               )}
@@ -261,7 +261,7 @@ export default function ResetPassword() {
                     const isPassed = passwordStrength.passed.includes(req);
                     return (
                       <span key={req} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${isPassed ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
-                        {isPassed ? <Check className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" /> : <X className="w-3 h-3" weight="bold" aria-hidden="true" />}
+                        {isPassed ? <Check className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" /> : <X className="w-3 h-3" weight="bold" aria-hidden="true" />}
                         {req}
                       </span>
                     );
@@ -273,7 +273,7 @@ export default function ResetPassword() {
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" className="text-black font-medium">Confirm Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-neutral-500" weight="regular" aria-hidden="true" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -286,12 +286,12 @@ export default function ResetPassword() {
                   className={`pl-10 bg-white border-neutral-200 focus:border-black focus:ring-black h-12 ${errors.confirmPassword ? 'border-red-500' : ''}`}
                 />
                 {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-emerald-500" weight="bold" aria-hidden="true" />
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" aria-hidden="true" weight="bold" aria-hidden="true" />
                 )}
               </div>
               {errors.confirmPassword && (
                 <p className="text-sm text-red-500 flex items-center gap-1">
-                  <Warning className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                  <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                   {errors.confirmPassword}
                 </p>
               )}
@@ -304,13 +304,13 @@ export default function ResetPassword() {
             >
               {isSubmitting ? (
                 <>
-                  <Spinner className="mr-2 w-5 aria-hidden="true" h-5 animate-spin" weight="bold" aria-hidden="true" />
+                  <Spinner className="mr-2 w-5 h-5 animate-spin" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Resetting password...
                 </>
               ) : (
                 <>
                   Reset Password
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </>
               )}
             </Button>
@@ -327,11 +327,11 @@ export default function ResetPassword() {
           <div className="mt-8 pt-8 border-t border-neutral-200">
             <div className="flex items-center justify-center gap-6 text-xs text-neutral-500">
               <div className="flex items-center gap-1">
-                <ShieldCheck className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                 <span>256-bit SSL</span>
               </div>
               <div className="flex items-center gap-1">
-                <Lock className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <Lock className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                 <span>Encrypted</span>
               </div>
             </div>
@@ -356,7 +356,7 @@ export default function ResetPassword() {
           className="relative z-10 text-center max-w-md"
         >
           <div className="w-32 h-32 mx-auto mb-8 rounded-lg bg-white/10 flex items-center justify-center backdrop-blur-sm">
-            <ShieldCheck className="w-1 aria-hidden="true"6 h-16 text-white" weight="duotone" aria-hidden="true" />
+            <ShieldCheck className="w-16 h-16 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
           </div>
           <h2 className="text-2xl font-bold mb-4 text-white">
             Secure Password Reset
@@ -369,19 +369,19 @@ export default function ResetPassword() {
             <h3 className="text-white font-medium mb-4">Password Tips:</h3>
             <ul className="space-y-3 text-white/70 text-sm">
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-400 shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Use a unique password for each account
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-400 shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Mix uppercase, lowercase, numbers, and symbols
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-400 shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Avoid personal information like birthdays
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-400 shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Consider using a password manager
               </li>
             </ul>

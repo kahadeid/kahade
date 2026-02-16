@@ -263,7 +263,7 @@ export default function Navbar() {
                 {...ariaProps('Go to dashboard')}
               >
                 Dashboard
-                <ArrowRight className="ml-2 w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               </Button>
             ) : (
               <>
@@ -316,7 +316,7 @@ export default function Navbar() {
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" weight="bold" aria-hidden="true" />
               ) : (
-                <List className="w-6 aria-hidden="true" h-6" weight="bold" aria-hidden="true" />
+                <List className="w-6 h-6" aria-hidden="true" weight="bold" aria-hidden="true" />
               )}
             </button>
           </div>

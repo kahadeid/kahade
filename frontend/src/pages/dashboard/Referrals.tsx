@@ -227,7 +227,7 @@ export default function Referrals() {
       <DashboardLayout title="Referrals" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Loading referral data...</p>
           </div>
         </div>
@@ -256,7 +256,7 @@ export default function Referrals() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <Gift className="w-5 aria-hidden="true" h-5 text-white/60" weight="duotone" aria-hidden="true" />
+                  <Gift className="w-5 h-5 text-white/60" aria-hidden="true" weight="duotone" aria-hidden="true" />
                   <span className="text-white/60 text-sm font-medium">Your Referral Code</span>
                 </div>
                 
@@ -271,7 +271,7 @@ export default function Referrals() {
                       onClick={copyReferralCode}
                       className="text-white/70 hover:text-white hover:bg-white/10 h-10 w-10 p-0 rounded-xl"
                     >
-                      {copied ? <Check className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" /> : <Copy className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />}
+                      {copied ? <Check className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" /> : <Copy className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />}
                     </Button>
                   </div>
                 ) : (
@@ -280,7 +280,7 @@ export default function Referrals() {
                     disabled={isGenerating}
                     className="bg-white text-black hover:bg-white/90 rounded-xl h-11 mb-4"
                   >
-                    {isGenerating ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : <Gift className="w-4 aria-hidden="true" h-4 mr-2" />}
+                    {isGenerating ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : <Gift className="w-4 h-4 mr-2" aria-hidden="true" />}
                     Generate Code
                   </Button>
                 )}
@@ -296,14 +296,14 @@ export default function Referrals() {
                   onClick={copyReferralLink}
                   className="bg-white/10 text-white hover:bg-white/20 border border-white/20 rounded-xl h-11"
                 >
-                  {copiedLink ? <Check className="w-4 aria-hidden="true" h-4 mr-2" /> : <Copy className="w-4 aria-hidden="true" h-4 mr-2" />}
+                  {copiedLink ? <Check className="w-4 h-4 mr-2" aria-hidden="true" /> : <Copy className="w-4 h-4 mr-2" aria-hidden="true" />}
                   Copy Link
                 </Button>
                 <Button
                   onClick={shareReferral}
                   className="bg-white text-black hover:bg-white/90 rounded-xl h-11"
                 >
-                  <Share className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                  <Share className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Share
                 </Button>
               </div>
@@ -321,7 +321,7 @@ export default function Referrals() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center">
-                <Users className="w-5 aria-hidden="true" h-5 text-black" weight="duotone" aria-hidden="true" />
+                <Users className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.totalReferrals || 0}</div>
@@ -336,7 +336,7 @@ export default function Referrals() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                <CheckCircle className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="duotone" aria-hidden="true" />
+                <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.successfulReferrals || 0}</div>
@@ -351,7 +351,7 @@ export default function Referrals() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                <Clock className="w-5 aria-hidden="true" h-5 text-amber-600" weight="duotone" aria-hidden="true" />
+                <Clock className="w-5 h-5 text-amber-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.pendingReferrals || 0}</div>
@@ -366,7 +366,7 @@ export default function Referrals() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                <Trophy className="w-5 aria-hidden="true" h-5 text-purple-600" weight="duotone" aria-hidden="true" />
+                <Trophy className="w-5 h-5 text-purple-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
               </div>
             </div>
             <div className="text-xl md:text-2xl font-bold text-black truncate">{formatCurrency(stats?.totalEarnings || 0)}</div>
@@ -397,7 +397,7 @@ export default function Referrals() {
                 {(Array.isArray(referrals) ? referrals : []).length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                      <UserPlus className="w-8 aria-hidden="true" h-8 text-neutral-500" weight="regular" aria-hidden="true" />
+                      <UserPlus className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
                     </div>
                     <h4 className="text-lg font-semibold text-black mb-1">No Referrals Yet</h4>
                     <p className="text-sm text-neutral-600 max-w-sm mx-auto">
@@ -417,7 +417,7 @@ export default function Referrals() {
                           className="flex items-center gap-4 md:gap-4 p-2 md:p-4 rounded-xl hover:bg-neutral-50 transition-colors"
                         >
                           <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0">
-                            <Users className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="duotone" aria-hidden="true" />
+                            <Users className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
@@ -448,7 +448,7 @@ export default function Referrals() {
                 {(Array.isArray(rewards) ? rewards : []).length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                      <Gift className="w-8 aria-hidden="true" h-8 text-neutral-500" weight="regular" aria-hidden="true" />
+                      <Gift className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
                     </div>
                     <h4 className="text-lg font-semibold text-black mb-1">No Rewards Yet</h4>
                     <p className="text-sm text-neutral-600 max-w-sm mx-auto">
@@ -495,7 +495,7 @@ export default function Referrals() {
                                 className="bg-black text-white hover:bg-black/90 rounded-lg h-8 text-xs"
                               >
                                 {claimingRewardId === reward.id ? (
-                                  <Spinner className="w-3 aria-hidden="true" h-3 animate-spin" />
+                                  <Spinner className="w-3 h-3 animate-spin" aria-hidden="true" />
                                 ) : (
                                   'Claim'
                                 )}

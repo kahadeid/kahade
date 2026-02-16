@@ -130,12 +130,12 @@ export function Table<T extends Record<string, any>>({
   // Render sort icon
   const renderSortIcon = (columnKey: string) => {
     if (sortKey !== columnKey) {
-      return <ChevronsUpDown className="w-4 aria-hidden="true" h-4 text-gray-400" />;
+      return <ChevronsUpDown className="w-4 h-4 text-gray-400" aria-hidden="true" />;
     }
     return sortOrder === 'asc' ? (
-      <ChevronUp className="w-4 aria-hidden="true" h-4 text-blue-600" />
+      <ChevronUp className="w-4 h-4 text-blue-600" aria-hidden="true" />
     ) : (
-      <ChevronDown className="w-4 aria-hidden="true" h-4 text-blue-600" />
+      <ChevronDown className="w-4 h-4 text-blue-600" aria-hidden="true" />
     );
   };
 

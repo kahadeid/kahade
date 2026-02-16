@@ -163,7 +163,7 @@ export function RadioGroup({
                       {option.label}
                     </span>
                     {isChecked && (
-                      <Check className="w-5 aria-hidden="true" h-5 text-blue-600 flex-shrink-0 ml-2" />
+                      <Check className="w-5 h-5 text-blue-600 flex-shrink-0 ml-2" aria-hidden="true" />
                     )}
                   </div>
                   {option.description && (
@@ -284,13 +284,13 @@ export function RadioGroup({
 //       value: 'standard',
 //       label: 'Standard Delivery',
 //       description: '5-7 business days',
-//       icon: <Truck className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Truck className="w-5 h-5" aria-hidden="true" />,
 //     },
 //     {
 //       value: 'express',
 //       label: 'Express Delivery',
 //       description: '2-3 business days',
-//       icon: <Zap className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Zap className="w-5 h-5" aria-hidden="true" />,
 //     },
 //   ]}
 // />
@@ -368,17 +368,17 @@ export function RadioGroup({
 //     {
 //       value: 'light',
 //       label: 'Light',
-//       icon: <Sun className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Sun className="w-5 h-5" aria-hidden="true" />,
 //     },
 //     {
 //       value: 'dark',
 //       label: 'Dark',
-//       icon: <Moon className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Moon className="w-5 h-5" aria-hidden="true" />,
 //     },
 //     {
 //       value: 'auto',
 //       label: 'Auto',
-//       icon: <Monitor className="w-5 aria-hidden="true" h-5" />,
+//       icon: <Monitor className="w-5 h-5" aria-hidden="true" />,
 //     },
 //   ]}
 // />
