@@ -127,136 +127,136 @@ export class WithdrawalService {
    */
   async createWithdrawal(dto: CreateWithdrawalDto): Promise<Withdrawal> {
     try {
-    const {
-      userId,
-      bankAccountId,
-      amountMinor,
-      idempotencyKey,
-      ipAddress,
-      userAgent,
-      deviceFingerprint,
+      const {
+        userId,
+        bankAccountId,
+        amountMinor,
+        idempotencyKey,
+        ipAddress,
+        userAgent,
+        deviceFingerprint,
+      } = dto;
+
+      // Step 1: Idempotency check
+      const existingWithdrawal = await this.prisma.withdrawal.findUnique({
+        where: { idempotencyKey },
+      });
+
+      if (existingWithdrawal) {
+        this.logger.warn(`Duplicate withdrawal request: ${idempotencyKey}`);
+        return existingWithdrawal;
+      }
+
+      // Step 2: Validate user and KYC status
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
+
+      // Step 3: Validate bank account ownership
+      const bankAccount = await this.prisma.bankAccount.findFirst({
+        where: {
+          id: bankAccountId,
+          userId,
+          isActive: true,
+          deletedAt: null,
+        },
+      });
+
+      if (!bankAccount) {
+        throw new BadRequestException("Invalid or inactive bank account");
+      }
+
+      // Step 4: Get wallet and validate balance
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { userId },
+      });
+
+      if (!wallet) {
+        throw new NotFoundException("Wallet not found");
+      }
+
+      const availableBalance = wallet.balanceMinor - wallet.lockedMinor;
+      if (availableBalance < amountMinor) {
+        throw new BadRequestException({
+          code: "INSUFFICIENT_BALANCE",
+          message: "Insufficient balance",
+          available: availableBalance.toString(),
+          requested: amountMinor.toString(),
+        });
+      }
+
+      // Step 5: Validate withdrawal limits
+      await this.validateWithdrawalLimits(userId, amountMinor, user.kycStatus);
+
+      // Step 6: Calculate velocity score
+      const velocityData = await this.calculateVelocityScore(
+        userId,
+        amountMinor,
+        ipAddress,
+        deviceFingerprint,
+      );
+
+      // Step 7: Determine if approval is required
+      const kycLevel = this.getKYCLevel(user.kycStatus);
+      const limits = WITHDRAWAL_LIMITS[kycLevel];
+      const requiresApproval = amountMinor >= limits.requiresApprovalThreshold;
+      const isFlagged =
+        velocityData.score >= VELOCITY_THRESHOLDS.velocityScoreWarning;
+
+      // Step 8: Create withdrawal in transaction
+      const withdrawal = await this.prisma.$transaction(async (tx: any) => {
+        // Lock balance
+        await this.walletService.lockBalance({
+          userId,
+          amount: amountMinor,
+          reason: "Withdrawal request",
+          initiatedBy: userId,
+        });
+
+        // Create withdrawal record
+        const newWithdrawal = await tx.withdrawal.create({
+          data: {
+            walletId: wallet.id,
+            userId,
+            bankAccountId,
+            amountMinor,
+            idempotencyKey,
+            status:
+              isFlagged || requiresApproval
+                ? WithdrawalStatus.PENDING
+                : WithdrawalStatus.PENDING,
+            requiresMultipleApprovals:
+              amountMinor >= limits.requiresApprovalThreshold * 2n,
+            requiredApprovals:
+              amountMinor >= limits.requiresApprovalThreshold * 2n ? 2 : 1,
+            velocityScore: velocityData.score,
+            isFlaggedBySystem: isFlagged,
+            flagReason: isFlagged ? velocityData.flagReason : null,
+            coolingPeriodEndsAt: new Date(
+              Date.now() + limits.coolingPeriodMinutes * 60 * 1000,
+            ),
+            canProcessAfter: new Date(
+              Date.now() + limits.coolingPeriodMinutes * 60 * 1000,
+            ),
+          },
+        });
+
+        return newWithdrawal;
+      });
+
+      this.logger.log(
+        `Created withdrawal ${withdrawal.id} for user ${userId}, amount: ${amountMinor}, status: ${withdrawal.status}`,
+      );
+
+      return withdrawal;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    } = dto;
-
-    // Step 1: Idempotency check
-    const existingWithdrawal = await this.prisma.withdrawal.findUnique({
-      where: { idempotencyKey },
-    });
-
-    if (existingWithdrawal) {
-      this.logger.warn(`Duplicate withdrawal request: ${idempotencyKey}`);
-      return existingWithdrawal;
-    }
-
-    // Step 2: Validate user and KYC status
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-
-    // Step 3: Validate bank account ownership
-    const bankAccount = await this.prisma.bankAccount.findFirst({
-      where: {
-        id: bankAccountId,
-        userId,
-        isActive: true,
-        deletedAt: null,
-      },
-    });
-
-    if (!bankAccount) {
-      throw new BadRequestException("Invalid or inactive bank account");
-    }
-
-    // Step 4: Get wallet and validate balance
-    const wallet = await this.prisma.wallet.findUnique({
-      where: { userId },
-    });
-
-    if (!wallet) {
-      throw new NotFoundException("Wallet not found");
-    }
-
-    const availableBalance = wallet.balanceMinor - wallet.lockedMinor;
-    if (availableBalance < amountMinor) {
-      throw new BadRequestException({
-        code: "INSUFFICIENT_BALANCE",
-        message: "Insufficient balance",
-        available: availableBalance.toString(),
-        requested: amountMinor.toString(),
-      });
-    }
-
-    // Step 5: Validate withdrawal limits
-    await this.validateWithdrawalLimits(userId, amountMinor, user.kycStatus);
-
-    // Step 6: Calculate velocity score
-    const velocityData = await this.calculateVelocityScore(
-      userId,
-      amountMinor,
-      ipAddress,
-      deviceFingerprint,
-    );
-
-    // Step 7: Determine if approval is required
-    const kycLevel = this.getKYCLevel(user.kycStatus);
-    const limits = WITHDRAWAL_LIMITS[kycLevel];
-    const requiresApproval = amountMinor >= limits.requiresApprovalThreshold;
-    const isFlagged =
-      velocityData.score >= VELOCITY_THRESHOLDS.velocityScoreWarning;
-
-    // Step 8: Create withdrawal in transaction
-    const withdrawal = await this.prisma.$transaction(async (tx: any) => {
-      // Lock balance
-      await this.walletService.lockBalance({
-        userId,
-        amount: amountMinor,
-        reason: "Withdrawal request",
-        initiatedBy: userId,
-      });
-
-      // Create withdrawal record
-      const newWithdrawal = await tx.withdrawal.create({
-        data: {
-          walletId: wallet.id,
-          userId,
-          bankAccountId,
-          amountMinor,
-          idempotencyKey,
-          status:
-            isFlagged || requiresApproval
-              ? WithdrawalStatus.PENDING
-              : WithdrawalStatus.PENDING,
-          requiresMultipleApprovals:
-            amountMinor >= limits.requiresApprovalThreshold * 2n,
-          requiredApprovals:
-            amountMinor >= limits.requiresApprovalThreshold * 2n ? 2 : 1,
-          velocityScore: velocityData.score,
-          isFlaggedBySystem: isFlagged,
-          flagReason: isFlagged ? velocityData.flagReason : null,
-          coolingPeriodEndsAt: new Date(
-            Date.now() + limits.coolingPeriodMinutes * 60 * 1000,
-          ),
-          canProcessAfter: new Date(
-            Date.now() + limits.coolingPeriodMinutes * 60 * 1000,
-          ),
-        },
-      });
-
-      return newWithdrawal;
-    });
-
-    this.logger.log(
-      `Created withdrawal ${withdrawal.id} for user ${userId}, amount: ${amountMinor}, status: ${withdrawal.status}`,
-    );
-
-    return withdrawal;
   }
 
   // ============================================================================
@@ -381,95 +381,95 @@ export class WithdrawalService {
    */
   async getWithdrawalLimits(userId: string): Promise<WithdrawalLimits> {
     try {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
+
+      const kycLevel = this.getKYCLevel(user.kycStatus);
+      const limits = WITHDRAWAL_LIMITS[kycLevel];
+      const now = new Date();
+      const startOfDay = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+      );
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      // Get today's withdrawals
+      const todayWithdrawals = await this.prisma.withdrawal.aggregate({
+        where: {
+          userId,
+          requestedAt: { gte: startOfDay },
+          status: {
+            in: [
+              WithdrawalStatus.PENDING,
+              WithdrawalStatus.APPROVED,
+              WithdrawalStatus.COMPLETED,
+            ],
+          },
+        },
+        _sum: { amountMinor: true },
+        _count: true,
+      });
+
+      // Get this month's withdrawals
+      const monthWithdrawals = await this.prisma.withdrawal.aggregate({
+        where: {
+          userId,
+          requestedAt: { gte: startOfMonth },
+          status: {
+            in: [
+              WithdrawalStatus.PENDING,
+              WithdrawalStatus.APPROVED,
+              WithdrawalStatus.COMPLETED,
+            ],
+          },
+        },
+        _sum: { amountMinor: true },
+      });
+
+      // Get last withdrawal
+      const lastWithdrawal = await this.prisma.withdrawal.findFirst({
+        where: { userId },
+        orderBy: { requestedAt: "desc" },
+        select: { requestedAt: true },
+      });
+
+      const dailyUsed = todayWithdrawals._sum?.amountMinor || 0n;
+      const dailyCount = todayWithdrawals._count || 0;
+      const monthlyUsed = monthWithdrawals._sum?.amountMinor || 0n;
+
+      let nextWithdrawalAllowedAt: Date | null = null;
+      if (lastWithdrawal) {
+        const nextAllowed = new Date(
+          lastWithdrawal.requestedAt.getTime() +
+            limits.coolingPeriodMinutes * 60 * 1000,
+        );
+        if (nextAllowed > now) {
+          nextWithdrawalAllowedAt = nextAllowed;
+        }
+      }
+
+      return {
+        dailyLimit: limits.dailyLimit,
+        dailyUsed,
+        dailyRemaining: limits.dailyLimit - dailyUsed,
+        dailyCount,
+        maxDailyCount: limits.maxDailyCount,
+        monthlyLimit: limits.monthlyLimit,
+        monthlyUsed,
+        monthlyRemaining: limits.monthlyLimit - monthlyUsed,
+        coolingPeriodMinutes: limits.coolingPeriodMinutes,
+        nextWithdrawalAllowedAt,
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-
-    const kycLevel = this.getKYCLevel(user.kycStatus);
-    const limits = WITHDRAWAL_LIMITS[kycLevel];
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    // Get today's withdrawals
-    const todayWithdrawals = await this.prisma.withdrawal.aggregate({
-      where: {
-        userId,
-        requestedAt: { gte: startOfDay },
-        status: {
-          in: [
-            WithdrawalStatus.PENDING,
-            WithdrawalStatus.APPROVED,
-            WithdrawalStatus.COMPLETED,
-          ],
-        },
-      },
-      _sum: { amountMinor: true },
-      _count: true,
-    });
-
-    // Get this month's withdrawals
-    const monthWithdrawals = await this.prisma.withdrawal.aggregate({
-      where: {
-        userId,
-        requestedAt: { gte: startOfMonth },
-        status: {
-          in: [
-            WithdrawalStatus.PENDING,
-            WithdrawalStatus.APPROVED,
-            WithdrawalStatus.COMPLETED,
-          ],
-        },
-      },
-      _sum: { amountMinor: true },
-    });
-
-    // Get last withdrawal
-    const lastWithdrawal = await this.prisma.withdrawal.findFirst({
-      where: { userId },
-      orderBy: { requestedAt: "desc" },
-      select: { requestedAt: true },
-    });
-
-    const dailyUsed = todayWithdrawals._sum?.amountMinor || 0n;
-    const dailyCount = todayWithdrawals._count || 0;
-    const monthlyUsed = monthWithdrawals._sum?.amountMinor || 0n;
-
-    let nextWithdrawalAllowedAt: Date | null = null;
-    if (lastWithdrawal) {
-      const nextAllowed = new Date(
-        lastWithdrawal.requestedAt.getTime() +
-          limits.coolingPeriodMinutes * 60 * 1000,
-      );
-      if (nextAllowed > now) {
-        nextWithdrawalAllowedAt = nextAllowed;
-      }
-    }
-
-    return {
-      dailyLimit: limits.dailyLimit,
-      dailyUsed,
-      dailyRemaining: limits.dailyLimit - dailyUsed,
-      dailyCount,
-      maxDailyCount: limits.maxDailyCount,
-      monthlyLimit: limits.monthlyLimit,
-      monthlyUsed,
-      monthlyRemaining: limits.monthlyLimit - monthlyUsed,
-      coolingPeriodMinutes: limits.coolingPeriodMinutes,
-      nextWithdrawalAllowedAt,
-    };
   }
 
   // ============================================================================

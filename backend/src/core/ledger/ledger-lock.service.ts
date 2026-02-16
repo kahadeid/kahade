@@ -40,8 +40,6 @@ export class LedgerLockService {
     this.validateUUID(walletId, 'Wallet ID');
 
     return await this.prisma.$transaction(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       async (tx: any) => {
         const wallet = await tx.$queryRaw<Array<{ id: string }>>`
           SELECT id FROM wallets
@@ -79,9 +77,7 @@ export class LedgerLockService {
     // Sort wallet IDs to ensure consistent lock order (prevent deadlocks)
     const sortedWalletIds = [...walletIds].sort();
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return await this.prisma.$transaction(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       async (tx: any) => {
         // Acquire FOR UPDATE locks on all wallets with ::uuid type cast
         for (const walletId of sortedWalletIds) {
@@ -112,10 +108,8 @@ export class LedgerLockService {
   async createDoubleEntry(
     tx: Prisma.TransactionClient,
     journalData: {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       type: string;
       description: string;
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       metadata?: any;
     },
     entries: Array<{
@@ -144,11 +138,9 @@ export class LedgerLockService {
       throw new Error(
         `Double-entry invariant violated: sum is ${sum}, expected 0`,
       );
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
 
     // Create journal
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const journal = await (tx as any).ledgerJournal.create({
       data: {
         type: journalData.type,
@@ -159,12 +151,10 @@ export class LedgerLockService {
           0n,
         ),
       },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     // Create entries
     for (const entry of entries) {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).ledgerEntry.create({
         data: {
           journalId: journal.id,
@@ -187,15 +177,10 @@ export class LedgerLockService {
    * Validate ledger integrity for a wallet
    */
   async validateWalletLedger(walletId: string): Promise<{
-    try {
     isValid: boolean;
     expectedBalance: bigint;
     actualBalance: bigint;
     discrepancy: bigint;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   }> {
     // Validate UUID
     this.validateUUID(walletId, 'Wallet ID');
@@ -204,13 +189,11 @@ export class LedgerLockService {
       where: { id: walletId },
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!wallet) {
       throw new NotFoundException(`Wallet ${walletId} not found`);
     }
 
     // Calculate expected balance from ledger entries
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const entries = await (this.prisma as any).ledgerEntry.findMany({
       where: { walletId },
     });

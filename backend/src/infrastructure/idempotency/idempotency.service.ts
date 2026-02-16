@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Injectable, Inject } , Logger from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 
 
@@ -13,12 +13,13 @@ interface IdempotencyData {
 
 @Injectable()
 export class IdempotencyService {
+  private readonly logger = new Logger(IdempotencyService.name);
   private readonly PROCESSING_PREFIX = 'idempotency:processing:';
   private readonly RESPONSE_PREFIX = 'idempotency:response:';
   private readonly DEFAULT_TTL = 86400; // 24 hours in seconds
   private readonly PROCESSING_TTL = 300; // 5 minutes in seconds
 
-  constructor(@Inject(CACHE_MANAGER, private readonly logger: Logger) private cacheManager: Cache) {}
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
   /**
    * Build cache key with userId
@@ -46,53 +47,47 @@ export class IdempotencyService {
    */
   async set(key: string, value: any, ttl?: number): Promise<void> {
     try {
-    const serialized = typeof value === 'string' ? value : JSON.stringify(value);
-    await this.cacheManager.set(key, serialized, ttl || this.DEFAULT_TTL);
+      const serialized = typeof value === 'string' ? value : JSON.stringify(value);
+      await this.cacheManager.set(key, serialized, ttl || this.DEFAULT_TTL);
+    } catch (error) {
+      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
   /**
    * Delete cache value
    */
+  async delete(key: string): Promise<void> {
+    try {
+      await this.cacheManager.del(key);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-  /**
-   * Delete
-   */
-  async delete(key: string): Promise<void> {
-    try {
-    await this.cacheManager.del(key);
   }
 
   /**
    * Check if a request with this idempotency key is currently being processed
    */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
-  /**
-   * Isprocessing
-   */
   async isProcessing(key: string, userId: string): Promise<boolean> {
     try {
-    const fullKey = this.buildKey(key, userId);
+      const fullKey = this.buildKey(key, userId);
+      const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
+      const data = await this.get(processingKey);
+
+      if (!data) return false;
+
+      // Check if still valid (not expired) and belongs to the same user
+      const isValid = data.status === 'processing' &&
+                      data.userId === userId &&
+                      (Date.now() - data.timestamp) < (this.PROCESSING_TTL * 1000);
+
+      return isValid;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
-    const data = await this.get(processingKey);
-
-    if (!data) return false;
-
-    // Check if still valid (not expired) and belongs to the same user
-    const isValid = data.status === 'processing' &&
-                    data.userId === userId &&
-                    (Date.now() - data.timestamp) < (this.PROCESSING_TTL * 1000);
-
-    return isValid;
   }
 
   /**
@@ -100,19 +95,19 @@ export class IdempotencyService {
    */
   async markProcessing(key: string, userId: string, ttl?: number): Promise<void> {
     try {
-    const fullKey = this.buildKey(key, userId);
+      const fullKey = this.buildKey(key, userId);
+      const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
+      const data: IdempotencyData = {
+        status: 'processing',
+        userId,
+        timestamp: Date.now(),
+      };
+
+      await this.set(processingKey, data, ttl || this.PROCESSING_TTL);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
-    const data: IdempotencyData = {
-      status: 'processing',
-      userId,
-      timestamp: Date.now(),
-    };
-
-    await this.set(processingKey, data, ttl || this.PROCESSING_TTL);
   }
 
   /**
@@ -120,19 +115,19 @@ export class IdempotencyService {
    */
   async getCachedResponse(key: string, userId: string): Promise<any> {
     try {
-    const fullKey = this.buildKey(key, userId);
+      const fullKey = this.buildKey(key, userId);
+      const responseKey = `${this.RESPONSE_PREFIX}${fullKey}`;
+      const data = await this.get(responseKey);
+
+      if (!data || data.status !== 'completed' || data.userId !== userId) {
+        return null;
+      }
+
+      return data.response;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const responseKey = `${this.RESPONSE_PREFIX}${fullKey}`;
-    const data = await this.get(responseKey);
-
-    if (!data || data.status !== 'completed' || data.userId !== userId) {
-      return null;
-    }
-
-    return data.response;
   }
 
   /**
@@ -140,26 +135,26 @@ export class IdempotencyService {
    */
   async cacheResponse(key: string, userId: string, response: unknown, ttl?: number): Promise<void> {
     try {
-    const fullKey = this.buildKey(key, userId);
+      const fullKey = this.buildKey(key, userId);
+      const responseKey = `${this.RESPONSE_PREFIX}${fullKey}`;
+      const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
+
+      const data: IdempotencyData = {
+        status: 'completed',
+        userId,
+        response,
+        timestamp: Date.now(),
+      };
+
+      // Store the response
+      await this.set(responseKey, data, ttl || this.DEFAULT_TTL);
+
+      // Remove processing marker
+      await this.delete(processingKey);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const responseKey = `${this.RESPONSE_PREFIX}${fullKey}`;
-    const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
-
-    const data: IdempotencyData = {
-      status: 'completed',
-      userId,
-      response,
-      timestamp: Date.now(),
-    };
-
-    // Store the response
-    await this.set(responseKey, data, ttl || this.DEFAULT_TTL);
-
-    // Remove processing marker
-    await this.delete(processingKey);
   }
 
   /**
@@ -167,18 +162,18 @@ export class IdempotencyService {
    */
   async clearIdempotencyKey(key: string, userId: string): Promise<void> {
     try {
-    const fullKey = this.buildKey(key, userId);
+      const fullKey = this.buildKey(key, userId);
+      const responseKey = `${this.RESPONSE_PREFIX}${fullKey}`;
+      const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
+
+      await Promise.all([
+        this.delete(responseKey),
+        this.delete(processingKey),
+      ]);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const responseKey = `${this.RESPONSE_PREFIX}${fullKey}`;
-    const processingKey = `${this.PROCESSING_PREFIX}${fullKey}`;
-
-    await Promise.all([
-      this.delete(responseKey),
-      this.delete(processingKey),
-    ]);
   }
 
   /**

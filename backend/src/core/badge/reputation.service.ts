@@ -3,9 +3,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Decimal } from "@prisma/client/runtime/library";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 
-// Eslint-disable-next-line @typescript-eslint/no-unused-vars
-// Eslint-disable-next-line @typescript-eslint/no-unused-vars
-
 // ============================================================================
 // REPUTATION SERVICE - User Trust & Level System
 // ============================================================================
@@ -76,48 +73,48 @@ export class ReputationService {
    */
   async getUserReputation(userId: string): Promise<UserReputationInfo> {
     try {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        reputationScore: true,
-        totalTransactions: true,
-      },
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          reputationScore: true,
+          totalTransactions: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Get or create user level
+      let userLevel = await this.prisma.userLevel.findUnique({
+        where: { userId },
+      });
+
+      if (!userLevel) {
+        userLevel = await this.prisma.userLevel.create({
+          data: { userId },
+        });
+      }
+
+      const levelInfo = this.calculateLevel(userLevel.totalXp);
+
+      return {
+        userId: user.id,
+        reputationScore: Number(user.reputationScore),
+        level: levelInfo.level,
+        currentXp: userLevel.currentXp,
+        totalXp: userLevel.totalXp,
+        xpToNextLevel: levelInfo.xpToNextLevel,
+        transactionCount: userLevel.transactionCount,
+        successRate: Number(userLevel.successRate),
+        responseTime: userLevel.responseTime,
+        rank: levelInfo.rank,
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    // Get or create user level
-    let userLevel = await this.prisma.userLevel.findUnique({
-      where: { userId },
-    });
-
-    if (!userLevel) {
-      userLevel = await this.prisma.userLevel.create({
-        data: { userId },
-      });
-    }
-
-    const levelInfo = this.calculateLevel(userLevel.totalXp);
-
-    return {
-      userId: user.id,
-      reputationScore: Number(user.reputationScore),
-      level: levelInfo.level,
-      currentXp: userLevel.currentXp,
-      totalXp: userLevel.totalXp,
-      xpToNextLevel: levelInfo.xpToNextLevel,
-      transactionCount: userLevel.transactionCount,
-      successRate: Number(userLevel.successRate),
-      responseTime: userLevel.responseTime,
-      rank: levelInfo.rank,
-    };
   }
 
   /**
@@ -125,52 +122,50 @@ export class ReputationService {
    */
   async updateReputation(event: ReputationChangeEvent): Promise<void> {
     try {
+      const { userId, reason, change, referenceType, referenceId } = event;
+
+      await this.prisma.$transaction(async (tx: any) => {
+        // Get current reputation
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          select: { reputationScore: true },
+        });
+
+        if (!user) return;
+
+        const previousScore = Number(user.reputationScore);
+        let newScore = previousScore + change;
+
+        // Clamp between 0 and 5
+        newScore = Math.max(0, Math.min(5, newScore));
+
+        // Update user reputation
+        await tx.user.update({
+          where: { id: userId },
+          data: { reputationScore: new Decimal(newScore.toFixed(2)) },
+        });
+
+        // Record history
+        await tx.reputationHistory.create({
+          data: {
+            userId,
+            previousScore: new Decimal(previousScore.toFixed(2)),
+            newScore: new Decimal(newScore.toFixed(2)),
+            change: new Decimal(change.toFixed(2)),
+            reason,
+            referenceType,
+            referenceId,
+          },
+        });
+      });
+
+      this.logger.log(
+        `Reputation updated for user ${userId}: ${change > 0 ? "+" : ""}${change} (${reason})`,
+      );
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const { userId, reason, change, referenceType, referenceId } = event;
-
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await this.prisma.$transaction(async (tx: any) => {
-      // Get current reputation
-      const user = await tx.user.findUnique({
-        where: { id: userId },
-        select: { reputationScore: true },
-      });
-
-      if (!user) return;
-
-      const previousScore = Number(user.reputationScore);
-      let newScore = previousScore + change;
-
-      // Clamp between 0 and 5
-      newScore = Math.max(0, Math.min(5, newScore));
-
-      // Update user reputation
-      await tx.user.update({
-        where: { id: userId },
-        data: { reputationScore: new Decimal(newScore.toFixed(2)) },
-      });
-
-      // Record history
-      await tx.reputationHistory.create({
-        data: {
-          userId,
-          previousScore: new Decimal(previousScore.toFixed(2)),
-          newScore: new Decimal(newScore.toFixed(2)),
-          change: new Decimal(change.toFixed(2)),
-          reason,
-          referenceType,
-          referenceId,
-        },
-      });
-    });
-
-    this.logger.log(
-      `Reputation updated for user ${userId}: ${change > 0 ? "+" : ""}${change} (${reason})`,
-    );
   }
 
   /**
@@ -231,9 +226,7 @@ export class ReputationService {
       referenceId: orderId,
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     // Update user level stats
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
       // Increment transaction count
       await tx.user.update({
@@ -377,10 +370,8 @@ export class ReputationService {
    */
   async getReputationHistory(
     userId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     options: { page: number; limit: number },
   ): Promise<{
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: unknown[];
     total: number;
     page: number;
@@ -397,11 +388,9 @@ export class ReputationService {
         take: limit,
       }),
       this.prisma.reputationHistory.count({ where: { userId } }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     ]);
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: history.map((h: any) => ({
         id: h.id,
         previousScore: Number(h.previousScore),
@@ -418,71 +407,65 @@ export class ReputationService {
     };
   }
 
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   /**
    * Get leaderboard
    */
   async getLeaderboard(options: { page: number; limit: number }): Promise<{
-    try {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: unknown[];
     total: number;
     page: number;
     limit: number;
+  }> {
+    try {
+      const { page, limit } = options;
+      const skip = (page - 1) * limit;
+
+      const [users, total] = await Promise.all([
+        this.prisma.user.findMany({
+          where: { deletedAt: null },
+          orderBy: [{ reputationScore: "desc" }, { totalTransactions: "desc" }],
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            reputationScore: true,
+            totalTransactions: true,
+          },
+          skip,
+          take: limit,
+        }),
+        this.prisma.user.count({ where: { deletedAt: null } }),
+      ]);
+
+      // Get levels for each user
+      const userIds = users.map((u: any) => u.id);
+      const levels = await this.prisma.userLevel.findMany({
+        where: { userId: { in: userIds } },
+      });
+      const levelMap = new Map<string, { totalXp: number }>(levels.map((l: any) => [l.userId, l]));
+
+      return {
+        data: users.map((u, index) => {
+          const level = levelMap.get(u.id);
+          const levelInfo = this.calculateLevel(level?.totalXp || 0);
+          return {
+            rank: skip + index + 1,
+            userId: u.id,
+            username: u.username,
+            avatarUrl: u.avatarUrl,
+            reputationScore: Number(u.reputationScore),
+            totalTransactions: u.totalTransactions,
+            level: levelInfo.level,
+            levelRank: levelInfo.rank,
+          };
+        }),
+        total,
+        page,
+        limit,
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-  }> {
-    const { page, limit } = options;
-    const skip = (page - 1) * limit;
-
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
-        where: { deletedAt: null },
-        orderBy: [{ reputationScore: "desc" }, { totalTransactions: "desc" }],
-        select: {
-          id: true,
-          username: true,
-          avatarUrl: true,
-          reputationScore: true,
-          totalTransactions: true,
-        },
-        skip,
-        take: limit,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }),
-      this.prisma.user.count({ where: { deletedAt: null } }),
-    ]);
-
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // Get levels for each user
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const userIds = users.map((u: any) => u.id);
-    const levels = await this.prisma.userLevel.findMany({
-      where: { userId: { in: userIds } },
-    });
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const levelMap = new Map<string, { totalXp: number }>(levels.map((l: any) => [l.userId, l]));
-
-    return {
-      data: users.map((u, index) => {
-        const level = levelMap.get(u.id);
-        const levelInfo = this.calculateLevel(level?.totalXp || 0);
-        return {
-          rank: skip + index + 1,
-          userId: u.id,
-          username: u.username,
-          avatarUrl: u.avatarUrl,
-          reputationScore: Number(u.reputationScore),
-          totalTransactions: u.totalTransactions,
-          level: levelInfo.level,
-          levelRank: levelInfo.rank,
-        };
-      }),
-      total,
-      page,
-      limit,
-    };
   }
 }

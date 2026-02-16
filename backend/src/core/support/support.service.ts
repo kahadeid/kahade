@@ -110,64 +110,64 @@ export class SupportService {
    */
   async getTicketWithDetails(ticketId: string): Promise<TicketWithDetails> {
     try {
-    const ticket = await this.prisma.supportTicket.findUnique({
-      where: { id: ticketId },
-      include: {
-        responses: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
+      const ticket = await this.prisma.supportTicket.findUnique({
+        where: { id: ticketId },
+        include: {
+          responses: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
         },
-      },
+      });
+
+      if (!ticket) {
+        throw new NotFoundException("Ticket not found");
+      }
+
+      // Get user info
+      const user = await this.prisma.user.findUnique({
+        where: { id: ticket.userId },
+        select: { id: true, username: true, email: true },
+      });
+
+      // Get assigned agent info
+      let assignedTo: null | { id: any; displayName: any } = null;
+      if (ticket.assignedToId) {
+        const agent = await this.prisma.supportAgent.findUnique({
+          where: { userId: ticket.assignedToId },
+          select: { userId: true, displayName: true },
+        });
+        if (agent) {
+          assignedTo = { id: agent.userId, displayName: agent.displayName };
+        }
+      }
+
+      // Get response count
+      const responseCount = await this.prisma.ticketResponse.count({
+        where: { ticketId },
+      });
+
+      return {
+        id: ticket.id,
+        ticketNumber: ticket.ticketNumber,
+        subject: ticket.subject,
+        description: ticket.description,
+        category: ticket.category,
+        priority: ticket.priority,
+        status: ticket.status,
+        user: user!,
+        assignedTo,
+        responseCount,
+        lastResponseAt: ticket.responses[0]?.createdAt || null,
+        slaDeadline: ticket.slaDeadline,
+        slaBreach: ticket.slaBreach,
+        createdAt: ticket.createdAt,
+        updatedAt: ticket.updatedAt,
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    if (!ticket) {
-      throw new NotFoundException("Ticket not found");
-    }
-
-    // Get user info
-    const user = await this.prisma.user.findUnique({
-      where: { id: ticket.userId },
-      select: { id: true, username: true, email: true },
-    });
-
-    // Get assigned agent info
-    let assignedTo: null | { id: any; displayName: any } = null;
-    if (ticket.assignedToId) {
-      const agent = await this.prisma.supportAgent.findUnique({
-        where: { userId: ticket.assignedToId },
-        select: { userId: true, displayName: true },
-      });
-      if (agent) {
-        assignedTo = { id: agent.userId, displayName: agent.displayName };
-      }
-    }
-
-    // Get response count
-    const responseCount = await this.prisma.ticketResponse.count({
-      where: { ticketId },
-    });
-
-    return {
-      id: ticket.id,
-      ticketNumber: ticket.ticketNumber,
-      subject: ticket.subject,
-      description: ticket.description,
-      category: ticket.category,
-      priority: ticket.priority,
-      status: ticket.status,
-      user: user!,
-      assignedTo,
-      responseCount,
-      lastResponseAt: ticket.responses[0]?.createdAt || null,
-      slaDeadline: ticket.slaDeadline,
-      slaBreach: ticket.slaBreach,
-      createdAt: ticket.createdAt,
-      updatedAt: ticket.updatedAt,
-    };
   }
 
   /**
@@ -205,8 +205,6 @@ export class SupportService {
     ]);
 
     const ticketsWithDetails = await Promise.all(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       tickets.map((t: any) => this.getTicketWithDetails(t.id)),
     );
 
@@ -253,9 +251,7 @@ export class SupportService {
       this.prisma.supportTicket.count({ where }),
     ]);
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ticketsWithDetails = await Promise.all(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       tickets.map((t: any) => this.getTicketWithDetails(t.id)),
     );
 
@@ -283,14 +279,10 @@ export class SupportService {
       throw new NotFoundException("Ticket not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const previousStatus = ticket.status;
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
       // Update ticket
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateData: any = { status };
 
       if (status === "RESOLVED" || status === "CLOSED") {
@@ -363,12 +355,10 @@ export class SupportService {
 
     if (agent.currentTickets >= agent.maxTickets) {
       throw new BadRequestException(
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         "Agent has reached maximum ticket capacity",
       );
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
       // Decrement previous agent's count
       if (ticket.assignedToId) {
@@ -418,13 +408,11 @@ export class SupportService {
   /**
    * Add response to ticket
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async addResponse(
     ticketId: string,
     userId: string,
     dto: CreateResponseDto,
     isStaff: boolean = false,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const ticket = await this.prisma.supportTicket.findUnique({
       where: { id: ticketId },
@@ -433,14 +421,12 @@ export class SupportService {
     if (!ticket) {
       throw new NotFoundException("Ticket not found");
     }
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     // Check permission
     if (!isStaff && ticket.userId !== userId) {
       throw new ForbiddenException("You can only respond to your own tickets");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await this.prisma.$transaction(async (tx: any) => {
       // Create response
       const resp = await tx.ticketResponse.create({
@@ -457,7 +443,6 @@ export class SupportService {
       let newStatus = ticket.status;
       if (isStaff && ticket.status === "OPEN") {
         newStatus = "IN_PROGRESS";
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       } else if (isStaff && ticket.status === "WAITING_CUSTOMER") {
         newStatus = "IN_PROGRESS";
       } else if (!isStaff && ticket.status === "WAITING_CUSTOMER") {
@@ -465,7 +450,6 @@ export class SupportService {
       }
 
       // Track first response time
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateData: any = { status: newStatus };
       if (isStaff && !ticket.firstResponseAt) {
         updateData.firstResponseAt = new Date();
@@ -485,7 +469,6 @@ export class SupportService {
 
     return response;
   }
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   /**
    * Get ticket responses
@@ -494,7 +477,6 @@ export class SupportService {
     ticketId: string,
     userId: string,
     isStaff: boolean = false,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     const ticket = await this.prisma.supportTicket.findUnique({
       where: { id: ticketId },
@@ -513,28 +495,22 @@ export class SupportService {
 
     // Non-staff can't see internal notes
     if (!isStaff) {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       where.isInternal = false;
     }
 
     const responses = await this.prisma.ticketResponse.findMany({
       where,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       orderBy: { createdAt: "asc" },
     });
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     // Get user info for each response
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userIds = [...new Set(responses.map((r: any) => r.userId))];
     const users = await this.prisma.user.findMany({
       where: { id: { in: userIds } },
       select: { id: true, username: true, avatarUrl: true },
     });
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userMap = new Map(users.map((u: any) => [u.id, u]));
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return responses.map((r: any) => ({
       id: r.id,
       message: r.message,
@@ -554,7 +530,6 @@ export class SupportService {
    */
   async escalateTicket(
     ticketId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     escalatedTo: string,
     reason: string,
     performedBy: string,
@@ -567,7 +542,6 @@ export class SupportService {
       throw new NotFoundException("Ticket not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
       await tx.supportTicket.update({
         where: { id: ticketId },
@@ -590,7 +564,6 @@ export class SupportService {
         },
       });
     });
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     this.logger.log(
       `Ticket ${ticket.ticketNumber} escalated to ${escalatedTo}`,
@@ -604,23 +577,21 @@ export class SupportService {
   /**
    * Get canned responses
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getCannedResponses(category?: TicketCategory): Promise<any[]> {
     try {
+      const where: Prisma.CannedResponseWhereInput = { isActive: true };
+      if (category) {
+        where.category = category;
+      }
+
+      return this.prisma.cannedResponse.findMany({
+        where,
+        orderBy: { usageCount: "desc" },
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const where: Prisma.CannedResponseWhereInput = { isActive: true };
-    if (category) {
-      where.category = category;
-    }
-
-    return this.prisma.cannedResponse.findMany({
-      where,
-      orderBy: { usageCount: "desc" },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    });
   }
 
   /**
@@ -634,7 +605,6 @@ export class SupportService {
       category?: TicketCategory;
       shortcut?: string;
     },
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     return this.prisma.cannedResponse.create({
       data: {
@@ -653,19 +623,19 @@ export class SupportService {
    */
   private async generateTicketNumber(): Promise<string> {
     try {
-    const year = new Date().getFullYear();
-    const count = await this.prisma.supportTicket.count({
-      where: {
-        createdAt: {
-          gte: new Date(`${year}-01-01`),
+      const year = new Date().getFullYear();
+      const count = await this.prisma.supportTicket.count({
+        where: {
+          createdAt: {
+            gte: new Date(`${year}-01-01`),
+          },
         },
-      },
+      });
+      return `TKT-${year}-${String(count + 1).padStart(6, "0")}`;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-    return `TKT-${year}-${String(count + 1).padStart(6, "0")}`;
   }
 
   /**
@@ -677,7 +647,6 @@ export class SupportService {
   ): Promise<void> {
     // Find available agent with matching skills
     const agent = await this.prisma.supportAgent.findFirst({
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       where: {
         isAvailable: true,
         currentTickets: { lt: this.prisma.supportAgent.fields.maxTickets },
@@ -693,39 +662,36 @@ export class SupportService {
   /**
    * Get ticket statistics
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getTicketStats(): Promise<any> {
     try {
-    const [
-      totalOpen,
-      totalInProgress,
-      totalResolved,
-      // Eslint-disable-next-line @typescript-eslint/no-unused-vars
-      // Eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _avgResolutionTime,
-      slaBreach,
-    ] = await Promise.all([
+      const [
+        totalOpen,
+        totalInProgress,
+        totalResolved,
+        _avgResolutionTime,
+        slaBreach,
+      ] = await Promise.all([
+        this.prisma.supportTicket.count({ where: { status: "OPEN" } }),
+        this.prisma.supportTicket.count({ where: { status: "IN_PROGRESS" } }),
+        this.prisma.supportTicket.count({ where: { status: "RESOLVED" } }),
+        this.prisma.supportTicket.aggregate({
+          where: { resolvedAt: { not: null } },
+          _avg: {
+            // This would need a computed field for resolution time
+          },
+        }),
+        this.prisma.supportTicket.count({ where: { slaBreach: true } }),
+      ]);
+
+      return {
+        totalOpen,
+        totalInProgress,
+        totalResolved,
+        slaBreach,
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-      this.prisma.supportTicket.count({ where: { status: "OPEN" } }),
-      this.prisma.supportTicket.count({ where: { status: "IN_PROGRESS" } }),
-      this.prisma.supportTicket.count({ where: { status: "RESOLVED" } }),
-      this.prisma.supportTicket.aggregate({
-        where: { resolvedAt: { not: null } },
-        _avg: {
-          // This would need a computed field for resolution time
-        },
-      }),
-      this.prisma.supportTicket.count({ where: { slaBreach: true } }),
-    ]);
-
-    return {
-      totalOpen,
-      totalInProgress,
-      totalResolved,
-      slaBreach,
-    };
   }
 }
