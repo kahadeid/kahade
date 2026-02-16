@@ -1,16 +1,14 @@
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Controller, Get, ServiceUnavailableException } from "@nestjs/common";
-
 import {
-import { PrismaHealthIndicator } from "./prisma-health.indicator";
-import { RedisHealthIndicator } from "./redis-health.indicator";
-
   HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
   MemoryHealthIndicator,
   DiskHealthIndicator,
 } from "@nestjs/terminus";
+import { PrismaHealthIndicator } from "./prisma-health.indicator";
+import { RedisHealthIndicator } from "./redis-health.indicator";
 
 // ============================================================================
 // HEALTH CHECK CONTROLLER
