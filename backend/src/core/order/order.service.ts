@@ -1,7 +1,6 @@
 import { ConfigService } from "@nestjs/config";
-
-import {
-import {
+import { Injectable, Logger, NotFoundException, BadRequestException, ForbiddenException, ConflictException } from "@nestjs/common";
+import { CreateOrderCommentDto, UpdateOrderCommentDto } from "./dto/order-comment.dto";
 import { AcceptOrderDto } from "./dto/accept-order.dto";
 import { CancelOrderDto } from "./dto/cancel-order.dto";
 import { CreateOrderDto } from "./dto/create-order.dto";
@@ -13,17 +12,6 @@ import { PrismaService } from "@infrastructure/database/prisma.service";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { WalletService } from "../wallet/wallet.service";
 import { v4 as uuidv4 } from "uuid";
-
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-  ConflictException,
-} from "@nestjs/common";
-  CreateOrderCommentDto,
-  UpdateOrderCommentDto,
-} from "./dto/order-comment.dto";
 
 @Injectable()
 export class OrderService {
@@ -53,14 +41,14 @@ export class OrderService {
   /**
    * Calculate platform fee based on amount
    */
-  private _calculatePlatformFee(amountMinor: bigint): bigint {
+  private calculatePlatformFee(amountMinor: bigint): bigint {
     return (amountMinor * BigInt(this.PLATFORM_FEE_PERCENTAGE)) / 100n;
   }
 
   /**
    * Generate invite token
    */
-  private _generateInviteToken(): string {
+  private generateInviteToken(): string {
     return uuidv4().replace(/-/g, "");
   }
 
@@ -103,23 +91,17 @@ export class OrderService {
 
     const orderData: CreateOrderData = {
       initiatorId: userId,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       initiatorRole: dto.initiatorRole as any,
       title: dto.title,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       description: dto.description,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       category: dto.category as any,
       amountMinor,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       feePayer: dto.feePayer as any,
       platformFeeMinor,
       holdingPeriodDays: dto.holdingPeriodDays,
       customTerms: dto.customTerms,
       inviteToken,
       inviteExpiresAt,
-      // Note: idempotencyKey stored in audit log, not in order table
     };
 
     const order = await this.orderRepository.create(orderData);
@@ -149,11 +131,9 @@ export class OrderService {
   /**
    * Get orders with filters
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getOrders(userId: string, filterDto: OrderFilterExtendedDto) {
     const options = {
       userId,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       status: filterDto.status as any,
       role: filterDto.role as "as_buyer" | "as_seller" | undefined,
       search: filterDto.search,
@@ -207,12 +187,10 @@ export class OrderService {
 
   /**
    * Get order by invite token (public preview)
-   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
    */
   async getOrderByInviteToken(inviteToken: string) {
     const order = (await this.orderRepository.findByInviteToken(
       inviteToken,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     )) as any;
 
     if (!order) {
@@ -264,13 +242,11 @@ export class OrderService {
 
     if (
       order.status !== "WAITING_COUNTERPARTY" &&
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       order.status !== "PENDING_ACCEPT"
     ) {
       throw new BadRequestException("Cannot update order after acceptance");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: Record<string, unknown> = {};
     if (dto.title) updateData.title = dto.title;
     if (dto.description) updateData.description = dto.description;
@@ -316,21 +292,17 @@ export class OrderService {
       throw new ConflictException("This order has already been accepted");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (order.initiatorId === userId) {
       throw new BadRequestException("You cannot accept your own order");
     }
 
     const updated = (await this.orderRepository.updateStatus(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       order.id,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       "PENDING_ACCEPT" as any,
       {
         counterpartyId: userId,
       },
       undefined,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     )) as any;
 
     // Notify initiator
@@ -392,7 +364,7 @@ export class OrderService {
     // Check buyer balance
     const balance = await this.walletService.getBalance(buyerId);
 
-    // FIX: getBalance returns {balance, currency} - convert to minor units for comparison
+    // getBalance returns {balance, currency} - convert to minor units for comparison
     if (BigInt(Math.round(Number(balance.balance) * 100)) < totalAmount) {
       throw new BadRequestException("Insufficient balance");
     }
@@ -410,7 +382,6 @@ export class OrderService {
       amountMinor: order.amountMinor,
       timeoutHours: order.holdingPeriodDays * 24,
       idempotencyKey,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     // Update order status
@@ -419,7 +390,6 @@ export class OrderService {
     );
     const updated = await this.orderRepository.updateStatus(
       orderId,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       "PAID" as any,
       {
         autoReleaseAt,
@@ -449,7 +419,6 @@ export class OrderService {
   /**
    * Confirm delivery and release escrow
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async confirmDelivery(
     userId: string,
     orderId: string,
@@ -459,7 +428,6 @@ export class OrderService {
       throw new BadRequestException("Idempotency key is required");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const order = (await this.orderRepository.findById(orderId)) as any;
 
     if (!order) {
@@ -487,7 +455,6 @@ export class OrderService {
     }
 
     // Release escrow
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.escrowService.releaseEscrow({
       escrowId: order.escrowHold.id,
       actorId: userId,
@@ -498,7 +465,6 @@ export class OrderService {
     // Update order status
     const updated = await this.orderRepository.updateStatus(
       orderId,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       "COMPLETED" as any,
       {},
       undefined,
@@ -539,7 +505,6 @@ export class OrderService {
 
     if (order.initiatorId !== userId && order.counterpartyId !== userId) {
       throw new ForbiddenException("You do not have access to this order");
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
 
     // Can only cancel before payment
@@ -551,7 +516,6 @@ export class OrderService {
 
     const updated = await this.orderRepository.updateStatus(
       orderId,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       "CANCELLED" as any,
     );
 
@@ -589,7 +553,6 @@ export class OrderService {
     if (!order) {
       throw new NotFoundException("Order not found");
     }
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     if (order.initiatorId !== userId && order.counterpartyId !== userId) {
       throw new ForbiddenException("You do not have access to this order");
@@ -602,7 +565,6 @@ export class OrderService {
     // Update order status
     const updated = await this.orderRepository.updateStatus(
       orderId,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       "DISPUTED" as any,
     );
 
@@ -634,7 +596,6 @@ export class OrderService {
       throw new ForbiddenException("Only the order creator can resend invites");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (order.status !== "WAITING_COUNTERPARTY") {
       throw new BadRequestException("Order has already been accepted");
     }
@@ -648,14 +609,12 @@ export class OrderService {
     await this.orderRepository.update(orderId, {
       inviteToken: newInviteToken,
       inviteExpiresAt: newInviteExpiresAt,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     // Send email
     await this.notificationService.sendOrderInvite(
       email,
       order.orderNumber,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       newInviteToken,
       order.title,
     );
@@ -670,7 +629,6 @@ export class OrderService {
    * Get order comments
    */
   async getComments(userId: string, orderId: string) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const order = (await this.orderRepository.findById(orderId)) as any;
 
     if (!order) {
