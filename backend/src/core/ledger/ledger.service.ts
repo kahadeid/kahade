@@ -1,23 +1,9 @@
 import { ConfigService } from "@nestjs/config";
-
 import * as crypto from "crypto";
-
-import {
-import {
+import { Injectable, Logger, BadRequestException, InternalServerErrorException } from "@nestjs/common";
+import { LedgerJournal, LedgerEntry, LedgerAccountType, JournalType, LedgerAccountType as LedgerAccountTypeType } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
-  Injectable,
-  Logger,
-  BadRequestException,
-  InternalServerErrorException,
-} from "@nestjs/common";
-  LedgerJournal,
-  LedgerEntry,
-  LedgerAccountType,
-  JournalType,
-  LedgerAccountTypeType,
-} from "@prisma/client";
 
 // ============================================================================
 // BANK-GRADE LEDGER SERVICE
@@ -135,8 +121,6 @@ export class LedgerService {
         idempotencyKey,
         ...linkIds,
         entries: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           create: entries.map((entry: any) => ({
             accountId: entry.accountId,
             amountMinor: entry.amountMinor,
@@ -379,9 +363,7 @@ export class LedgerService {
     const existing = await prisma.ledgerAccount.findFirst({
       where: {
         walletId,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         type,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         currency: currency as any,
       },
     });
@@ -392,10 +374,8 @@ export class LedgerService {
 
     return prisma.ledgerAccount.create({
       data: {
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         walletId,
         type,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         currency: currency as any,
       },
     });
@@ -413,11 +393,9 @@ export class LedgerService {
     const prisma = tx ?? this.prisma;
 
     const existing = await prisma.ledgerAccount.findFirst({
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       where: {
         platformKey,
         type,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         currency: currency as any,
       },
     });
@@ -426,12 +404,10 @@ export class LedgerService {
       return existing;
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return prisma.ledgerAccount.create({
       data: {
         platformKey,
         type,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         currency: currency as any,
       },
     });
@@ -457,13 +433,11 @@ export class LedgerService {
    * Get account statement (entries with running balance)
    */
   async getAccountStatement(
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     accountId: string,
     startDate?: Date,
     endDate?: Date,
     limit: number = 100,
   ): Promise<LedgerEntry[]> {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { accountId };
 
     if (startDate || endDate) {
@@ -490,72 +464,72 @@ export class LedgerService {
    * BANK-GRADE: Verify all journals are balanced
    */
   async verifyAllJournalsBalanced(): Promise<{
-    try {
     totalJournals: number;
     unbalancedJournals: string[];
     isHealthy: boolean;
+  }> {
+    try {
+      const journals = await this.prisma.ledgerJournal.findMany({
+        include: { entries: true },
+      });
+
+      const unbalancedJournals: string[] = [];
+
+      for (const journal of journals) {
+        const sum = journal.entries.reduce(
+          (acc, entry) => acc + entry.amountMinor,
+          0n,
+        );
+        if (sum !== 0n) {
+          unbalancedJournals.push(journal.id);
+          this.logger.error(
+            `Unbalanced journal detected: ${journal.id}, sum=${sum}`,
+          );
+        }
+      }
+
+      return {
+        totalJournals: journals.length,
+        unbalancedJournals,
+        isHealthy: unbalancedJournals.length === 0,
+      };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in verifyAllJournalsBalanced: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-  }> {
-    const journals = await this.prisma.ledgerJournal.findMany({
-      include: { entries: true },
-    });
-
-    const unbalancedJournals: string[] = [];
-
-    for (const journal of journals) {
-      const sum = journal.entries.reduce(
-        (acc, entry) => acc + entry.amountMinor,
-        0n,
-      );
-      if (sum !== 0n) {
-        unbalancedJournals.push(journal.id);
-        this.logger.error(
-          `Unbalanced journal detected: ${journal.id}, sum=${sum}`,
-        );
-      }
-    }
-
-    return {
-      totalJournals: journals.length,
-      unbalancedJournals,
-      isHealthy: unbalancedJournals.length === 0,
-    };
   }
 
   /**
    * BANK-GRADE: Verify platform accounts balance (should net to zero)
    */
   async verifyPlatformBalance(): Promise<{
-    try {
     totalBalance: bigint;
     isBalanced: boolean;
     accountBalances: Record<string, bigint>;
+  }> {
+    try {
+      const platformAccounts = await this.prisma.ledgerAccount.findMany({
+        where: { platformKey: { not: null } },
+      });
+
+      const accountBalances: Record<string, bigint> = {};
+      let totalBalance = 0n;
+
+      for (const account of platformAccounts) {
+        const balance = await this.getAccountBalance(account.id);
+        accountBalances[account.platformKey!] = balance;
+        totalBalance += balance;
+      }
+
+      return {
+        totalBalance,
+        isBalanced: totalBalance === 0n,
+        accountBalances,
+      };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in verifyPlatformBalance: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-  }> {
-    const platformAccounts = await this.prisma.ledgerAccount.findMany({
-      where: { platformKey: { not: null } },
-    });
-
-    const accountBalances: Record<string, bigint> = {};
-    let totalBalance = 0n;
-
-    for (const account of platformAccounts) {
-      const balance = await this.getAccountBalance(account.id);
-      accountBalances[account.platformKey!] = balance;
-      totalBalance += balance;
-    }
-
-    return {
-      totalBalance,
-      isBalanced: totalBalance === 0n,
-      accountBalances,
-    };
   }
 
   // ============================================================================
@@ -606,11 +580,11 @@ export class LedgerService {
    */
   async healthCheck(): Promise<{ status: string }> {
     try {
-    this.logger.debug("Health check called");
+      this.logger.debug("Health check called");
+      return { status: "ok" };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in healthCheck: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    return { status: "ok" };
   }
 }
