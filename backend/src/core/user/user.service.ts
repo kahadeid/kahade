@@ -1,10 +1,8 @@
-
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
-
-import {
-import {
+import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
+import { PaginationUtil, PaginationParams } from "@common/utils/pagination.util";
 import { HashUtil } from "@common/utils/hash.util";
 import { IUserResponse, KYCStatus } from "@common/interfaces/user.interface";
 import { PrismaService } from "@infrastructure/database/prisma.service";
@@ -12,15 +10,6 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { UploadKycDto } from "./dto/upload-kyc.dto";
 import { User } from "@prisma/client";
 import { UserRepository, ICreateUser, IUpdateUser } from "./user.repository";
-
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Logger,
-} from "@nestjs/common";
-  PaginationUtil,
-  PaginationParams,
-} from "@common/utils/pagination.util";
 
 // ============================================================================
 // USER SERVICE - Production Ready
@@ -43,27 +32,27 @@ export class UserService {
    */
   async create(createUserData: ICreateUser): Promise<User> {
     try {
-    const existingUser = await this.userRepository.findByEmail(
-      createUserData.email,
-    );
-    if (existingUser) {
-      throw new BadRequestException("Email already exists");
+      const existingUser = await this.userRepository.findByEmail(
+        createUserData.email,
+      );
+      if (existingUser) {
+        throw new BadRequestException("Email already exists");
+      }
+
+      if (createUserData.username) {
+        const existingUsername = await this.userRepository.findByUsername(
+          createUserData.username,
+        );
+        if (existingUsername) {
+          throw new BadRequestException("Username already exists");
+        }
+      }
+
+      return this.userRepository.create(createUserData);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    }
-
-    if (createUserData.username) {
-      const existingUsername = await this.userRepository.findByUsername(
-        createUserData.username,
-      );
-      if (existingUsername) {
-        throw new BadRequestException("Username already exists");
-      }
-    }
-
-    return this.userRepository.create(createUserData);
   }
 
   /**
@@ -71,15 +60,15 @@ export class UserService {
    */
   async findById(id: string): Promise<User> {
     try {
-    const user = await this.userRepository.findById(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
+      const user = await this.userRepository.findById(id);
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
+      return user;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    }
-    return user;
   }
 
   /**
@@ -87,25 +76,25 @@ export class UserService {
    */
   async findByEmail(email: string): Promise<User | null> {
     try {
-    return this.userRepository.findByEmail(email);
-  }
-
+      return this.userRepository.findByEmail(email);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
   /**
    * Findbyusername
    */
   async findByUsername(username: string): Promise<User | null> {
     try {
-    return this.userRepository.findByUsername(username);
-  }
-
+      return this.userRepository.findByUsername(username);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
   /**
    * Findall
    */
@@ -148,13 +137,13 @@ export class UserService {
    */
   async updateLastLogin(id: string): Promise<void> {
     try {
-    await this.userRepository.update(id, {
-      lastLoginAt: new Date(),
+      await this.userRepository.update(id, {
+        lastLoginAt: new Date(),
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   /**
@@ -162,28 +151,28 @@ export class UserService {
    */
   async delete(id: string): Promise<void> {
     try {
-    await this.findById(id);
-    await this.userRepository.delete(id);
-  }
-
+      await this.findById(id);
+      await this.userRepository.delete(id);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
   /**
    * Softdelete
    */
   async softDelete(userId: string): Promise<void> {
     try {
-    await this.findById(userId);
-    await this.userRepository.update(userId, {
-      deletedAt: new Date(),
-      deletedByUserId: userId,
+      await this.findById(userId);
+      await this.userRepository.update(userId, {
+        deletedAt: new Date(),
+        deletedByUserId: userId,
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   // ============================================================================
@@ -224,14 +213,14 @@ export class UserService {
    */
   async updatePassword(userId: string, newPasswordHash: string): Promise<void> {
     try {
-    await this.userRepository.update(userId, {
-      passwordHash: newPasswordHash,
-      passwordUpdatedAt: new Date(),
+      await this.userRepository.update(userId, {
+        passwordHash: newPasswordHash,
+        passwordUpdatedAt: new Date(),
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   async setPasswordResetToken(
@@ -250,26 +239,26 @@ export class UserService {
    */
   async findByPasswordResetToken(tokenHash: string): Promise<User | null> {
     try {
-    return this.userRepository.findByPasswordResetToken(tokenHash);
-  }
-
+      return this.userRepository.findByPasswordResetToken(tokenHash);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
   /**
    * Clearpasswordresettoken
    */
   async clearPasswordResetToken(userId: string): Promise<void> {
     try {
-    await this.userRepository.update(userId, {
-      passwordResetToken: null,
-      passwordResetExpires: null,
+      await this.userRepository.update(userId, {
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   // ============================================================================
@@ -292,27 +281,27 @@ export class UserService {
    */
   async findByEmailVerificationToken(tokenHash: string): Promise<User | null> {
     try {
-    return this.userRepository.findByEmailVerificationToken(tokenHash);
-  }
-
+      return this.userRepository.findByEmailVerificationToken(tokenHash);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
   /**
    * Markemailverified
    */
   async markEmailVerified(userId: string): Promise<void> {
     try {
-    await this.userRepository.update(userId, {
-      emailVerifiedAt: new Date(),
-      emailVerificationToken: null,
-      emailVerificationExpires: null,
+      await this.userRepository.update(userId, {
+        emailVerifiedAt: new Date(),
+        emailVerificationToken: null,
+        emailVerificationExpires: null,
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   /**
@@ -320,8 +309,12 @@ export class UserService {
    */
   async isEmailVerified(userId: string): Promise<boolean> {
     try {
-    const user = await this.findById(userId);
-    return !!user.emailVerifiedAt;
+      const user = await this.findById(userId);
+      return !!user.emailVerifiedAt;
+    } catch (error) {
+      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      throw error;
+    }
   }
 
   // ============================================================================
@@ -332,54 +325,55 @@ export class UserService {
     userId: string,
     file: any,
     payload: UploadKycDto,
+  ): Promise<{ message: string; status: string }> {
+    try {
+      await this.findById(userId);
+
+      const userDir = path.join(this.KYC_UPLOAD_DIR, "kyc", userId);
+      if (!fs.existsSync(userDir)) {
+        fs.mkdirSync(userDir, { recursive: true });
+      }
+
+      const fileExt = file.originalname.split(".").pop()?.toLowerCase() || "jpg";
+      const fileHash = crypto
+        .createHash("sha256")
+        .update(file.buffer)
+        .digest("hex");
+      const fileName = `${Date.now()}_${fileHash.substring(0, 8)}.${fileExt}`;
+      const filePath = `/uploads/kyc/${userId}/${fileName}`;
+      const fullPath = path.join(userDir, fileName);
+
+      fs.writeFileSync(fullPath, file.buffer);
+
+      await this.prisma.kYCSubmission.create({
+        data: {
+          userId,
+          idCardObjectKey: filePath,
+          selfieObjectKey: filePath,
+          idCardHash: fileHash,
+          selfieHash: fileHash,
+          fullNameEnc: payload.fullName.trim(),
+          idNumberEnc: payload.idNumber.trim(),
+          dateOfBirthEnc: payload.dateOfBirth,
+          addressEnc: payload.address?.trim() ?? "",
+          status: "PENDING",
+        },
+      });
+
+      await this.userRepository.update(userId, {
+        kycStatus: "PENDING",
+      });
+
+      this.logger.log(`KYC document uploaded for user ${userId}`);
+
+      return {
+        message: "KYC document uploaded successfully",
+        status: "PENDING",
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-  ): Promise<{ message: string; status: string }> {
-    await this.findById(userId);
-
-    const userDir = path.join(this.KYC_UPLOAD_DIR, "kyc", userId);
-    if (!fs.existsSync(userDir)) {
-      fs.mkdirSync(userDir, { recursive: true });
-    }
-
-    const fileExt = file.originalname.split(".").pop()?.toLowerCase() || "jpg";
-    const fileHash = crypto
-      .createHash("sha256")
-      .update(file.buffer)
-      .digest("hex");
-    const fileName = `${Date.now()}_${fileHash.substring(0, 8)}.${fileExt}`;
-    const filePath = `/uploads/kyc/${userId}/${fileName}`;
-    const fullPath = path.join(userDir, fileName);
-
-    fs.writeFileSync(fullPath, file.buffer);
-
-    await this.prisma.kYCSubmission.create({
-      data: {
-        userId,
-        idCardObjectKey: filePath,
-        selfieObjectKey: filePath,
-        idCardHash: fileHash,
-        selfieHash: fileHash,
-        fullNameEnc: payload.fullName.trim(),
-        idNumberEnc: payload.idNumber.trim(),
-        dateOfBirthEnc: payload.dateOfBirth,
-        addressEnc: payload.address?.trim() ?? "",
-        status: "PENDING",
-      },
-    });
-
-    await this.userRepository.update(userId, {
-      kycStatus: "PENDING",
-    });
-
-    this.logger.log(`KYC document uploaded for user ${userId}`);
-
-    return {
-      message: "KYC document uploaded successfully",
-      status: "PENDING",
-    };
   }
 
   // ============================================================================
@@ -401,74 +395,74 @@ export class UserService {
    */
   async updateAvatar(userId: string, file: any): Promise<IUserResponse> {
     try {
-    if (!fs.existsSync(this.AVATAR_UPLOAD_DIR)) {
-      fs.mkdirSync(this.AVATAR_UPLOAD_DIR, { recursive: true });
+      if (!fs.existsSync(this.AVATAR_UPLOAD_DIR)) {
+        fs.mkdirSync(this.AVATAR_UPLOAD_DIR, { recursive: true });
+      }
+
+      const fileExt = file.originalname.split(".").pop()?.toLowerCase() || "jpg";
+      const fileHash = crypto
+        .createHash("sha256")
+        .update(file.buffer)
+        .digest("hex");
+      const fileName = `${Date.now()}_${fileHash.substring(0, 8)}.${fileExt}`;
+      const filePath = path.join(this.AVATAR_UPLOAD_DIR, fileName);
+      const relativePath = `/uploads/avatars/${fileName}`;
+
+      fs.writeFileSync(filePath, file.buffer);
+
+      const updated = await this.userRepository.update(userId, {
+        avatarUrl: relativePath,
+      });
+
+      this.logger.log(`Avatar updated for user ${userId}`);
+
+      return this.sanitizeUser(updated);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    }
-
-    const fileExt = file.originalname.split(".").pop()?.toLowerCase() || "jpg";
-    const fileHash = crypto
-      .createHash("sha256")
-      .update(file.buffer)
-      .digest("hex");
-    const fileName = `${Date.now()}_${fileHash.substring(0, 8)}.${fileExt}`;
-    const filePath = path.join(this.AVATAR_UPLOAD_DIR, fileName);
-    const relativePath = `/uploads/avatars/${fileName}`;
-
-    fs.writeFileSync(filePath, file.buffer);
-
-    const updated = await this.userRepository.update(userId, {
-      avatarUrl: relativePath,
-    });
-
-    this.logger.log(`Avatar updated for user ${userId}`);
-
-    return this.sanitizeUser(updated);
   }
 
   /**
    * Getstats
    */
   async getStats(userId: string): Promise<{
-    try {
     totalTransactions: number;
     completedTransactions: number;
     disputeCount: number;
+  }> {
+    try {
+      const where = {
+        deletedAt: null,
+        OR: [{ initiatorId: userId }, { counterpartyId: userId }],
+      };
+
+      const [totalTransactions, completedTransactions, disputeCount] =
+        await Promise.all([
+          (this.prisma as any).order.count({ where }),
+          (this.prisma as any).order.count({
+            where: {
+              ...where,
+              status: "COMPLETED",
+            },
+          }),
+          (this.prisma as any).order.count({
+            where: {
+              ...where,
+              status: "DISPUTED",
+            },
+          }),
+        ]);
+
+      return {
+        totalTransactions,
+        completedTransactions,
+        disputeCount,
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-  }> {
-    const where = {
-      deletedAt: null,
-      OR: [{ initiatorId: userId }, { counterpartyId: userId }],
-    };
-
-    const [totalTransactions, completedTransactions, disputeCount] =
-      await Promise.all([
-        (this.prisma as any).order.count({ where }),
-        (this.prisma as any).order.count({
-          where: {
-            ...where,
-            status: "COMPLETED",
-          },
-        }),
-        (this.prisma as any).order.count({
-          where: {
-            ...where,
-            status: "DISPUTED",
-          },
-        }),
-      ]);
-
-    return {
-      totalTransactions,
-      completedTransactions,
-      disputeCount,
-    };
   }
 
   // ============================================================================
@@ -479,50 +473,50 @@ export class UserService {
    * Getuserratings
    */
   async getUserRatings(userId: string): Promise<{
-    try {
     averageRating: number;
     totalRatings: number;
     breakdown: Record<number, number>;
     recentRatings: unknown[];
+  }> {
+    try {
+      const ratings = await (this.prisma as any).rating.findMany({
+        where: { toUserId: userId },
+        include: {
+          fromUser: { select: { id: true, username: true } },
+          order: { select: { id: true, title: true, orderNumber: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const totalRatings = ratings.length;
+      const averageRating =
+        totalRatings > 0
+          ? ratings.reduce((sum: number, r: any) => sum + r.score, 0) /
+            totalRatings
+          : 0;
+
+      const breakdown: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      ratings.forEach((r: any) => {
+        breakdown[r.score] = (breakdown[r.score] || 0) + 1;
+      });
+
+      return {
+        averageRating: Math.round(averageRating * 10) / 10,
+        totalRatings,
+        breakdown,
+        recentRatings: ratings.slice(0, 10).map((r: any) => ({
+          id: r.id,
+          score: r.score,
+          review: r.review,
+          rater: r.fromUser,
+          order: r.order,
+          createdAt: r.createdAt,
+        })),
+      };
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-  }> {
-    const ratings = await (this.prisma as any).rating.findMany({
-      where: { toUserId: userId },
-      include: {
-        fromUser: { select: { id: true, username: true } },
-        order: { select: { id: true, title: true, orderNumber: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    const totalRatings = ratings.length;
-    const averageRating =
-      totalRatings > 0
-        ? ratings.reduce((sum: number, r: any) => sum + r.score, 0) /
-          totalRatings
-        : 0;
-
-    const breakdown: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    ratings.forEach((r: any) => {
-      breakdown[r.score] = (breakdown[r.score] || 0) + 1;
-    });
-
-    return {
-      averageRating: Math.round(averageRating * 10) / 10,
-      totalRatings,
-      breakdown,
-      recentRatings: ratings.slice(0, 10).map((r: any) => ({
-        id: r.id,
-        score: r.score,
-        review: r.review,
-        rater: r.fromUser,
-        order: r.order,
-        createdAt: r.createdAt,
-      })),
-    };
   }
 
   // ============================================================================
@@ -546,15 +540,15 @@ export class UserService {
    */
   async unsuspendUser(userId: string): Promise<void> {
     try {
-    await this.userRepository.update(userId, {
-      suspendedAt: null,
-      suspendedUntil: null,
-      suspendReason: null,
+      await this.userRepository.update(userId, {
+        suspendedAt: null,
+        suspendedUntil: null,
+        suspendReason: null,
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   /**
@@ -562,21 +556,21 @@ export class UserService {
    */
   async isUserSuspended(userId: string): Promise<boolean> {
     try {
-    const user = await this.findById(userId);
-    if (!user.suspendedAt) {
-      return false;
+      const user = await this.findById(userId);
+      if (!user.suspendedAt) {
+        return false;
+      }
+
+      if (user.suspendedUntil && new Date(user.suspendedUntil) < new Date()) {
+        await this.unsuspendUser(userId);
+        return false;
+      }
+
+      return true;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    }
-
-    if (user.suspendedUntil && new Date(user.suspendedUntil) < new Date()) {
-      await this.unsuspendUser(userId);
-      return false;
-    }
-
-    return true;
   }
 
   // ============================================================================
@@ -588,19 +582,19 @@ export class UserService {
    */
   async incrementFailedLogin(userId: string): Promise<number> {
     try {
-    const user = await this.findById(userId);
-    const newCount = (user.failedLoginCount || 0) + 1;
+      const user = await this.findById(userId);
+      const newCount = (user.failedLoginCount || 0) + 1;
 
-    await this.userRepository.update(userId, {
-      failedLoginCount: newCount,
-      lastFailedLoginAt: new Date(),
+      await this.userRepository.update(userId, {
+        failedLoginCount: newCount,
+        lastFailedLoginAt: new Date(),
+      });
+
+      return newCount;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    return newCount;
   }
 
   /**
@@ -608,14 +602,14 @@ export class UserService {
    */
   async resetFailedLogin(userId: string): Promise<void> {
     try {
-    await this.userRepository.update(userId, {
-      failedLoginCount: 0,
-      lastFailedLoginAt: null,
+      await this.userRepository.update(userId, {
+        failedLoginCount: 0,
+        lastFailedLoginAt: null,
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   // ============================================================================
