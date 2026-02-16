@@ -3,13 +3,13 @@ import { CreateResponseDto } from "./dto/create-response.dto";
 import { CreateTicketDto } from "./dto/create-ticket.dto";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import {
-import {
   Injectable,
   Logger,
   NotFoundException,
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
+import {
   TicketStatus,
   TicketPriority,
   TicketCategory,

@@ -9,7 +9,6 @@ import { UploadKycDto } from "./dto/upload-kyc.dto";
 import { UserService } from "./user.service";
 import { memoryStorage } from "multer";
 import {
-import {
   Controller,
   Get,
   Post,
@@ -26,6 +25,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
 } from "@nestjs/common";
+import {
   ApiTags,
   ApiOperation,
   ApiResponse,

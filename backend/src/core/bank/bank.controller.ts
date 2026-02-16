@@ -6,7 +6,6 @@ import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { SUPPORTED_BANKS, getBankByCode } from "@common/constants/banks";
 import {
-import {
   Controller,
   Get,
   Post,
@@ -21,6 +20,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
 } from "@nestjs/common";
+import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
