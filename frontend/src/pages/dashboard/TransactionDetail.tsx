@@ -371,7 +371,7 @@ export default function TransactionDetail() {
       <DashboardLayout title="Transaction" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Loading transaction...</p>
           </div>
         </div>
@@ -384,7 +384,7 @@ export default function TransactionDetail() {
       <DashboardLayout title="Transaction" subtitle="Not found">
         <div className="text-center py-12">
           <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-            <XCircle className="w-8 aria-hidden="true" h-8 text-neutral-500" weight="regular" aria-hidden="true" />
+            <XCircle className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
           </div>
           <h3 className="font-semibold text-black mb-1">Transaction Not Found</h3>
           <p className="text-sm text-neutral-600 mb-4">The transaction you're looking for doesn't exist.</p>
@@ -454,7 +454,7 @@ export default function TransactionDetail() {
                         : 'bg-neutral-100 text-neutral-500'
                   }`}>
                     {step.completed ? (
-                      <CheckCircle className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                      <CheckCircle className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                     ) : (
                       step.id
                     )}
@@ -513,7 +513,7 @@ export default function TransactionDetail() {
                           className="font-mono text-sm text-black hover:text-neutral-900/80 flex items-center gap-1 transition-colors"
                         >
                           {transaction.orderNumber}
-                          <Copy className="w-3 aria-hidden="true" h-3" weight="bold" aria-hidden="true" />
+                          <Copy className="w-3 h-3" aria-hidden="true" weight="bold" aria-hidden="true" />
                         </button>
                       </div>
                       <div className="space-y-1">
@@ -533,7 +533,7 @@ export default function TransactionDetail() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className={`p-4 rounded-xl ${isBuyer ? 'bg-black/5 border border-black/10' : 'bg-neutral-50'}`}>
                         <div className="text-xs text-neutral-600 mb-2 flex items-center gap-2">
-                          <User className="w-3 aria-hidden="true" h-3" />
+                          <User className="w-3 h-3" aria-hidden="true" />
                           Buyer {isBuyer && <Badge className="bg-black text-white border-0 text-[10px]">You</Badge>}
                         </div>
                         <div className="flex items-center gap-3">
@@ -544,7 +544,7 @@ export default function TransactionDetail() {
                             <div className="font-medium text-black text-sm">{buyer?.username || 'Waiting...'}</div>
                             {buyer?.reputationScore && (
                               <div className="text-xs text-neutral-600 flex items-center gap-1">
-                                <Star className="w-3 aria-hidden="true" h-3 text-amber-500" weight="fill" aria-hidden="true" />
+                                <Star className="w-3 h-3 text-amber-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                                 {buyer.reputationScore}
                               </div>
                             )}
@@ -553,7 +553,7 @@ export default function TransactionDetail() {
                       </div>
                       <div className={`p-4 rounded-xl ${isSeller ? 'bg-black/5 border border-black/10' : 'bg-neutral-50'}`}>
                         <div className="text-xs text-neutral-600 mb-2 flex items-center gap-2">
-                          <Package className="w-3 aria-hidden="true" h-3" />
+                          <Package className="w-3 h-3" aria-hidden="true" />
                           Seller {isSeller && <Badge className="bg-black text-white border-0 text-[10px]">You</Badge>}
                         </div>
                         <div className="flex items-center gap-3">
@@ -564,7 +564,7 @@ export default function TransactionDetail() {
                             <div className="font-medium text-black text-sm">{seller?.username || 'Waiting...'}</div>
                             {seller?.reputationScore && (
                               <div className="text-xs text-neutral-600 flex items-center gap-1">
-                                <Star className="w-3 aria-hidden="true" h-3 text-amber-500" weight="fill" aria-hidden="true" />
+                                <Star className="w-3 h-3 text-amber-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                                 {seller.reputationScore}
                               </div>
                             )}
@@ -603,7 +603,7 @@ export default function TransactionDetail() {
                     {(Array.isArray(messages) ? messages : []).length === 0 ? (
                       <div className="h-full flex items-center justify-center">
                         <div className="text-center">
-                          <ChatCircle className="w-1 aria-hidden="true"0 h-10 text-neutral-300 mx-auto mb-2" weight="regular" aria-hidden="true" />
+                          <ChatCircle className="w-10 h-10 text-neutral-300 mx-auto mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
                           <p className="text-sm text-neutral-600">No messages yet</p>
                         </div>
                       </div>
@@ -647,9 +647,9 @@ export default function TransactionDetail() {
                         className="bg-black text-white hover:bg-black/90 rounded-xl h-10 w-10 p-0"
                       >
                         {isSendingMessage ? (
-                          <Spinner className="w-4 aria-hidden="true" h-4 animate-spin" />
+                          <Spinner className="w-4 h-4 animate-spin" aria-hidden="true" />
                         ) : (
-                          <PaperPlaneTilt className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                          <PaperPlaneTilt className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         )}
                       </Button>
                     </div>
@@ -670,7 +670,7 @@ export default function TransactionDetail() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                          <CheckCircle className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="fill" aria-hidden="true" />
+                          <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                         </div>
                         <div>
                           <div className="font-medium text-black">Delivery Confirmed</div>
@@ -698,7 +698,7 @@ export default function TransactionDetail() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <Truck className="w-1 aria-hidden="true"2 h-12 text-neutral-300 mx-auto mb-3" weight="regular" aria-hidden="true" />
+                      <Truck className="w-12 h-12 text-neutral-300 mx-auto mb-3" aria-hidden="true" weight="regular" aria-hidden="true" />
                       <h3 className="font-medium text-black mb-1">No Delivery Info</h3>
                       <p className="text-sm text-neutral-600">Delivery information will appear here once submitted</p>
                     </div>
@@ -726,7 +726,7 @@ export default function TransactionDetail() {
                       disabled={isActionLoading}
                       className="w-full bg-black text-white hover:bg-black/90 rounded-xl h-11"
                     >
-                      {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />}
+                      {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />}
                       Accept Transaction
                     </Button>
                     <Button
@@ -734,7 +734,7 @@ export default function TransactionDetail() {
                       onClick={() => setIsCancelOpen(true)}
                       className="w-full border-red-200 text-red-600 hover:bg-red-50 rounded-xl h-11"
                     >
-                      <XCircle className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                      <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                       Reject
                     </Button>
                   </>
@@ -747,7 +747,7 @@ export default function TransactionDetail() {
                     disabled={isActionLoading}
                     className="w-full bg-black text-white hover:bg-black/90 rounded-xl h-11"
                   >
-                    {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : <CreditCard className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />}
+                    {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : <CreditCard className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />}
                     Pay Now
                   </Button>
                 )}
@@ -759,7 +759,7 @@ export default function TransactionDetail() {
                     disabled={isActionLoading}
                     className="w-full bg-black text-white hover:bg-black/90 rounded-xl h-11"
                   >
-                    <Truck className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                    <Truck className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Confirm Delivery
                   </Button>
                 )}
@@ -771,7 +771,7 @@ export default function TransactionDetail() {
                     disabled={isActionLoading}
                     className="w-full bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl h-11"
                   >
-                    {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />}
+                    {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />}
                     Confirm Receipt
                   </Button>
                 )}
@@ -783,7 +783,7 @@ export default function TransactionDetail() {
                     onClick={() => setIsDisputeOpen(true)}
                     className="w-full border-amber-200 text-amber-600 hover:bg-amber-50 rounded-xl h-11"
                   >
-                    <Warning className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                    <Warning className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Open Dispute
                   </Button>
                 )}
@@ -795,7 +795,7 @@ export default function TransactionDetail() {
                     onClick={() => setIsCancelOpen(true)}
                     className="w-full border-red-200 text-red-600 hover:bg-red-50 rounded-xl h-11"
                   >
-                    <XCircle className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                    <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Cancel Transaction
                   </Button>
                 )}
@@ -811,7 +811,7 @@ export default function TransactionDetail() {
             >
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="duotone" aria-hidden="true" />
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="font-medium text-black text-sm mb-1">Escrow Protected</h3>
@@ -844,7 +844,7 @@ export default function TransactionDetail() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCancelOpen(false)} className="rounded-xl">Cancel</Button>
             <Button onClick={handleCancel} disabled={isActionLoading} className="bg-red-600 text-white hover:bg-red-700 rounded-xl">
-              {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : null}
+              {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : null}
               Confirm Cancel
             </Button>
           </DialogFooter>
@@ -890,7 +890,7 @@ export default function TransactionDetail() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeliveryProofOpen(false)} className="rounded-xl">Cancel</Button>
             <Button onClick={handleConfirmDelivery} disabled={isActionLoading} className="bg-black text-white hover:bg-black/90 rounded-xl">
-              {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : null}
+              {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : null}
               Confirm Delivery
             </Button>
           </DialogFooter>
@@ -927,7 +927,7 @@ export default function TransactionDetail() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDisputeOpen(false)} className="rounded-xl">Cancel</Button>
             <Button onClick={handleSubmitDispute} disabled={isActionLoading} className="bg-amber-600 text-white hover:bg-amber-700 rounded-xl">
-              {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : null}
+              {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : null}
               Submit Dispute
             </Button>
           </DialogFooter>
@@ -966,7 +966,7 @@ export default function TransactionDetail() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsRatingOpen(false)} className="rounded-xl">Skip</Button>
             <Button onClick={handleSubmitRating} disabled={isActionLoading} className="bg-black text-white hover:bg-black/90 rounded-xl">
-              {isActionLoading ? <Spinner className="w-4 aria-hidden="true" h-4 animate-spin mr-2" /> : null}
+              {isActionLoading ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" /> : null}
               Submit Rating
             </Button>
           </DialogFooter>

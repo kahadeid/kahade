@@ -148,7 +148,7 @@ export default function DisputeDetail() {
       <DashboardLayout title="Dispute Details" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Loading dispute details...</p>
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function DisputeDetail() {
       <DashboardLayout title="Dispute Details" subtitle="Not found">
         <div className="text-center py-12">
           <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-            <Warning className="w-8 aria-hidden="true" h-8 text-neutral-500" weight="regular" aria-hidden="true" />
+            <Warning className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
           </div>
           <h3 className="font-semibold text-black mb-1">Dispute Not Found</h3>
           <p className="text-sm text-neutral-600 mb-4">The dispute you're looking for doesn't exist.</p>
@@ -184,7 +184,7 @@ export default function DisputeDetail() {
         {/* Back Button */}
         <Link href="/disputes">
           <Button variant="ghost" className="gap-2 rounded-xl h-10 px-3">
-            <ArrowLeft className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             Back
           </Button>
         </Link>
@@ -204,7 +204,7 @@ export default function DisputeDetail() {
                   <p className="text-neutral-600">{formatCurrency(dispute.order.amount)}</p>
                 </div>
                 <Badge className={`${status.bgColor} ${status.color} border-0 flex items-center gap-1.5 shrink-0`}>
-                  <StatusIcon className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                  <StatusIcon className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                   {status.label}
                 </Badge>
               </div>
@@ -231,7 +231,7 @@ export default function DisputeDetail() {
               >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                    <CheckCircle className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="fill" aria-hidden="true" />
+                    <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-emerald-800 mb-1">Resolution</h3>
@@ -253,7 +253,7 @@ export default function DisputeDetail() {
             >
               <div className="p-4 md:px-5 border-b border-neutral-200">
                 <h3 className="font-semibold text-black flex items-center gap-2">
-                  <ChatCircle className="w-5 aria-hidden="true" h-5" weight="duotone" aria-hidden="true" />
+                  <ChatCircle className="w-5 h-5" aria-hidden="true" weight="duotone" aria-hidden="true" />
                   Messages
                 </h3>
               </div>
@@ -262,7 +262,7 @@ export default function DisputeDetail() {
                 {(Array.isArray(dispute?.messages) ? dispute.messages : []).length === 0 ? (
                   <div className="h-full flex items-center justify-center">
                     <div className="text-center">
-                      <ChatCircle className="w-1 aria-hidden="true"0 h-10 text-neutral-300 mx-auto mb-2" weight="regular" aria-hidden="true" />
+                      <ChatCircle className="w-10 h-10 text-neutral-300 mx-auto mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
                       <p className="text-sm text-neutral-600">No messages yet</p>
                     </div>
                   </div>
@@ -279,9 +279,9 @@ export default function DisputeDetail() {
                         <div className={`max-w-[80%]`}>
                           <div className={`flex items-center gap-2 mb-1 ${isOwn ? 'justify-end' : ''}`}>
                             {isAdmin ? (
-                              <ShieldCheck className="w-3 aria-hidden="true" h-3 text-blue-600" weight="fill" aria-hidden="true" />
+                              <ShieldCheck className="w-3 h-3 text-blue-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                             ) : (
-                              <User className="w-3 aria-hidden="true" h-3 text-neutral-500" weight="fill" aria-hidden="true" />
+                              <User className="w-3 h-3 text-neutral-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                             )}
                             <span className={`text-xs font-medium ${isAdmin ? 'text-blue-600' : 'text-neutral-600'}`}>
                               {msg.senderName}
@@ -324,9 +324,9 @@ export default function DisputeDetail() {
                       className="bg-black text-white hover:bg-black/90 rounded-xl h-10 w-10 p-0"
                     >
                       {isSending ? (
-                        <Spinner className="w-4 aria-hidden="true" h-4 animate-spin" />
+                        <Spinner className="w-4 h-4 animate-spin" aria-hidden="true" />
                       ) : (
-                        <PaperPlaneTilt className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <PaperPlaneTilt className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                       )}
                     </Button>
                   </div>
@@ -382,7 +382,7 @@ export default function DisputeDetail() {
             >
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 aria-hidden="true" h-5 text-blue-600" weight="duotone" aria-hidden="true" />
+                  <ShieldCheck className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="font-medium text-black text-sm mb-1">Support Team</h3>

@@ -313,7 +313,7 @@ export default function CreateTransaction() {
             onClick={() => currentStep === 1 ? setLocation('/transactions') : handleBack()}
             className="p-2 -ml-2 hover:bg-neutral-100 rounded-xl transition-colors"
           >
-            <ArrowLeft className="w-6 aria-hidden="true" h-6 text-black" weight="bold" aria-hidden="true" />
+            <ArrowLeft className="w-6 h-6 text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
           </button>
           <h1 className="flex-1 text-center font-semibold text-base text-black sm:text-lg">
             Create Order
@@ -358,7 +358,7 @@ export default function CreateTransaction() {
                         : 'bg-neutral-100 text-neutral-500'
                   }`}>
                     {currentStep > step.id ? (
-                      <Check className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                      <Check className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                     ) : (
                       <step.icon className="w-5 h-5" weight={currentStep === step.id ? 'bold' : 'regular'} />
                     )}
@@ -413,7 +413,7 @@ export default function CreateTransaction() {
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
                       formData.role === 'buyer' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'
                     }`}>
-                      <Package className="w-6 aria-hidden="true" h-6" weight="duotone" aria-hidden="true" />
+                      <Package className="w-6 h-6" aria-hidden="true" weight="duotone" aria-hidden="true" />
                     </div>
                     <span className="font-semibold text-black">I'm Buying</span>
                     <span className="text-xs text-neutral-600 text-center mt-1">I want to purchase something</span>
@@ -431,7 +431,7 @@ export default function CreateTransaction() {
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
                       formData.role === 'seller' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'
                     }`}>
-                      <CurrencyDollar className="w-6 aria-hidden="true" h-6" weight="duotone" aria-hidden="true" />
+                      <CurrencyDollar className="w-6 h-6" aria-hidden="true" weight="duotone" aria-hidden="true" />
                     </div>
                     <span className="font-semibold text-black">I'm Selling</span>
                     <span className="text-xs text-neutral-600 text-center mt-1">I want to sell something</span>
@@ -443,7 +443,7 @@ export default function CreateTransaction() {
                     {formData.role === 'buyer' ? 'Seller' : 'Buyer'}'s Email
                   </Label>
                   <div className="relative">
-                    <EnvelopeSimple className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" weight="regular" aria-hidden="true" />
+                    <EnvelopeSimple className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
                     <Input
                       type="email"
                       placeholder="Enter email address"
@@ -452,13 +452,13 @@ export default function CreateTransaction() {
                       className="pl-12 h-12"
                     />
                     {isValidatingEmail && (
-                      <Spinner className="absolute right-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 animate-spin text-neutral-500" />
+                      <Spinner className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-neutral-500" aria-hidden="true" />
                     )}
                   </div>
                   
                   {emailError && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">
-                      <Warning className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                      <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                       {emailError}
                     </div>
                   )}
@@ -466,19 +466,19 @@ export default function CreateTransaction() {
                   {counterpartyInfo && (
                     <div className="flex items-center gap-4 p-2 bg-emerald-50 rounded-xl border border-emerald-200">
                       <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                        <User className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="duotone" aria-hidden="true" />
+                        <User className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                       </div>
                       <div className="flex-1">
                         <div className="font-medium text-black text-sm">{counterpartyInfo.username}</div>
                         <div className="text-xs text-emerald-600">Verified user found</div>
                       </div>
-                      <CheckCircle className="w-5 aria-hidden="true" h-5 text-emerald-600" weight="fill" aria-hidden="true" />
+                      <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                     </div>
                   )}
                   
                   {!counterpartyInfo && formData.counterpartyEmail && !isValidatingEmail && !emailError && (
                     <div className="flex items-center gap-2 text-neutral-600 text-sm">
-                      <Info className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                      <Info className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                       User not found. An invitation will be sent.
                     </div>
                   )}
@@ -524,7 +524,7 @@ export default function CreateTransaction() {
                         return (
                           <SelectItem key={cat.value} value={cat.value}>
                             <span className="flex items-center gap-3">
-                              <IconComponent className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="duotone" aria-hidden="true" />
+                              <IconComponent className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                               <span>{cat.label}</span>
                             </span>
                           </SelectItem>
@@ -588,7 +588,7 @@ export default function CreateTransaction() {
                         <div className="text-sm text-neutral-600">{method.description}</div>
                       </div>
                       {formData.deliveryMethod === method.value && (
-                        <CheckCircle className="w-5 aria-hidden="true" h-5 text-black shrink-0" weight="fill" aria-hidden="true" />
+                        <CheckCircle className="w-5 h-5 text-black shrink-0" aria-hidden="true" weight="fill" aria-hidden="true" />
                       )}
                     </Label>
                   ))}
@@ -724,7 +724,7 @@ export default function CreateTransaction() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200 flex items-center justify-center">
-                        <User className="w-5 aria-hidden="true" h-5 text-neutral-600" weight="duotone" aria-hidden="true" />
+                        <User className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                       </div>
                       <div>
                         <div className="font-medium text-black text-sm">
@@ -800,7 +800,7 @@ export default function CreateTransaction() {
               onClick={currentStep === 1 ? () => setLocation('/transactions') : handleBack}
               className="rounded-xl border-neutral-200 h-11"
             >
-              <ArrowLeft className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+              <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
               {currentStep === 1 ? 'Cancel' : 'Back'}
             </Button>
             
@@ -810,7 +810,7 @@ export default function CreateTransaction() {
                 className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
               >
                 Continue
-                <ArrowRight className="w-4 aria-hidden="true" h-4 ml-2" weight="bold" aria-hidden="true" />
+                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" aria-hidden="true" />
               </Button>
             ) : (
               <Button
@@ -820,12 +820,12 @@ export default function CreateTransaction() {
               >
                 {isSubmitting ? (
                   <>
-                    <Spinner className="w-4 aria-hidden="true" h-4 mr-2 animate-spin" weight="bold" aria-hidden="true" />
+                    <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Creating...
                   </>
                 ) : (
                   <>
-                    <ShieldCheck className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                    <ShieldCheck className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Create Order
                   </>
                 )}
@@ -841,7 +841,7 @@ export default function CreateTransaction() {
           transition={{ delay: 0.3 }}
           className="mt-6 flex items-center justify-center gap-2 text-sm text-neutral-600"
         >
-          <ShieldCheck className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+          <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
           <span>Your funds are protected by our secure escrow system</span>
         </motion.div>
       </div>

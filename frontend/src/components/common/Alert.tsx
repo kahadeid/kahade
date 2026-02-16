@@ -44,22 +44,22 @@ export function Alert({
     success: {
       container: 'bg-green-50 border-green-200 text-green-900 dark:bg-green-900/20 dark:border-green-800 dark:text-green-100',
       icon: 'text-green-500',
-      defaultIcon: <CheckCircle className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <CheckCircle className="w-5 h-5" aria-hidden="true" />,
     },
     error: {
       container: 'bg-red-50 border-red-200 text-red-900 dark:bg-red-900/20 dark:border-red-800 dark:text-red-100',
       icon: 'text-red-500',
-      defaultIcon: <AlertCircle className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <AlertCircle className="w-5 h-5" aria-hidden="true" />,
     },
     warning: {
       container: 'bg-yellow-50 border-yellow-200 text-yellow-900 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-100',
       icon: 'text-yellow-500',
-      defaultIcon: <AlertTriangle className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <AlertTriangle className="w-5 h-5" aria-hidden="true" />,
     },
     info: {
       container: 'bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-100',
       icon: 'text-blue-500',
-      defaultIcon: <Info className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <Info className="w-5 h-5" aria-hidden="true" />,
     },
   };
 
@@ -142,7 +142,7 @@ export function Callout({
       title: 'text-green-900 dark:text-green-100',
       text: 'text-green-800 dark:text-green-200',
       icon: 'text-green-500',
-      defaultIcon: <CheckCircle className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <CheckCircle className="w-5 h-5" aria-hidden="true" />,
     },
     error: {
       container: bordered
@@ -151,7 +151,7 @@ export function Callout({
       title: 'text-red-900 dark:text-red-100',
       text: 'text-red-800 dark:text-red-200',
       icon: 'text-red-500',
-      defaultIcon: <AlertCircle className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <AlertCircle className="w-5 h-5" aria-hidden="true" />,
     },
     warning: {
       container: bordered
@@ -160,7 +160,7 @@ export function Callout({
       title: 'text-yellow-900 dark:text-yellow-100',
       text: 'text-yellow-800 dark:text-yellow-200',
       icon: 'text-yellow-500',
-      defaultIcon: <AlertTriangle className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <AlertTriangle className="w-5 h-5" aria-hidden="true" />,
     },
     info: {
       container: bordered
@@ -169,7 +169,7 @@ export function Callout({
       title: 'text-blue-900 dark:text-blue-100',
       text: 'text-blue-800 dark:text-blue-200',
       icon: 'text-blue-500',
-      defaultIcon: <Info className="w-5 aria-hidden="true" h-5" />,
+      defaultIcon: <Info className="w-5 h-5" aria-hidden="true" />,
     },
   };
 
@@ -253,7 +253,7 @@ export function Callout({
 // Example 5: Custom icon
 // <Alert
 //   variant="success"
-//   icon={<Shield className="w-5 aria-hidden="true" h-5" />}
+//   icon={<Shield className="w-5 h-5" aria-hidden="true" />}
 //   title="Secure Transaction"
 // >
 //   This transaction is protected by our escrow service.

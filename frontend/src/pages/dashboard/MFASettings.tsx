@@ -150,14 +150,14 @@ export default function MFASettings() {
           <div className="border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Smartphone className="h-5 w-5 aria-hidden="true" text-gray-400" />
+                <Smartphone className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 <div>
                   <div className="font-medium">Aplikasi Authenticator</div>
                   <div className="text-sm text-gray-500">Google Authenticator, Authy</div>
                 </div>
               </div>
               {mfaStatus?.methods.totp ? (
-                <Check className="h-5 w-5 aria-hidden="true" text-green-500" />
+                <Check className="h-5 w-5 text-green-500" aria-hidden="true" />
               ) : (
                 <X className="h-5 w-5 text-gray-300" />
               )}
@@ -168,14 +168,14 @@ export default function MFASettings() {
           <div className="border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 aria-hidden="true" text-gray-400" />
+                <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 <div>
                   <div className="font-medium">Email</div>
                   <div className="text-sm text-gray-500">Kode verifikasi via email</div>
                 </div>
               </div>
               {mfaStatus?.methods.email ? (
-                <Check className="h-5 w-5 aria-hidden="true" text-green-500" />
+                <Check className="h-5 w-5 text-green-500" aria-hidden="true" />
               ) : (
                 <X className="h-5 w-5 text-gray-300" />
               )}
@@ -186,7 +186,7 @@ export default function MFASettings() {
           <div className="border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Key className="h-5 w-5 aria-hidden="true" text-gray-400" />
+                <Key className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 <div>
                   <div className="font-medium">Kode Cadangan</div>
                   <div className="text-sm text-gray-500">
@@ -195,9 +195,9 @@ export default function MFASettings() {
                 </div>
               </div>
               {(mfaStatus?.backupCodesRemaining || 0) > 0 ? (
-                <Check className="h-5 w-5 aria-hidden="true" text-green-500" />
+                <Check className="h-5 w-5 text-green-500" aria-hidden="true" />
               ) : (
-                <AlertTriangle className="h-5 w-5 text-yellow-5 aria-hidden="true"00" />
+                <AlertTriangle className="h-5 w-5 text-yellow-500" aria-hidden="true" />
               )}
             </div>
           </div>
@@ -241,13 +241,13 @@ export default function MFASettings() {
             onClick={loadTrustedDevices}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <RefreshCw className="h-5 w-5 aria-hidden="true" text-gray-500" />
+            <RefreshCw className="h-5 w-5 text-gray-500" aria-hidden="true" />
           </button>
         </div>
 
         {(Array.isArray(trustedDevices) ? trustedDevices : []).length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            <Monitor className="h-12 w-1 aria-hidden="true"2 mx-auto mb-3 text-gray-300" />
+            <Monitor className="h-12 w-12 mx-auto mb-3 text-gray-300" aria-hidden="true" />
             <p>Belum ada perangkat terpercaya</p>
           </div>
         ) : (
@@ -258,7 +258,7 @@ export default function MFASettings() {
                 className="flex items-center justify-between p-4 border rounded-lg"
               >
                 <div className="flex items-center gap-3">
-                  <Monitor className="h-8 w-8 aria-hidden="true" text-gray-400" />
+                  <Monitor className="h-8 w-8 text-gray-400" aria-hidden="true" />
                   <div>
                     <div className="font-medium">
                       {device.deviceName || device.browser || "Perangkat Tidak Dikenal"}
@@ -433,7 +433,7 @@ function TOTPSetupModal({
             <div>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-yellow-6 aria-hidden="true"00 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
                     <h3 className="font-medium text-yellow-800">Simpan Kode Cadangan</h3>
                     <p className="text-sm text-yellow-700 mt-1">
@@ -453,16 +453,16 @@ function TOTPSetupModal({
                       className="p-1 hover:bg-gray-200 rounded"
                     >
                       {showCodes ? (
-                        <EyeOff className="h-4 w-4 aria-hidden="true"" />
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <Eye className="h-4 w-4 aria-hidden="true"" />
+                        <Eye className="h-4 w-4" aria-hidden="true" />
                       )}
                     </button>
                     <button
                       onClick={copyBackupCodes}
                       className="p-1 hover:bg-gray-200 rounded"
                     >
-                      <Copy className="h-4 w-4 aria-hidden="true"" />
+                      <Copy className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -533,7 +533,7 @@ function DisableMFAModal({
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
         <div className="text-center mb-6">
           <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle className="h-6 w-6 aria-hidden="true" text-red-600" />
+            <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900">Nonaktifkan 2FA</h2>
           <p className="text-gray-500 mt-2">

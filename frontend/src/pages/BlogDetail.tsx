@@ -240,7 +240,7 @@ export default function BlogDetail() {
     return (
       <LandingLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <Spinner className="w-8 h-8 md:w-1 aria-hidden="true"0 md:h-10 animate-spin text-black" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 md:w-10 md:h-10 animate-spin text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
         </div>
       </LandingLayout>
     );
@@ -260,7 +260,7 @@ export default function BlogDetail() {
             <Link href="/blog">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button className="h-10 md:h-11 bg-black text-white hover:bg-black/90 rounded-xl">
-                  <ArrowLeft className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Kembali ke Blog
                 </Button>
               </motion.div>
@@ -329,9 +329,9 @@ export default function BlogDetail() {
               className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-neutral-600 mb-4 md:mb-6"
             >
               <Link href="/" className="hover:text-neutral-900 transition-colors">Beranda</Link>
-              <CaretRight className="w-3 h-3 md:w-4 aria-hidden="true" md:h-4" weight="bold" aria-hidden="true" />
+              <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               <Link href="/blog" className="hover:text-neutral-900 transition-colors">Blog</Link>
-              <CaretRight className="w-3 h-3 md:w-4 aria-hidden="true" md:h-4" weight="bold" aria-hidden="true" />
+              <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               <span className="text-black">{post.category}</span>
             </motion.nav>
 
@@ -345,11 +345,11 @@ export default function BlogDetail() {
               <Badge className="bg-black text-white hover:bg-black/90 text-xs">{post.category}</Badge>
               <div className="flex items-center gap-4 md:gap-4 text-xs md:text-sm text-neutral-600">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 md:w-4 aria-hidden="true" md:h-4" weight="regular" aria-hidden="true" />
+                  <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                   {post.readTime} menit baca
                 </span>
                 <span className="flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5 md:w-4 aria-hidden="true" md:h-4" weight="regular" aria-hidden="true" />
+                  <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                   {post.views.toLocaleString()} tayangan
                 </span>
               </div>
@@ -373,7 +373,7 @@ export default function BlogDetail() {
               className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4 md:gap-4">
-                <Avatar className="w-10 h-10 md:w-1 aria-hidden="true"2 md:h-12">
+                <Avatar className="w-10 h-10 md:w-12 md:h-12" aria-hidden="true">
                   <AvatarImage src={post.author.avatar} alt={post.author.name} />
                   <AvatarFallback className="bg-black text-white text-sm">
                     {post.author.name.split(' ').map(n => n[0]).join('')}
@@ -396,7 +396,7 @@ export default function BlogDetail() {
                     onClick={handleLike}
                     className={`h-9 border-neutral-200 rounded-lg transition-all ${isLiked ? 'bg-red-50 border-red-200 text-red-600' : ''}`}
                   >
-                    <Heart className="w-4 aria-hidden="true" h-4 mr-1" weight={isLiked ? 'fill' : 'regular'} />
+                    <Heart className="w-4 h-4 mr-1" aria-hidden="true" weight={isLiked ? 'fill' : 'regular'} />
                     {post.likes + (isLiked ? 1 : 0)}
                   </Button>
                 </motion.div>
@@ -407,7 +407,7 @@ export default function BlogDetail() {
                     onClick={handleBookmark}
                     className={`h-9 border-neutral-200 rounded-lg transition-all ${isBookmarked ? 'bg-amber-50 border-amber-200 text-amber-600' : ''}`}
                   >
-                    <BookmarkSimple className="w-4 aria-hidden="true" h-4" weight={isBookmarked ? 'fill' : 'regular'} />
+                    <BookmarkSimple className="w-4 h-4" aria-hidden="true" weight={isBookmarked ? 'fill' : 'regular'} />
                   </Button>
                 </motion.div>
               </div>
@@ -476,7 +476,7 @@ export default function BlogDetail() {
                         className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={() => handleShare('twitter')}
                       >
-                        <TwitterLogo className="w-4 aria-hidden="true" h-4 mr-2" weight="fill" aria-hidden="true" />
+                        <TwitterLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
                         Twitter
                       </Button>
                     </motion.div>
@@ -487,7 +487,7 @@ export default function BlogDetail() {
                         className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={() => handleShare('facebook')}
                       >
-                        <FacebookLogo className="w-4 aria-hidden="true" h-4 mr-2" weight="fill" aria-hidden="true" />
+                        <FacebookLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
                         Facebook
                       </Button>
                     </motion.div>
@@ -498,7 +498,7 @@ export default function BlogDetail() {
                         className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={() => handleShare('linkedin')}
                       >
-                        <LinkedinLogo className="w-4 aria-hidden="true" h-4 mr-2" weight="fill" aria-hidden="true" />
+                        <LinkedinLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
                         LinkedIn
                       </Button>
                     </motion.div>
@@ -511,12 +511,12 @@ export default function BlogDetail() {
                       >
                         {copied ? (
                           <>
-                            <Check className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                            <Check className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                             Tersalin!
                           </>
                         ) : (
                           <>
-                            <Copy className="w-4 aria-hidden="true" h-4 mr-2" weight="regular" aria-hidden="true" />
+                            <Copy className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
                             Salin tautan
                           </>
                         )}
@@ -575,7 +575,7 @@ export default function BlogDetail() {
             className="mt-8 md:mt-12 p-4 md:p-6 bg-neutral-50 rounded-xl md:rounded-2xl"
           >
             <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-4">
-              <Avatar className="w-12 h-12 md:w-1 aria-hidden="true"6 md:h-16">
+              <Avatar className="w-12 h-12 md:w-16 md:h-16" aria-hidden="true">
                 <AvatarImage src={post.author.avatar} alt={post.author.name} />
                 <AvatarFallback className="bg-black text-white text-base md:text-lg">
                   {post.author.name.split(' ').map(n => n[0]).join('')}
@@ -595,22 +595,22 @@ export default function BlogDetail() {
             <span className="text-xs md:text-sm text-neutral-600">Bagikan:</span>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={() => handleShare('twitter')}>
-                <TwitterLogo className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <TwitterLogo className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={() => handleShare('facebook')}>
-                <FacebookLogo className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <FacebookLogo className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={() => handleShare('linkedin')}>
-                <LinkedinLogo className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <LinkedinLogo className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={handleCopyLink}>
-                {copied ? <Check className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" /> : <Copy className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />}
+                {copied ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />}
               </Button>
             </motion.div>
           </div>
@@ -630,7 +630,7 @@ export default function BlogDetail() {
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button variant="outline" className="h-9 md:h-10 border-neutral-200 rounded-lg text-sm">
                     Lihat semua
-                    <ArrowRight className="w-4 aria-hidden="true" h-4 ml-2" weight="bold" aria-hidden="true" />
+                    <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                   </Button>
                 </motion.div>
               </Link>
@@ -669,7 +669,7 @@ export default function BlogDetail() {
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>{formatDate(relatedPost.publishedAt)}</span>
                         <span className="flex items-center gap-1">
-                          <Clock className="w-3 aria-hidden="true" h-3" weight="regular" aria-hidden="true" />
+                          <Clock className="w-3 h-3" aria-hidden="true" weight="regular" aria-hidden="true" />
                           {relatedPost.readTime} menit
                         </span>
                       </div>

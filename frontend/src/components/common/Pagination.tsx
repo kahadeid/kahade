@@ -117,7 +117,7 @@ export function Pagination({
             )}
             aria-label="First page"
           >
-            <ChevronsLeft className="w-4 aria-hidden="true" h-4" />
+            <ChevronsLeft className="w-4 h-4" aria-hidden="true" />
           </button>
         )}
 
@@ -136,7 +136,7 @@ export function Pagination({
           )}
           aria-label="Previous page"
         >
-          <ChevronLeft className="w-4 aria-hidden="true" h-4" />
+          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
         </button>
 
         {/* Page numbers */}
@@ -194,7 +194,7 @@ export function Pagination({
           )}
           aria-label="Next page"
         >
-          <ChevronRight className="w-4 aria-hidden="true" h-4" />
+          <ChevronRight className="w-4 h-4" aria-hidden="true" />
         </button>
 
         {/* Last page button */}
@@ -213,7 +213,7 @@ export function Pagination({
             )}
             aria-label="Last page"
           >
-            <ChevronsRight className="w-4 aria-hidden="true" h-4" />
+            <ChevronsRight className="w-4 h-4" aria-hidden="true" />
           </button>
         )}
       </div>
@@ -285,7 +285,7 @@ export function SimplePagination({
             : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
         )}
       >
-        <ChevronLeft className="w-4 aria-hidden="true" h-4" />
+        <ChevronLeft className="w-4 h-4" aria-hidden="true" />
         Previous
       </button>
 
@@ -308,7 +308,7 @@ export function SimplePagination({
         )}
       >
         Next
-        <ChevronRight className="w-4 aria-hidden="true" h-4" />
+        <ChevronRight className="w-4 h-4" aria-hidden="true" />
       </button>
     </div>
   );

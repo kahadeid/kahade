@@ -236,7 +236,7 @@ export default function UseCases() {
               className="mb-6"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
-                <Briefcase className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <Briefcase className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Solusi untuk Setiap Industri
               </span>
             </motion.div>
@@ -291,7 +291,7 @@ export default function UseCases() {
                   <ul className="space-y-2">
                     {useCase.benefits.map((benefit, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <CheckCircle className="w-5 aria-hidden="true" h-5 text-black shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                        <CheckCircle className="w-5 h-5 text-black shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                         <span className="text-sm text-neutral-600">{benefit}</span>
                       </li>
                     ))}
@@ -324,7 +324,7 @@ export default function UseCases() {
                   <p className="text-sm italic mb-3">"{useCase.testimonial.quote}"</p>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center">
-                      <UserCircle className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                      <UserCircle className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="text-sm font-semibold">{useCase.testimonial.name}</div>
@@ -391,7 +391,7 @@ export default function UseCases() {
                     <ul className="space-y-2">
                       {story.results.map((result, i) => (
                         <li key={i} className="flex items-center gap-2">
-                          <ChartLineUp className="w-4 aria-hidden="true" h-4 text-green-600" weight="bold" aria-hidden="true" />
+                          <ChartLineUp className="w-4 h-4 text-green-600" aria-hidden="true" weight="bold" aria-hidden="true" />
                           <span className="text-sm font-semibold text-black">{result}</span>
                         </li>
                       ))}
@@ -437,7 +437,7 @@ export default function UseCases() {
               <Link href="/register">
                 <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Gratis
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
               <Link href="/contact">

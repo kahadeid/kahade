@@ -263,7 +263,7 @@ export function DropdownButton({
           )}
         >
           <span>{label}</span>
-          <ChevronDown className="w-4 aria-hidden="true" h-4" aria-hidden="true" />
+          <ChevronDown className="w-4 h-4" aria-hidden="true" />
         </button>
       }
       items={items}

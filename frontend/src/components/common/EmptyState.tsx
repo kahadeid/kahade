@@ -52,11 +52,11 @@ export function EmptyState({
 }: EmptyStateProps) {
   // Default icons for each variant
   const defaultIcons = {
-    'no-data': <Inbox className="w-1 aria-hidden="true"6 h-16" />,
-    'no-results': <Search className="w-1 aria-hidden="true"6 h-16" />,
-    'error': <AlertTriangle className="w-1 aria-hidden="true"6 h-16" />,
-    '404': <FileX className="w-1 aria-hidden="true"6 h-16" />,
-    'empty-cart': <ShoppingCart className="w-1 aria-hidden="true"6 h-16" />,
+    'no-data': <Inbox className="w-16 h-16" aria-hidden="true" />,
+    'no-results': <Search className="w-16 h-16" aria-hidden="true" />,
+    'error': <AlertTriangle className="w-16 h-16" aria-hidden="true" />,
+    '404': <FileX className="w-16 h-16" aria-hidden="true" />,
+    'empty-cart': <ShoppingCart className="w-16 h-16" aria-hidden="true" />,
     'custom': null,
   };
 
@@ -266,7 +266,7 @@ export function EmptyCart({
 // <EmptyState
 //   title="No messages"
 //   description="You don't have any messages yet."
-//   icon={<Mail className="w-1 aria-hidden="true"6 h-16" />}
+//   icon={<Mail className="w-16 h-16" aria-hidden="true" />}
 // />
 
 // Example 5: Using pre-built variant

@@ -49,8 +49,7 @@ const envSchema = z.object({
   VITE_GOOGLE_MAPS_API_KEY: z.string().optional(),
   VITE_RECAPTCHA_SITE_KEY: z.string().optional(),
 
-  // Sentry Configuration (Optional)
-  VITE_SENTRY_DSN: z.string().url().optional(),
+  VITE_SENTRY_DSN: z.string().url().optional().or(z.literal('')),
   VITE_SENTRY_ENVIRONMENT: z.string().default('development'),
   VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0.1),
 
@@ -95,21 +94,25 @@ export type Env = z.infer<typeof envSchema>;
  * Throws detailed error if validation fails
  */
 function parseEnv(): Env {
+  const envData = {
+    ...import.meta.env,
+    VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+  };
+
   try {
-    return envSchema.parse(import.meta.env);
+    return envSchema.parse(envData);
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors = error.errors.map(
         (err) => `  - ${err.path.join('.')}: ${err.message}`
       );
-      
+
       console.error(
         '\n❌ Environment Variable Validation Failed:\n' +
         errors.join('\n') +
         '\n\nPlease check your .env file and ensure all required variables are set correctly.\n'
       );
-      
-      // In production, we want to fail fast
+
       if (import.meta.env.PROD) {
         throw new Error('Invalid environment configuration');
       }

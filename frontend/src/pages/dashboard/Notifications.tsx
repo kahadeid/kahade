@@ -152,7 +152,7 @@ export default function Notifications() {
       <DashboardLayout title="Notifications" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Loading notifications...</p>
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function Notifications() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center">
-                    <Bell className="w-5 aria-hidden="true" h-5 text-black" weight="duotone" aria-hidden="true" />
+                    <Bell className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
                   </div>
                   <div>
                     <span className="font-semibold text-black">{notifList.length}</span>
@@ -214,7 +214,7 @@ export default function Notifications() {
                     onClick={handleMarkAllRead}
                     className="rounded-xl border-neutral-200 h-8"
                   >
-                    <Check className="w-4 aria-hidden="true" h-4 mr-1" weight="bold" aria-hidden="true" />
+                    <Check className="w-4 h-4 mr-1" aria-hidden="true" weight="bold" aria-hidden="true" />
                     <span className="hidden sm:inline">Mark All Read</span>
                   </Button>
                 )}
@@ -317,7 +317,7 @@ export default function Notifications() {
                                 className="h-7 text-xs rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
                                 onClick={() => handleMarkRead(notif.id)}
                               >
-                                <Check className="w-3 aria-hidden="true" h-3 mr-1" weight="bold" aria-hidden="true" />
+                                <Check className="w-3 h-3 mr-1" aria-hidden="true" weight="bold" aria-hidden="true" />
                                 Mark Read
                               </Button>
                             )}
@@ -327,7 +327,7 @@ export default function Notifications() {
                               className="h-7 text-xs rounded-lg text-neutral-500 hover:text-red-600 hover:bg-red-50"
                               onClick={() => handleDelete(notif.id)}
                             >
-                              <Trash className="w-3 aria-hidden="true" h-3 mr-1" weight="bold" aria-hidden="true" />
+                              <Trash className="w-3 h-3 mr-1" aria-hidden="true" weight="bold" aria-hidden="true" />
                               Delete
                             </Button>
                           </div>
@@ -341,7 +341,7 @@ export default function Notifications() {
           ) : (
             <div className="p-12 text-center">
               <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                <Bell className="w-8 aria-hidden="true" h-8 text-neutral-500" weight="regular" aria-hidden="true" />
+                <Bell className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
               </div>
               <h3 className="font-semibold text-black mb-1">No notifications</h3>
               <p className="text-sm text-neutral-600 max-w-sm mx-auto">

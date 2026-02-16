@@ -163,7 +163,7 @@ export default function ForgotPassword() {
           {/* Main Content */}
           <div className="max-w-md">
             <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-8">
-              <Lock className="w-1 aria-hidden="true"0 h-10 text-white" weight="duotone" aria-hidden="true" />
+              <Lock className="w-10 h-10 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
             </div>
             <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
               Account Recovery
@@ -237,7 +237,7 @@ export default function ForgotPassword() {
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-foreground font-medium">Email address</Label>
                     <div className="relative">
-                      <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="email"
                         type="email"
@@ -256,7 +256,7 @@ export default function ForgotPassword() {
                     </div>
                     {emailError && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <Warning className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {emailError}
                       </p>
                     )}
@@ -270,12 +270,12 @@ export default function ForgotPassword() {
                   >
                     {isLoading ? (
                       <>
-                        <Spinner className="w-5 aria-hidden="true" h-5 animate-spin mr-2" />
+                        <Spinner className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
                         Sending...
                       </>
                     ) : countdown > 0 ? (
                       <>
-                        <Clock className="w-5 aria-hidden="true" h-5 mr-2" />
+                        <Clock className="w-5 h-5 mr-2" aria-hidden="true" />
                         Wait {countdown}s
                       </>
                     ) : (
@@ -287,7 +287,7 @@ export default function ForgotPassword() {
                 {/* Security Tips */}
                 <div className="mt-6 p-4 bg-neutral-50 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <Info className="w-5 aria-hidden="true" h-5 text-neutral-600 shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                    <Info className="w-5 h-5 text-neutral-600 shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                     <div className="text-sm text-neutral-600">
                       <p className="font-medium text-foreground mb-1">Security tip</p>
                       <p>Make sure you're on the official Kahade website before entering your email. We'll never ask for your password via email.</p>
@@ -317,7 +317,7 @@ export default function ForgotPassword() {
                 
                 {/* Success Icon */}
                 <div className="w-20 h-20 rounded-2xl bg-emerald-100 flex items-center justify-center mb-6">
-                  <CheckCircle className="w-1 aria-hidden="true"0 h-10 text-emerald-600" weight="fill" aria-hidden="true" />
+                  <CheckCircle className="w-10 h-10 text-emerald-600" aria-hidden="true" weight="fill" aria-hidden="true" />
                 </div>
                 
                 {/* Title */}
@@ -331,7 +331,7 @@ export default function ForgotPassword() {
                 {/* Email Display */}
                 <div className="bg-secondary rounded-xl p-4 mb-6">
                   <div className="flex items-center justify-center gap-3">
-                    <Envelope className="w-5 aria-hidden="true" h-5 text-neutral-600" />
+                    <Envelope className="w-5 h-5 text-neutral-600" aria-hidden="true" />
                     <span className="font-medium text-foreground">{email}</span>
                   </div>
                 </div>
@@ -349,12 +349,12 @@ export default function ForgotPassword() {
                   >
                     {isLoading ? (
                       <>
-                        <Spinner className="w-5 aria-hidden="true" h-5 animate-spin mr-2" />
+                        <Spinner className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
                         Sending...
                       </>
                     ) : countdown > 0 ? (
                       <>
-                        <Clock className="w-5 aria-hidden="true" h-5 mr-2" />
+                        <Clock className="w-5 h-5 mr-2" aria-hidden="true" />
                         Resend in {countdown}s
                       </>
                     ) : (
@@ -405,7 +405,7 @@ export default function ForgotPassword() {
                 {/* Back to Login */}
                 <p className="mt-8 text-center text-neutral-600">
                   <Link href="/login" className="inline-flex items-center gap-2 font-semibold text-foreground hover:underline">
-                    <ArrowLeft className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                    <ArrowLeft className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Back to login
                   </Link>
                 </p>

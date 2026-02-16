@@ -95,11 +95,11 @@ export default function Licenses() {
             </p>
             <div className="flex flex-wrap items-center gap-4 md:gap-4 text-sm text-neutral-600">
               <span className="flex items-center gap-2">
-                <Calendar className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 Terakhir diperbarui: 1 Januari 2026
               </span>
               <Button variant="ghost" size="sm" className="gap-2 text-neutral-600 hover:text-neutral-900" onClick={() => window.print()}>
-                <Printer className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                <Printer className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                 Cetak
               </Button>
             </div>
@@ -117,7 +117,7 @@ export default function Licenses() {
               viewport={{ once: true }}
               className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center"
             >
-              <Package className="w-7 h-7 md:w-1 aria-hidden="true"0 md:h-10 mx-auto text-black mb-2 md:mb-4" weight="bold" aria-hidden="true" />
+              <Package className="w-7 h-7 md:w-10 md:h-10 mx-auto text-black mb-2 md:mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               <div className="text-xl md:text-3xl font-bold mb-0.5 md:mb-1 text-black">
                 {licenses.reduce((acc, cat) => acc + cat.items.length, 0)}
               </div>
@@ -130,7 +130,7 @@ export default function Licenses() {
               transition={{ delay: 0.1 }}
               className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center"
             >
-              <Code className="w-7 h-7 md:w-1 aria-hidden="true"0 md:h-10 mx-auto text-black mb-2 md:mb-4" weight="bold" aria-hidden="true" />
+              <Code className="w-7 h-7 md:w-10 md:h-10 mx-auto text-black mb-2 md:mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               <div className="text-xl md:text-3xl font-bold mb-0.5 md:mb-1 text-black">{licenses.length}</div>
               <div className="text-[10px] md:text-sm text-neutral-600">Kategori</div>
             </motion.div>
@@ -141,7 +141,7 @@ export default function Licenses() {
               transition={{ delay: 0.2 }}
               className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center"
             >
-              <FileText className="w-7 h-7 md:w-1 aria-hidden="true"0 md:h-10 mx-auto text-black mb-2 md:mb-4" weight="bold" aria-hidden="true" />
+              <FileText className="w-7 h-7 md:w-10 md:h-10 mx-auto text-black mb-2 md:mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
               <div className="text-xl md:text-3xl font-bold mb-0.5 md:mb-1 text-black">3</div>
               <div className="text-[10px] md:text-sm text-neutral-600">Jenis Lisensi</div>
             </motion.div>

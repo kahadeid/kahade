@@ -43,7 +43,7 @@ export default function TestimonialsSection() {
               <div className="card card-hover h-full p-6 md:p-8 relative">
                 {/* Quote Icon */}
                 <div className="absolute top-4 right-4 opacity-10 group-hover:opacity-20 transition-opacity" aria-hidden="true">
-                  <Quotes className="w-1 aria-hidden="true"2 h-12 text-primary" weight="fill" aria-hidden="true" />
+                  <Quotes className="w-12 h-12 text-primary" aria-hidden="true" weight="fill" aria-hidden="true" />
                 </div>
                 
                 <div className="relative z-10">

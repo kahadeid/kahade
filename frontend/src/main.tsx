@@ -2,41 +2,27 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-// Initialize validated environment variables FIRST
 import { env, isFeatureEnabled } from '@/config/env.validation';
 
-// Initialize i18n for internationalization
 import '@/lib/i18n';
 
-// Import design system utilities
-import { theme } from '@/lib/design-tokens';
+import designTokens from '@/lib/design-tokens';
 import { animations } from '@/lib/animations';
 import { cn } from '@/lib/ui-utils';
 
-/**
- * Development-only global utilities
- * Only expose in development environment for debugging
- */
-if (import.meta.env.DEV) {
-  // Make utilities globally available for easier debugging
-  declare global {
-    interface Window {
-      __KAHADE_DEV__: {
-        theme: typeof theme;
-        animations: typeof animations;
-        cn: typeof cn;
-        env: typeof env;
-      };
-    }
+declare global {
+  interface Window {
+    __KAHADE_DEV__?: Record<string, unknown>;
   }
+}
 
+if (import.meta.env.DEV) {
   window.__KAHADE_DEV__ = {
-    theme,
+    theme: designTokens,
     animations,
     cn,
     env,
   };
-  
 }
 
 /**

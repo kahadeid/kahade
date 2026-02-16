@@ -43,7 +43,7 @@ export function FeatureCard({
           <div className="w-14 h-14 rounded-xl bg-black 
                         group-hover:scale-110 group-hover:rotate-3 
                         transition-all duration-300 flex items-center justify-center mb-4">
-            <IconComponent className="w-7 aria-hidden="true" h-7 text-white" weight="duotone" aria-hidden="true" />
+            <IconComponent className="w-7 h-7 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
           </div>
           
           <h3 className="text-lg font-bold text-black mb-2 

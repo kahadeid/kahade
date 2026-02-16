@@ -31,7 +31,7 @@ export default function NotFound() {
           </h1>
           <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
             <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-black flex items-center justify-center">
-              <MagnifyingGlass className="w-8 h-8 sm:w-10 sm:h-10 md:w-1 aria-hidden="true"2 md:h-12 text-white" weight="bold" aria-hidden="true" />
+              <MagnifyingGlass className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-4 md:gap-4 justify-center">
           <Link href="/">
             <Button className="h-10 md:h-11 px-5 md:px-6 bg-black text-white hover:bg-black/90 font-semibold rounded-xl gap-2">
-              <House className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+              <House className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
               Kembali ke Beranda
             </Button>
           </Link>
@@ -56,7 +56,7 @@ export default function NotFound() {
             className="h-10 md:h-11 px-5 md:px-6 border-neutral-200 font-semibold rounded-xl gap-2"
             onClick={() => window.history.back()}
           >
-            <ArrowLeft className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
             Kembali
           </Button>
         </div>

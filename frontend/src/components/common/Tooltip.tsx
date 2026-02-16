@@ -228,7 +228,7 @@ export function SimpleTooltip({
 // Example 1: Basic tooltip
 // <Tooltip content="Click to edit">
 //   <Button variant="ghost" size="sm">
-//     <Edit className="w-4 aria-hidden="true" h-4" />
+//     <Edit className="w-4 h-4" aria-hidden="true" />
 //   </Button>
 // </Tooltip>
 
@@ -266,7 +266,7 @@ export function SimpleTooltip({
 
 // Example 6: Icon with tooltip
 // <Tooltip content="This transaction is protected by escrow">
-//   <Shield className="w-5 aria-hidden="true" h-5 text-green-500" />
+//   <Shield className="w-5 h-5 text-green-500" aria-hidden="true" />
 // </Tooltip>
 
 // Example 7: Help text tooltip
@@ -277,7 +277,7 @@ export function SimpleTooltip({
 //     delay={100}
 //   >
 //     <button className="text-gray-400 hover:text-gray-600">
-//       <HelpCircle className="w-4 aria-hidden="true" h-4" />
+//       <HelpCircle className="w-4 h-4" aria-hidden="true" />
 //     </button>
 //   </Tooltip>
 // </div>

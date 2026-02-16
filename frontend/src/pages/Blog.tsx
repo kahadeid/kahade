@@ -152,7 +152,7 @@ export default function Blog() {
               transition={{ delay: 0.3 }}
               className="relative max-w-md mx-auto"
             >
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-neutral-600" weight="regular" aria-hidden="true" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
               <Input
                 placeholder="Cari artikel..."
                 value={searchQuery}
@@ -206,7 +206,7 @@ export default function Blog() {
                     transition={{ duration: 0.3 }}
                     className="text-center"
                   >
-                    <TrendUp className="w-16 h-16 md:w-2 aria-hidden="true"4 md:h-24 text-neutral-600 mx-auto mb-2" weight="fill" aria-hidden="true" />
+                    <TrendUp className="w-16 h-16 md:w-24 md:h-24 text-neutral-600 mx-auto mb-2" aria-hidden="true" weight="fill" aria-hidden="true" />
                     <span className="text-sm text-neutral-600">Artikel Unggulan</span>
                   </motion.div>
                 </div>
@@ -216,7 +216,7 @@ export default function Blog() {
                       {featuredPost.category}
                     </span>
                     <span className="flex items-center gap-1 text-xs md:text-sm text-neutral-600">
-                      <Sparkle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                      <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                       Unggulan
                     </span>
                   </div>
@@ -228,22 +228,22 @@ export default function Blog() {
                   </p>
                   <div className="flex flex-wrap items-center gap-4 md:gap-4 text-xs md:text-sm text-neutral-600 mb-6">
                     <span className="flex items-center gap-1">
-                      <User className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                      <User className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                       {featuredPost.author}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                      <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                       {featuredPost.date}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-4 aria-hidden="true" h-4" weight="regular" aria-hidden="true" />
+                      <Clock className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
                       {featuredPost.readTime}
                     </span>
                   </div>
                   <Link href={`/blog/${featuredPost.id}`}>
                     <Button className="h-11 md:h-12 px-6 bg-black text-white hover:bg-black/90 font-semibold rounded-xl btn-hover-lift">
                       Baca Artikel
-                      <ArrowRight className="ml-2 w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" />
+                      <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
                     </Button>
                   </Link>
                 </div>
@@ -273,7 +273,7 @@ export default function Blog() {
                       whileHover={{ scale: 1.2, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <Lightbulb className="w-10 h-10 md:w-1 aria-hidden="true"2 md:h-12 text-neutral-600 group-hover:text-neutral-900 transition-colors duration-300" weight="fill" aria-hidden="true" />
+                      <Lightbulb className="w-10 h-10 md:w-12 md:h-12 text-neutral-600 group-hover:text-neutral-900 transition-colors duration-300" aria-hidden="true" weight="fill" aria-hidden="true" />
                     </motion.div>
                   </div>
                   <div className="p-4 md:p-6">
@@ -290,11 +290,11 @@ export default function Blog() {
                     </p>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3 aria-hidden="true".5 h-3.5" weight="regular" aria-hidden="true" />
+                        <Calendar className="w-3 .5 h-3.5" aria-hidden="true" weight="regular" aria-hidden="true" />
                         {post.date}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3 aria-hidden="true".5 h-3.5" weight="regular" aria-hidden="true" />
+                        <Clock className="w-3 .5 h-3.5" aria-hidden="true" weight="regular" aria-hidden="true" />
                         {post.readTime}
                       </span>
                     </div>
@@ -315,7 +315,7 @@ export default function Blog() {
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4"
               >
-                <BookOpen className="w-8 h-8 md:w-1 aria-hidden="true"0 md:h-10 text-neutral-600" weight="regular" aria-hidden="true" />
+                <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
               </motion.div>
               <h3 className="font-bold text-lg md:text-xl mb-2 text-black">No articles found</h3>
               <p className="text-sm md:text-base text-neutral-600">Coba sesuaikan pencarian atau filter Anda.</p>
@@ -357,7 +357,7 @@ export default function Blog() {
               transition={{ duration: 0.2 }}
               className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
             >
-              <BookOpen className="w-7 h-7 md:w-8 aria-hidden="true" md:h-8 text-white" weight="fill" aria-hidden="true" />
+              <BookOpen className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="fill" aria-hidden="true" />
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Berlangganan Newsletter Kami

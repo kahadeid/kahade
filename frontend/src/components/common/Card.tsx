@@ -41,9 +41,9 @@ export function Card({
           className
         )}
       >
-        <Skeleton className="h-6 w-3 aria-hidden="true"/4 mb-4" />
+        <Skeleton className="h-6 w-3 /4 mb-4" aria-hidden="true" />
         <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-5 aria-hidden="true"/6" />
+        <Skeleton className="h-4 w-5 /6" aria-hidden="true" />
       </div>
     );
   }
@@ -276,7 +276,7 @@ export function CardImage({
 //         </p>
 //       </div>
 //       <div className="p-3 bg-green-100 rounded-full">
-//         <TrendingUp className="w-6 aria-hidden="true" h-6 text-green-600" />
+//         <TrendingUp className="w-6 h-6 text-green-600" aria-hidden="true" />
 //       </div>
 //     </div>
 //     <div className="mt-2 flex items-center gap-1 text-sm">

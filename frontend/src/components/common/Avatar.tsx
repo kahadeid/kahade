@@ -118,7 +118,7 @@ export function Avatar({
           <span className={cn('select-none', bgColor)}>{initials}</span>
         ) : (
           <span className={cn('select-none', bgColor)}>
-            <User className="w-1 aria-hidden="true"/2 h-1/2" />
+            <User className="w-1 /2 h-1/2" aria-hidden="true" />
           </span>
         )}
       </div>

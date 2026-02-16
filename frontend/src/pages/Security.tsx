@@ -210,7 +210,7 @@ export default function Security() {
               className="mb-6"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border-2 border-blue-100 rounded-full text-sm font-medium text-blue-700">
-                <ShieldCheck className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Keamanan & Kepercayaan
               </span>
             </motion.div>
@@ -241,7 +241,7 @@ export default function Security() {
               <Link href="/register">
                 <Button className="h-14 px-8 bg-black text-white hover:bg-black/90 rounded-xl font-semibold text-base">
                   Mulai Transaksi Aman
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
             </motion.div>
@@ -380,7 +380,7 @@ export default function Security() {
             <div className="bg-white border-2 border-neutral-200 rounded-2xl p-6 md:p-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                  <Certificate className="w-6 aria-hidden="true" h-6 text-blue-600" weight="duotone" aria-hidden="true" />
+                  <Certificate className="w-6 h-6 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-black mb-2">Komitmen Kepatuhan</h3>
@@ -433,7 +433,7 @@ export default function Security() {
                 <ul className="space-y-3">
                   {category.items.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 aria-hidden="true" h-5 text-black shrink-0 mt-0.5" weight="bold" aria-hidden="true" />
+                      <Check className="w-5 h-5 text-black shrink-0 mt-0.5" aria-hidden="true" weight="bold" aria-hidden="true" />
                       <span className="text-sm text-neutral-600">{item}</span>
                     </li>
                   ))}
@@ -625,7 +625,7 @@ export default function Security() {
               viewport={{ once: true }}
               className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
             >
-              <ShieldCheck className="w-8 aria-hidden="true" h-8 text-white" weight="duotone" aria-hidden="true" />
+              <ShieldCheck className="w-8 h-8 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -654,7 +654,7 @@ export default function Security() {
               <Link href="/register">
                 <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Sekarang
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
               <Link href="/contact">

@@ -344,7 +344,7 @@ export default function Login() {
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-foreground font-medium">Alamat Email</Label>
                     <div className="relative">
-                      <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="email"
                         type="email"
@@ -359,7 +359,7 @@ export default function Login() {
                     </div>
                     {errors.email && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <Warning className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {errors.email.message}
                       </p>
                     )}
@@ -371,7 +371,7 @@ export default function Login() {
                       <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
@@ -389,12 +389,12 @@ export default function Login() {
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
                       >
-                        {showPassword ? <EyeSlash className="w-5 aria-hidden="true" h-5" /> : <Eye className="w-5 aria-hidden="true" h-5" />}
+                        {showPassword ? <EyeSlash className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
                       </button>
                     </div>
                     {errors.password && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <Warning className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {errors.password.message}
                       </p>
                     )}
@@ -445,7 +445,7 @@ export default function Login() {
                   >
                     {isLoading || isSubmitting ? (
                       <>
-                        <Spinner className="w-5 aria-hidden="true" h-5 animate-spin mr-2" />
+                        <Spinner className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
                         Masuk...
                       </>
                     ) : (
@@ -474,7 +474,7 @@ export default function Login() {
                         onClick={() => handleSocialLogin('Google')}
                         aria-label="Login dengan Google"
                       >
-                        <GoogleLogo className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                        <GoogleLogo className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                       </button>
                       <button 
                         type="button"
@@ -482,7 +482,7 @@ export default function Login() {
                         onClick={() => handleSocialLogin('Apple')}
                         aria-label="Login dengan Apple"
                       >
-                        <AppleLogo className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                        <AppleLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                       </button>
                       <button 
                         type="button"
@@ -490,7 +490,7 @@ export default function Login() {
                         onClick={() => handleSocialLogin('X')}
                         aria-label="Login dengan X"
                       >
-                        <XLogo className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                        <XLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                       </button>
                     </div>
                     
@@ -517,12 +517,12 @@ export default function Login() {
                   className="flex items-center gap-2 text-neutral-600 hover:text-foreground mb-8 transition-colors"
                   aria-label="Kembali ke login"
                 >
-                  <ArrowLeft className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Kembali ke login
                 </button>
                 
                 <div className="w-16 h-16 rounded-xl bg-neutral-100 flex items-center justify-center mb-6">
-                  <DeviceMobile className="w-8 aria-hidden="true" h-8 text-foreground" weight="duotone" aria-hidden="true" />
+                  <DeviceMobile className="w-8 h-8 text-foreground" aria-hidden="true" weight="duotone" aria-hidden="true" />
                 </div>
                 
                 <h1 className="text-3xl font-bold mb-3 text-foreground">Two-Factor Authentication</h1>
@@ -534,7 +534,7 @@ export default function Login() {
                   <div className="space-y-2">
                     <Label htmlFor="mfaCode" className="text-foreground font-medium">Kode Autentikasi</Label>
                     <div className="relative">
-                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" aria-hidden="true" />
+                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="mfaCode"
                         type="text"
@@ -557,7 +557,7 @@ export default function Login() {
                   >
                     {isLoading ? (
                       <>
-                        <Spinner className="w-5 aria-hidden="true" h-5 animate-spin mr-2" />
+                        <Spinner className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
                         Memverifikasi...
                       </>
                     ) : (

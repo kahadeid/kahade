@@ -360,7 +360,7 @@ export default function Register() {
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             className="w-24 h-24 rounded-3xl bg-green-100 flex items-center justify-center mx-auto mb-8"
           >
-            <CheckCircle className="w-1 aria-hidden="true"2 h-12 text-green-600" weight="fill" aria-hidden="true" />
+            <CheckCircle className="w-12 h-12 text-green-600" aria-hidden="true" weight="fill" aria-hidden="true" />
           </motion.div>
           
           <h1 className="text-3xl font-bold mb-4 text-foreground">Welcome to Kahade!</h1>
@@ -372,7 +372,7 @@ export default function Register() {
             <Link href="/login">
               <Button className="w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl font-semibold">
                 Continue to Login
-                <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
               </Button>
             </Link>
             <Link href="/">
@@ -482,7 +482,7 @@ export default function Register() {
                         "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                         step >= s ? 'bg-black text-white' : 'bg-neutral-100 text-muted-foreground'
                       )}>
-                        {step > s ? <Check className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" /> : s}
+                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : s}
                       </div>
                       {s < 3 && (
                         <div className={cn(
@@ -499,7 +499,7 @@ export default function Register() {
                   <div className="space-y-2">
                     <Label htmlFor="username" className="text-foreground font-medium">Username</Label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="username"
                         type="text"
@@ -515,7 +515,7 @@ export default function Register() {
                     </div>
                     {errors.username && touched.username && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {errors.username}
                       </p>
                     )}
@@ -525,7 +525,7 @@ export default function Register() {
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-foreground font-medium">Email address</Label>
                     <div className="relative">
-                      <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="email"
                         type="email"
@@ -541,7 +541,7 @@ export default function Register() {
                     </div>
                     {errors.email && touched.email && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {errors.email}
                       </p>
                     )}
@@ -553,7 +553,7 @@ export default function Register() {
                       Phone number <span className="text-muted-foreground font-normal">(optional)</span>
                     </Label>
                     <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="phone"
                         type="tel"
@@ -569,7 +569,7 @@ export default function Register() {
                     </div>
                     {errors.phone && touched.phone && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {errors.phone}
                       </p>
                     )}
@@ -602,21 +602,21 @@ export default function Register() {
                     className="h-12 border-2 border-neutral-200 rounded-xl flex items-center justify-center hover:border-black hover:bg-neutral-100 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     onClick={() => handleSocialSignup('Google')}
                   >
-                    <GoogleLogo className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                    <GoogleLogo className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                   </button>
                   <button 
                     type="button"
                     className="h-12 border-2 border-neutral-200 rounded-xl flex items-center justify-center hover:border-black hover:bg-neutral-100 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     onClick={() => handleSocialSignup('Apple')}
                   >
-                    <AppleLogo className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                    <AppleLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                   </button>
                   <button 
                     type="button"
                     className="h-12 border-2 border-neutral-200 rounded-xl flex items-center justify-center hover:border-black hover:bg-neutral-100 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     onClick={() => handleSocialSignup('X')}
                   >
-                    <XLogo className="w-5 aria-hidden="true" h-5" weight="fill" aria-hidden="true" />
+                    <XLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
                   </button>
                 </div>
                 
@@ -647,7 +647,7 @@ export default function Register() {
                   onClick={() => setStep(1)}
                   className="flex items-center gap-2 text-neutral-600 hover:text-foreground mb-4 transition-colors"
                 >
-                  <ArrowLeft className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Back
                 </button>
                 
@@ -667,7 +667,7 @@ export default function Register() {
                         "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                         step >= s ? 'bg-black text-white' : 'bg-neutral-100 text-muted-foreground'
                       )}>
-                        {step > s ? <Check className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" /> : s}
+                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : s}
                       </div>
                       {s < 3 && (
                         <div className={cn(
@@ -684,7 +684,7 @@ export default function Register() {
                   <div className="space-y-2">
                     <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
@@ -702,7 +702,7 @@ export default function Register() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        {showPassword ? <EyeSlash className="w-5 aria-hidden="true" h-5" /> : <Eye className="w-5 aria-hidden="true" h-5" />}
+                        {showPassword ? <EyeSlash className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
                       </button>
                     </div>
                     
@@ -735,7 +735,7 @@ export default function Register() {
                               )}
                             >
                               {passwordStrength.passed.includes(item) ? (
-                                <Check className="w-3 aria-hidden="true".5 h-3.5" weight="bold" aria-hidden="true" />
+                                <Check className="w-3 .5 h-3.5" aria-hidden="true" weight="bold" aria-hidden="true" />
                               ) : (
                                 <X className="w-3.5 h-3.5" />
                               )}
@@ -751,7 +751,7 @@ export default function Register() {
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirm password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
@@ -769,12 +769,12 @@ export default function Register() {
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        {showConfirmPassword ? <EyeSlash className="w-5 aria-hidden="true" h-5" /> : <Eye className="w-5 aria-hidden="true" h-5" />}
+                        {showConfirmPassword ? <EyeSlash className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
                       </button>
                     </div>
                     {errors.confirmPassword && touched.confirmPassword && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                         {errors.confirmPassword}
                       </p>
                     )}
@@ -809,7 +809,7 @@ export default function Register() {
                   onClick={() => setStep(2)}
                   className="flex items-center gap-2 text-neutral-600 hover:text-foreground mb-4 transition-colors"
                 >
-                  <ArrowLeft className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                   Back
                 </button>
                 
@@ -829,7 +829,7 @@ export default function Register() {
                         "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                         step >= s ? 'bg-black text-white' : 'bg-neutral-100 text-muted-foreground'
                       )}>
-                        {step > s ? <Check className="w-4 aria-hidden="true" h-4" weight="bold" aria-hidden="true" /> : s}
+                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : s}
                       </div>
                       {s < 3 && (
                         <div className={cn(
@@ -866,7 +866,7 @@ export default function Register() {
                       Referral code <span className="text-muted-foreground font-normal">(optional)</span>
                     </Label>
                     <div className="relative">
-                      <Gift className="absolute left-4 top-1/2 -translate-y-1/2 w-5 aria-hidden="true" h-5 text-muted-foreground" />
+                      <Gift className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                       <Input
                         id="referralCode"
                         type="text"
@@ -944,7 +944,7 @@ export default function Register() {
                   >
                     {isLoading ? (
                       <>
-                        <Spinner className="w-5 aria-hidden="true" h-5 animate-spin mr-2" />
+                        <Spinner className="w-5 h-5 animate-spin mr-2" aria-hidden="true" />
                         Creating account...
                       </>
                     ) : (

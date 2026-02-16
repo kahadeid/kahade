@@ -40,7 +40,7 @@ export function LoadingFallback({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <Spinner className="w-8 aria-hidden="true" h-8 text-primary" />
+            <Spinner className="w-8 h-8 text-primary" aria-hidden="true" />
           </motion.div>
         </div>
         <motion.p
@@ -68,16 +68,16 @@ export function DashboardPageSkeleton() {
     <div className="container py-8 space-y-8 animate-in fade-in duration-300">
       {/* Page Header */}
       <div className="space-y-2">
-        <Skeleton className="h-8 w-4 aria-hidden="true"8" />
-        <Skeleton className="h-4 w-9 aria-hidden="true"6" />
+        <Skeleton className="h-8 w-48" aria-hidden="true" />
+        <Skeleton className="h-4 w-96" aria-hidden="true" />
       </div>
       
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
           <div key={i} className="card p-6 space-y-3">
-            <Skeleton className="h-4 w-2 aria-hidden="true"4" />
-            <Skeleton className="h-8 w-3 aria-hidden="true"2" />
+            <Skeleton className="h-4 w-24" aria-hidden="true" />
+            <Skeleton className="h-8 w-32" aria-hidden="true" />
             <Skeleton className="h-3 w-full" />
           </div>
         ))}
@@ -85,7 +85,7 @@ export function DashboardPageSkeleton() {
       
       {/* Content Area */}
       <div className="card p-6 space-y-4">
-        <Skeleton className="h-6 w-4 aria-hidden="true"0" />
+        <Skeleton className="h-6 w-40" aria-hidden="true" />
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="h-16 w-full" />
@@ -106,15 +106,15 @@ export function TransactionListSkeleton() {
         <div key={i} className="card p-4 md:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 flex-1">
-              <Skeleton className="w-1 aria-hidden="true"2 h-12 rounded-full" />
+              <Skeleton className="w-12 h-12 rounded-full" aria-hidden="true" />
               <div className="space-y-2 flex-1">
-                <Skeleton className="h-5 w-4 aria-hidden="true"8" />
-                <Skeleton className="h-4 w-3 aria-hidden="true"2" />
+                <Skeleton className="h-5 w-48" aria-hidden="true" />
+                <Skeleton className="h-4 w-32" aria-hidden="true" />
               </div>
             </div>
             <div className="text-right space-y-2">
-              <Skeleton className="h-5 w-2 aria-hidden="true"4 ml-auto" />
-              <Skeleton className="h-4 w-1 aria-hidden="true"6 ml-auto" />
+              <Skeleton className="h-5 w-24 ml-auto" aria-hidden="true" />
+              <Skeleton className="h-4 w-16 ml-auto" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -131,27 +131,27 @@ export function ProfilePageSkeleton() {
     <div className="container py-8 space-y-8 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex items-center gap-6">
-        <Skeleton className="w-2 aria-hidden="true"4 h-24 rounded-full" />
+        <Skeleton className="w-24 h-24 rounded-full" aria-hidden="true" />
         <div className="space-y-2 flex-1">
-          <Skeleton className="h-8 w-4 aria-hidden="true"8" />
-          <Skeleton className="h-4 w-6 aria-hidden="true"4" />
+          <Skeleton className="h-8 w-48" aria-hidden="true" />
+          <Skeleton className="h-4 w-64" aria-hidden="true" />
         </div>
       </div>
       
       {/* Form */}
       <div className="card p-6 space-y-6">
-        <Skeleton className="h-6 w-3 aria-hidden="true"2" />
+        <Skeleton className="h-6 w-32" aria-hidden="true" />
         <div className="space-y-4">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="space-y-2">
-              <Skeleton className="h-4 w-2 aria-hidden="true"4" />
+              <Skeleton className="h-4 w-24" aria-hidden="true" />
               <Skeleton className="h-10 w-full" />
             </div>
           ))}
         </div>
         <div className="flex gap-3">
-          <Skeleton className="h-10 w-2 aria-hidden="true"4" />
-          <Skeleton className="h-10 w-2 aria-hidden="true"4" />
+          <Skeleton className="h-10 w-24" aria-hidden="true" />
+          <Skeleton className="h-10 w-24" aria-hidden="true" />
         </div>
       </div>
     </div>
@@ -168,12 +168,12 @@ export function CardGridSkeleton({ count = 6 }: { count?: number }) {
         <div key={i} className="card overflow-hidden">
           <Skeleton className="h-48 w-full" />
           <div className="p-6 space-y-3">
-            <Skeleton className="h-6 w-3 aria-hidden="true"/4" />
+            <Skeleton className="h-6 w-3 /4" aria-hidden="true" />
             <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5 aria-hidden="true"/6" />
+            <Skeleton className="h-4 w-5 /6" aria-hidden="true" />
             <div className="flex gap-2 pt-2">
-              <Skeleton className="h-8 w-2 aria-hidden="true"0" />
-              <Skeleton className="h-8 w-2 aria-hidden="true"0" />
+              <Skeleton className="h-8 w-20" aria-hidden="true" />
+              <Skeleton className="h-8 w-20" aria-hidden="true" />
             </div>
           </div>
         </div>

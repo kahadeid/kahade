@@ -26,7 +26,7 @@ export interface BreadcrumbProps {
 
 export function Breadcrumb({
   items,
-  separator = <ChevronRight className="w-4 aria-hidden="true" h-4" />,
+  separator = <ChevronRight className="w-4 h-4" aria-hidden="true" />,
   maxItems,
   className,
 }: BreadcrumbProps) {
@@ -164,7 +164,7 @@ export function SimpleBreadcrumb({
     {
       label: 'Home',
       href: homeHref,
-      icon: <Home className="w-4 aria-hidden="true" h-4" />,
+      icon: <Home className="w-4 h-4" aria-hidden="true" />,
       onClick: onNavigate ? () => onNavigate(homeHref) : undefined,
     },
     ...items.map(item => ({
@@ -184,7 +184,7 @@ export function SimpleBreadcrumb({
 // Example 1: Basic breadcrumb
 // <Breadcrumb
 //   items={[
-//     { label: 'Home', href: '/', icon: <Home className="w-4 aria-hidden="true" h-4" /> },
+//     { label: 'Home', href: '/', icon: <Home className="w-4 h-4" aria-hidden="true" /> },
 //     { label: 'Transactions', href: '/transactions' },
 //     { label: 'Transaction Details' },
 //   ]}
@@ -197,7 +197,7 @@ export function SimpleBreadcrumb({
 //     {
 //       label: 'Home',
 //       onClick: () => router.push('/'),
-//       icon: <Home className="w-4 aria-hidden="true" h-4" />,
+//       icon: <Home className="w-4 h-4" aria-hidden="true" />,
 //     },
 //     {
 //       label: 'Transactions',
@@ -253,7 +253,7 @@ export function SimpleBreadcrumb({
 //       items={[
 //         {
 //           label: 'Home',
-//           icon: <Home className="w-4 aria-hidden="true" h-4" />,
+//           icon: <Home className="w-4 h-4" aria-hidden="true" />,
 //           onClick: () => router.push('/'),
 //         },
 //         ...items,
@@ -268,12 +268,12 @@ export function SimpleBreadcrumb({
 //     {
 //       label: 'Dashboard',
 //       href: '/dashboard',
-//       icon: <LayoutDashboard className="w-4 aria-hidden="true" h-4" />,
+//       icon: <LayoutDashboard className="w-4 h-4" aria-hidden="true" />,
 //     },
 //     {
 //       label: 'Transactions',
 //       href: '/transactions',
-//       icon: <FileText className="w-4 aria-hidden="true" h-4" />,
+//       icon: <FileText className="w-4 h-4" aria-hidden="true" />,
 //     },
 //     {
 //       label: `#${transaction.id.slice(0, 8)}`,

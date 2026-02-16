@@ -175,7 +175,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
       >
         <item.icon className="w-5 h-5" weight={isActive(item.href) ? 'fill' : 'regular'} />
         <span className="font-medium">{item.label}</span>
-        {isActive(item.href) && <CaretRight className="w-4 aria-hidden="true" h-4 ml-auto" />}
+        {isActive(item.href) && <CaretRight className="w-4 h-4 ml-auto" aria-hidden="true" />}
       </Link>
     );
   };
@@ -222,7 +222,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
           <div className="flex gap-2">
             <a href={import.meta.env.VITE_APP_URL || 'https://app.kahade.id'} className="flex-1">
               <Button variant="outline" size="sm" className="w-full">
-                <Globe className="w-4 aria-hidden="true" h-4 mr-2" />
+                <Globe className="w-4 h-4 mr-2" aria-hidden="true" />
                 User View
               </Button>
             </a>
@@ -232,7 +232,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
               className="text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
             >
-              <SignOut className="w-4 aria-hidden="true" h-4" />
+              <SignOut className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                 className="lg:hidden p-2 hover:bg-secondary rounded-lg"
                 onClick={() => setIsSidebarOpen(true)}
               >
-                <List className="w-6 aria-hidden="true" h-6" weight="bold" aria-hidden="true" />
+                <List className="w-6 h-6" aria-hidden="true" weight="bold" aria-hidden="true" />
               </button>
               <div>
                 {title && <h1 className="text-xl font-bold">{title}</h1>}
@@ -309,7 +309,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
             <div className="flex items-center gap-3">
               {/* Global Search */}
               <div className="hidden md:flex relative">
-                <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 aria-hidden="true" h-4 text-muted-foreground" />
+                <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                 <Input
                   type="search"
                   placeholder="Search users, transactions..."
@@ -321,7 +321,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
               
               {/* Notifications */}
               <Button variant="ghost" size="icon" className="relative">
-                <Bell className="w-5 aria-hidden="true" h-5" />
+                <Bell className="w-5 h-5" aria-hidden="true" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </Button>
               
@@ -358,7 +358,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                         onClick={() => setIsProfileDropdownOpen(false)}
                         className="flex items-center gap-4 px-4 py-2.5 text-sm hover:bg-secondary transition-colors"
                       >
-                        <Gear className="w-4 aria-hidden="true" h-4" />
+                        <Gear className="w-4 h-4" aria-hidden="true" />
                         System Settings
                       </Link>
                       <Link
@@ -366,7 +366,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                         onClick={() => setIsProfileDropdownOpen(false)}
                         className="flex items-center gap-4 px-4 py-2.5 text-sm hover:bg-secondary transition-colors"
                       >
-                        <ClockCounterClockwise className="w-4 aria-hidden="true" h-4" />
+                        <ClockCounterClockwise className="w-4 h-4" aria-hidden="true" />
                         Audit Logs
                       </Link>
                       <div className="border-t border-border mt-2 pt-2">
@@ -375,14 +375,14 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                           onClick={() => setIsProfileDropdownOpen(false)}
                           className="flex items-center gap-4 px-4 py-2.5 text-sm hover:bg-secondary transition-colors"
                         >
-                          <Globe className="w-4 aria-hidden="true" h-4" />
+                          <Globe className="w-4 h-4" aria-hidden="true" />
                           Switch to User View
                         </Link>
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-4 px-4 py-2.5 text-sm text-destructive hover:bg-secondary transition-colors w-full"
                         >
-                          <SignOut className="w-4 aria-hidden="true" h-4" />
+                          <SignOut className="w-4 h-4" aria-hidden="true" />
                           Sign Out
                         </button>
                       </div>

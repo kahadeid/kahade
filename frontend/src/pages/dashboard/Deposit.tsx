@@ -415,7 +415,7 @@ export default function Deposit() {
       >
         {isSubmitting ? (
           <span className="flex items-center gap-2">
-            <Spinner className="w-5 aria-hidden="true" h-5 animate-spin" />
+            <Spinner className="w-5 h-5 animate-spin" aria-hidden="true" />
             Memproses...
           </span>
         ) : (
@@ -436,7 +436,7 @@ export default function Deposit() {
       {/* Success Header */}
       <div className="text-center py-6">
         <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="w-8 aria-hidden="true" h-8 text-green-600" weight="bold" aria-hidden="true" />
+          <Check className="w-8 h-8 text-green-600" aria-hidden="true" weight="bold" aria-hidden="true" />
         </div>
         <h2 className="text-xl font-bold text-black mb-2">Invoice Dibuat</h2>
         <p className="text-neutral-600">Silakan selesaikan pembayaran Anda</p>
@@ -456,7 +456,7 @@ export default function Deposit() {
           <div className="flex justify-between items-center">
             <span className="text-neutral-600">Berlaku hingga</span>
             <span className="text-orange-500 font-medium flex items-center gap-1">
-              <Clock className="w-4 aria-hidden="true" h-4" />
+              <Clock className="w-4 h-4" aria-hidden="true" />
               {new Date(paymentInfo.expiresAt).toLocaleString('id-ID')}
             </span>
           </div>
@@ -467,7 +467,7 @@ export default function Deposit() {
       {selectedMethod?.type === 'qris' && paymentInfo?.qrUrl && (
         <div className="bg-white rounded-xl p-6 border border-neutral-200 text-center">
           <div className="mb-4">
-            <QrCode className="w-8 aria-hidden="true" h-8 text-black mx-auto mb-2" />
+            <QrCode className="w-8 h-8 text-black mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm text-neutral-600">Scan QR Code dengan aplikasi e-wallet atau mobile banking</p>
           </div>
           <img
@@ -493,9 +493,9 @@ export default function Deposit() {
               className="shrink-0"
             >
               {copiedText === paymentInfo.vaNumber ? (
-                <Check className="w-5 aria-hidden="true" h-5 text-green-600" />
+                <Check className="w-5 h-5 text-green-600" aria-hidden="true" />
               ) : (
-                <Copy className="w-5 aria-hidden="true" h-5" />
+                <Copy className="w-5 h-5" aria-hidden="true" />
               )}
             </Button>
           </div>
@@ -506,7 +506,7 @@ export default function Deposit() {
       {selectedMethod?.type === 'ewallet' && paymentInfo?.paymentUrl && (
         <div className="space-y-4">
           <div className="bg-orange-50 rounded-xl p-4 flex items-start gap-3">
-            <Info className="w-5 aria-hidden="true" h-5 text-orange-500 shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-sm text-orange-700">
               Anda akan diarahkan ke aplikasi {selectedMethod.name} untuk menyelesaikan pembayaran.
             </p>
@@ -517,7 +517,7 @@ export default function Deposit() {
           >
             <span className="flex items-center gap-2">
               Buka {selectedMethod.name}
-              <ArrowRight className="w-5 aria-hidden="true" h-5" />
+              <ArrowRight className="w-5 h-5" aria-hidden="true" />
             </span>
           </Button>
         </div>

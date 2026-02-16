@@ -95,7 +95,7 @@ export function SkeletonAvatar({ size = 'md', ...props }: SkeletonProps & { size
 export function SkeletonCard({ className, ...props }: SkeletonProps) {
   return (
     <div className={cn('p-4 border rounded-lg space-y-3', className)} {...props}>
-      <Skeleton className="h-6 w-3 aria-hidden="true"/4" />
+      <Skeleton className="h-6 w-3 /4" aria-hidden="true" />
       <SkeletonText lines={2} />
       <div className="flex gap-2">
         <SkeletonButton />
@@ -116,10 +116,10 @@ export function TransactionCardSkeleton() {
       <div className="flex items-center gap-3">
         <SkeletonAvatar size="md" />
         <div className="flex-1 space-y-2">
-          <Skeleton className="h-5 w-3 aria-hidden="true"2" /> {/* Name */}
-          <Skeleton className="h-4 w-2 aria-hidden="true"4" /> {/* Status */}
+          <Skeleton className="h-5 w-32" aria-hidden="true" /> {/* Name */}
+          <Skeleton className="h-4 w-24" aria-hidden="true" /> {/* Status */}
         </div>
-        <Skeleton className="h-6 w-2 aria-hidden="true"0" /> {/* Amount */}
+        <Skeleton className="h-6 w-20" aria-hidden="true" /> {/* Amount */}
       </div>
 
       {/* Description */}
@@ -127,10 +127,10 @@ export function TransactionCardSkeleton() {
 
       {/* Footer: Date + Actions */}
       <div className="flex items-center justify-between pt-2 border-t">
-        <Skeleton className="h-4 w-3 aria-hidden="true"2" /> {/* Date */}
+        <Skeleton className="h-4 w-32" aria-hidden="true" /> {/* Date */}
         <div className="flex gap-2">
-          <Skeleton className="h-8 w-2 aria-hidden="true"0 rounded" /> {/* Button 1 */}
-          <Skeleton className="h-8 w-2 aria-hidden="true"0 rounded" /> {/* Button 2 */}
+          <Skeleton className="h-8 w-20 rounded" aria-hidden="true" /> {/* Button 1 */}
+          <Skeleton className="h-8 w-20 rounded" aria-hidden="true" /> {/* Button 2 */}
         </div>
       </div>
     </div>
@@ -153,9 +153,9 @@ export function UserCardSkeleton() {
       <div className="flex items-center gap-3">
         <SkeletonAvatar size="lg" />
         <div className="flex-1 space-y-2">
-          <Skeleton className="h-5 w-3 aria-hidden="true"2" /> {/* Name */}
-          <Skeleton className="h-4 w-4 aria-hidden="true"8" /> {/* Email */}
-          <Skeleton className="h-4 w-2 aria-hidden="true"4" /> {/* Role */}
+          <Skeleton className="h-5 w-32" aria-hidden="true" /> {/* Name */}
+          <Skeleton className="h-4 w-48" aria-hidden="true" /> {/* Email */}
+          <Skeleton className="h-4 w-24" aria-hidden="true" /> {/* Role */}
         </div>
       </div>
     </div>
@@ -177,10 +177,10 @@ export function DisputeCardSkeleton() {
     <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-lg space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Skeleton className="h-5 w-5 aria-hidden="true" rounded" /> {/* Icon */}
-          <Skeleton className="h-5 w-3 aria-hidden="true"2" /> {/* Title */}
+          <Skeleton className="h-5 w-5 rounded" aria-hidden="true" /> {/* Icon */}
+          <Skeleton className="h-5 w-32" aria-hidden="true" /> {/* Title */}
         </div>
-        <Skeleton className="h-6 w-2 aria-hidden="true"4 rounded-full" /> {/* Status badge */}
+        <Skeleton className="h-6 w-24 rounded-full" aria-hidden="true" /> {/* Status badge */}
       </div>
       <SkeletonText lines={2} />
       <div className="flex gap-2 pt-2">
@@ -196,10 +196,10 @@ export function ProfileSkeleton() {
     <div className="space-y-6">
       {/* Avatar section */}
       <div className="flex items-center gap-4">
-        <SkeletonCircle className="w-2 aria-hidden="true"4 h-24" />
+        <SkeletonCircle className="w-24 h-24" aria-hidden="true" />
         <div className="space-y-2 flex-1">
-          <Skeleton className="h-6 w-4 aria-hidden="true"8" />
-          <Skeleton className="h-4 w-6 aria-hidden="true"4" />
+          <Skeleton className="h-6 w-48" aria-hidden="true" />
+          <Skeleton className="h-4 w-64" aria-hidden="true" />
         </div>
       </div>
 
@@ -207,7 +207,7 @@ export function ProfileSkeleton() {
       <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="space-y-2">
-            <Skeleton className="h-4 w-2 aria-hidden="true"4" /> {/* Label */}
+            <Skeleton className="h-4 w-24" aria-hidden="true" /> {/* Label */}
             <Skeleton className="h-10 w-full rounded-lg" /> {/* Input */}
           </div>
         ))}
@@ -216,7 +216,7 @@ export function ProfileSkeleton() {
       {/* Actions */}
       <div className="flex gap-2">
         <SkeletonButton className="flex-1" />
-        <SkeletonButton className="w-2 aria-hidden="true"4" />
+        <SkeletonButton className="w-24" aria-hidden="true" />
       </div>
     </div>
   );
@@ -249,9 +249,9 @@ export function DashboardStatsSkeleton() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="p-6 border rounded-lg space-y-2">
-          <Skeleton className="h-4 w-2 aria-hidden="true"4" /> {/* Label */}
-          <Skeleton className="h-8 w-3 aria-hidden="true"2" /> {/* Value */}
-          <Skeleton className="h-3 w-1 aria-hidden="true"6" /> {/* Change */}
+          <Skeleton className="h-4 w-24" aria-hidden="true" /> {/* Label */}
+          <Skeleton className="h-8 w-32" aria-hidden="true" /> {/* Value */}
+          <Skeleton className="h-3 w-16" aria-hidden="true" /> {/* Change */}
         </div>
       ))}
     </div>
@@ -261,12 +261,12 @@ export function DashboardStatsSkeleton() {
 export function ChartSkeleton({ className }: { className?: string }) {
   return (
     <div className={cn('p-6 border rounded-lg space-y-4', className)}>
-      <Skeleton className="h-6 w-4 aria-hidden="true"8" /> {/* Title */}
+      <Skeleton className="h-6 w-48" aria-hidden="true" /> {/* Title */}
       <Skeleton className="h-64 w-full" /> {/* Chart area */}
       <div className="flex gap-4 justify-center">
-        <Skeleton className="h-4 w-2 aria-hidden="true"0" /> {/* Legend 1 */}
-        <Skeleton className="h-4 w-2 aria-hidden="true"0" /> {/* Legend 2 */}
-        <Skeleton className="h-4 w-2 aria-hidden="true"0" /> {/* Legend 3 */}
+        <Skeleton className="h-4 w-20" aria-hidden="true" /> {/* Legend 1 */}
+        <Skeleton className="h-4 w-20" aria-hidden="true" /> {/* Legend 2 */}
+        <Skeleton className="h-4 w-20" aria-hidden="true" /> {/* Legend 3 */}
       </div>
     </div>
   );
@@ -275,11 +275,11 @@ export function ChartSkeleton({ className }: { className?: string }) {
 export function NotificationSkeleton() {
   return (
     <div className="p-3 border-b flex gap-3">
-      <SkeletonCircle className="w-1 aria-hidden="true"0 h-10" />
+      <SkeletonCircle className="w-10 h-10" aria-hidden="true" />
       <div className="flex-1 space-y-2">
         <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-3 w-3 aria-hidden="true"/4" />
-        <Skeleton className="h-3 w-2 aria-hidden="true"0" /> {/* Time */}
+        <Skeleton className="h-3 w-3 /4" aria-hidden="true" />
+        <Skeleton className="h-3 w-20" aria-hidden="true" /> {/* Time */}
       </div>
     </div>
   );
@@ -304,8 +304,8 @@ export function PageSkeleton() {
     <div className="container mx-auto p-6 space-y-6">
       {/* Page header */}
       <div className="space-y-2">
-        <Skeleton className="h-8 w-6 aria-hidden="true"4" /> {/* Title */}
-        <Skeleton className="h-4 w-9 aria-hidden="true"6" /> {/* Subtitle */}
+        <Skeleton className="h-8 w-64" aria-hidden="true" /> {/* Title */}
+        <Skeleton className="h-4 w-96" aria-hidden="true" /> {/* Subtitle */}
       </div>
 
       {/* Stats */}
@@ -330,7 +330,7 @@ export function PageSkeleton() {
  * 
  * 1. Simple loading state:
  * ```tsx
- * {isLoading ? <Skeleton className="h-4 w-3 aria-hidden="true"2" /> : <span>{data}</span>}
+ * {isLoading ? <Skeleton className="h-4 w-32" aria-hidden="true" /> : <span>{data}</span>}
  * ```
  * 
  * 2. Card loading:

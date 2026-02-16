@@ -192,7 +192,7 @@ export default function Pricing() {
               className="mb-6"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
-                <CreditCard className="w-4 aria-hidden="true" h-4" weight="fill" aria-hidden="true" />
+                <CreditCard className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
                 Harga Transparan, Tanpa Biaya Tersembunyi
               </span>
             </motion.div>
@@ -339,7 +339,7 @@ export default function Pricing() {
                     }`}
                   >
                     {plan.cta}
-                    <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                    <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                   </Button>
                 </Link>
               </motion.div>
@@ -380,7 +380,7 @@ export default function Pricing() {
             >
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center">
-                  <Calculator className="w-6 aria-hidden="true" h-6 text-white" weight="bold" aria-hidden="true" />
+                  <Calculator className="w-6 h-6 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-black">Simulasi Biaya</h3>
@@ -541,7 +541,7 @@ export default function Pricing() {
                     >
                       {typeof value === 'boolean' ? (
                         value ? (
-                          <Check className="w-6 aria-hidden="true" h-6 text-black mx-auto" weight="bold" aria-hidden="true" />
+                          <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" aria-hidden="true" />
                         ) : (
                           <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                         )
@@ -609,7 +609,7 @@ export default function Pricing() {
               <Link href="/contact">
                 <Button className="h-12 px-6 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                   Hubungi Tim Sales
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
             </motion.div>
@@ -649,7 +649,7 @@ export default function Pricing() {
               <Link href="/register">
                 <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold text-base">
                   Mulai Gratis Sekarang
-                  <ArrowRight className="ml-2 w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
             </motion.div>

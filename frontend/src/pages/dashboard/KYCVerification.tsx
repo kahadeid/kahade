@@ -178,7 +178,7 @@ export default function KYCVerification() {
       <DashboardLayout title="KYC Verification" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-1 aria-hidden="true"0 h-10 animate-spin text-black mx-auto mb-4" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
             <p className="text-neutral-600">Loading verification status...</p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default function KYCVerification() {
         >
           <div className="bg-white rounded-2xl border border-neutral-200 p-8 text-center">
             <div className="w-20 h-20 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-1 aria-hidden="true"0 h-10 text-emerald-600" weight="fill" aria-hidden="true" />
+              <CheckCircle className="w-10 h-10 text-emerald-600" aria-hidden="true" weight="fill" aria-hidden="true" />
             </div>
             <h2 className="text-2xl font-bold text-black mb-2">Identity Verified</h2>
             <p className="text-neutral-600 mb-6">
@@ -232,7 +232,7 @@ export default function KYCVerification() {
         >
           <div className="bg-white rounded-2xl border border-neutral-200 p-8 text-center">
             <div className="w-20 h-20 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto mb-6">
-              <Spinner className="w-1 aria-hidden="true"0 h-10 text-amber-600 animate-spin" weight="bold" aria-hidden="true" />
+              <Spinner className="w-10 h-10 text-amber-600 animate-spin" aria-hidden="true" weight="bold" aria-hidden="true" />
             </div>
             <h2 className="text-2xl font-bold text-black mb-2">Under Review</h2>
             <p className="text-neutral-600 mb-6">
@@ -266,7 +266,7 @@ export default function KYCVerification() {
           <div className="bg-red-50 rounded-2xl border border-red-200 p-5">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                <Warning className="w-5 aria-hidden="true" h-5 text-red-600" weight="fill" aria-hidden="true" />
+                <Warning className="w-5 h-5 text-red-600" aria-hidden="true" weight="fill" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="font-semibold text-red-800 mb-1">Verification Rejected</h3>
@@ -297,21 +297,21 @@ export default function KYCVerification() {
         >
           <div className="flex items-start gap-4">
             <div className="w-11 h-11 rounded-xl bg-black flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 aria-hidden="true" h-5 text-white" weight="duotone" aria-hidden="true" />
+              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
             </div>
             <div>
               <h3 className="font-semibold text-black mb-2">Why Verify?</h3>
               <div className="space-y-2 text-sm text-neutral-600">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-500" weight="fill" aria-hidden="true" />
+                  <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                   <span>Increase transaction limit to Rp 100.000.000</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-500" weight="fill" aria-hidden="true" />
+                  <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                   <span>Get verified badge on your profile</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 aria-hidden="true" h-4 text-emerald-500" weight="fill" aria-hidden="true" />
+                  <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" aria-hidden="true" />
                   <span>Faster dispute resolution</span>
                 </div>
               </div>
@@ -338,7 +338,7 @@ export default function KYCVerification() {
                         : 'bg-neutral-100 text-neutral-500'
                   }`}>
                     {step > s.id ? (
-                      <Check className="w-5 aria-hidden="true" h-5" weight="bold" aria-hidden="true" />
+                      <Check className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
                     ) : (
                       <s.icon className="w-5 h-5" weight={step === s.id ? 'bold' : 'regular'} />
                     )}
@@ -482,7 +482,7 @@ export default function KYCVerification() {
                       </div>
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center">
-                        <Upload className="w-8 aria-hidden="true" h-8 text-neutral-500 mb-2" weight="duotone" aria-hidden="true" />
+                        <Upload className="w-8 h-8 text-neutral-500 mb-2" aria-hidden="true" weight="duotone" aria-hidden="true" />
                         {idFront ? (
                           <span className="text-sm text-neutral-600">{idFront.name}</span>
                         ) : (
@@ -495,7 +495,7 @@ export default function KYCVerification() {
 
                 <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
                   <div className="flex items-start gap-3">
-                    <Warning className="w-5 aria-hidden="true" h-5 text-amber-600 shrink-0 mt-0.5" weight="fill" aria-hidden="true" />
+                    <Warning className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
                     <div className="text-sm text-amber-800">
                       <p className="font-medium mb-1">Photo Requirements</p>
                       <ul className="list-disc list-inside text-amber-700 space-y-0.5">
@@ -519,7 +519,7 @@ export default function KYCVerification() {
               disabled={step === 1}
               className="rounded-xl border-neutral-200 h-11"
             >
-              <ArrowLeft className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+              <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
               Back
             </Button>
             
@@ -529,7 +529,7 @@ export default function KYCVerification() {
                 className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
               >
                 Continue
-                <ArrowRight className="w-4 aria-hidden="true" h-4 ml-2" weight="bold" aria-hidden="true" />
+                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" aria-hidden="true" />
               </Button>
             ) : (
               <Button
@@ -539,12 +539,12 @@ export default function KYCVerification() {
               >
                 {isSubmitting ? (
                   <>
-                    <Spinner className="w-4 aria-hidden="true" h-4 mr-2 animate-spin" weight="bold" aria-hidden="true" />
+                    <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Submitting...
                   </>
                 ) : (
                   <>
-                    <ShieldCheck className="w-4 aria-hidden="true" h-4 mr-2" weight="bold" aria-hidden="true" />
+                    <ShieldCheck className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
                     Submit for Verification
                   </>
                 )}
