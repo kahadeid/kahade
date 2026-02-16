@@ -316,7 +316,7 @@ export default function Login() {
       </div>
       
       {/* Right Side - Form */}
-      <div className="flex-1 flex flex-col justify-start px-6 py-12 lg:px-12 xl:px-20 bg-white">
+      <div className="flex-1 flex flex-col justify-center px-4 py-8 md:px-12 xl:px-20 bg-white">
         <div className="w-full max-w-md mx-auto">
           <AnimatePresence mode="wait">
             {!showMfaInput ? (
@@ -327,15 +327,15 @@ export default function Login() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-8">
-                  <img src="/images/logo.svg" alt="Kahade Logo" className="h-10 w-auto" />
+                <Link href="/" className="inline-flex items-center gap-2 mb-6 md:mb-8">
+                  <img src="/images/logo.svg" alt="Kahade Logo" className="h-8 md:h-10 w-auto" />
                 </Link>
                 
                 {/* Title */}
-                <h1 className="text-3xl xl:text-4xl font-bold mb-2 text-foreground">Selamat datang</h1>
+                <h1 className="text-2xl md:text-3xl xl:text-4xl font-bold mb-1 text-foreground">Selamat datang</h1>
                 
                 {/* Subtitle */}
-                <p className="text-neutral-600 mb-8">
+                <p className="text-sm md:text-base text-neutral-600 mb-6 md:mb-8">
                   Masuk ke akun Anda untuk melanjutkan
                 </p>
                 
@@ -359,7 +359,7 @@ export default function Login() {
                     </div>
                     {errors.email && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <Warning className="w-4 h-4" weight="fill" aria-hidden="true" />
                         {errors.email.message}
                       </p>
                     )}
@@ -394,7 +394,7 @@ export default function Login() {
                     </div>
                     {errors.password && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <Warning className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <Warning className="w-4 h-4" weight="fill" aria-hidden="true" />
                         {errors.password.message}
                       </p>
                     )}
@@ -474,7 +474,7 @@ export default function Login() {
                         onClick={() => handleSocialLogin('Google')}
                         aria-label="Login dengan Google"
                       >
-                        <GoogleLogo className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                        <GoogleLogo className="w-5 h-5" weight="bold" aria-hidden="true" />
                       </button>
                       <button 
                         type="button"
