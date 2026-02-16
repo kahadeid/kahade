@@ -4,17 +4,8 @@ import { MFAMethod } from '@prisma/client';
 import { MfaService } from './mfa.service';
 import { PrismaService } from '@infrastructure/database/prisma.service';
 import { SmsService } from '@integrations/sms/sms.service';
-
-
 import * as crypto from 'crypto';
-
-import {
-
-  Injectable,
-  Logger,
-  BadRequestException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 export interface MFASetupResult {
   method: MFAMethod;
@@ -48,51 +39,51 @@ export class EnhancedMFAService {
    * Getmfastatus
    */
   async getMFAStatus(userId: string): Promise<{
-    try {
     enabled: boolean;
     methods: {
       totp: boolean;
       sms: boolean;
       email: boolean;
       webauthn: boolean;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     };
     preferredMethod: MFAMethod | null;
     backupCodesRemaining: number;
   }> {
-    let userMfa = await this.prisma.userMFA.findUnique({
-      where: { userId },
-      include: {
-        webauthnCredentials: {
-          where: { isActive: true },
+    try {
+      let userMfa = await this.prisma.userMFA.findUnique({
+        where: { userId },
+        include: {
+          webauthnCredentials: {
+            where: { isActive: true },
+          },
         },
-      },
-    });
-
-    if (!userMfa) {
-      userMfa = await this.prisma.userMFA.create({
-        data: { userId },
-        include: { webauthnCredentials: true },
       });
+
+      if (!userMfa) {
+        userMfa = await this.prisma.userMFA.create({
+          data: { userId },
+          include: { webauthnCredentials: true },
+        });
+      }
+
+      const backupCodes = (userMfa.backupCodes as string[]) || [];
+      const backupCodesRemaining = backupCodes.length - userMfa.backupCodesUsed;
+
+      return {
+        enabled: userMfa.status === 'ENABLED',
+        methods: {
+          totp: userMfa.totpEnabled,
+          sms: userMfa.smsEnabled,
+          email: userMfa.emailEnabled,
+          webauthn: userMfa.webauthnCredentials.length > 0,
+        },
+        preferredMethod: userMfa.preferredMethod,
+        backupCodesRemaining,
+      };
+    } catch (error) {
+      this.logger.error(`Error in getMFAStatus: ${(error as Error).message}`, (error as Error).stack);
+      throw error;
     }
-
-    const backupCodes = (userMfa.backupCodes as string[]) || [];
-    const backupCodesRemaining = backupCodes.length - userMfa.backupCodesUsed;
-
-    return {
-      enabled: userMfa.status === 'ENABLED',
-      methods: {
-        totp: userMfa.totpEnabled,
-        sms: userMfa.smsEnabled,
-        email: userMfa.emailEnabled,
-        webauthn: userMfa.webauthnCredentials.length > 0,
-      },
-      preferredMethod: userMfa.preferredMethod,
-      backupCodesRemaining,
-    };
   }
 
   async initializeTOTPSetup(
