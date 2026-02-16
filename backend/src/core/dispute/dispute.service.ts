@@ -1,27 +1,10 @@
-
-import {
-import {
-import {
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from "@nestjs/common";
+import { PaginationUtil, PaginationParams } from "@common/utils/pagination.util";
+import { Prisma, Dispute, DisputeStatus, DisputeDecision, OrderStatus } from "@prisma/client";
 import { CreateDisputeDto } from "./dto/create-dispute.dto";
 import { DisputeRepository } from "./dispute.repository";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
-
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-  Logger,
-} from "@nestjs/common";
-  PaginationUtil,
-  PaginationParams,
-} from "@common/utils/pagination.util";
-  Prisma,
-  Dispute,
-  DisputeStatus,
-  DisputeDecision,
-  OrderStatus,
-} from "@prisma/client";
 
 // ============================================================================
 // BANK-GRADE DISPUTE SERVICE
@@ -50,80 +33,80 @@ export class DisputeService {
    */
   async create(userId: string, dto: CreateDisputeDto): Promise<Dispute> {
     try {
-    const order = await this.prisma.order.findUnique({
-      where: { id: dto.orderId },
+      const order = await this.prisma.order.findUnique({
+        where: { id: dto.orderId },
+      });
+
+      if (!order) {
+        throw new NotFoundException("Order not found");
+      }
+
+      if (order.initiatorId !== userId && order.counterpartyId !== userId) {
+        throw new ForbiddenException("You are not part of this order");
+      }
+
+      if (
+        order.status === OrderStatus.COMPLETED ||
+        order.status === OrderStatus.CANCELLED
+      ) {
+        throw new BadRequestException(
+          "Cannot dispute completed or cancelled order",
+        );
+      }
+
+      const existingDispute = await this.disputeRepository.findByOrderId(
+        dto.orderId,
+      );
+      if (existingDispute && existingDispute.status !== DisputeStatus.CLOSED) {
+        throw new BadRequestException(
+          "There is already an open dispute for this order",
+        );
+      }
+
+      const responseDeadline = new Date(
+        Date.now() + this.RESPONSE_DEADLINE_HOURS * 60 * 60 * 1000,
+      );
+
+      const dispute = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        const newDispute = await tx.dispute.create({
+          data: {
+            orderId: dto.orderId,
+            openedBy: userId,
+            reason: dto.reason,
+            description: dto.description,
+            status: DisputeStatus.OPEN,
+            responseDeadline,
+          },
+          include: {
+            opener: { select: { id: true, username: true, email: true } },
+            order: true,
+          },
+        });
+
+        await tx.order.update({
+          where: { id: dto.orderId },
+          data: { status: OrderStatus.DISPUTED },
+        });
+
+        await tx.disputeTimeline.create({
+          data: {
+            disputeId: newDispute.id,
+            action: "OPENED",
+            performedBy: userId,
+            details: { reason: dto.reason, description: dto.description },
+          },
+        });
+
+        return newDispute;
+      });
+
+      this.logger.log(`Dispute created: ${dispute.id} for order: ${dto.orderId}`);
+
+      return dispute;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in create: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    if (!order) {
-      throw new NotFoundException("Order not found");
-    }
-
-    if (order.initiatorId !== userId && order.counterpartyId !== userId) {
-      throw new ForbiddenException("You are not part of this order");
-    }
-
-    if (
-      order.status === OrderStatus.COMPLETED ||
-      order.status === OrderStatus.CANCELLED
-    ) {
-      throw new BadRequestException(
-        "Cannot dispute completed or cancelled order",
-      );
-    }
-
-    const existingDispute = await this.disputeRepository.findByOrderId(
-      dto.orderId,
-    );
-    if (existingDispute && existingDispute.status !== DisputeStatus.CLOSED) {
-      throw new BadRequestException(
-        "There is already an open dispute for this order",
-      );
-    }
-
-    const responseDeadline = new Date(
-      Date.now() + this.RESPONSE_DEADLINE_HOURS * 60 * 60 * 1000,
-    );
-
-    const dispute = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const newDispute = await tx.dispute.create({
-        data: {
-          orderId: dto.orderId,
-          openedBy: userId,
-          reason: dto.reason,
-          description: dto.description,
-          status: DisputeStatus.OPEN,
-          responseDeadline,
-        },
-        include: {
-          opener: { select: { id: true, username: true, email: true } },
-          order: true,
-        },
-      });
-
-      await tx.order.update({
-        where: { id: dto.orderId },
-        data: { status: OrderStatus.DISPUTED },
-      });
-
-      await tx.disputeTimeline.create({
-        data: {
-          disputeId: newDispute.id,
-          action: "OPENED",
-          performedBy: userId,
-          details: { reason: dto.reason, description: dto.description },
-        },
-      });
-
-      return newDispute;
-    });
-
-    this.logger.log(`Dispute created: ${dispute.id} for order: ${dto.orderId}`);
-
-    return dispute;
   }
 
   /**
@@ -178,32 +161,32 @@ export class DisputeService {
    */
   async findOne(id: string, userId?: string): Promise<Dispute> {
     try {
-    const dispute = await this.disputeRepository.findById(id);
+      const dispute = await this.disputeRepository.findById(id);
 
-    if (!dispute) {
-      throw new NotFoundException("Dispute not found");
+      if (!dispute) {
+        throw new NotFoundException("Dispute not found");
+      }
+
+      if (userId) {
+        const order = await this.prisma.order.findUnique({
+          where: { id: dispute.orderId },
+        });
+
+        if (
+          order &&
+          dispute.openedBy !== userId &&
+          order.initiatorId !== userId &&
+          order.counterpartyId !== userId
+        ) {
+          throw new ForbiddenException("Not authorized to view this dispute");
+        }
+      }
+
+      return dispute;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in findOne: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (userId) {
-      const order = await this.prisma.order.findUnique({
-        where: { id: dispute.orderId },
-      });
-
-      if (
-        order &&
-        dispute.openedBy !== userId &&
-        order.initiatorId !== userId &&
-        order.counterpartyId !== userId
-      ) {
-        throw new ForbiddenException("Not authorized to view this dispute");
-      }
-    }
-
-    return dispute;
   }
 
   async respond(
@@ -436,63 +419,63 @@ export class DisputeService {
    */
   async appeal(id: string, userId: string, reason: string): Promise<Dispute> {
     try {
-    const dispute = await this.disputeRepository.findById(id);
+      const dispute = await this.disputeRepository.findById(id);
 
-    if (!dispute) {
-      throw new NotFoundException("Dispute not found");
+      if (!dispute) {
+        throw new NotFoundException("Dispute not found");
+      }
+
+      if (dispute.status !== DisputeStatus.DECIDED) {
+        throw new BadRequestException("Only decided disputes can be appealed");
+      }
+
+      if (!dispute.canAppeal) {
+        throw new BadRequestException("Appeal window has closed");
+      }
+
+      if (dispute.appealDeadline && new Date() > dispute.appealDeadline) {
+        throw new BadRequestException("Appeal deadline has passed");
+      }
+
+      const order = await this.prisma.order.findUnique({
+        where: { id: dispute.orderId },
+      });
+
+      if (
+        !order ||
+        (order.initiatorId !== userId && order.counterpartyId !== userId)
+      ) {
+        throw new ForbiddenException("Not authorized to appeal this dispute");
+      }
+
+      const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        const updatedDispute = await tx.dispute.update({
+          where: { id },
+          data: {
+            status: DisputeStatus.APPEALED,
+            appealCount: { increment: 1 },
+          },
+        });
+
+        await tx.disputeTimeline.create({
+          data: {
+            disputeId: id,
+            action: "APPEALED",
+            performedBy: userId,
+            details: { reason },
+          },
+        });
+
+        return updatedDispute;
+      });
+
+      this.logger.log(`Dispute ${id} appealed by ${userId}`);
+
+      return updated;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in appeal: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (dispute.status !== DisputeStatus.DECIDED) {
-      throw new BadRequestException("Only decided disputes can be appealed");
-    }
-
-    if (!dispute.canAppeal) {
-      throw new BadRequestException("Appeal window has closed");
-    }
-
-    if (dispute.appealDeadline && new Date() > dispute.appealDeadline) {
-      throw new BadRequestException("Appeal deadline has passed");
-    }
-
-    const order = await this.prisma.order.findUnique({
-      where: { id: dispute.orderId },
-    });
-
-    if (
-      !order ||
-      (order.initiatorId !== userId && order.counterpartyId !== userId)
-    ) {
-      throw new ForbiddenException("Not authorized to appeal this dispute");
-    }
-
-    const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const updatedDispute = await tx.dispute.update({
-        where: { id },
-        data: {
-          status: DisputeStatus.APPEALED,
-          appealCount: { increment: 1 },
-        },
-      });
-
-      await tx.disputeTimeline.create({
-        data: {
-          disputeId: id,
-          action: "APPEALED",
-          performedBy: userId,
-          details: { reason },
-        },
-      });
-
-      return updatedDispute;
-    });
-
-    this.logger.log(`Dispute ${id} appealed by ${userId}`);
-
-    return updated;
   }
 
   /**
@@ -500,7 +483,11 @@ export class DisputeService {
    */
   async closeAppealWindow(id: string): Promise<Dispute> {
     try {
-    return this.disputeRepository.closeAppealWindow(id);
+      return this.disputeRepository.closeAppealWindow(id);
+    } catch (error) {
+      this.logger.error(`Error in closeAppealWindow: ${(error as Error).message}`, (error as Error).stack);
+      throw error;
+    }
   }
 
   async submitEvidence(
@@ -508,36 +495,37 @@ export class DisputeService {
     userId: string,
     fileUrls: string[],
     description: string,
+  ): Promise<void> {
+    try {
+      const dispute = await this.disputeRepository.findById(disputeId);
+
+      if (!dispute) {
+        throw new NotFoundException("Dispute not found");
+      }
+
+      if (
+        dispute.status === DisputeStatus.CLOSED ||
+        dispute.status === DisputeStatus.DECIDED
+      ) {
+        throw new BadRequestException(
+          "Cannot submit evidence for closed disputes",
+        );
+      }
+
+      await this.prisma.disputeEvidence.create({
+        data: {
+          disputeId,
+          submittedBy: userId,
+          fileUrls,
+          description,
+        },
+      });
+
+      this.logger.log(`Evidence submitted for dispute ${disputeId} by ${userId}`);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in submitEvidence: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-  ): Promise<void> {
-    const dispute = await this.disputeRepository.findById(disputeId);
-
-    if (!dispute) {
-      throw new NotFoundException("Dispute not found");
-    }
-
-    if (
-      dispute.status === DisputeStatus.CLOSED ||
-      dispute.status === DisputeStatus.DECIDED
-    ) {
-      throw new BadRequestException(
-        "Cannot submit evidence for closed disputes",
-      );
-    }
-
-    await this.prisma.disputeEvidence.create({
-      data: {
-        disputeId,
-        submittedBy: userId,
-        fileUrls,
-        description,
-      },
-    });
-
-    this.logger.log(`Evidence submitted for dispute ${disputeId} by ${userId}`);
   }
 
   /**
