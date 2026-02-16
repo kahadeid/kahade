@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsBigInt, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MaxLength, IsNumberString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 
@@ -25,7 +25,7 @@ export class CreateWithdrawalDto {
     description: 'Amount in minor units (cents/sen)',
     example: '50000000',
   })
-  @IsBigInt()
+  @IsNumberString()
   @Transform(({ value }) => BigInt(value))
   amountMinor: bigint;
 

@@ -13,8 +13,8 @@ const envSchema = z.object({
   VITE_APP_DESCRIPTION: z.string().optional(),
 
   // API Configuration (Required)
-  VITE_API_BASE_URL: z.string().url({
-    message: 'VITE_API_BASE_URL must be a valid URL',
+  VITE_API_BASE_URL: z.string().min(1, {
+    message: 'VITE_API_BASE_URL must be set',
   }),
   VITE_API_TIMEOUT: z.coerce.number().positive().default(30000),
 

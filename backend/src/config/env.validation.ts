@@ -36,11 +36,11 @@ export const envValidationSchema = Joi.object({
   CSRF_SECRET: Joi.string().optional().default('dev-csrf-secret-key'),
   BCRYPT_ROUNDS: Joi.number().min(10).max(14).default(12),
 
-  SMTP_HOST: Joi.string().optional(),
+  SMTP_HOST: Joi.string().optional().allow(''),
   SMTP_PORT: Joi.number().default(587),
   SMTP_SECURE: Joi.string().valid('true', 'false').default('false'),
-  SMTP_USER: Joi.string().optional(),
-  SMTP_PASSWORD: Joi.string().optional(),
+  SMTP_USER: Joi.string().optional().allow(''),
+  SMTP_PASSWORD: Joi.string().optional().allow(''),
   SMTP_FROM_NAME: Joi.string().default('Kahade'),
   SMTP_FROM_EMAIL: Joi.string().default('noreply@kahade.id'),
 
