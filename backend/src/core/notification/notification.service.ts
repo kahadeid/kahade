@@ -1,22 +1,9 @@
-
-import {
-import {
-import {
+import { Injectable, NotFoundException, ForbiddenException, Logger } from "@nestjs/common";
+import { NotificationRepository, ICreateNotification } from "./notification.repository";
+import { PaginationUtil, PaginationParams } from "@common/utils/pagination.util";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { Notification } from "@prisma/client";
 import { NotificationType } from "./dto/create-notification.dto";
-
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-  Logger,
-} from "@nestjs/common";
-  NotificationRepository,
-  ICreateNotification,
-} from "./notification.repository";
-  PaginationUtil,
-  PaginationParams,
-} from "@common/utils/pagination.util";
 
 interface FindAllParams extends PaginationParams {
   read?: boolean;
@@ -78,47 +65,47 @@ export class NotificationService {
    */
   async findUnread(userId: string): Promise<Notification[]> {
     try {
-    return this.notificationRepository.findUnreadByUser(userId);
-  }
-
+      return this.notificationRepository.findUnreadByUser(userId);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in findUnread: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
+  }
+
   /**
    * Countunread
    */
   async countUnread(userId: string): Promise<number> {
     try {
-    return this.notificationRepository.countUnread(userId);
-  }
-
+      return this.notificationRepository.countUnread(userId);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in countUnread: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
+  }
+
   /**
    * Markasread
    */
   async markAsRead(id: string, userId: string): Promise<Notification> {
     try {
-    const notification = await this.notificationRepository.findById(id);
+      const notification = await this.notificationRepository.findById(id);
 
-    if (!notification) {
-      throw new NotFoundException("Notification not found");
+      if (!notification) {
+        throw new NotFoundException("Notification not found");
+      }
+
+      if (notification.userId !== userId) {
+        throw new ForbiddenException(
+          "Not authorized to update this notification",
+        );
+      }
+
+      return this.notificationRepository.markAsRead(id);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in markAsRead: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (notification.userId !== userId) {
-      throw new ForbiddenException(
-        "Not authorized to update this notification",
-      );
-    }
-
-    return this.notificationRepository.markAsRead(id);
   }
 
   /**
@@ -126,15 +113,15 @@ export class NotificationService {
    */
   async markAllAsRead(userId: string): Promise<{ count: number }> {
     try {
-    const count = await this.notificationRepository.markAllAsRead(userId);
-    this.logger.log(
+      const count = await this.notificationRepository.markAllAsRead(userId);
+      this.logger.log(
+        `Marked ${count} notifications as read for user: ${userId}`,
+      );
+      return { count };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in markAllAsRead: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-      `Marked ${count} notifications as read for user: ${userId}`,
-    );
-    return { count };
   }
 
   /**
@@ -142,23 +129,23 @@ export class NotificationService {
    */
   async delete(id: string, userId: string): Promise<void> {
     try {
-    const notification = await this.notificationRepository.findById(id);
+      const notification = await this.notificationRepository.findById(id);
 
-    if (!notification) {
-      throw new NotFoundException("Notification not found");
+      if (!notification) {
+        throw new NotFoundException("Notification not found");
+      }
+
+      if (notification.userId !== userId) {
+        throw new ForbiddenException(
+          "Not authorized to delete this notification",
+        );
+      }
+
+      await this.notificationRepository.delete(id);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in delete: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (notification.userId !== userId) {
-      throw new ForbiddenException(
-        "Not authorized to delete this notification",
-      );
-    }
-
-    await this.notificationRepository.delete(id);
   }
 
   /**
@@ -166,13 +153,13 @@ export class NotificationService {
    */
   async deleteAll(userId: string): Promise<{ count: number }> {
     try {
-    const count = await this.notificationRepository.deleteAllByUser(userId);
+      const count = await this.notificationRepository.deleteAllByUser(userId);
+      this.logger.log(`Deleted ${count} notifications for user: ${userId}`);
+      return { count };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in deleteAll: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    this.logger.log(`Deleted ${count} notifications for user: ${userId}`);
-    return { count };
   }
 
   async sendTransactionNotification(
