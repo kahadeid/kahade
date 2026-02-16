@@ -4,6 +4,10 @@
     // PRODUCTION BUILD CONFIG - Relaxed TypeScript checks for faster builds
     // This allows production build while code is being improved gradually
     
+    // CRITICAL: Skip type checking for node_modules
+    // This fixes the 8000+ errors from @types packages
+    "skipLibCheck": true,
+    
     "strict": false,
     "strictNullChecks": false,
     "noImplicitAny": false,
