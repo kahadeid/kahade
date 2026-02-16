@@ -1,10 +1,8 @@
-
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
-
-import {
-import {
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from "@nestjs/common";
+import { PaginationUtil, PaginationParams } from "@common/utils/pagination.util";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
 import { ITransactionResponse } from "../../common/interfaces/transaction.interface";
 import { NotificationService } from "@core/notification/notification.service";
@@ -17,16 +15,6 @@ import { UserService } from "@core/user/user.service";
 import { ValidationUtil } from "@common/utils/validation.util";
 import { WalletService } from "@core/wallet/wallet.service";
 import { randomBytes, randomUUID } from "crypto";
-
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-  Logger,
-} from "@nestjs/common";
-  PaginationUtil,
-  PaginationParams,
-} from "@common/utils/pagination.util";
 
 const UPLOAD_DIR = process.env.UPLOAD_DEST || "./uploads";
 
@@ -45,14 +33,14 @@ export class TransactionService {
     this.ensureUploadDir();
   }
 
-  private _ensureUploadDir(): void {
+  private ensureUploadDir(): void {
     const deliveryDir = path.join(UPLOAD_DIR, "delivery");
     if (!fs.existsSync(deliveryDir)) {
       fs.mkdirSync(deliveryDir, { recursive: true });
     }
   }
 
-  private _storeDeliveryProofFile(
+  private storeDeliveryProofFile(
     transactionId: string,
     file: Express.Multer["File"],
   ): string {
@@ -153,33 +141,33 @@ export class TransactionService {
    */
   async findOne(id: string, userId?: string): Promise<ITransactionResponse> {
     try {
-    let transaction: any = null;
+      let transaction: any = null;
 
-    if (ValidationUtil.isUUID(id)) {
-      transaction = await this.transactionRepository.findById(id);
+      if (ValidationUtil.isUUID(id)) {
+        transaction = await this.transactionRepository.findById(id);
+      }
+
+      if (!transaction) {
+        transaction = await this.transactionRepository.findByOrderNumber(id);
+      }
+
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      if (
+        userId &&
+        transaction.initiatorId !== userId &&
+        transaction.counterpartyId !== userId
+      ) {
+        throw new ForbiddenException("Not authorized to view this transaction");
+      }
+
+      return this.transformToResponse(transaction);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in findOne: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (!transaction) {
-      transaction = await this.transactionRepository.findByOrderNumber(id);
-    }
-
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
-    }
-
-    if (
-      userId &&
-      transaction.initiatorId !== userId &&
-      transaction.counterpartyId !== userId
-    ) {
-      throw new ForbiddenException("Not authorized to view this transaction");
-    }
-
-    return this.transformToResponse(transaction);
   }
 
   async findByOrderNumber(
@@ -209,18 +197,18 @@ export class TransactionService {
    */
   async findByInviteToken(inviteToken: string): Promise<ITransactionResponse> {
     try {
-    const transaction =
-      await this.transactionRepository.findByInviteToken(inviteToken);
+      const transaction =
+        await this.transactionRepository.findByInviteToken(inviteToken);
 
-    if (!transaction) {
-      throw new NotFoundException("Invalid or expired invite link");
+      if (!transaction) {
+        throw new NotFoundException("Invalid or expired invite link");
+      }
+
+      return this.transformToResponse(transaction);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in findByInviteToken: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    return this.transformToResponse(transaction);
   }
 
   async findAllByUser(
@@ -249,43 +237,43 @@ export class TransactionService {
    */
   async accept(id: string, userId: string): Promise<ITransactionResponse> {
     try {
-    const transaction = await this.transactionRepository.findById(id);
+      const transaction = await this.transactionRepository.findById(id);
 
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      if (transaction.counterpartyId !== userId) {
+        throw new ForbiddenException(
+          "Only the counterparty can accept this transaction",
+        );
+      }
+
+      if (transaction.status !== "PENDING_ACCEPT") {
+        throw new BadRequestException(
+          "Transaction cannot be accepted in current status",
+        );
+      }
+
+      const updated = await this.transactionRepository.update(id, {
+        status: "ACCEPTED",
+        acceptedAt: new Date(),
+      });
+
+      this.logger.log(`Transaction ${id} accepted by user ${userId}`);
+
+      await this.notificationService.sendTransactionNotification(
+        transaction.initiatorId,
+        transaction.id,
+        "accepted",
+        transaction.title,
+      );
+
+      return this.transformToResponse(updated);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in accept: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (transaction.counterpartyId !== userId) {
-      throw new ForbiddenException(
-        "Only the counterparty can accept this transaction",
-      );
-    }
-
-    if (transaction.status !== "PENDING_ACCEPT") {
-      throw new BadRequestException(
-        "Transaction cannot be accepted in current status",
-      );
-    }
-
-    const updated = await this.transactionRepository.update(id, {
-      status: "ACCEPTED",
-      acceptedAt: new Date(),
-    });
-
-    this.logger.log(`Transaction ${id} accepted by user ${userId}`);
-
-    await this.notificationService.sendTransactionNotification(
-      transaction.initiatorId,
-      transaction.id,
-      "accepted",
-      transaction.title,
-    );
-
-    return this.transformToResponse(updated);
   }
 
   async acceptByInvite(
@@ -373,100 +361,100 @@ export class TransactionService {
    */
   async pay(id: string, userId: string): Promise<ITransactionResponse> {
     try {
-    const transaction = await this.transactionRepository.findById(id);
+      const transaction = await this.transactionRepository.findById(id);
 
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      const buyerId =
+        transaction.initiatorRole === "BUYER"
+          ? transaction.initiatorId
+          : transaction.counterpartyId;
+
+      if (buyerId !== userId) {
+        throw new ForbiddenException("Only buyer can make payment");
+      }
+
+      if (transaction.status !== "ACCEPTED") {
+        throw new BadRequestException(
+          "Transaction must be accepted before payment",
+        );
+      }
+
+      const amountMinor = transaction.amountMinor || BigInt(0);
+      const platformFeeMinor = transaction.platformFeeMinor || BigInt(0);
+
+      let totalToPay = amountMinor;
+      if (transaction.feePayer === "BUYER") {
+        totalToPay = amountMinor + platformFeeMinor;
+      } else if (transaction.feePayer === "SPLIT") {
+        totalToPay = amountMinor + platformFeeMinor / BigInt(2);
+      }
+
+      try {
+        await this.walletService.lockBalance({
+          userId: buyerId as string,
+          amount: totalToPay,
+          reason: `Escrow for transaction ${transaction.orderNumber}`,
+          initiatedBy: 'system',
+        });
+      } catch (error: unknown) {
+        this.logger.error(
+          `Failed to lock balance for transaction ${id}: ${(error as Error).message}`,
+        );
+        throw new BadRequestException(
+          "Insufficient balance to pay for this transaction",
+        );
+      }
+
+      const buyerWallet = await this.prisma.wallet.findUnique({
+        where: { userId: buyerId as string },
+      });
+
+      if (!buyerWallet) {
+        throw new BadRequestException("Buyer wallet not found");
+      }
+
+      const sellerId =
+        transaction.initiatorRole === "SELLER"
+          ? transaction.initiatorId
+          : transaction.counterpartyId;
+      const sellerWallet = sellerId
+        ? await this.prisma.wallet.findUnique({ where: { userId: sellerId } })
+        : null;
+
+      await (this.prisma as any).escrowHold.create({
+        data: {
+          orderId: transaction.id,
+          buyerWalletId: buyerWallet.id,
+          sellerWalletId: sellerWallet?.id,
+          amountMinor: totalToPay,
+          status: "HELD",
+        },
+      });
+
+      const updated = await this.transactionRepository.update(id, {
+        status: "PAID",
+        paidAt: new Date(),
+      });
+
+      this.logger.log(`Transaction ${id} paid by user ${userId}`);
+
+      if (sellerId) {
+        await this.notificationService.sendTransactionNotification(
+          sellerId,
+          transaction.id,
+          "paid",
+          transaction.title,
+        );
+      }
+
+      return this.transformToResponse(updated);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in pay: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    const buyerId =
-      transaction.initiatorRole === "BUYER"
-        ? transaction.initiatorId
-        : transaction.counterpartyId;
-
-    if (buyerId !== userId) {
-      throw new ForbiddenException("Only buyer can make payment");
-    }
-
-    if (transaction.status !== "ACCEPTED") {
-      throw new BadRequestException(
-        "Transaction must be accepted before payment",
-      );
-    }
-
-    const amountMinor = transaction.amountMinor || BigInt(0);
-    const platformFeeMinor = transaction.platformFeeMinor || BigInt(0);
-
-    let totalToPay = amountMinor;
-    if (transaction.feePayer === "BUYER") {
-      totalToPay = amountMinor + platformFeeMinor;
-    } else if (transaction.feePayer === "SPLIT") {
-      totalToPay = amountMinor + platformFeeMinor / BigInt(2);
-    }
-
-    try {
-      await this.walletService.lockBalance({
-        userId: buyerId as string,
-        amount: totalToPay,
-        reason: `Escrow for transaction ${transaction.orderNumber}`,
-        initiatedBy: 'system',
-      });
-    } catch (error: unknown) {
-      this.logger.error(
-        `Failed to lock balance for transaction ${id}: ${(error as Error).message}`,
-      );
-      throw new BadRequestException(
-        "Insufficient balance to pay for this transaction",
-      );
-    }
-
-    const buyerWallet = await this.prisma.wallet.findUnique({
-      where: { userId: buyerId as string },
-    });
-
-    if (!buyerWallet) {
-      throw new BadRequestException("Buyer wallet not found");
-    }
-
-    const sellerId =
-      transaction.initiatorRole === "SELLER"
-        ? transaction.initiatorId
-        : transaction.counterpartyId;
-    const sellerWallet = sellerId
-      ? await this.prisma.wallet.findUnique({ where: { userId: sellerId } })
-      : null;
-
-    await (this.prisma as any).escrowHold.create({
-      data: {
-        orderId: transaction.id,
-        buyerWalletId: buyerWallet.id,
-        sellerWalletId: sellerWallet?.id,
-        amountMinor: totalToPay,
-        status: "HELD",
-      },
-    });
-
-    const updated = await this.transactionRepository.update(id, {
-      status: "PAID",
-      paidAt: new Date(),
-    });
-
-    this.logger.log(`Transaction ${id} paid by user ${userId}`);
-
-    if (sellerId) {
-      await this.notificationService.sendTransactionNotification(
-        sellerId,
-        transaction.id,
-        "paid",
-        transaction.title,
-      );
-    }
-
-    return this.transformToResponse(updated);
   }
 
   async confirmDelivery(
@@ -811,7 +799,7 @@ export class TransactionService {
     return this.transformToResponse(updated);
   }
 
-  private _validateStatusTransition(
+  private validateStatusTransition(
     currentStatus: string,
     newStatus: string,
   ): void {
@@ -833,7 +821,7 @@ export class TransactionService {
     }
   }
 
-  private _generateInviteToken(): string {
+  private generateInviteToken(): string {
     return randomBytes(9)
       .toString("base64")
       .replace(/[^A-Za-z0-9]/g, "")
@@ -845,64 +833,64 @@ export class TransactionService {
    */
   async getTimeline(transactionId: string, userId: string): Promise<any[]> {
     try {
-    const transaction =
-      await this.transactionRepository.findById(transactionId);
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
+      const transaction =
+        await this.transactionRepository.findById(transactionId);
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      if (
+        transaction.initiatorId !== userId &&
+        transaction.counterpartyId !== userId
+      ) {
+        throw new ForbiddenException("Access denied");
+      }
+
+      const timeline: Array<{
+        event: string;
+        timestamp: Date | null;
+        description: string;
+      }> = [];
+      timeline.push({
+        event: "created",
+        timestamp: transaction.createdAt,
+        description: "Transaction created",
+      });
+
+      if (transaction.acceptedAt) {
+        timeline.push({
+          event: "accepted",
+          timestamp: transaction.acceptedAt,
+          description: "Transaction accepted",
+        });
+      }
+      if (transaction.paidAt) {
+        timeline.push({
+          event: "paid",
+          timestamp: transaction.paidAt,
+          description: "Payment confirmed",
+        });
+      }
+      if (transaction.completedAt) {
+        timeline.push({
+          event: "completed",
+          timestamp: transaction.completedAt,
+          description: "Transaction completed",
+        });
+      }
+      if (transaction.cancelledAt) {
+        timeline.push({
+          event: "cancelled",
+          timestamp: transaction.cancelledAt,
+          description: "Transaction cancelled",
+        });
+      }
+
+      return timeline;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getTimeline: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (
-      transaction.initiatorId !== userId &&
-      transaction.counterpartyId !== userId
-    ) {
-      throw new ForbiddenException("Access denied");
-    }
-
-    const timeline: Array<{
-      event: string;
-      timestamp: Date | null;
-      description: string;
-    }> = [];
-    timeline.push({
-      event: "created",
-      timestamp: transaction.createdAt,
-      description: "Transaction created",
-    });
-
-    if (transaction.acceptedAt) {
-      timeline.push({
-        event: "accepted",
-        timestamp: transaction.acceptedAt,
-        description: "Transaction accepted",
-      });
-    }
-    if (transaction.paidAt) {
-      timeline.push({
-        event: "paid",
-        timestamp: transaction.paidAt,
-        description: "Payment confirmed",
-      });
-    }
-    if (transaction.completedAt) {
-      timeline.push({
-        event: "completed",
-        timestamp: transaction.completedAt,
-        description: "Transaction completed",
-      });
-    }
-    if (transaction.cancelledAt) {
-      timeline.push({
-        event: "cancelled",
-        timestamp: transaction.cancelledAt,
-        description: "Transaction cancelled",
-      });
-    }
-
-    return timeline;
   }
 
   /**
@@ -910,30 +898,30 @@ export class TransactionService {
    */
   async getMessages(transactionId: string, userId: string): Promise<any[]> {
     try {
-    const transaction =
-      await this.transactionRepository.findById(transactionId);
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
+      const transaction =
+        await this.transactionRepository.findById(transactionId);
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      if (
+        transaction.initiatorId !== userId &&
+        transaction.counterpartyId !== userId
+      ) {
+        throw new ForbiddenException("Access denied");
+      }
+
+      const messages = await this.prisma.orderComment.findMany({
+        where: { orderId: transactionId },
+        orderBy: { createdAt: "asc" },
+        include: { user: { select: { id: true, username: true } } },
+      });
+
+      return messages;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getMessages: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (
-      transaction.initiatorId !== userId &&
-      transaction.counterpartyId !== userId
-    ) {
-      throw new ForbiddenException("Access denied");
-    }
-
-    const messages = await this.prisma.orderComment.findMany({
-      where: { orderId: transactionId },
-      orderBy: { createdAt: "asc" },
-      include: { user: { select: { id: true, username: true } } },
-    });
-
-    return messages;
   }
 
   async sendMessage(
@@ -971,32 +959,32 @@ export class TransactionService {
    */
   async getRatings(transactionId: string, userId: string): Promise<any[]> {
     try {
-    const transaction =
-      await this.transactionRepository.findById(transactionId);
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
+      const transaction =
+        await this.transactionRepository.findById(transactionId);
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      if (
+        transaction.initiatorId !== userId &&
+        transaction.counterpartyId !== userId
+      ) {
+        throw new ForbiddenException("Access denied");
+      }
+
+      const ratings = await (this.prisma as any).rating.findMany({
+        where: { orderId: transactionId },
+        include: {
+          fromUser: { select: { id: true, username: true } },
+          toUser: { select: { id: true, username: true } },
+        },
+      });
+
+      return ratings;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getRatings: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (
-      transaction.initiatorId !== userId &&
-      transaction.counterpartyId !== userId
-    ) {
-      throw new ForbiddenException("Access denied");
-    }
-
-    const ratings = await (this.prisma as any).rating.findMany({
-      where: { orderId: transactionId },
-      include: {
-        fromUser: { select: { id: true, username: true } },
-        toUser: { select: { id: true, username: true } },
-      },
-    });
-
-    return ratings;
   }
 
   async submitDeliveryProof(
@@ -1080,28 +1068,28 @@ export class TransactionService {
    */
   async getDeliveryProof(transactionId: string, userId: string): Promise<any> {
     try {
-    const transaction =
-      await this.transactionRepository.findById(transactionId);
-    if (!transaction) {
-      throw new NotFoundException("Transaction not found");
+      const transaction =
+        await this.transactionRepository.findById(transactionId);
+      if (!transaction) {
+        throw new NotFoundException("Transaction not found");
+      }
+
+      if (
+        transaction.initiatorId !== userId &&
+        transaction.counterpartyId !== userId
+      ) {
+        throw new ForbiddenException("Access denied");
+      }
+
+      const deliveryProof = await (this.prisma as any).deliveryProof.findUnique({
+        where: { orderId: transactionId },
+      });
+
+      return deliveryProof;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getDeliveryProof: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-
-    if (
-      transaction.initiatorId !== userId &&
-      transaction.counterpartyId !== userId
-    ) {
-      throw new ForbiddenException("Access denied");
-    }
-
-    const deliveryProof = await (this.prisma as any).deliveryProof.findUnique({
-      where: { orderId: transactionId },
-    });
-
-    return deliveryProof;
   }
 
   private async processReferralReward(
@@ -1188,7 +1176,7 @@ export class TransactionService {
     }
   }
 
-  private _transformToResponse(
+  private transformToResponse(
     transaction: Transaction & any,
   ): ITransactionResponse {
     const amountMinor = transaction.amountMinor || BigInt(0);
