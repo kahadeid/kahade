@@ -11,32 +11,13 @@ export class PasswordService {
    * Hash a password
    */
   async hashPassword(password: string): Promise<string> {
-    try {
     return HashUtil.hashPassword(password);
   }
 
-  /**
-   * Verify a password against a hash
-   */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
-  /**
-   * Verifypassword
-   */
   async verifyPassword(password: string, hash: string): Promise<boolean> {
-    try {
     return HashUtil.verifyPassword(password, hash);
   }
 
-  /**
-   * Check if password meets security requirements
-   */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   validatePasswordStrength(password: string): {
     isValid: boolean;
     errors: string[];

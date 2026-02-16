@@ -72,12 +72,7 @@ export class SecurityMonitorService {
    * Log security event
    */
   async logEvent(event: SecurityEvent): Promise<void> {
-    try {
     this.logger.warn(
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
       `[SECURITY] ${event.severity} - ${event.type}`,
       {
         ...event,
@@ -112,13 +107,7 @@ export class SecurityMonitorService {
    * TODO: Integrate with alerting system (email, Slack, PagerDuty, etc.)
    */
   private async sendAlert(event: SecurityEvent): Promise<void> {
-    try {
-    // Example: Send to Slack, email, or SMS
     this.logger.error(
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
       `[CRITICAL SECURITY ALERT] ${event.type}`,
       event.details,
     );
@@ -132,13 +121,8 @@ export class SecurityMonitorService {
    * Check for suspicious activity patterns
    */
   async checkSuspiciousActivity(userId: string): Promise<{
-    try {
     isSuspicious: boolean;
     reasons: string[];
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   }> {
     const reasons: string[] = [];
     const now = new Date();

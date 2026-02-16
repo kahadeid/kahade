@@ -162,7 +162,6 @@ export class FileUploadService {
    * Validate image
    */
   async validateImage(file: Express.Multer.File): Promise<void> {
-    try {
     const allowedMimeTypes = [
       'image/jpeg',
       'image/png',
@@ -172,12 +171,7 @@ export class FileUploadService {
 
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new BadRequestException('Invalid image format');
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
     }
-    }
-
   }
 }
 

@@ -169,28 +169,23 @@ export class AdvancedCacheService {
    */
   async delete(key: string): Promise<void> {
     try {
-    await this.redis.del(key);
+      await this.redis.del(key);
+    } catch (error) {
+      this.logger.error(`Cache delete failed for ${key}:`, error);
+    }
   }
 
   /**
    * Delete by pattern
    */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
-  /**
-   * Deletebypattern
-   */
   async deleteByPattern(pattern: string): Promise<void> {
     try {
-    const keys = await this.redis.keys(pattern);
-    if (keys.length > 0) {
-      await this.redis.del(...keys);
+      const keys = await this.redis.keys(pattern);
+      if (keys.length > 0) {
+        await this.redis.del(...keys);
+      }
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
+      this.logger.error(`Cache deleteByPattern failed for ${pattern}:`, error);
     }
   }
 
@@ -198,13 +193,8 @@ export class AdvancedCacheService {
    * Invalidate by tags
    */
   async invalidateByTags(tags: string[]): Promise<void> {
-    try {
     for (const tag of tags) {
       await this.deleteByPattern(`*:tag:${tag}:*`);
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
   }
 

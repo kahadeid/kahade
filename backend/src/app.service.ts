@@ -30,7 +30,6 @@ export class AppService {
    * QUALITY FIX [M012]: Added comprehensive health checks
    */
   async getDetailedHealth(): Promise<{
-    try {
     status: "healthy" | "degraded" | "unhealthy";
     timestamp: string;
     uptime: number;
@@ -44,10 +43,6 @@ export class AppService {
         total: number;
         percentage: number;
       };
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     };
   }> {
     // Eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -123,13 +118,8 @@ export class AppService {
    * Readiness check for Kubernetes/container orchestration
    */
   async getReadiness(): Promise<{
-    try {
     ready: boolean;
     checks: Record<string, boolean>;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   }> {
     const checks: Record<string, boolean> = {};
 

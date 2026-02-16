@@ -148,13 +148,8 @@ export class JobService extends (EventEmitter as new () => EventEmitter) {
    * Process next job in queue
    */
   private async processNextJob(): Promise<void> {
-    try {
     if (this.processing || this.queue.length === 0) {
       return;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
 
     this.processing = true;
@@ -181,7 +176,7 @@ export class JobService extends (EventEmitter as new () => EventEmitter) {
 
       this.emit('job:completed', job);
       this.logger.log(`Job completed: ${job.id} (${job.type})`);
-    } catch (error: Error) {
+    } catch (error) {
       // Job failed
       job.error = error.message;
       job.updatedAt = new Date();
@@ -215,7 +210,6 @@ export class JobService extends (EventEmitter as new () => EventEmitter) {
    * Process job
    */
   private async processJob(job: Job): Promise<any> {
-    try {
     return new Promise((resolve, reject) => {
       const listeners = this.listeners(`job:process:${job.type}`);
 
@@ -228,10 +222,6 @@ export class JobService extends (EventEmitter as new () => EventEmitter) {
       handler(job.data)
         .then(resolve)
         .catch(reject);
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     });
   }
 

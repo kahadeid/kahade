@@ -198,8 +198,8 @@ export function validate(config: Record<string, unknown>) {
         `Configuration validation failed:\n${errorMessages.join("\n")}`,
       );
     } else {
-      // In development, just warn
-      }`,
+      console.warn(
+        `Configuration validation warnings:\n${errorMessages.join("\n")}`,
       );
     }
   }

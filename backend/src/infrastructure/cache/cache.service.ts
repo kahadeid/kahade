@@ -169,26 +169,18 @@ export class CacheService {
    */
   async clear(): Promise<void> {
     try {
-    // NOTE: Use Redis when available - Tracked in backlog
-    // Await this.redis.flushdb();
-
-    // Memory cache fallback
-    this.memoryCache.clear();
+      this.memoryCache.clear();
+    } catch (error) {
+      this.logger.error(`Cache clear error:`, error);
+    }
   }
 }
 
-/**
- * Cache decorator for methods
- */
 export function Cacheable(options?: CacheOptions) {
   return function (
     target: any,
     propertyKey: string,
     descriptor: PropertyDescriptor,
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   ) {
     const originalMethod = descriptor.value;
 

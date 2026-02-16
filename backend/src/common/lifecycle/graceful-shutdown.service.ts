@@ -119,19 +119,9 @@ export class GracefulShutdownService implements OnModuleDestroy {
    * Wait for pending requests to finish
    */
   private async waitForPendingRequests(): Promise<void> {
-    try {
-    // NOTE: Implement request tracking - Tracked in backlog
-    // For now, just wait a bit
     return new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  /**
-   * Run all registered cleanup callbacks
-   */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   private async runCleanupCallbacks(): Promise<void> {
     for (const callback of this.cleanupCallbacks) {
       try {
