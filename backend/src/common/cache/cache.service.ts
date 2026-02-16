@@ -137,12 +137,7 @@ export class CacheService {
    * Invalidate user-related cache
    */
   async invalidateUser(userId: string): Promise<void> {
-    try {
     await Promise.all([
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
       this.del(`${CacheKey.USER_BY_ID}:${userId}`),
       this.delPattern(`${CacheKey.WALLET_BY_USER}:${userId}*`),
       this.delPattern(`${CacheKey.TRANSACTION_LIST}:${userId}*`),
@@ -155,12 +150,7 @@ export class CacheService {
    * Invalidate wallet-related cache
    */
   async invalidateWallet(walletId: string, userId: string): Promise<void> {
-    try {
     await Promise.all([
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
       this.del(`${CacheKey.WALLET_BY_ID}:${walletId}`),
       this.del(`${CacheKey.WALLET_BY_USER}:${userId}`),
       this.delPattern(`${CacheKey.TRANSACTION_LIST}:${walletId}*`),
@@ -172,12 +162,7 @@ export class CacheService {
    * Warm up cache with hot data
    */
   async warmUpCache(data: { key: string; value: any; ttl?: number }[]): Promise<void> {
-    try {
     await Promise.all(
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
       data.map(({ key, value, ttl }) => this.set(key, value, ttl)),
     );
     this.logger.log(`Warmed up cache with ${data.length} entries`);

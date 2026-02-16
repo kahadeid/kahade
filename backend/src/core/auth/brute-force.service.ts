@@ -283,14 +283,9 @@ export class BruteForceService {
    * Get remaining attempts before lockout
    */
   async getRemainingAttempts(identifier: string): Promise<number> {
-    try {
     const status = await this.checkAccountLock(identifier);
     if (status.isLocked) {
       return 0;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
     return Math.max(0, this.MAX_FAILED_ATTEMPTS - (status.attemptCount || 0));
   }

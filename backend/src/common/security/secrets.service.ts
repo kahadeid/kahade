@@ -139,17 +139,12 @@ export class SecretsService {
    * Hash password (for comparison)
    */
   async hashPassword(password: string, salt?: string): Promise<string> {
-    try {
     const actualSalt = salt || crypto.randomBytes(16).toString('hex');
     return new Promise((resolve, reject) => {
       crypto.pbkdf2(password, actualSalt, 100000, 64, 'sha512', (err, key) => {
         if (err) reject(err);
         resolve(`${actualSalt}:${key.toString('hex')}`);
       });
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     });
   }
 

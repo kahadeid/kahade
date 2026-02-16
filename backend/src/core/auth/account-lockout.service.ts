@@ -54,16 +54,11 @@ export class AccountLockoutService {
    * Check if an account is locked
    */
   async checkLockout(identifier: string): Promise<LockoutStatus> {
-    try {
     const key = this.buildKey(identifier);
     const record = await this.cacheManager.get<FailedAttemptRecord>(key);
 
     if (!record) {
       return { isLocked: false };
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
 
     if (record.lockedUntil) {
@@ -94,21 +89,15 @@ export class AccountLockoutService {
    * Returns true if account is now locked
    */
   async recordFailedAttempt(identifier: string): Promise<boolean> {
-    try {
     const key = this.buildKey(identifier);
     const now = Date.now();
 
     let record = await this.cacheManager.get<FailedAttemptRecord>(key);
 
     if (!record) {
-      // First failed attempt
       record = { count: 1, lastAttempt: now };
       await this.cacheManager.set(key, record, this.attemptWindowMs);
       return false;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
 
     // Check if we're outside the attempt window
@@ -145,23 +134,11 @@ export class AccountLockoutService {
    * Clear failed attempts after successful login
    */
   async clearFailedAttempts(identifier: string): Promise<void> {
-    try {
     const key = this.buildKey(identifier);
     await this.cacheManager.del(key);
   }
 
-  /**
-   * Manually lock an account (admin action)
-   */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
-  /**
-   * Lockaccount
-   */
   async lockAccount(identifier: string, durationMs?: number): Promise<void> {
-    try {
     const key = this.buildKey(identifier);
     const duration = durationMs || this.lockoutDurationMs;
     const now = Date.now();
@@ -170,10 +147,6 @@ export class AccountLockoutService {
       count: this.maxFailedAttempts,
       lastAttempt: now,
       lockedUntil: now + duration,
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     };
 
     await this.cacheManager.set(key, record, duration);
@@ -186,14 +159,9 @@ export class AccountLockoutService {
    * Manually unlock an account (admin action)
    */
   async unlockAccount(identifier: string): Promise<void> {
-    try {
     const key = this.buildKey(identifier);
     await this.cacheManager.del(key);
     this.logger.log(
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
       `Account ${this.maskIdentifier(identifier)} manually unlocked`,
     );
   }
@@ -202,16 +170,11 @@ export class AccountLockoutService {
    * Get remaining attempts before lockout
    */
   async getRemainingAttempts(identifier: string): Promise<number> {
-    try {
     const key = this.buildKey(identifier);
     const record = await this.cacheManager.get<FailedAttemptRecord>(key);
 
     if (!record) {
       return this.maxFailedAttempts;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
 
     return Math.max(0, this.maxFailedAttempts - record.count);

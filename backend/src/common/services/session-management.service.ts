@@ -146,14 +146,9 @@ export class SessionManagementService {
    * Invalidate a specific session
    */
   async invalidateSession(sessionId: string): Promise<void> {
-    try {
     await this.prisma.session.update({
       where: { id: sessionId },
       data: { isActive: false },
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     });
 
     this.logger.log(`Session ${sessionId} invalidated`);
@@ -163,17 +158,12 @@ export class SessionManagementService {
    * Invalidate all sessions for a user (logout all devices)
    */
   async invalidateUserSessions(userId: string): Promise<number> {
-    try {
     const result = await this.prisma.session.updateMany({
       where: {
         userId,
         isActive: true,
       },
       data: { isActive: false },
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     });
 
     this.logger.log(
@@ -210,11 +200,7 @@ export class SessionManagementService {
    * Cleanup expired sessions (runs daily)
    */
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
-  /**
-   * Cleanupexpiredsessions
-   */
   async cleanupExpiredSessions(): Promise<void> {
-    try {
     const cutoffDate = new Date(
       Date.now() - this.SESSION_INACTIVITY_DAYS * 24 * 60 * 60 * 1000,
     );
@@ -228,10 +214,6 @@ export class SessionManagementService {
           { lastActivityAt: { lt: cutoffDate } },
         ],
       },
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     });
 
     this.logger.log(`Cleaned up ${result.count} expired sessions`);
