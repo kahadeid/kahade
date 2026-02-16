@@ -1,14 +1,3 @@
-import { Throttle } from "@nestjs/throttler";
-
-import { CreateDisputeDto } from "./dto/create-dispute.dto";
-import { CurrentUser } from "@common/decorators/current-user.decorator";
-import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
-import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
-import { Roles } from "@common/decorators/roles.decorator";
-import { RolesGuard } from "@common/guards/roles.guard";
-import { SubmitEvidenceDto } from "./dto/submit-evidence.dto";
-import {
-import {
 import {
   Controller,
   Get,
@@ -22,14 +11,23 @@ import {
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
+import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
 } from "@nestjs/swagger";
-  DisputeService,
-} from "./dispute.service";
+import { Throttle } from "@nestjs/throttler";
+
+import { CreateDisputeDto } from "./dto/create-dispute.dto";
+import { CurrentUser } from "@common/decorators/current-user.decorator";
+import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
+import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
+import { Roles } from "@common/decorators/roles.decorator";
+import { RolesGuard } from "@common/guards/roles.guard";
+import { SubmitEvidenceDto } from "./dto/submit-evidence.dto";
+import { DisputeService } from "./dispute.service";
 
 // ============================================================================
 // DISPUTE CONTROLLER - Bank-Grade Security
@@ -54,12 +52,7 @@ export class DisputeController {
     @CurrentUser("id") userId: string,
     @Body() createDisputeDto: CreateDisputeDto,
   ) {
-    const dto: ServiceCreateDisputeDto = {
-      orderId: createDisputeDto.orderId,
-      reason: createDisputeDto.reason,
-      description: createDisputeDto.description,
-    };
-    return this.disputeService.create(userId, dto);
+    return this.disputeService.create(userId, createDisputeDto);
   }
 
   @Get()
@@ -208,12 +201,6 @@ export class DisputeController {
     @CurrentUser("id") adminId: string,
     @Body() resolveDisputeDto: ResolveDisputeDto,
   ) {
-    const dto: ServiceResolveDisputeDto = {
-      decision: resolveDisputeDto.decision,
-      sellerAmountMinor: resolveDisputeDto.sellerAmountMinor,
-      buyerRefundMinor: resolveDisputeDto.buyerRefundMinor,
-      resolutionNotes: resolveDisputeDto.resolutionNotes,
-    };
-    return this.disputeService.resolve(id, adminId, dto);
+    return this.disputeService.resolve(id, adminId, resolveDisputeDto);
   }
 }

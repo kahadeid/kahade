@@ -4,7 +4,6 @@ import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { NotificationService } from "./notification.service";
 import {
-import {
   Controller,
   Get,
   Patch,
@@ -18,6 +17,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
 } from "@nestjs/common";
+import {
   ApiTags,
   ApiOperation,
   ApiResponse,

@@ -6,7 +6,6 @@ import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import {
-import {
   Controller,
   Get,
   Post,
@@ -19,6 +18,7 @@ import {
   ConflictException,
   Logger,
 } from "@nestjs/common";
+import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,

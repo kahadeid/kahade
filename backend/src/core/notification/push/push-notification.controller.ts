@@ -3,7 +3,6 @@ import { AdminGuard } from "@common/guards/admin.guard";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { NotificationChannel } from "@prisma/client";
 import {
-import {
   Controller,
   Get,
   Post,
@@ -14,6 +13,7 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
+import {
   PushNotificationService,
   PushPayload,
 } from "./push-notification.service";
