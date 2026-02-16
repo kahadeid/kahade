@@ -1,23 +1,10 @@
 import { ConfigService } from "@nestjs/config";
-
+import { Controller, Post, Body, HttpCode, HttpStatus, Logger, UnauthorizedException, BadRequestException, Req } from "@nestjs/common";
 import * as crypto from "crypto";
-
-import {
 import { IpUtil } from "@common/utils/ip.util";
 import { PaymentStatus, WebhookStatus } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { Request } from "express";
-
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Logger,
-  UnauthorizedException,
-  BadRequestException,
-  Req,
-} from "@nestjs/common";
 
 interface MidtransNotificationPayload {
   transaction_time: string;
@@ -285,7 +272,7 @@ export class MidtransWebhookController {
     }
   }
 
-  private _verifySignature(payload: MidtransNotificationPayload): boolean {
+  private verifySignature(payload: MidtransNotificationPayload): boolean {
     if (!this.serverKey) {
       this.logger.error("Server key not configured");
       return false;
@@ -315,7 +302,7 @@ export class MidtransWebhookController {
     }
   }
 
-  private _verifyPayoutSignature(payload: any): boolean {
+  private verifyPayoutSignature(payload: any): boolean {
     if (!this.serverKey) {
       return false;
     }
@@ -536,7 +523,7 @@ export class MidtransWebhookController {
     }
   }
 
-  private _mapMidtransStatus(
+  private mapMidtransStatus(
     transactionStatus: string,
     fraudStatus?: string,
   ): PaymentStatus {
@@ -559,7 +546,7 @@ export class MidtransWebhookController {
     return statusMap[transactionStatus] ?? PaymentStatus.PENDING;
   }
 
-  private _mapPayoutStatus(status: string): string {
+  private mapPayoutStatus(status: string): string {
     const statusMap: Record<string, string> = {
       success: "COMPLETED",
       pending: "PROCESSING",
@@ -570,7 +557,7 @@ export class MidtransWebhookController {
     return statusMap[status] ?? "PENDING";
   }
 
-  private _sanitizeHeaders(headers: any): any {
+  private sanitizeHeaders(headers: any): any {
     const sanitized = { ...headers };
     delete sanitized["authorization"];
     delete sanitized["cookie"];
