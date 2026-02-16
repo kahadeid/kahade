@@ -1,4 +1,4 @@
-import { Injectable } , Logger from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Counter, Gauge, Histogram, Registry } from 'prom-client';
 
 
@@ -18,6 +18,7 @@ import { Counter, Gauge, Histogram, Registry } from 'prom-client';
  */
 @Injectable()
 export class PrometheusService {
+  private readonly logger = new Logger(PrometheusService.name);
   public readonly registry: Registry;
 
   // HTTP Metrics
@@ -41,7 +42,7 @@ export class PrometheusService {
   public cacheHits: Counter;
   public cacheMisses: Counter;
 
-  constructor(, private readonly logger: Logger) {
+  constructor() {
     this.registry = new Registry();
 
     // HTTP Metrics

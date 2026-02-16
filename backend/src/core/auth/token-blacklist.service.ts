@@ -392,14 +392,9 @@ export class TokenBlacklistService {
    * Get statistics (for monitoring)
    */
   async getStats(): Promise<{
-    try {
     blacklistSize: number;
     refreshTokenCount: number;
     usingRedis: boolean;
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   }> {
     if (this.redis) {
       try {

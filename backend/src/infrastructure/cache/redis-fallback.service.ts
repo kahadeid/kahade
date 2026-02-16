@@ -123,19 +123,19 @@ export class RedisFallbackService implements OnModuleInit {
    */
   async deletePattern(pattern: string): Promise<void> {
     try {
-    const keys = await this.keys(pattern);
-    if (keys.length > 0) {
-      const firstKey = keys[0];
-      if (firstKey !== undefined) {
-        this.fallbackCache.delete(firstKey);
-      }
-      for (const key of keys.slice(1)) {
-        await this.del(key);
+      const keys = await this.keys(pattern);
+      if (keys.length > 0) {
+        const firstKey = keys[0];
+        if (firstKey !== undefined) {
+          this.fallbackCache.delete(firstKey);
+        }
+        for (const key of keys.slice(1)) {
+          await this.del(key);
+        }
       }
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
-    }
     }
   }
 

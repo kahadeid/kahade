@@ -5,12 +5,8 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-  // Eslint-disable-next-line @typescript-eslint/no-unused-vars
   BadRequestException,
 } from "@nestjs/common";
-// Eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-// Eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // ============================================================================
 // BADGE SERVICE - Gamification & Trust System
@@ -218,58 +214,52 @@ export class BadgeService {
    */
   async initializeDefaultBadges(): Promise<void> {
     try {
-    for (const badge of DEFAULT_BADGES) {
-      await this.prisma.badge.upsert({
-        where: { code: badge.code },
-        update: {
-          name: badge.name,
-          description: badge.description,
-          category: badge.category,
-          rarity: badge.rarity,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-          requirements: badge.requirements as any,
-          pointsAwarded: badge.pointsAwarded,
-          iconUrl: badge.iconUrl,
-          color: badge.color,
-        },
-        create: {
-          code: badge.code,
-          name: badge.name,
-          description: badge.description,
-          category: badge.category,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-          rarity: badge.rarity,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-          requirements: badge.requirements as any,
-          pointsAwarded: badge.pointsAwarded,
-          iconUrl: badge.iconUrl,
-          color: badge.color,
-        },
+      for (const badge of DEFAULT_BADGES) {
+        await this.prisma.badge.upsert({
+          where: { code: badge.code },
+          update: {
+            name: badge.name,
+            description: badge.description,
+            category: badge.category,
+            rarity: badge.rarity,
+            requirements: badge.requirements as any,
+            pointsAwarded: badge.pointsAwarded,
+            iconUrl: badge.iconUrl,
+            color: badge.color,
+          },
+          create: {
+            code: badge.code,
+            name: badge.name,
+            description: badge.description,
+            category: badge.category,
+            rarity: badge.rarity,
+            requirements: badge.requirements as any,
+            pointsAwarded: badge.pointsAwarded,
+            iconUrl: badge.iconUrl,
+            color: badge.color,
+          },
+        });
+      }
+      this.logger.log(`Initialized ${DEFAULT_BADGES.length} default badges`);
+    } catch (error) {
+      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all available badges
+   */
+  async getAllBadges(): Promise<any[]> {
+    try {
+      return this.prisma.badge.findMany({
+        where: { isActive: true },
+        orderBy: [{ category: "asc" }, { rarity: "asc" }],
       });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    }
-    this.logger.log(`Initialized ${DEFAULT_BADGES.length} default badges`);
-  }
-
-  /**
-   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-   * Get all available badges
-   */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getAllBadges(): Promise<any[]> {
-    try {
-    return this.prisma.badge.findMany({
-      where: { isActive: true },
-      orderBy: [{ category: "asc" }, { rarity: "asc" }],
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
-    });
   }
 
   /**
@@ -277,37 +267,35 @@ export class BadgeService {
    */
   async getUserBadges(userId: string): Promise<UserBadgeInfo[]> {
     try {
-    const userBadges = await this.prisma.userBadge.findMany({
-      where: {
-        userId,
-        revokedAt: null,
-      },
-      include: {
-        badge: true,
-      },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      orderBy: [{ displayOrder: "asc" }, { awardedAt: "desc" }],
+      const userBadges = await this.prisma.userBadge.findMany({
+        where: {
+          userId,
+          revokedAt: null,
+        },
+        include: {
+          badge: true,
+        },
+        orderBy: [{ displayOrder: "asc" }, { awardedAt: "desc" }],
+      });
+
+      return userBadges.map((ub: any) => ({
+        id: ub.id,
+        badge: {
+          code: ub.badge.code,
+          name: ub.badge.name,
+          description: ub.badge.description,
+          category: ub.badge.category,
+          rarity: ub.badge.rarity,
+          iconUrl: ub.badge.iconUrl,
+          color: ub.badge.color,
+        },
+        awardedAt: ub.awardedAt,
+        isDisplayed: ub.isDisplayed,
+      }));
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return userBadges.map((ub: any) => ({
-      id: ub.id,
-      badge: {
-        code: ub.badge.code,
-        name: ub.badge.name,
-        description: ub.badge.description,
-        category: ub.badge.category,
-        rarity: ub.badge.rarity,
-        iconUrl: ub.badge.iconUrl,
-        color: ub.badge.color,
-      },
-      awardedAt: ub.awardedAt,
-      isDisplayed: ub.isDisplayed,
-    }));
   }
 
   /**
@@ -339,12 +327,10 @@ export class BadgeService {
     });
 
     if (existing && !existing.revokedAt) {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       return null; // Already has badge
     }
 
     // Award badge
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userBadge = await this.prisma.$transaction(async (tx: any) => {
       const ub = await tx.userBadge.upsert({
         where: {
@@ -410,126 +396,126 @@ export class BadgeService {
    */
   async checkAndAwardBadges(userId: string): Promise<UserBadgeInfo[]> {
     try {
-    const awardedBadges: UserBadgeInfo[] = [];
+      const awardedBadges: UserBadgeInfo[] = [];
 
-    // Get user stats
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        emailVerifiedAt: true,
-        kycStatus: true,
-        reputationScore: true,
-        totalTransactions: true,
-        createdAt: true,
-      },
+      // Get user stats
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          emailVerifiedAt: true,
+          kycStatus: true,
+          reputationScore: true,
+          totalTransactions: true,
+          createdAt: true,
+        },
+      });
+
+      if (!user) return awardedBadges;
+
+      // Get user level for additional stats
+      const userLevel = await this.prisma.userLevel.findUnique({
+        where: { userId },
+      });
+
+      // Get all active badges
+      const badges = await this.prisma.badge.findMany({
+        where: { isActive: true, isAutoAwarded: true },
+      });
+
+      // Calculate user stats
+      const accountAgeDays = Math.floor(
+        (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      // Get total volume
+      const volumeResult = await this.prisma.order.aggregate({
+        where: {
+          OR: [{ initiatorId: userId }, { counterpartyId: userId }],
+          status: "COMPLETED",
+        },
+        _sum: { amountMinor: true },
+      });
+      const totalVolume = volumeResult._sum.amountMinor || 0n;
+
+      // Check each badge
+      for (const badge of badges) {
+        const requirements = badge.requirements as BadgeRequirements;
+        let eligible = true;
+
+        // Check email verification
+        if (badge.code === "VERIFIED_EMAIL" && !user.emailVerifiedAt) {
+          eligible = false;
+        }
+
+        // Check KYC
+        if (requirements.kycVerified && user.kycStatus !== "VERIFIED") {
+          eligible = false;
+        }
+
+        // Check transaction count
+        if (
+          requirements.minTransactions &&
+          user.totalTransactions < requirements.minTransactions
+        ) {
+          eligible = false;
+        }
+
+        // Check rating
+        if (
+          requirements.minRating &&
+          Number(user.reputationScore) < requirements.minRating
+        ) {
+          eligible = false;
+        }
+
+        // Check account age
+        if (
+          requirements.accountAgeDays &&
+          accountAgeDays < requirements.accountAgeDays
+        ) {
+          eligible = false;
+        }
+
+        // Check volume
+        if (
+          requirements.totalVolumeMinor &&
+          totalVolume < BigInt(requirements.totalVolumeMinor)
+        ) {
+          eligible = false;
+        }
+
+        // Check success rate
+        if (requirements.minSuccessRate && userLevel) {
+          if (Number(userLevel.successRate) < requirements.minSuccessRate) {
+            eligible = false;
+          }
+        }
+
+        // Check response time
+        if (requirements.responseTimeMinutes && userLevel?.responseTime) {
+          if (userLevel.responseTime > requirements.responseTimeMinutes) {
+            eligible = false;
+          }
+        }
+
+        if (eligible) {
+          const awarded = await this.awardBadge(
+            userId,
+            badge.code,
+            "Auto-awarded",
+          );
+          if (awarded) {
+            awardedBadges.push(awarded);
+          }
+        }
+      }
+
+      return awardedBadges;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    if (!user) return awardedBadges;
-
-    // Get user level for additional stats
-    const userLevel = await this.prisma.userLevel.findUnique({
-      where: { userId },
-    });
-
-    // Get all active badges
-    const badges = await this.prisma.badge.findMany({
-      where: { isActive: true, isAutoAwarded: true },
-    });
-
-    // Calculate user stats
-    const accountAgeDays = Math.floor(
-      (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
-    // Get total volume
-    const volumeResult = await this.prisma.order.aggregate({
-      where: {
-        OR: [{ initiatorId: userId }, { counterpartyId: userId }],
-        status: "COMPLETED",
-      },
-      _sum: { amountMinor: true },
-    });
-    const totalVolume = volumeResult._sum.amountMinor || 0n;
-
-    // Check each badge
-    for (const badge of badges) {
-      const requirements = badge.requirements as BadgeRequirements;
-      let eligible = true;
-
-      // Check email verification
-      if (badge.code === "VERIFIED_EMAIL" && !user.emailVerifiedAt) {
-        eligible = false;
-      }
-
-      // Check KYC
-      if (requirements.kycVerified && user.kycStatus !== "VERIFIED") {
-        eligible = false;
-      }
-
-      // Check transaction count
-      if (
-        requirements.minTransactions &&
-        user.totalTransactions < requirements.minTransactions
-      ) {
-        eligible = false;
-      }
-
-      // Check rating
-      if (
-        requirements.minRating &&
-        Number(user.reputationScore) < requirements.minRating
-      ) {
-        eligible = false;
-      }
-
-      // Check account age
-      if (
-        requirements.accountAgeDays &&
-        accountAgeDays < requirements.accountAgeDays
-      ) {
-        eligible = false;
-      }
-
-      // Check volume
-      if (
-        requirements.totalVolumeMinor &&
-        totalVolume < BigInt(requirements.totalVolumeMinor)
-      ) {
-        eligible = false;
-      }
-
-      // Check success rate
-      if (requirements.minSuccessRate && userLevel) {
-        if (Number(userLevel.successRate) < requirements.minSuccessRate) {
-          eligible = false;
-        }
-      }
-
-      // Check response time
-      if (requirements.responseTimeMinutes && userLevel?.responseTime) {
-        if (userLevel.responseTime > requirements.responseTimeMinutes) {
-          eligible = false;
-        }
-      }
-
-      if (eligible) {
-        const awarded = await this.awardBadge(
-          userId,
-          badge.code,
-          "Auto-awarded",
-        );
-        if (awarded) {
-          awardedBadges.push(awarded);
-        }
-      }
-    }
-
-    return awardedBadges;
   }
 
   /**
@@ -557,13 +543,11 @@ export class BadgeService {
   /**
    * Reorder displayed badges
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async reorderBadges(
     userId: string,
     badgeOrder: { userBadgeId: string; order: number }[],
   ): Promise<void> {
     await this.prisma.$transaction(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       badgeOrder.map((item: any) =>
         this.prisma.userBadge.updateMany({
           where: { id: item.userBadgeId, userId },
@@ -578,36 +562,34 @@ export class BadgeService {
    */
   async getDisplayedBadges(userId: string): Promise<UserBadgeInfo[]> {
     try {
-    const userBadges = await this.prisma.userBadge.findMany({
-      where: {
-        userId,
-        isDisplayed: true,
-        revokedAt: null,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      },
-      include: { badge: true },
-      orderBy: { displayOrder: "asc" },
-      take: 5, // Max 5 displayed badges
+      const userBadges = await this.prisma.userBadge.findMany({
+        where: {
+          userId,
+          isDisplayed: true,
+          revokedAt: null,
+        },
+        include: { badge: true },
+        orderBy: { displayOrder: "asc" },
+        take: 5, // Max 5 displayed badges
+      });
+
+      return userBadges.map((ub: any) => ({
+        id: ub.id,
+        badge: {
+          code: ub.badge.code,
+          name: ub.badge.name,
+          description: ub.badge.description,
+          category: ub.badge.category,
+          rarity: ub.badge.rarity,
+          iconUrl: ub.badge.iconUrl,
+          color: ub.badge.color,
+        },
+        awardedAt: ub.awardedAt,
+        isDisplayed: ub.isDisplayed,
+      }));
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return userBadges.map((ub: any) => ({
-      id: ub.id,
-      badge: {
-        code: ub.badge.code,
-        name: ub.badge.name,
-        description: ub.badge.description,
-        category: ub.badge.category,
-        rarity: ub.badge.rarity,
-        iconUrl: ub.badge.iconUrl,
-        color: ub.badge.color,
-      },
-      awardedAt: ub.awardedAt,
-      isDisplayed: ub.isDisplayed,
-    }));
   }
 }

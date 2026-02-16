@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, Query, Headers } , UseGuards from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Query, Headers } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { WalletService } from './wallet.service';
 import { WithdrawDto } from './dto/withdraw.dto';
 
 
-
-// FIX: Import updated at build fixing phase
 
 @Controller('wallet')
 @UseGuards(JwtAuthGuard)

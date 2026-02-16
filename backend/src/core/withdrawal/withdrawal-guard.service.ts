@@ -222,39 +222,39 @@ export class WithdrawalGuardService {
 
   private async calculateVelocityScore(userId: string): Promise<number> {
     try {
-    const now = new Date();
-    const hourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const now = new Date();
+      const hourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+      const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    const [hourly, daily, weekly] = await Promise.all([
-      this.prisma.withdrawal.count({
-        where: { userId, requestedAt: { gte: hourAgo } },
+      const [hourly, daily, weekly] = await Promise.all([
+        this.prisma.withdrawal.count({
+          where: { userId, requestedAt: { gte: hourAgo } },
+        }),
+        this.prisma.withdrawal.count({
+          where: { userId, requestedAt: { gte: dayAgo } },
+        }),
+        this.prisma.withdrawal.count({
+          where: { userId, requestedAt: { gte: weekAgo } },
+        }),
+      ]);
+
+      let score = 0;
+
+      if (hourly >= 3) score += 40;
+      else if (hourly >= 2) score += 20;
+
+      if (daily >= 10) score += 30;
+      else if (daily >= 5) score += 15;
+
+      if (weekly >= 30) score += 30;
+      else if (weekly >= 20) score += 15;
+
+      return score;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-      }),
-      this.prisma.withdrawal.count({
-        where: { userId, requestedAt: { gte: dayAgo } },
-      }),
-      this.prisma.withdrawal.count({
-        where: { userId, requestedAt: { gte: weekAgo } },
-      }),
-    ]);
-
-    let score = 0;
-
-    if (hourly >= 3) score += 40;
-    else if (hourly >= 2) score += 20;
-
-    if (daily >= 10) score += 30;
-    else if (daily >= 5) score += 15;
-
-    if (weekly >= 30) score += 30;
-    else if (weekly >= 20) score += 15;
-
-    return score;
   }
 
   /**
@@ -262,19 +262,19 @@ export class WithdrawalGuardService {
    */
   async flagWithdrawal(withdrawalId: string, reason: string): Promise<void> {
     try {
-    await this.prisma.withdrawal.update({
-      where: { id: withdrawalId },
-      data: {
-        isFlaggedBySystem: true,
-        flagReason: reason,
-      },
+      await this.prisma.withdrawal.update({
+        where: { id: withdrawalId },
+        data: {
+          isFlaggedBySystem: true,
+          flagReason: reason,
+        },
+      });
+
+      this.logger.warn(`Withdrawal ${withdrawalId} flagged: ${reason}`);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    this.logger.warn(`Withdrawal ${withdrawalId} flagged: ${reason}`);
   }
 
   private getMinutesSince(date: Date | null): number | null {

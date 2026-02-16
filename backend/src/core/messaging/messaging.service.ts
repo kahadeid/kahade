@@ -42,8 +42,6 @@ export interface MessageWithSender {
   senderAvatar: string | null;
   type: MessageType;
   content: string;
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   attachments: any;
   replyToId: string | null;
   replyTo: {
@@ -151,9 +149,7 @@ export class MessagingService {
           type: "ORDER",
           title: `Chat: ${order.title}`,
           orderId,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           participants: {
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             create: participantIds.map((id: any) => ({
               userId: id,
             })),
@@ -218,10 +214,8 @@ export class MessagingService {
       }),
       this.prisma.conversation.count({ where }),
     ]);
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     const conversationsWithDetails = await Promise.all(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       conversations.map((conv: any) =>
         this.getConversationWithDetails(conv.id, userId),
       ),
@@ -270,18 +264,14 @@ export class MessagingService {
       );
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     // Get participant details
     const participantUsers = await this.prisma.user.findMany({
       where: {
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         id: { in: conversation.participants.map((p: any) => p.userId) },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       },
       select: { id: true, username: true, avatarUrl: true },
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const participants = conversation.participants.map((p: any) => {
       const user = participantUsers.find((u) => u.id === p.userId);
       return {
@@ -335,13 +325,11 @@ export class MessagingService {
 
     if (!participant || participant.leftAt) {
       throw new ForbiddenException(
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         "You are not a participant of this conversation",
       );
     }
 
     // Create message
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const message = await this.prisma.$transaction(async (tx: any) => {
       const msg = await tx.message.create({
         data: {
@@ -429,21 +417,18 @@ export class MessagingService {
       where,
       orderBy: { createdAt: "desc" },
       take: options.limit + 1, // Get one extra to check if there are more
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     const hasMore = messages.length > options.limit;
     const messageData = messages.slice(0, options.limit);
 
     const messagesWithSender = await Promise.all(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       messageData.map((m: any) => this.getMessageWithSender(m.id)),
     );
 
     return {
       data: messagesWithSender.reverse(), // Return in chronological order
       hasMore,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     };
   }
 
@@ -452,50 +437,47 @@ export class MessagingService {
    */
   async markAsRead(userId: string, conversationId: string): Promise<void> {
     try {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await this.prisma.$transaction(async (tx: any) => {
-      // Update participant's last read time and reset unread count
-      await tx.conversationParticipant.update({
-        where: {
-          conversationId_userId: {
-            conversationId,
-            userId,
+      await this.prisma.$transaction(async (tx: any) => {
+        // Update participant's last read time and reset unread count
+        await tx.conversationParticipant.update({
+          where: {
+            conversationId_userId: {
+              conversationId,
+              userId,
+            },
           },
-        },
-        data: {
-          lastReadAt: new Date(),
-          unreadCount: 0,
-        },
-      });
-
-      // Create read receipts for unread messages
-      const unreadMessages = await tx.message.findMany({
-        where: {
-          conversationId,
-          senderId: { not: userId },
-          readReceipts: {
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-            none: { userId },
+          data: {
+            lastReadAt: new Date(),
+            unreadCount: 0,
           },
-        },
-        select: { id: true },
-      });
-
-      if (unreadMessages.length > 0) {
-        await tx.messageReadReceipt.createMany({
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data: unreadMessages.map((m: any) => ({
-            messageId: m.id,
-            userId,
-          })),
-          skipDuplicates: true,
         });
-      }
+
+        // Create read receipts for unread messages
+        const unreadMessages = await tx.message.findMany({
+          where: {
+            conversationId,
+            senderId: { not: userId },
+            readReceipts: {
+              none: { userId },
+            },
+          },
+          select: { id: true },
+        });
+
+        if (unreadMessages.length > 0) {
+          await tx.messageReadReceipt.createMany({
+            data: unreadMessages.map((m: any) => ({
+              messageId: m.id,
+              userId,
+            })),
+            skipDuplicates: true,
+          });
+        }
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   /**
@@ -539,29 +521,29 @@ export class MessagingService {
    */
   async deleteMessage(userId: string, messageId: string): Promise<void> {
     try {
-    const message = await this.prisma.message.findUnique({
-      where: { id: messageId },
+      const message = await this.prisma.message.findUnique({
+        where: { id: messageId },
+      });
+
+      if (!message) {
+        throw new NotFoundException("Message not found");
+      }
+
+      if (message.senderId !== userId) {
+        throw new ForbiddenException("You can only delete your own messages");
+      }
+
+      await this.prisma.message.update({
+        where: { id: messageId },
+        data: {
+          deletedAt: new Date(),
+          deletedBy: userId,
+        },
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
-
-    if (!message) {
-      throw new NotFoundException("Message not found");
-    }
-
-    if (message.senderId !== userId) {
-      throw new ForbiddenException("You can only delete your own messages");
-    }
-
-    await this.prisma.message.update({
-      where: { id: messageId },
-      data: {
-        deletedAt: new Date(),
-        deletedBy: userId,
-      },
-    });
   }
 
   // ============================================================================

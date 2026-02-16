@@ -18,8 +18,6 @@ import {
 export interface PushPayload {
   title: string;
   body: string;
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: Record<string, any>;
   imageUrl?: string;
   actionUrl?: string;
@@ -101,31 +99,29 @@ export class PushNotificationService {
    */
   async unregisterPushSubscription(endpoint: string): Promise<void> {
     try {
-    await this.prisma.pushSubscription.updateMany({
-      where: { endpoint },
-      data: { isActive: false },
+      await this.prisma.pushSubscription.updateMany({
+        where: { endpoint },
+        data: { isActive: false },
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   /**
    * Get user's active push subscriptions
-   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getUserPushSubscriptions(userId: string): Promise<any[]> {
     try {
-    return this.prisma.pushSubscription.findMany({
-      where: { userId, isActive: true },
-      orderBy: { lastUsedAt: "desc" },
+      return this.prisma.pushSubscription.findMany({
+        where: { userId, isActive: true },
+        orderBy: { lastUsedAt: "desc" },
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   // ============================================================================
@@ -711,10 +707,8 @@ export class PushNotificationService {
    */
   async getNotificationHistory(
     userId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     options: { page: number; limit: number },
   ): Promise<{
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: unknown[];
     total: number;
     page: number;
@@ -741,13 +735,13 @@ export class PushNotificationService {
    */
   async markAsRead(notificationId: string): Promise<void> {
     try {
-    await this.prisma.notificationLog.update({
-      where: { id: notificationId },
-      data: { readAt: new Date() },
+      await this.prisma.notificationLog.update({
+        where: { id: notificationId },
+        data: { readAt: new Date() },
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 }

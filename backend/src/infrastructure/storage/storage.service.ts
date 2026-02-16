@@ -24,31 +24,29 @@ export class StorageService {
     }
   }
 
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async upload(file: any): Promise<string> {
     try {
-    const ext = path.extname(file.originalname);
-    const safeName = path
-      .basename(file.originalname, ext)
-      .replace(/[^a-z0-9]/gi, "_")
-      .toLowerCase();
+      const ext = path.extname(file.originalname);
+      const safeName = path
+        .basename(file.originalname, ext)
+        .replace(/[^a-z0-9]/gi, "_")
+        .toLowerCase();
+      const filename = `${Date.now()}-${safeName}${ext}`;
+      const filepath = path.join(this.uploadPath, filename);
+
+      // Ensure we are still within the upload directory
+      if (!filepath.startsWith(path.resolve(this.uploadPath))) {
+        throw new Error("Invalid file path");
+      }
+
+      fs.writeFileSync(filepath, file.buffer);
+
+      this.logger.log(`File uploaded: ${filename}`);
+      return `/uploads/${filename}`;
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    const filename = `${Date.now()}-${safeName}${ext}`;
-    const filepath = path.join(this.uploadPath, filename);
-
-    // Ensure we are still within the upload directory
-    if (!filepath.startsWith(path.resolve(this.uploadPath))) {
-      throw new Error("Invalid file path");
-    }
-
-    fs.writeFileSync(filepath, file.buffer);
-
-    this.logger.log(`File uploaded: ${filename}`);
-    return `/uploads/${filename}`;
   }
 
   /**
@@ -56,19 +54,19 @@ export class StorageService {
    */
   async delete(filename: string): Promise<void> {
     try {
-    const safeFilename = path.basename(filename);
-    const filepath = path.join(this.uploadPath, safeFilename);
+      const safeFilename = path.basename(filename);
+      const filepath = path.join(this.uploadPath, safeFilename);
 
-    if (
-      fs.existsSync(filepath) &&
-      filepath.startsWith(path.resolve(this.uploadPath))
-    ) {
-      fs.unlinkSync(filepath);
-      this.logger.log(`File deleted: ${safeFilename}`);
+      if (
+        fs.existsSync(filepath) &&
+        filepath.startsWith(path.resolve(this.uploadPath))
+      ) {
+        fs.unlinkSync(filepath);
+        this.logger.log(`File deleted: ${safeFilename}`);
+      }
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
-    }
     }
   }
 
@@ -77,17 +75,17 @@ export class StorageService {
    */
   async get(filename: string): Promise<Buffer> {
     try {
-    const safeFilename = path.basename(filename);
-    const filepath = path.join(this.uploadPath, safeFilename);
+      const safeFilename = path.basename(filename);
+      const filepath = path.join(this.uploadPath, safeFilename);
 
-    if (!filepath.startsWith(path.resolve(this.uploadPath))) {
-      throw new Error("Invalid file path");
+      if (!filepath.startsWith(path.resolve(this.uploadPath))) {
+        throw new Error("Invalid file path");
+      }
+
+      return fs.readFileSync(filepath);
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    }
-
-    return fs.readFileSync(filepath);
   }
 }

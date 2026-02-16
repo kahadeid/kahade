@@ -162,8 +162,6 @@ export class RiskAssessmentService {
       update: {
         riskScore: totalScore,
         riskLevel,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         riskFactors: riskFactors as any,
         flagsTriggered: fraudResult.flagsTriggered,
         isApproved,
@@ -172,9 +170,7 @@ export class RiskAssessmentService {
       create: {
         orderId,
         riskScore: totalScore,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         riskLevel,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         riskFactors: riskFactors as any,
         flagsTriggered: fraudResult.flagsTriggered,
         isApproved,
@@ -242,19 +238,17 @@ export class RiskAssessmentService {
   }
 
   /**
-   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
    * Get order risk assessment
    */
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getOrderRiskAssessment(orderId: string): Promise<any> {
     try {
-    return this.prisma.transactionRiskAssessment.findUnique({
-      where: { orderId },
+      return this.prisma.transactionRiskAssessment.findUnique({
+        where: { orderId },
+      });
     } catch (error) {
       this.logger.error(`Error in method: ${error.message}`, error.stack);
       throw error;
     }
-    });
   }
 
   /**
@@ -305,11 +299,9 @@ export class RiskAssessmentService {
    * Get orders requiring review
    */
   async getOrdersRequiringReview(options: {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     page: number;
     limit: number;
   }): Promise<{
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: unknown[];
     total: number;
     page: number;
@@ -327,12 +319,10 @@ export class RiskAssessmentService {
       }),
       this.prisma.transactionRiskAssessment.count({
         where: { requiresReview: true, reviewedAt: null },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       }),
     ]);
 
     // Get order details
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const orderIds = assessments.map((a: any) => a.orderId);
     const orders = await this.prisma.order.findMany({
       where: { id: { in: orderIds } },
@@ -342,17 +332,13 @@ export class RiskAssessmentService {
         title: true,
         amountMinor: true,
         status: true,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         initiator: { select: { id: true, username: true } },
         counterparty: { select: { id: true, username: true } },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       },
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const orderMap = new Map(orders.map((o: any) => [o.id, o]));
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = assessments.map((a: any) => ({
       ...a,
       order: orderMap.get(a.orderId),
