@@ -1,9 +1,8 @@
 import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
 
-import {
 import { Request } from "express";
-
+import {
   Injectable,
   CanActivate,
   ExecutionContext,
@@ -108,7 +107,7 @@ export class IpWhitelistGuard implements CanActivate {
   /**
    * Get client IP address, handling proxies
    */
-  private _getClientIp(request: Request): string {
+  private getClientIp(request: Request): string {
     // Check X-Forwarded-For header (set by proxies)
     const forwarded = request.headers["x-forwarded-for"];
     if (typeof forwarded === "string") {
@@ -129,7 +128,7 @@ export class IpWhitelistGuard implements CanActivate {
   /**
    * Check if IP is in the allowed list (supports CIDR notation)
    */
-  private _isIpAllowed(clientIp: string, allowedIps: string[]): boolean {
+  private isIpAllowed(clientIp: string, allowedIps: string[]): boolean {
     // Normalize IPv6-mapped IPv4 addresses
     const normalizedClientIp = this.normalizeIp(clientIp);
 
@@ -153,7 +152,7 @@ export class IpWhitelistGuard implements CanActivate {
   /**
    * Normalize IP address (handle IPv6-mapped IPv4)
    */
-  private _normalizeIp(ip: string): string {
+  private normalizeIp(ip: string): string {
     // Remove IPv6 prefix for IPv4-mapped addresses
     if (ip.startsWith("::ffff:")) {
       return ip.substring(7);
@@ -164,7 +163,7 @@ export class IpWhitelistGuard implements CanActivate {
   /**
    * Check if IP is within CIDR range
    */
-  private _isIpInCidr(ip: string, cidr: string): boolean {
+  private isIpInCidr(ip: string, cidr: string): boolean {
     const [range, bits] = cidr.split("/");
     const mask = parseInt(bits, 10);
 
@@ -185,7 +184,7 @@ export class IpWhitelistGuard implements CanActivate {
   /**
    * Convert IPv4 address to number
    */
-  private _ipToNumber(ip: string): number | null {
+  private ipToNumber(ip: string): number | null {
     const parts = ip.split(".");
     if (parts.length !== 4) {
       return null;
@@ -206,7 +205,7 @@ export class IpWhitelistGuard implements CanActivate {
   /**
    * Parse comma-separated IP list
    */
-  private _parseIpList(ipList: string): string[] {
+  private parseIpList(ipList: string): string[] {
     if (!ipList) {
       return [];
     }

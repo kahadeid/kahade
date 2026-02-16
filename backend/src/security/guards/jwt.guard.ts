@@ -2,10 +2,9 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Reflector } from "@nestjs/core";
 
-import {
 import { IS_PUBLIC_KEY } from "@common/decorators/public.decorator";
 import { Request } from "express";
-
+import {
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -97,7 +96,7 @@ export class JwtGuard implements CanActivate {
     }
   }
 
-  private _extractTokenFromHeader(request: Request): string | undefined {
+  private extractTokenFromHeader(request: Request): string | undefined {
     const authHeader = request.headers.authorization;
     if (!authHeader) {
       return undefined;

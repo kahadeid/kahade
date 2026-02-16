@@ -8,7 +8,6 @@ import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
 
 import {
-
   Injectable,
   NotFoundException,
   BadRequestException,

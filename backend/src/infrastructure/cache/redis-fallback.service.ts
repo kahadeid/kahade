@@ -139,7 +139,7 @@ export class RedisFallbackService implements OnModuleInit {
     }
   }
 
-  private _getFallback(key: string): any {
+  private getFallback(key: string): any {
     const cached = this.fallbackCache.get(key);
     if (!cached) return null;
 
@@ -151,14 +151,14 @@ export class RedisFallbackService implements OnModuleInit {
     return cached.value;
   }
 
-  private _setFallback(key: string, value: any, ttl: number): void {
+  private setFallback(key: string, value: any, ttl: number): void {
     this.fallbackCache.set(key, {
       value,
       expiry: Date.now() + ttl * 1000,
     });
   }
 
-  private _cleanupFallbackCache(): void {
+  private cleanupFallbackCache(): void {
     const now = Date.now();
     for (const [key, cached] of this.fallbackCache.entries()) {
       if (now > cached.expiry) {

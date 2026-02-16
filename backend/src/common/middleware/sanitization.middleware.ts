@@ -26,7 +26,7 @@ export class SanitizationMiddleware implements NestMiddleware {
     next();
   }
 
-  private _sanitizeObject(obj: Record<string, any>): Record<string, any> {
+  private sanitizeObject(obj: Record<string, any>): Record<string, any> {
     const sanitized: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(obj)) {

@@ -135,7 +135,7 @@ export class QueryOptimizerService {
   /**
    * Cleanup expired cache entries
    */
-  private _cleanupCache(): void {
+  private cleanupCache(): void {
     const now = Date.now();
     for (const [key, value] of this.queryCache.entries()) {
       if (now - value.timestamp > this.cacheTTL) {

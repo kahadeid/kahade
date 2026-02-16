@@ -20,7 +20,7 @@ export class LedgerLockService {
   /**
    * Validate UUID format to prevent SQL injection
    */
-  private _validateUUID(id: string, fieldName: string = 'ID'): void {
+  private validateUUID(id: string, fieldName: string = 'ID'): void {
     if (!isValidUUID(id)) {
       throw new BadRequestException(`Invalid ${fieldName} format`);
     }

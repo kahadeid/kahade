@@ -3,7 +3,6 @@ import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
 import {
-
   Injectable,
   Logger,
   BadRequestException,

@@ -3,7 +3,6 @@ import { randomBytes } from 'crypto';
 
 
 import {
-
   Injectable,
   NestMiddleware,
   ForbiddenException,
@@ -91,7 +90,7 @@ export class CsrfMiddleware implements NestMiddleware {
   /**
    * Generate new CSRF token
    */
-  private _generateToken(res: Response): string {
+  private generateToken(res: Response): string {
     const token = randomBytes(32).toString('hex');
 
     // Set token in httpOnly cookie
@@ -111,7 +110,7 @@ export class CsrfMiddleware implements NestMiddleware {
   /**
    * Check if path is excluded from CSRF protection
    */
-  private _isExcludedPath(path: string): boolean {
+  private isExcludedPath(path: string): boolean {
     return this.EXCLUDED_PATHS.some((excluded) =>
       path.startsWith(excluded),
     );

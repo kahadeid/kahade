@@ -5,7 +5,6 @@ import { tap } from 'rxjs/operators';
 
 import {
 import {
-
   Injectable,
   NestInterceptor,
   ExecutionContext,
@@ -86,7 +85,7 @@ export class VersionInterceptor implements NestInterceptor {
   /**
    * Extract version from request
    */
-  private _getRequestedVersion(request: any): string | null {
+  private getRequestedVersion(request: any): string | null {
     // Try URI versioning first (/v1/users)
     const pathMatch = request.path.match(/^\/v(\d+)/);
     if (pathMatch) {

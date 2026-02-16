@@ -124,7 +124,7 @@ export class WebhookSecurityService {
   /**
    * Generate unique webhook ID
    */
-  private _generateWebhookId(payload: string): string {
+  private generateWebhookId(payload: string): string {
     return crypto.createHash('sha256').update(payload).digest('hex');
   }
 

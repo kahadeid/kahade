@@ -134,7 +134,7 @@ export class CircuitBreaker {
   /**
    * Handle successful request
    */
-  private _onSuccess() {
+  private onSuccess() {
     this.metrics.successfulRequests++;
     this.metrics.lastSuccessTime = new Date();
     this.failureCount = 0;
@@ -152,7 +152,7 @@ export class CircuitBreaker {
   /**
    * Handle failed request
    */
-  private _onFailure(error: Error) {
+  private onFailure(error: Error) {
     this.metrics.failedRequests++;
     this.metrics.lastFailureTime = new Date();
     this.lastFailureTime = new Date();
@@ -172,7 +172,7 @@ export class CircuitBreaker {
   /**
    * Open circuit (stop all requests)
    */
-  private _openCircuit() {
+  private openCircuit() {
     this.state = CircuitState.OPEN;
     this.logger.warn(
       `Circuit OPENED after ${this.failureCount} failures`,
@@ -187,7 +187,7 @@ export class CircuitBreaker {
   /**
    * Close circuit (normal operation)
    */
-  private _closeCircuit() {
+  private closeCircuit() {
     this.state = CircuitState.CLOSED;
     this.failureCount = 0;
     this.successCount = 0;
@@ -197,7 +197,7 @@ export class CircuitBreaker {
   /**
    * Attempt to recover from open state
    */
-  private _attemptReset() {
+  private attemptReset() {
     this.state = CircuitState.HALF_OPEN;
     this.successCount = 0;
     this.logger.log(

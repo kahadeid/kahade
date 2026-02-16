@@ -52,7 +52,7 @@ export class PrometheusMetricsService implements OnModuleInit {
     this.collectDefaultMetrics();
   }
 
-  private _initializeMetrics() {
+  private initializeMetrics() {
     // HTTP metrics
     this.httpRequestDuration = new Histogram({
       name: 'http_request_duration_seconds',
@@ -159,7 +159,7 @@ export class PrometheusMetricsService implements OnModuleInit {
     this.registry.registerMetric(this.walletBalance);
   }
 
-  private _collectDefaultMetrics() {
+  private collectDefaultMetrics() {
     // Update memory usage every 10 seconds
     setInterval(() => {
       const usage = process.memoryUsage();

@@ -5,7 +5,6 @@ import { Transform, Type } from 'class-transformer';
 import DOMPurify from 'isomorphic-dompurify';
 
 import {
-
 /**
  * DTO Validation & Sanitization Examples
  *
@@ -14,7 +13,6 @@ import {
  *
  * Copy these patterns when creating new DTOs.
  */
-
   IsString,
   IsNumber,
   IsEmail,

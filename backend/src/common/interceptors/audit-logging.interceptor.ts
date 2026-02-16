@@ -5,7 +5,6 @@ import { throwError } from 'rxjs';
 
 
 import {
-
   Injectable,
   NestInterceptor,
   ExecutionContext,
@@ -49,7 +48,7 @@ export class AuditLoggingInterceptor implements NestInterceptor {
     );
   }
 
-  private _logAuditEntry(
+  private logAuditEntry(
     context: RequestContext,
     success: boolean,
     duration: number,

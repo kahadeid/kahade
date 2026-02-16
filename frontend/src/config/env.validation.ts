@@ -141,9 +141,7 @@ export const isFeatureEnabled = (feature: keyof Pick<Env,
  * Log environment info in development
  */
 if (import.meta.env.DEV) {
-
-
-
+  console.log('[Kahade] Features:', {
     PWA: env.VITE_ENABLE_PWA,
     Analytics: env.VITE_ENABLE_ANALYTICS,
     ErrorReporting: env.VITE_ENABLE_ERROR_REPORTING,

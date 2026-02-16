@@ -1,7 +1,6 @@
 import { Reflector } from "@nestjs/core";
 
 import {
-
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -102,7 +101,7 @@ export class RateLimitGuard implements CanActivate, OnModuleDestroy {
 
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _getKey(request: any, handlerName: string): string {
+  private getKey(request: any, handlerName: string): string {
     const userId = request.user?.id;
     const ip = request.ip || request.connection?.remoteAddress || "unknown";
 
@@ -113,7 +112,7 @@ export class RateLimitGuard implements CanActivate, OnModuleDestroy {
   }
 
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _setRateLimitHeaders(
+  private setRateLimitHeaders(
     // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     request: any,
     limit: number,
@@ -128,7 +127,7 @@ export class RateLimitGuard implements CanActivate, OnModuleDestroy {
     }
   }
 
-  private _cleanup(): void {
+  private cleanup(): void {
     const now = Date.now();
     let cleaned = 0;
 

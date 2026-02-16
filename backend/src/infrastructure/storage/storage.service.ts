@@ -17,7 +17,7 @@ export class StorageService {
     this.ensureUploadDirectory();
   }
 
-  private _ensureUploadDirectory(): void {
+  private ensureUploadDirectory(): void {
     if (!fs.existsSync(this.uploadPath)) {
       fs.mkdirSync(this.uploadPath, { recursive: true });
       this.logger.log(`Created upload directory: ${this.uploadPath}`);

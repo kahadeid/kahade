@@ -199,7 +199,7 @@ export class RiskAssessmentService {
   /**
    * Assess amount-based risk
    */
-  private _assessAmountRisk(amountMinor: bigint): RiskFactor {
+  private assessAmountRisk(amountMinor: bigint): RiskFactor {
     const amount = Number(amountMinor) / 100;
 
     if (amount >= 100000000) {
@@ -234,7 +234,7 @@ export class RiskAssessmentService {
   /**
    * Calculate risk level from score
    */
-  private _calculateRiskLevel(score: number): RiskLevel {
+  private calculateRiskLevel(score: number): RiskLevel {
     if (score >= 80) return "CRITICAL";
     if (score >= 50) return "HIGH";
     if (score >= 25) return "MEDIUM";

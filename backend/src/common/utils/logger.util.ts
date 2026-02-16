@@ -138,7 +138,7 @@ export class EnhancedLogger extends Logger {
   /**
    * Format data for logging
    */
-  private _formatData(data?: Record<string, any>): string {
+  private formatData(data?: Record<string, any>): string {
     if (!data) return '';
     return inspect(data, { depth: 3, colors: true });
   }
@@ -146,7 +146,7 @@ export class EnhancedLogger extends Logger {
   /**
    * Format as JSON for structured logging
    */
-  private _formatJson(
+  private formatJson(
     level: string,
     message: string,
     data?: Record<string, any>,

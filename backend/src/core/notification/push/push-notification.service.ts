@@ -3,9 +3,8 @@ import { Injectable, Logger } from "@nestjs/common";
 
 import * as crypto from "crypto";
 
-import {
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
   NotificationChannel,
   NotificationPriority,
   NotificationStatus,
@@ -393,7 +392,7 @@ export class PushNotificationService {
   /**
    * Generate VAPID headers for Web Push
    */
-  private _generateVapidHeaders(
+  private generateVapidHeaders(
     endpoint: string,
     publicKey: string,
     privateKey: string,
@@ -428,7 +427,7 @@ export class PushNotificationService {
   /**
    * Sign VAPID token (simplified implementation)
    */
-  private _signVapidToken(token: string, privateKey: string): string {
+  private signVapidToken(token: string, privateKey: string): string {
     // In production, use proper ECDSA P-256 signing
     // This is a simplified version that creates a deterministic signature
     const hmac = crypto.createHmac("sha256", privateKey);
@@ -439,7 +438,7 @@ export class PushNotificationService {
   /**
    * Encrypt payload for Web Push (simplified)
    */
-  private _encryptPayload(payload: string, keys: WebPushKeys): Buffer {
+  private encryptPayload(payload: string, keys: WebPushKeys): Buffer {
     // In production, implement proper AES-128-GCM encryption with ECDH key exchange
     // This is a simplified version that creates a valid-looking encrypted payload
     const payloadBuffer = Buffer.from(payload, "utf-8");

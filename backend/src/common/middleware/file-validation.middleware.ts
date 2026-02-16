@@ -40,7 +40,7 @@ export class FileValidationMiddleware implements NestMiddleware {
     next();
   }
 
-  private _getFiles(req: Request): Multer["File"][] {
+  private getFiles(req: Request): Multer["File"][] {
     if (req.file) {
       return [req.file];
     }

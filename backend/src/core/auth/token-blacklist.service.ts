@@ -340,14 +340,14 @@ export class TokenBlacklistService {
   /**
    * Hash token for storage (don't store raw tokens)
    */
-  private _hashToken(token: string): string {
+  private hashToken(token: string): string {
     return crypto.createHash("sha256").update(token).digest("hex");
   }
 
   /**
    * Start cleanup interval for memory storage
    */
-  private _startCleanupInterval(): void {
+  private startCleanupInterval(): void {
     // Clean up every 5 minutes
     this.cleanupInterval = setInterval(
       () => {
@@ -360,7 +360,7 @@ export class TokenBlacklistService {
   /**
    * Clean up expired entries from memory storage
    */
-  private _cleanupExpiredEntries(): void {
+  private cleanupExpiredEntries(): void {
     const now = Date.now();
     let cleanedBlacklist = 0;
     let cleanedRefresh = 0;

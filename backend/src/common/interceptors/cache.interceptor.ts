@@ -6,7 +6,6 @@ import { tap } from 'rxjs/operators';
 import * as crypto from 'crypto';
 
 import {
-
   Injectable,
   NestInterceptor,
   ExecutionContext,
@@ -56,13 +55,13 @@ export class CacheInterceptor implements NestInterceptor {
     );
   }
 
-  private _generateETag(data: unknown): string {
+  private generateETag(data: unknown): string {
     const hash = crypto.createHash('md5');
     hash.update(JSON.stringify(data));
     return `"${hash.digest('hex')}"`;
   }
 
-  private _getCacheControl(url: string): string {
+  private getCacheControl(url: string): string {
     // Public data - cache for 5 minutes
     if (url.includes('/public')) {
       return 'public, max-age=300';

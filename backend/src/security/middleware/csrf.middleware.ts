@@ -66,13 +66,13 @@ export class CsrfMiddleware implements NestMiddleware {
     return next();
   }
 
-  private _isExcludedPath(path: string, originalUrl: string): boolean {
+  private isExcludedPath(path: string, originalUrl: string): boolean {
     return this.EXCLUDED_PATHS.some(
       excluded => path.startsWith(excluded) || originalUrl.startsWith(excluded)
     );
   }
 
-  private _ensureCsrfToken(req: Request, res: Response): void {
+  private ensureCsrfToken(req: Request, res: Response): void {
     if (!req.cookies?.[this.CSRF_COOKIE_NAME]) {
       const token = this.generateToken();
       res.cookie(this.CSRF_COOKIE_NAME, token, {
@@ -84,11 +84,11 @@ export class CsrfMiddleware implements NestMiddleware {
     }
   }
 
-  private _generateToken(): string {
+  private generateToken(): string {
     return crypto.randomBytes(32).toString('hex');
   }
 
-  private _validateToken(cookieToken: string, headerToken: string): boolean {
+  private validateToken(cookieToken: string, headerToken: string): boolean {
     try {
       // Constant-time comparison to prevent timing attacks
       const cookieBuf = Buffer.from(cookieToken);
@@ -104,7 +104,7 @@ export class CsrfMiddleware implements NestMiddleware {
     }
   }
 
-  private _rotateToken(req: Request, res: Response, _oldToken: string): void {
+  private rotateToken(req: Request, res: Response, _oldToken: string): void {
     // Rotate CSRF token after each successful mutating request
     const newToken = this.generateToken();
     res.cookie(this.CSRF_COOKIE_NAME, newToken, {

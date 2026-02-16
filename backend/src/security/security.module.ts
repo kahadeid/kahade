@@ -1,6 +1,5 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
-import {
 import { AuditModule } from "./audit/audit.module";
 import { AuthModule } from "@core/auth/auth.module";
 import { BodySizeLimitMiddleware } from "./middleware/body-size-limit.middleware";
@@ -8,7 +7,7 @@ import { CsrfMiddleware } from "./middleware/csrf.middleware";
 import { DatabaseModule } from "@infrastructure/database/database.module";
 import { EncryptionService } from "./encryption.service";
 import { RequestIdMiddleware } from "./middleware/request-id.middleware";
-
+import {
   Module,
   Global,
   MiddlewareConsumer,

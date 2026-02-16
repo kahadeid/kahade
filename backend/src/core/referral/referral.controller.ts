@@ -1,13 +1,12 @@
 
 import * as crypto from "crypto";
 
-import {
-import {
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
+import {
   Controller,
   Get,
   Post,
@@ -489,7 +488,7 @@ export class ReferralController {
   // HELPER METHODS
   // ============================================================================
 
-  private _generateReferralCode(): string {
+  private generateReferralCode(): string {
     // Generate 8 character alphanumeric code
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     let code = "";

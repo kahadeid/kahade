@@ -105,7 +105,7 @@ export class PerformanceMonitorService {
   /**
    * Record metric
    */
-  private _recordMetric(metric: PerformanceMetric): void {
+  private recordMetric(metric: PerformanceMetric): void {
     if (!this.metrics.has(metric.name)) {
       this.metrics.set(metric.name, []);
     }
@@ -161,7 +161,7 @@ export class PerformanceMonitorService {
   /**
    * Calculate percentile
    */
-  private _percentile(sorted: number[], p: number): number {
+  private percentile(sorted: number[], p: number): number {
     const index = Math.ceil((sorted.length * p) / 100) - 1;
     return sorted[Math.max(0, index)];
   }

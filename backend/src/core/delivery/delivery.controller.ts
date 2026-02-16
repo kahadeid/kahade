@@ -4,14 +4,13 @@ import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 
-import {
-import {
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { InitiatorRole, OrderStatus } from "@prisma/client";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { memoryStorage } from "multer";
-
+import {
+import {
   Controller,
   Get,
   Post,
@@ -61,7 +60,7 @@ export class DeliveryController {
     this.ensureUploadDir();
   }
 
-  private _ensureUploadDir(): void {
+  private ensureUploadDir(): void {
     const deliveryDir = path.join(UPLOAD_DIR, "delivery");
     if (!fs.existsSync(deliveryDir)) {
       fs.mkdirSync(deliveryDir, { recursive: true });

@@ -1,7 +1,4 @@
 
-import {
-import {
-import {
 import { CreatePromoDto } from "./dto/create-promo.dto";
 import { CreateVoucherDto } from "./dto/create-voucher.dto";
 import { CurrentUser } from "@common/decorators/current-user.decorator";
@@ -9,7 +6,9 @@ import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { Roles } from "@common/decorators/roles.decorator";
 import { RolesGuard } from "@common/guards/roles.guard";
 import { VoucherStatus } from "@prisma/client";
-
+import {
+import {
+import {
   Controller,
   Get,
   Post,
@@ -418,7 +417,7 @@ export class PromoController {
     return { status: "ok", module: "promo" };
   }
 
-  private _resolveAmountMinor(
+  private resolveAmountMinor(
     amountMinor?: number,
     orderAmount?: number,
   ): number {

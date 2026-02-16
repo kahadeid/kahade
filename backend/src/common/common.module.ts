@@ -1,12 +1,11 @@
 import { Module, Global } from "@nestjs/common";
 
-import {
 import { HttpExceptionFilter } from "./filters/http-exception.filter";
 import { LoggingInterceptor } from "./interceptors/logging.interceptor";
 import { PrismaExceptionFilter } from "./filters/prisma-exception.filter";
 import { TimeoutInterceptor } from "./interceptors/timeout.interceptor";
 import { TransformInterceptor } from "./interceptors/transform.interceptor";
-
+import {
   APP_FILTER,
   APP_INTERCEPTOR,
 } from "@nestjs/core";

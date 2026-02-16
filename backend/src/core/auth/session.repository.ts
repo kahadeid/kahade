@@ -316,7 +316,7 @@ export class SessionRepository {
   /**
    * Hash token for secure storage
    */
-  private _hashToken(token: string): string {
+  private hashToken(token: string): string {
     return crypto.createHash("sha256").update(token).digest("hex");
   }
 }

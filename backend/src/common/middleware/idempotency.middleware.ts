@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid';
 
 
 import {
-
   Injectable,
   NestMiddleware,
   BadRequestException,
@@ -108,7 +107,7 @@ export class IdempotencyMiddleware implements NestMiddleware {
   /**
    * Validate idempotency key format
    */
-  private _isValidKey(key: string): boolean {
+  private isValidKey(key: string): boolean {
     // Key must be 16-128 characters
     if (key.length < 16 || key.length > 128) {
       return false;
@@ -121,7 +120,7 @@ export class IdempotencyMiddleware implements NestMiddleware {
   /**
    * Build cache key from request and idempotency key
    */
-  private _buildCacheKey(req: Request, idempotencyKey: string): string {
+  private buildCacheKey(req: Request, idempotencyKey: string): string {
     // Include method and path to make key unique per endpoint
     return `${req.method}:${req.path}:${idempotencyKey}`;
   }

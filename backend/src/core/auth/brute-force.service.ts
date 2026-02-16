@@ -56,7 +56,7 @@ export class BruteForceService {
   /**
    * Initialize Redis connection
    */
-  private _initializeRedis(): void {
+  private initializeRedis(): void {
     const redisUrl = this.configService.get<string>("REDIS_URL");
 
     if (redisUrl) {

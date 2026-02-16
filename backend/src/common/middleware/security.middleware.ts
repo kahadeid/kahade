@@ -27,7 +27,7 @@ export class SecurityMiddleware implements NestMiddleware {
     next();
   }
 
-  private _sanitizeObject(obj: any): void {
+  private sanitizeObject(obj: any): void {
     for (const key in obj) {
       if (typeof obj[key] === 'string') {
         obj[key] = DOMPurify.sanitize(obj[key], { ALLOWED_TAGS: [] });
@@ -37,13 +37,13 @@ export class SecurityMiddleware implements NestMiddleware {
     }
   }
 
-  private _addSecurityHeaders(res: Response): void {
+  private addSecurityHeaders(res: Response): void {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
   }
 
-  private _detectSuspiciousPatterns(req: Request): void {
+  private detectSuspiciousPatterns(req: Request): void {
     const suspiciousPatterns = [
       /<script[^>]*>.*?<\/script>/gi,
       /javascript:/gi,

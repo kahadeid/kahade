@@ -1,10 +1,9 @@
 
-import {
-import {
 import { CreatePromoDto, CreatePromoExtendedDto } from "./dto/create-promo.dto";
 import { CreateVoucherDto, CreateVoucherExtendedDto } from "./dto/create-voucher.dto";
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
+import {
   Injectable,
   Logger,
   BadRequestException,

@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-import {
 import { Type } from "class-transformer";
-
+import {
   IsNumber,
   IsString,
   Min,

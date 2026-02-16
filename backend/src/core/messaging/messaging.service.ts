@@ -1,10 +1,9 @@
 
-import {
 import { ConversationType, MessageType, Prisma } from "@prisma/client";
 import { CreateConversationDto } from "./dto/create-conversation.dto";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { SendMessageDto } from "./dto/send-message.dto";
-
+import {
   Injectable,
   Logger,
   NotFoundException,

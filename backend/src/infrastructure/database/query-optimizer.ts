@@ -198,7 +198,7 @@ export class QueryOptimizer {
   /**
    * Helper: Add metric with size limit
    */
-  private _addMetric(metric: QueryMetrics): void {
+  private addMetric(metric: QueryMetrics): void {
     this.queryMetrics.push(metric);
 
     // Keep only last N metrics
