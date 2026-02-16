@@ -1,5 +1,4 @@
 import { Injectable, Logger } from "@nestjs/common";
-
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { RiskLevel, FraudAlertStatus } from "@prisma/client";
 
@@ -123,35 +122,35 @@ export class FraudDetectionService {
    */
   async initializeDefaultRules(): Promise<void> {
     try {
-    for (const rule of DEFAULT_FRAUD_RULES) {
-      await this.prisma.fraudRule.upsert({
-        where: { code: rule.code },
-        update: {
-          name: rule.name,
-          description: rule.description,
-          type: rule.type as any,
-          conditions: rule.conditions,
-          actions: rule.actions,
-          riskScore: rule.riskScore,
-          priority: rule.priority,
-        },
-        create: {
-          code: rule.code,
-          name: rule.name,
-          description: rule.description,
-          type: rule.type as any,
-          conditions: rule.conditions,
-          actions: rule.actions,
-          riskScore: rule.riskScore,
-          priority: rule.priority,
-        },
-      });
+      for (const rule of DEFAULT_FRAUD_RULES) {
+        await this.prisma.fraudRule.upsert({
+          where: { code: rule.code },
+          update: {
+            name: rule.name,
+            description: rule.description,
+            type: rule.type as any,
+            conditions: rule.conditions,
+            actions: rule.actions,
+            riskScore: rule.riskScore,
+            priority: rule.priority,
+          },
+          create: {
+            code: rule.code,
+            name: rule.name,
+            description: rule.description,
+            type: rule.type as any,
+            conditions: rule.conditions,
+            actions: rule.actions,
+            riskScore: rule.riskScore,
+            priority: rule.priority,
+          },
+        });
+      }
+      this.logger.log(`Initialized ${DEFAULT_FRAUD_RULES.length} fraud rules`);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in initializeDefaultRules: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    }
-    this.logger.log(`Initialized ${DEFAULT_FRAUD_RULES.length} fraud rules`);
   }
 
   // ============================================================================
@@ -374,21 +373,21 @@ export class FraudDetectionService {
    */
   private async checkLocation(ipAddress?: string): Promise<boolean> {
     try {
-    if (!ipAddress) return false;
+      if (!ipAddress) return false;
 
-    const ipReputation = await this.prisma.ipReputation.findUnique({
-      where: { ipAddress },
+      const ipReputation = await this.prisma.ipReputation.findUnique({
+        where: { ipAddress },
+      });
+
+      if (ipReputation) {
+        return ipReputation.isVpn || ipReputation.isProxy || ipReputation.isTor;
+      }
+
+      return false;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in checkLocation: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    if (ipReputation) {
-      return ipReputation.isVpn || ipReputation.isProxy || ipReputation.isTor;
-    }
-
-    return false;
   }
 
   /**
@@ -424,19 +423,19 @@ export class FraudDetectionService {
    */
   private async checkNetwork(userId: string): Promise<boolean> {
     try {
-    const riskProfile = await this.prisma.userRiskProfile.findUnique({
-      where: { userId },
+      const riskProfile = await this.prisma.userRiskProfile.findUnique({
+        where: { userId },
+      });
+
+      if (riskProfile && riskProfile.confirmedFrauds > 0) {
+        return true;
+      }
+
+      return false;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in checkNetwork: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    if (riskProfile && riskProfile.confirmedFrauds > 0) {
-      return true;
-    }
-
-    return false;
   }
 
   // ============================================================================
@@ -448,21 +447,21 @@ export class FraudDetectionService {
    */
   async getOrCreateRiskProfile(userId: string): Promise<any> {
     try {
-    let profile = await this.prisma.userRiskProfile.findUnique({
-      where: { userId },
+      let profile = await this.prisma.userRiskProfile.findUnique({
+        where: { userId },
+      });
+
+      if (!profile) {
+        profile = await this.prisma.userRiskProfile.create({
+          data: { userId },
+        });
+      }
+
+      return profile;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getOrCreateRiskProfile: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    if (!profile) {
-      profile = await this.prisma.userRiskProfile.create({
-        data: { userId },
-      });
-    }
-
-    return profile;
   }
 
   /**
@@ -495,7 +494,7 @@ export class FraudDetectionService {
   /**
    * Calculate risk level from score
    */
-  private _calculateRiskLevel(score: number): RiskLevel {
+  private calculateRiskLevel(score: number): RiskLevel {
     if (score >= 80) return "CRITICAL";
     if (score >= 50) return "HIGH";
     if (score >= 25) return "MEDIUM";
@@ -536,31 +535,31 @@ export class FraudDetectionService {
    * Get pending fraud alerts
    */
   async getPendingAlerts(options: { page: number; limit: number }): Promise<{
-    try {
     data: unknown[];
     total: number;
     page: number;
     limit: number;
+  }> {
+    try {
+      const { page, limit } = options;
+      const skip = (page - 1) * limit;
+
+      const [alerts, total] = await Promise.all([
+        this.prisma.fraudAlert.findMany({
+          where: { status: "PENDING" },
+          orderBy: [{ riskLevel: "desc" }, { createdAt: "desc" }],
+          skip,
+          take: limit,
+          include: { rule: true },
+        }),
+        this.prisma.fraudAlert.count({ where: { status: "PENDING" } }),
+      ]);
+
+      return { data: alerts, total, page, limit };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getPendingAlerts: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-  }> {
-    const { page, limit } = options;
-    const skip = (page - 1) * limit;
-
-    const [alerts, total] = await Promise.all([
-      this.prisma.fraudAlert.findMany({
-        where: { status: "PENDING" },
-        orderBy: [{ riskLevel: "desc" }, { createdAt: "desc" }],
-        skip,
-        take: limit,
-        include: { rule: true },
-      }),
-      this.prisma.fraudAlert.count({ where: { status: "PENDING" } }),
-    ]);
-
-    return { data: alerts, total, page, limit };
   }
 
   /**
@@ -645,20 +644,20 @@ export class FraudDetectionService {
    */
   async removeFromWatchlist(userId: string): Promise<void> {
     try {
-    await this.prisma.userRiskProfile.update({
-      where: { userId },
-      data: {
-        isWatchlisted: false,
-        watchlistReason: null,
-        watchlistedAt: null,
-        watchlistedBy: null,
-      },
+      await this.prisma.userRiskProfile.update({
+        where: { userId },
+        data: {
+          isWatchlisted: false,
+          watchlistReason: null,
+          watchlistedAt: null,
+          watchlistedBy: null,
+        },
+      });
+
+      this.logger.log(`User ${userId} removed from watchlist`);
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in removeFromWatchlist: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    this.logger.log(`User ${userId} removed from watchlist`);
   }
 }
