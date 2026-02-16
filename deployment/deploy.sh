@@ -400,13 +400,13 @@ fi
 # Build backend with production config
 log_info "Building backend for production..."
 
-# Use production tsconfig if exists, otherwise regular build with skip lib check
+# Use production tsconfig if exists, otherwise regular build
 if [ -f "tsconfig.production.json" ]; then
     log_info "Using tsconfig.production.json for build"
-    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build --tsc --project tsconfig.production.json
+    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build -p tsconfig.production.json
 else
-    log_info "Using default tsconfig.build.json with skipLibCheck"
-    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build --skipLibCheck
+    log_info "Using default tsconfig.build.json"
+    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build
 fi
 
 BUILD_EXIT_CODE=$?
