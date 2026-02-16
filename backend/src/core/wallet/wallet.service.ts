@@ -3,8 +3,6 @@ import { Decimal } from 'decimal.js';
 import { PrismaService } from '@infrastructure/database/prisma.service';
 import { WithdrawalStatus, DepositStatus, Prisma, PaymentType, PaymentStatus, Currency } from '@prisma/client';
 
-
-
 interface Wallet {
   id: string;
   userId: string;
@@ -55,29 +53,29 @@ export class WalletService {
    */
   async getBalance(userId: string): Promise<BalanceResult> {
     try {
-    const wallet = await this.prisma.wallet.findUnique({
-      where: { userId },
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { userId },
+      });
+
+      if (!wallet) {
+        throw new NotFoundException('Wallet not found');
+      }
+
+      // Keep as BigInt, convert only for display using Decimal.js
+      const balanceMinor = wallet.balanceMinor.toString();
+      const balance = new Decimal(balanceMinor)
+        .div(this.MINOR_UNIT_DIVISOR)
+        .toFixed(2);
+
+      return {
+        balanceMinor,
+        balance,
+        currency: wallet.currency,
+      };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getBalance: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    if (!wallet) {
-      throw new NotFoundException('Wallet not found');
-    }
-
-    // Keep as BigInt, convert only for display using Decimal.js
-    const balanceMinor = wallet.balanceMinor.toString();
-    const balance = new Decimal(balanceMinor)
-      .div(this.MINOR_UNIT_DIVISOR)
-      .toFixed(2);
-
-    return {
-      balanceMinor,
-      balance,
-      currency: wallet.currency,
-    };
   }
 
   /**
@@ -87,31 +85,31 @@ export class WalletService {
    */
   async getBalanceDetailed(userId: string): Promise<DetailedBalanceResult> {
     try {
-    const wallet = await this.prisma.wallet.findUnique({
-      where: { userId },
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { userId },
+      });
+
+      if (!wallet) {
+        throw new NotFoundException('Wallet not found');
+      }
+
+      const balanceMinor = wallet.balanceMinor.toString();
+      const lockedMinor = (wallet.lockedMinor || 0n).toString();
+      const availableMinor = (wallet.balanceMinor - (wallet.lockedMinor || 0n)).toString();
+
+      return {
+        balanceMinor,
+        balance: new Decimal(balanceMinor).div(this.MINOR_UNIT_DIVISOR).toFixed(2),
+        lockedMinor,
+        locked: new Decimal(lockedMinor).div(this.MINOR_UNIT_DIVISOR).toFixed(2),
+        availableMinor,
+        available: new Decimal(availableMinor).div(this.MINOR_UNIT_DIVISOR).toFixed(2),
+        currency: wallet.currency,
+      };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in getBalanceDetailed: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    if (!wallet) {
-      throw new NotFoundException('Wallet not found');
-    }
-
-    const balanceMinor = wallet.balanceMinor.toString();
-    const lockedMinor = (wallet.lockedMinor || 0n).toString();
-    const availableMinor = (wallet.balanceMinor - (wallet.lockedMinor || 0n)).toString();
-
-    return {
-      balanceMinor,
-      balance: new Decimal(balanceMinor).div(this.MINOR_UNIT_DIVISOR).toFixed(2),
-      lockedMinor,
-      locked: new Decimal(lockedMinor).div(this.MINOR_UNIT_DIVISOR).toFixed(2),
-      availableMinor,
-      available: new Decimal(availableMinor).div(this.MINOR_UNIT_DIVISOR).toFixed(2),
-      currency: wallet.currency,
-    };
   }
 
   /**
