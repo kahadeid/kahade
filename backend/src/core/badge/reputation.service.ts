@@ -344,7 +344,7 @@ export class ReputationService {
   /**
    * Calculate level from XP
    */
-  private _calculateLevel(totalXp: number): {
+  private calculateLevel(totalXp: number): {
     level: number;
     rank: string;
     xpToNextLevel: number;

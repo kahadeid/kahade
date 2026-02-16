@@ -1,10 +1,9 @@
 
-import {
-import {
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
+import {
   Controller,
   Get,
   Post,
@@ -418,7 +417,7 @@ export class RatingController {
   // HELPER METHODS
   // ============================================================================
 
-  private _checkProfanity(text: string): boolean {
+  private checkProfanity(text: string): boolean {
     const profanityList = [
       "fuck",
       "shit",

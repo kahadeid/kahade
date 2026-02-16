@@ -220,7 +220,7 @@ export class AccountLockoutService {
   /**
    * Build cache key for identifier
    */
-  private _buildKey(identifier: string): string {
+  private buildKey(identifier: string): string {
     // Normalize identifier (lowercase for emails)
     const normalized = identifier.toLowerCase().trim();
     return `${this.CACHE_PREFIX}${normalized}`;
@@ -229,7 +229,7 @@ export class AccountLockoutService {
   /**
    * Mask identifier for logging
    */
-  private _maskIdentifier(identifier: string): string {
+  private maskIdentifier(identifier: string): string {
     if (identifier.includes("@")) {
       // Email - mask middle part
       const [local, domain] = identifier.split("@");

@@ -72,7 +72,7 @@ export class TransactionService {
     throw lastError;
   }
 
-  private _delay(ms: number): Promise<void> {
+  private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

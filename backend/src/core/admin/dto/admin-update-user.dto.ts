@@ -1,8 +1,7 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 
-import {
 import { KYCStatus } from "@prisma/client";
-
+import {
   IsBoolean,
   IsEmail,
   IsEnum,

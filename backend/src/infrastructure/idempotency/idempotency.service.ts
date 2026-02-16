@@ -23,7 +23,7 @@ export class IdempotencyService {
   /**
    * Build cache key with userId
    */
-  private _buildKey(key: string, userId: string): string {
+  private buildKey(key: string, userId: string): string {
     return `${userId}:${key}`;
   }
 

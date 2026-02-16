@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
-import {
 import { Type, Transform } from "class-transformer";
-
+import {
   IsInt,
   IsEnum,
   IsOptional,

@@ -62,7 +62,7 @@ export class LoggerService implements NestLoggerService {
   /**
    * Log with context enrichment
    */
-  private _logWithContext(
+  private logWithContext(
     level: string,
     message: string,
     context?: any,

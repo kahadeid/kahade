@@ -1,8 +1,7 @@
 import { Reflector } from "@nestjs/core";
 
-import {
 import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
-
+import {
   Injectable,
   ExecutionContext,
   CanActivate,
@@ -61,14 +60,14 @@ export class ThrottlerGuard implements CanActivate {
 
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _getKey(request: any): string {
+  private getKey(request: any): string {
     if (request.user?.id) {
       return `user:${request.user.id}`;
     }
     return `ip:${request.ip || request.connection?.remoteAddress || "unknown"}`;
   }
 
-  private _cleanup(now: number): void {
+  private cleanup(now: number): void {
     for (const [key, record] of this.storage.entries()) {
       if (record.resetAt < now) {
         this.storage.delete(key);

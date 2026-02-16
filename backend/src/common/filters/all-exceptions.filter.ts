@@ -4,7 +4,6 @@ import { ValidationError } from 'class-validator';
 
 
 import {
-
   ExceptionFilter,
   Catch,
   ArgumentsHost,
@@ -150,7 +149,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   /**
    * Format class-validator validation errors
    */
-  private _formatValidationErrors(errors: ValidationError[]): string[] {
+  private formatValidationErrors(errors: ValidationError[]): string[] {
     return errors.flatMap((error) => {
       if (error.constraints) {
         return Object.values(error.constraints);
@@ -165,7 +164,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   /**
    * Sanitize request body to remove sensitive data from logs
    */
-  private _sanitizeBody(body: unknown): any {
+  private sanitizeBody(body: unknown): any {
     if (!body || typeof body !== 'object') {
       return body;
     }

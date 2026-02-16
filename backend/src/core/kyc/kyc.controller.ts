@@ -5,13 +5,12 @@ import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 
-import {
-import {
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { memoryStorage } from "multer";
-
+import {
+import {
   Controller,
   Get,
   Post,
@@ -90,21 +89,21 @@ export class KycController {
     }
   }
 
-  private _ensureUploadDir(): void {
+  private ensureUploadDir(): void {
     const kycDir = path.join(UPLOAD_DIR, "kyc");
     if (!fs.existsSync(kycDir)) {
       fs.mkdirSync(kycDir, { recursive: true });
     }
   }
 
-  private _generateFileHash(buffer: Buffer): string {
+  private generateFileHash(buffer: Buffer): string {
     return crypto.createHash("sha256").update(buffer).digest("hex");
   }
 
   /**
    * BANK-GRADE: Encrypt sensitive PII data using AES-256-GCM
    */
-  private _encryptPII(plaintext: string): string {
+  private encryptPII(plaintext: string): string {
     if (!plaintext) return "";
 
     const iv = crypto.randomBytes(16);
@@ -126,7 +125,7 @@ export class KycController {
   /**
    * BANK-GRADE: Decrypt sensitive PII data
    */
-  private _decryptPII(encryptedData: string): string {
+  private decryptPII(encryptedData: string): string {
     if (!encryptedData || !encryptedData.includes(":")) return encryptedData;
 
     try {

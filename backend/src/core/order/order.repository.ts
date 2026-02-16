@@ -1,9 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-import {
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
   Order,
   OrderStatus,
   InitiatorRole,
@@ -57,7 +56,7 @@ export class OrderRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  private _generateOrderNumber(): string {
+  private generateOrderNumber(): string {
     const date = new Date();
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();

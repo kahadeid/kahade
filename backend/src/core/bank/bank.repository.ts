@@ -1,9 +1,8 @@
 import { ConfigService } from "@nestjs/config";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 
-import {
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
   createCipheriv,
   createDecipheriv,
   randomBytes,
@@ -82,7 +81,7 @@ export class BankRepository implements OnModuleInit {
     );
   }
 
-  private _encrypt(text: string): string {
+  private encrypt(text: string): string {
     const iv = randomBytes(16);
     const cipher = createCipheriv(this.algorithm, this.encryptionKey, iv);
     let encrypted = cipher.update(text, "utf8", "hex");
@@ -91,7 +90,7 @@ export class BankRepository implements OnModuleInit {
     return `${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted}`;
   }
 
-  private _decrypt(encryptedText: string): string {
+  private decrypt(encryptedText: string): string {
     try {
       const [ivHex, authTagHex, encrypted] = encryptedText.split(":");
       if (!ivHex || !authTagHex || !encrypted) {

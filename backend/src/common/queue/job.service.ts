@@ -138,7 +138,7 @@ export class JobService extends (EventEmitter as new () => EventEmitter) {
   /**
    * Start processing queue
    */
-  private _startProcessing(): void {
+  private startProcessing(): void {
     setInterval(() => {
       this.processNextJob();
     }, 100);
@@ -238,14 +238,14 @@ export class JobService extends (EventEmitter as new () => EventEmitter) {
   /**
    * Sort queue by priority
    */
-  private _sortQueue(): void {
+  private sortQueue(): void {
     this.queue.sort((a, b) => b.priority - a.priority);
   }
 
   /**
    * Generate unique job ID
    */
-  private _generateJobId(): string {
+  private generateJobId(): string {
     return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }

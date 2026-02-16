@@ -1,13 +1,12 @@
 import { ConfigService } from "@nestjs/config";
 
-import {
-import {
 import { CacheService } from "@infrastructure/cache/cache.service";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { PaymentService } from "./payment.service";
 import { Public } from "@common/decorators/public.decorator";
 import { WebhookValidatorService } from "@integrations/webhook/webhook-validator.service";
-
+import {
+import {
   Controller,
   Post,
   Body,
@@ -92,7 +91,7 @@ export class PaymentController {
     return this.paymentService.verifyPayment(paymentId);
   }
 
-  private _normalizeHeaders(
+  private normalizeHeaders(
     headers: Record<string, string | string[] | undefined>,
   ): Record<string, string> {
     return Object.entries(headers).reduce<Record<string, string>>(
@@ -111,7 +110,7 @@ export class PaymentController {
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _getWebhookIdempotencyKey(payload: any): string | null {
+  private getWebhookIdempotencyKey(payload: any): string | null {
     return (
       payload?.transaction_id ||
       payload?.order_id ||

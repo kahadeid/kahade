@@ -1,9 +1,8 @@
 
-import {
 import { BadgeService } from "./badge.service";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { ReputationService } from "./reputation.service";
-
+import {
   Controller,
   Get,
   Post,

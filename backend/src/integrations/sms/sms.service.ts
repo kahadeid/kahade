@@ -330,7 +330,7 @@ export class SmsService {
   /**
    * Normalize phone number to international format
    */
-  private _normalizePhoneNumber(phone: string): string {
+  private normalizePhoneNumber(phone: string): string {
     // Remove all non-digit characters except +
     let normalized = phone.replace(/[^\d+]/g, "");
 
@@ -349,7 +349,7 @@ export class SmsService {
   /**
    * Mask phone number for logging
    */
-  private _maskPhoneNumber(phone: string): string {
+  private maskPhoneNumber(phone: string): string {
     if (phone.length <= 6) return "***";
     return phone.substring(0, 4) + "****" + phone.substring(phone.length - 4);
   }

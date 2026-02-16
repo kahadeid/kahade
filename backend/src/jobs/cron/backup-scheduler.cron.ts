@@ -116,7 +116,7 @@ export class BackupSchedulerCron {
     }
   }
 
-  private _formatBytes(bytes: number): string {
+  private formatBytes(bytes: number): string {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];

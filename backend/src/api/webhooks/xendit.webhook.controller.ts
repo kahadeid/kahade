@@ -2,12 +2,11 @@ import { ConfigService } from "@nestjs/config";
 
 import * as crypto from "crypto";
 
-import {
 import { IpUtil } from "@common/utils/ip.util";
 import { PaymentStatus, WebhookStatus } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { Request } from "express";
-
+import {
   Controller,
   Post,
   Body,
@@ -276,7 +275,7 @@ export class XenditWebhookController {
     }
   }
 
-  private _verifyCallbackToken(providedToken: string | undefined): boolean {
+  private verifyCallbackToken(providedToken: string | undefined): boolean {
     if (!this.callbackToken) {
       this.logger.error("Callback token not configured");
       return false;
@@ -489,7 +488,7 @@ export class XenditWebhookController {
     }
   }
 
-  private _mapInvoiceStatus(status: string): PaymentStatus {
+  private mapInvoiceStatus(status: string): PaymentStatus {
     const statusMap: Record<string, PaymentStatus> = {
       PAID: PaymentStatus.SUCCESS,
       SETTLED: PaymentStatus.SUCCESS,
@@ -501,7 +500,7 @@ export class XenditWebhookController {
     return statusMap[status] ?? PaymentStatus.PENDING;
   }
 
-  private _mapDisbursementStatus(status: string): string {
+  private mapDisbursementStatus(status: string): string {
     const statusMap: Record<string, string> = {
       COMPLETED: "COMPLETED",
       PENDING: "PROCESSING",
@@ -511,7 +510,7 @@ export class XenditWebhookController {
     return statusMap[status] ?? "PENDING";
   }
 
-  private _sanitizeHeaders(headers: any): any {
+  private sanitizeHeaders(headers: any): any {
     const sanitized = { ...headers };
     delete sanitized["authorization"];
     delete sanitized["cookie"];

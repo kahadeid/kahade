@@ -245,7 +245,7 @@ export class PerformanceService {
   /**
    * Calculate percentile
    */
-  private _percentile(values: number[], p: number): number {
+  private percentile(values: number[], p: number): number {
     const index = Math.ceil((values.length * p) / 100) - 1;
     return values[Math.max(0, index)];
   }

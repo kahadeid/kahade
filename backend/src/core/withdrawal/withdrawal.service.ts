@@ -1,12 +1,11 @@
 import { ConfigService } from "@nestjs/config";
 
-import {
 import { CreateWithdrawalDto } from "./dto/create-withdrawal.dto";
 import { LedgerService } from "../ledger/ledger.service";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
 import { Withdrawal, WithdrawalStatus, KYCStatus } from "@prisma/client";
-
+import {
   Injectable,
   Logger,
   BadRequestException,
@@ -744,7 +743,7 @@ export class WithdrawalService {
   // HELPER METHODS
   // ============================================================================
 
-  private _getKYCLevel(
+  private getKYCLevel(
     kycStatus?: KYCStatus | null,
   ): keyof typeof WITHDRAWAL_LIMITS {
     switch (kycStatus) {

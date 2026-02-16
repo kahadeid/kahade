@@ -175,7 +175,7 @@ export class XssSanitizationMiddleware implements NestMiddleware {
     next();
   }
 
-  private _sanitize(obj: any): any {
+  private sanitize(obj: any): any {
     if (typeof obj === 'string') {
       return xss(obj);
     }

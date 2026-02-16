@@ -50,7 +50,7 @@ export class MetricsService implements OnModuleInit {
   /**
    * Initialize default application metrics
    */
-  private _initializeDefaultMetrics(): void {
+  private initializeDefaultMetrics(): void {
     // HTTP metrics
     this.createCounter("http_requests_total", {
       method: "",
@@ -329,7 +329,7 @@ export class MetricsService implements OnModuleInit {
   /**
    * Build metric key from name and labels
    */
-  private _buildKey(name: string, labels: Record<string, string>): string {
+  private buildKey(name: string, labels: Record<string, string>): string {
     const labelStr = Object.entries(labels)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}="${v}"`)
@@ -340,7 +340,7 @@ export class MetricsService implements OnModuleInit {
   /**
    * Format metric in Prometheus format
    */
-  private _formatMetric(
+  private formatMetric(
     name: string,
     type: string,
     value: number,

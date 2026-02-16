@@ -1,11 +1,10 @@
 import { Controller, Get, Query, UseGuards, Logger } from "@nestjs/common";
 
-import {
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { sanitizePagination } from "@common/pipes/pagination.pipe";
-
+import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
@@ -500,7 +499,7 @@ export class ActivityController {
   // HELPER METHODS
   // ============================================================================
 
-  private _maskIpAddress(ip: string): string {
+  private maskIpAddress(ip: string): string {
     // Mask last octet for privacy
     const parts = ip.split(".");
     if (parts.length === 4) {

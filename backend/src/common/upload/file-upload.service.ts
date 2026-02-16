@@ -141,7 +141,7 @@ export class FileUploadService {
   /**
    * Generate secure filename
    */
-  private _generateSecureFilename(extension: string): string {
+  private generateSecureFilename(extension: string): string {
     const timestamp = Date.now();
     const randomBytes = crypto.randomBytes(16).toString('hex');
     return `${timestamp}-${randomBytes}${extension}`;
@@ -150,7 +150,7 @@ export class FileUploadService {
   /**
    * Get destination folder by MIME type
    */
-  private _getDestinationByMimeType(mimeType: string): string {
+  private getDestinationByMimeType(mimeType: string): string {
     if (mimeType.startsWith('image/')) return 'images';
     if (mimeType.startsWith('video/')) return 'videos';
     if (mimeType.startsWith('audio/')) return 'audio';

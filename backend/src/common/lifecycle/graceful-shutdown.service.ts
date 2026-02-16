@@ -41,7 +41,7 @@ export class GracefulShutdownService implements OnModuleDestroy {
   /**
    * Setup shutdown signal handlers
    */
-  private _setupShutdownHandlers() {
+  private setupShutdownHandlers() {
     // Kubernetes sends SIGTERM before killing pod
     process.on('SIGTERM', () => {
       this.logger.warn('SIGTERM received, starting graceful shutdown...');

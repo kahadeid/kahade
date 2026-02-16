@@ -189,11 +189,11 @@ export class ErrorRecoveryService {
     }
   }
 
-  private _sleep(ms: number): Promise<void> {
+  private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  private _timeout(ms: number): Promise<never> {
+  private timeout(ms: number): Promise<never> {
     return new Promise((_, reject) =>
       setTimeout(() => reject(new Error('Operation timed out')), ms),
     );

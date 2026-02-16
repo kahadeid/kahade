@@ -1,20 +1,12 @@
 import { ConfigService } from "@nestjs/config";
 
-import {
 import { PrismaClient } from "@prisma/client";
-
+import {
   Injectable,
   OnModuleInit,
   OnModuleDestroy,
   Logger,
 } from "@nestjs/common";
-// Eslint-disable-next-line @typescript-eslint/no-unused-vars
-// Eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-// ============================================================================
-// BANK-GRADE PRISMA SERVICE
-// Implements: Connection Pooling, Health Checks, Graceful Shutdown
-// ============================================================================
 
 @Injectable()
 export class PrismaService
@@ -44,10 +36,7 @@ export class PrismaService
       },
     });
 
-    // Set up query logging in development
     if (!isProduction) {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any).$on("query", (e: any) => {
         if (e.duration > 1000) {
           this.logger.warn(`Slow query (${e.duration}ms): ${e.query}`);
@@ -55,17 +44,11 @@ export class PrismaService
       });
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // Log errors
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this as any).$on("error", (e: any) => {
       this.logger.error(`Database error: ${e.message}`);
     });
   }
 
-  /**
-   * Onmoduleinit
-   */
   async onModuleInit(): Promise<void> {
     try {
       await this.$connect();
@@ -77,29 +60,19 @@ export class PrismaService
     }
   }
 
-  /**
-   * Onmoduledestroy
-   */
   async onModuleDestroy(): Promise<void> {
     try {
-    await this.$disconnect();
-    this.isConnected = false;
-    this.logger.log("Database disconnected");
-  }
-
-  /**
-   * Health check for database connection
-   */
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      await this.$disconnect();
+      this.isConnected = false;
+      this.logger.log("Database disconnected");
+    } catch (error: any) {
+      this.logger.error(`Error disconnecting: ${error.message}`, error.stack);
       throw error;
     }
-  /**
-   * Ishealthy
-   */
+  }
+
   async isHealthy(): Promise<boolean> {
     try {
-      // SECURITY: Ensure input is properly sanitized
       await this.$queryRaw`SELECT 1`;
       return true;
     } catch {
@@ -107,16 +80,10 @@ export class PrismaService
     }
   }
 
-  /**
-   * Get connection status
-   */
   getConnectionStatus(): boolean {
     return this.isConnected;
   }
 
-  /**
-   * Execute with retry logic for transient failures
-   */
   async executeWithRetry<T>(
     operation: () => Promise<T>,
     maxRetries = 3,
@@ -130,7 +97,6 @@ export class PrismaService
       } catch (error: unknown) {
         lastError = error as Error;
 
-        // Check if error is retryable (connection issues, deadlocks)
         const isRetryable = this.isRetryableError(error);
 
         if (!isRetryable || attempt === maxRetries) {
@@ -148,46 +114,24 @@ export class PrismaService
     throw lastError;
   }
 
-  /**
-   * Check if error is retryable
-   */
-  private _isRetryableError(error: unknown): boolean {
+  private isRetryableError(error: unknown): boolean {
     if (error && typeof error === "object" && "code" in error) {
-      // P1001: Can't reach database server
-      // P1002: Database server timed out
-      // P2024: Timed out fetching connection from pool
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // P2034: Transaction failed due to write conflict or deadlock
       const retryableCodes = ["P1001", "P1002", "P2024", "P2034"];
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       return retryableCodes.includes((error as any).code);
     }
     return false;
   }
 
-  /**
-   * Delay helper
-   */
-  private _delay(ms: number): Promise<void> {
+  private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /**
-   * Clean database (development/testing only)
-   */
   async cleanDatabase(): Promise<void> {
-    try {
     if (process.env.NODE_ENV === "production") {
       throw new Error("Cannot clean database in production");
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
     }
 
     const models = Object.keys(this).filter(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (key: any) =>
         !key.startsWith("_") && !key.startsWith("$") && key !== "logger",
     );

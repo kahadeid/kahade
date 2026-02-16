@@ -1,8 +1,7 @@
 
-import {
 import { ErrorResponseDto, ErrorCode } from "@common/dto/response.dto";
 import { Request, Response } from "express";
-
+import {
   ArgumentsHost,
   Catch,
   HttpStatus,
@@ -127,7 +126,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     response.status(errorResponse.statusCode).json(errorResponse);
   }
 
-  private _buildErrorResponse(
+  private buildErrorResponse(
     exception: PrismaClientKnownRequestError,
     path: string,
     method: string,
@@ -160,7 +159,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     );
   }
 
-  private _enrichErrorMessage(
+  private enrichErrorMessage(
     exception: PrismaClientKnownRequestError,
     defaultMessage: string,
   ): string {
@@ -191,7 +190,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     return defaultMessage;
   }
 
-  private _logError(
+  private logError(
     exception: PrismaClientKnownRequestError,
     request: Request & { id?: string },
     errorResponse: ErrorResponseDto,
@@ -218,7 +217,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private _isPrismaError(
+  private isPrismaError(
     exception: unknown,
   ): exception is PrismaClientKnownRequestError {
     return (

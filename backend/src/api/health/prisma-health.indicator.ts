@@ -3,7 +3,6 @@ import { PrismaService } from '@infrastructure/database/prisma.service';
 
 
 import {
-
   HealthIndicator,
   HealthIndicatorResult,
   HealthCheckError,

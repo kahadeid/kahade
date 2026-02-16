@@ -1,8 +1,7 @@
 
-import {
 import { BadgeCategory, BadgeRarity } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
-
+import {
   Injectable,
   Logger,
   NotFoundException,

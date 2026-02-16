@@ -150,7 +150,7 @@ export class CacheService {
   /**
    * Build full cache key with namespace
    */
-  private _buildKey(key: string, namespace?: string): string {
+  private buildKey(key: string, namespace?: string): string {
     return namespace ? `${namespace}:${key}` : key;
   }
 

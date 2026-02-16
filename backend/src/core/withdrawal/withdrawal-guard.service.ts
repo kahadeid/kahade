@@ -277,12 +277,12 @@ export class WithdrawalGuardService {
     this.logger.warn(`Withdrawal ${withdrawalId} flagged: ${reason}`);
   }
 
-  private _getMinutesSince(date: Date | null): number | null {
+  private getMinutesSince(date: Date | null): number | null {
     if (!date) return null;
     return Math.floor((Date.now() - date.getTime()) / 60000);
   }
 
-  private _formatAmount(amountMinor: bigint): string {
+  private formatAmount(amountMinor: bigint): string {
     const amount = Number(amountMinor) / 100;
     return `Rp ${amount.toLocaleString("id-ID")}`;
   }

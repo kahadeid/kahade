@@ -253,7 +253,7 @@ export class KycExpiryCheckCron {
   /**
    * Get notification content based on days until expiry
    */
-  private _getExpiryNotificationContent(
+  private getExpiryNotificationContent(
     daysUntilExpiry: number,
     expiresAt: Date | null,
   ): { title: string; message: string } {
@@ -280,7 +280,7 @@ export class KycExpiryCheckCron {
   /**
    * Get email content for expiring KYC
    */
-  private _getExpiryEmailContent(
+  private getExpiryEmailContent(
     username: string,
     daysUntilExpiry: number,
     expiresAt: Date | null,
@@ -346,7 +346,7 @@ export class KycExpiryCheckCron {
   /**
    * Get email content for expired KYC
    */
-  private _getExpiredEmailContent(username: string): string {
+  private getExpiredEmailContent(username: string): string {
     return `
       <!DOCTYPE html>
       <html>
@@ -406,7 +406,7 @@ export class KycExpiryCheckCron {
   /**
    * Format date to Indonesian locale
    */
-  private _formatDate(date: Date): string {
+  private formatDate(date: Date): string {
     return date.toLocaleDateString("id-ID", {
       weekday: "long",
       year: "numeric",
@@ -418,7 +418,7 @@ export class KycExpiryCheckCron {
   /**
    * Get app URL from environment or default
    */
-  private _getAppUrl(): string {
+  private getAppUrl(): string {
     return process.env.APP_URL || "https://app.kahade.id";
   }
 }

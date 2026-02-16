@@ -1,13 +1,12 @@
 import { Throttle } from "@nestjs/throttler";
 
-import {
-import {
 import { AddBankAccountDto } from "./dto/add-bank-account.dto";
 import { BankRepository } from "./bank.repository";
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
 import { SUPPORTED_BANKS, getBankByCode } from "@common/constants/banks";
-
+import {
+import {
   Controller,
   Get,
   Post,

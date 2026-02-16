@@ -1,8 +1,6 @@
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Throttle } from "@nestjs/throttler";
 
-import {
-import {
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { HashUtil } from "@common/utils/hash.util";
 import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
@@ -10,7 +8,8 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { UploadKycDto } from "./dto/upload-kyc.dto";
 import { UserService } from "./user.service";
 import { memoryStorage } from "multer";
-
+import {
+import {
   Controller,
   Get,
   Post,

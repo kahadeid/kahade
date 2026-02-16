@@ -1,9 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-import {
 import { DisputeDecision } from "@prisma/client";
 import { Transform } from "class-transformer";
-
+import {
   IsString,
   IsEnum,
   MinLength,

@@ -3,7 +3,6 @@ import { Request } from 'express';
 
 
 import {
-
   Injectable,
   CanActivate,
   ExecutionContext,
@@ -145,7 +144,7 @@ export class EnhancedRateLimitGuard implements CanActivate {
   /**
    * Generate rate limit key
    */
-  private _generateKey(request: Request, prefix?: string): string {
+  private generateKey(request: Request, prefix?: string): string {
     const userId = (request as any).user?.id;
     const ip = request.ip || request.socket.remoteAddress;
     const path = request.path;
@@ -157,7 +156,7 @@ export class EnhancedRateLimitGuard implements CanActivate {
   /**
    * Clean up expired entries
    */
-  private _cleanup(): void {
+  private cleanup(): void {
     const now = Date.now();
 
     // Clean up rate limit store

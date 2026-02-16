@@ -1,8 +1,7 @@
 
-import {
 import { plainToInstance } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
-
+import {
   PipeTransform,
   Injectable,
   ArgumentMetadata,
@@ -37,12 +36,12 @@ export class ValidationPipe implements PipeTransform<unknown> {
     return value;
   }
 
-  private _toValidate(metatype: ClassConstructor): boolean {
+  private toValidate(metatype: ClassConstructor): boolean {
     const types: ClassConstructor[] = [String, Boolean, Number, Array, Object];
     return !types.includes(metatype);
   }
 
-  private _formatErrors(errors: ValidationError[]): ValidationErrorDetail[] {
+  private formatErrors(errors: ValidationError[]): ValidationErrorDetail[] {
     return errors.map((error: ValidationError) => {
       const constraints = error.constraints
         ? (Object.values(error.constraints) as string[])
