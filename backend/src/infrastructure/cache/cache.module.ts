@@ -1,9 +1,8 @@
+import { CacheModule as NestCacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Module, Global } from '@nestjs/common';
 import { CacheService } from './cache.service';
 import { RedisFallbackService } from './redis-fallback.service';
-
-
 
 @Global()
 @Module({
