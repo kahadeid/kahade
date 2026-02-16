@@ -3,16 +3,6 @@ import { Decimal } from 'decimal.js';
 import { PrismaService } from '@infrastructure/database/prisma.service';
 import { WithdrawalStatus, DepositStatus, Prisma, PaymentType, PaymentStatus, Currency } from '@prisma/client';
 
-interface Wallet {
-  id: string;
-  userId: string;
-  balanceMinor: bigint;
-  lockedMinor: bigint | null;
-  currency: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 interface LockBalanceData {
   userId: string;
   amount: bigint;
@@ -39,6 +29,16 @@ interface DetailedBalanceResult {
   currency: string;
 }
 
+type WalletRecord = {
+  id: string;
+  userId: string;
+  balanceMinor: bigint;
+  lockedMinor: bigint | null;
+  currency: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 @Injectable()
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
@@ -48,8 +48,6 @@ export class WalletService {
 
   /**
    * Get user's wallet balance
-   * @param userId - User ID
-   * @returns Balance in major and minor units
    */
   async getBalance(userId: string): Promise<BalanceResult> {
     try {
@@ -61,7 +59,6 @@ export class WalletService {
         throw new NotFoundException('Wallet not found');
       }
 
-      // Keep as BigInt, convert only for display using Decimal.js
       const balanceMinor = wallet.balanceMinor.toString();
       const balance = new Decimal(balanceMinor)
         .div(this.MINOR_UNIT_DIVISOR)
@@ -80,8 +77,6 @@ export class WalletService {
 
   /**
    * Get detailed wallet balance including locked amount
-   * @param userId - User ID
-   * @returns Detailed balance information
    */
   async getBalanceDetailed(userId: string): Promise<DetailedBalanceResult> {
     try {
@@ -114,13 +109,10 @@ export class WalletService {
 
   /**
    * Get user's transaction history
-   * @param userId - User ID
-   * @param options - Pagination and filter options
    */
   async getTransactions(userId: string, options: { page?: number; limit?: number; type?: string }) {
     const { page = 1, limit = 20 } = options;
 
-    // Validate pagination parameters
     if (page < 1 || limit < 1 || limit > 100) {
       throw new BadRequestException('Invalid pagination parameters');
     }
@@ -136,7 +128,6 @@ export class WalletService {
     const skip = (page - 1) * limit;
     const halfLimit = Math.floor(limit / 2);
 
-    // Use Promise.all for parallel queries
     const [deposits, withdrawals, totalDeposits, totalWithdrawals] = await Promise.all([
       this.prisma.deposit.findMany({
         where: { walletId: wallet.id },
@@ -192,15 +183,11 @@ export class WalletService {
 
   /**
    * Lock balance for escrow or pending transactions
-   * @param data - Lock balance parameters
-   * @returns Success status
    */
   async lockBalance(data: LockBalanceData): Promise<{ success: boolean }> {
     return await this.prisma.$transaction(async (tx) => {
       try {
-        // Step 1: Acquire pessimistic lock using FOR UPDATE
-        // SECURITY: Ensure input is properly sanitized
-        const wallets = await tx.$queryRaw<Wallet[]>`
+        const wallets = await tx.$queryRaw<WalletRecord[]>`
           SELECT * FROM "Wallet"
           WHERE "userId" = ${data.userId}::uuid
           FOR UPDATE NOWAIT
@@ -214,13 +201,11 @@ export class WalletService {
         const lockedMinor = wallet.lockedMinor || 0n;
         const availableMinor = wallet.balanceMinor - lockedMinor;
 
-        // Step 2: Validate sufficient balance
         if (availableMinor < data.amount) {
           this.logger.warn(`Insufficient balance for user ${data.userId}: available=${availableMinor}, requested=${data.amount}`);
           throw new BadRequestException('Insufficient available balance');
         }
 
-        // Step 3: Update with lock held
         await tx.wallet.update({
           where: { userId: data.userId },
           data: {
@@ -229,7 +214,6 @@ export class WalletService {
           },
         });
 
-        // Step 4: Create audit trail (matching existing schema)
         await tx.auditLog.create({
           data: {
             action: 'BALANCE_LOCK',
@@ -262,80 +246,66 @@ export class WalletService {
 
   /**
    * Unlock previously locked balance
-   * @param userId - User ID
-   * @param amountMinor - Amount to unlock in minor units
-   * @param reason - Reason for unlocking
-   * @param initiatedBy - Who initiated this action
-   * @param ipAddress - IP address
-   * @param userAgent - User agent
-   * @returns Success status
    */
   async unlockBalance(
     userId: string,
     amountMinor: bigint,
     reason: string,
-    initiatedBy: string,
-    ipAddress?: string,
-    userAgent?: string
+    tx?: any
   ): Promise<{ success: boolean }> {
-    return await this.prisma.$transaction(async (tx) => {
-      try {
-        // Acquire pessimistic lock
-        // SECURITY: Ensure input is properly sanitized
-        const wallets = await tx.$queryRaw<Wallet[]>`
-          SELECT * FROM "Wallet"
-          WHERE "userId" = ${userId}::uuid
-          FOR UPDATE NOWAIT
-        `;
+    const execute = async (client: any) => {
+      const wallets = await client.$queryRaw<WalletRecord[]>`
+        SELECT * FROM "Wallet"
+        WHERE "userId" = ${userId}::uuid
+        FOR UPDATE NOWAIT
+      `;
 
-        if (!wallets || wallets.length === 0) {
-          throw new NotFoundException('Wallet not found');
-        }
-
-        const wallet = wallets[0];
-        const lockedMinor = wallet.lockedMinor || 0n;
-
-        if (lockedMinor < amountMinor) {
-          this.logger.warn(`Insufficient locked balance for user ${userId}: locked=${lockedMinor}, requested=${amountMinor}`);
-          throw new BadRequestException('Insufficient locked balance');
-        }
-
-        const newLockedMinor = lockedMinor - amountMinor;
-
-        // Update wallet
-        await tx.wallet.update({
-          where: { userId },
-          data: {
-            lockedMinor: newLockedMinor,
-            updatedAt: new Date(),
-          },
-        });
-
-        // Create audit log
-        await tx.auditLog.create({
-          data: {
-            action: 'BALANCE_UNLOCK',
-            performedBy: initiatedBy,
-            entityType: 'WALLET',
-            entityId: wallet.id,
-            details: {
-              before: { lockedMinor: lockedMinor.toString() },
-              after: { lockedMinor: newLockedMinor.toString() },
-              amount: amountMinor.toString(),
-              reason,
-            },
-            ipAddress,
-            userAgent,
-          },
-        });
-
-        this.logger.log(`Balance unlocked for user ${userId}: amount=${amountMinor}, reason=${reason}`);
-        return { success: true };
-      } catch (error) {
-        this.logger.error(`Failed to unlock balance for user ${userId}:`, error);
-        throw error;
+      if (!wallets || wallets.length === 0) {
+        throw new NotFoundException('Wallet not found');
       }
-    }, {
+
+      const wallet = wallets[0];
+      const lockedMinor = wallet.lockedMinor || 0n;
+
+      if (lockedMinor < amountMinor) {
+        this.logger.warn(`Insufficient locked balance for user ${userId}: locked=${lockedMinor}, requested=${amountMinor}`);
+        throw new BadRequestException('Insufficient locked balance');
+      }
+
+      const newLockedMinor = lockedMinor - amountMinor;
+
+      await client.wallet.update({
+        where: { userId },
+        data: {
+          lockedMinor: newLockedMinor,
+          updatedAt: new Date(),
+        },
+      });
+
+      await client.auditLog.create({
+        data: {
+          action: 'BALANCE_UNLOCK',
+          performedBy: 'system',
+          entityType: 'WALLET',
+          entityId: wallet.id,
+          details: {
+            before: { lockedMinor: lockedMinor.toString() },
+            after: { lockedMinor: newLockedMinor.toString() },
+            amount: amountMinor.toString(),
+            reason,
+          },
+        },
+      });
+
+      this.logger.log(`Balance unlocked for user ${userId}: amount=${amountMinor}, reason=${reason}`);
+      return { success: true };
+    };
+
+    if (tx) {
+      return execute(tx);
+    }
+
+    return await this.prisma.$transaction(async (txn) => execute(txn), {
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       timeout: 5000,
     });
@@ -343,135 +313,110 @@ export class WalletService {
 
   /**
    * Transfer locked balance from one user to another
-   * @param fromUserId - Sender user ID
-   * @param toUserId - Receiver user ID
-   * @param amountMinor - Amount to transfer in minor units
-   * @param reason - Reason for transfer
-   * @param initiatedBy - Who initiated this action
-   * @param ipAddress - IP address
-   * @param userAgent - User agent
-   * @returns Success status
    */
   async transferLockedBalance(
     fromUserId: string,
     toUserId: string,
     amountMinor: bigint,
     reason: string,
-    initiatedBy: string,
-    ipAddress?: string,
-    userAgent?: string
+    tx?: any
   ): Promise<{ success: boolean }> {
-    return await this.prisma.$transaction(async (tx) => {
-      try {
-        // Lock both wallets (ordered by userId to prevent deadlock)
-        const [userId1, userId2] = [fromUserId, toUserId].sort();
+    const execute = async (client: any) => {
+      const [userId1, userId2] = [fromUserId, toUserId].sort();
 
-        // SECURITY: Ensure input is properly sanitized
-        const wallets = await tx.$queryRaw<Wallet[]>`
-          SELECT * FROM "Wallet"
-          WHERE "userId" IN (${userId1}::uuid, ${userId2}::uuid)
-          ORDER BY "userId"
-          FOR UPDATE NOWAIT
-        `;
+      const wallets = await client.$queryRaw<WalletRecord[]>`
+        SELECT * FROM "Wallet"
+        WHERE "userId" IN (${userId1}::uuid, ${userId2}::uuid)
+        ORDER BY "userId"
+        FOR UPDATE NOWAIT
+      `;
 
-        if (!wallets || wallets.length !== 2) {
-          throw new NotFoundException('One or both wallets not found');
-        }
-
-        const fromWallet = wallets.find(w => w.userId === fromUserId);
-        const toWallet = wallets.find(w => w.userId === toUserId);
-
-        if (!fromWallet || !toWallet) {
-          throw new NotFoundException('Wallet not found');
-        }
-
-        const fromLockedMinor = fromWallet.lockedMinor || 0n;
-
-        if (fromLockedMinor < amountMinor) {
-          this.logger.warn(`Insufficient locked balance for transfer: from=${fromUserId}, amount=${amountMinor}`);
-          throw new BadRequestException('Insufficient locked balance');
-        }
-
-        // Deduct from sender's locked and balance
-        await tx.wallet.update({
-          where: { userId: fromUserId },
-          data: {
-            lockedMinor: fromLockedMinor - amountMinor,
-            balanceMinor: fromWallet.balanceMinor - amountMinor,
-            updatedAt: new Date(),
-          },
-        });
-
-        // Add to receiver's balance
-        await tx.wallet.update({
-          where: { userId: toUserId },
-          data: {
-            balanceMinor: toWallet.balanceMinor + amountMinor,
-            updatedAt: new Date(),
-          },
-        });
-
-        // Create audit logs for both wallets
-        await tx.auditLog.createMany({
-          data: [
-            {
-              action: 'BALANCE_TRANSFER_OUT',
-              performedBy: initiatedBy,
-              entityType: 'WALLET',
-              entityId: fromWallet.id,
-              details: {
-                before: {
-                  balanceMinor: fromWallet.balanceMinor.toString(),
-                  lockedMinor: fromLockedMinor.toString(),
-                },
-                after: {
-                  balanceMinor: (fromWallet.balanceMinor - amountMinor).toString(),
-                  lockedMinor: (fromLockedMinor - amountMinor).toString(),
-                },
-                amount: amountMinor.toString(),
-                reason,
-                toUserId,
-              },
-              ipAddress,
-              userAgent,
-            },
-            {
-              action: 'BALANCE_TRANSFER_IN',
-              performedBy: initiatedBy,
-              entityType: 'WALLET',
-              entityId: toWallet.id,
-              details: {
-                before: { balanceMinor: toWallet.balanceMinor.toString() },
-                after: { balanceMinor: (toWallet.balanceMinor + amountMinor).toString() },
-                amount: amountMinor.toString(),
-                reason,
-                fromUserId,
-              },
-              ipAddress,
-              userAgent,
-            },
-          ],
-        });
-
-        this.logger.log(`Balance transferred: from=${fromUserId}, to=${toUserId}, amount=${amountMinor}`);
-        return { success: true };
-      } catch (error) {
-        this.logger.error(`Failed to transfer balance: from=${fromUserId}, to=${toUserId}`, error);
-        throw error;
+      if (!wallets || wallets.length !== 2) {
+        throw new NotFoundException('One or both wallets not found');
       }
-    }, {
+
+      const fromWallet = wallets.find((w: WalletRecord) => w.userId === fromUserId);
+      const toWallet = wallets.find((w: WalletRecord) => w.userId === toUserId);
+
+      if (!fromWallet || !toWallet) {
+        throw new NotFoundException('Wallet not found');
+      }
+
+      const fromLockedMinor = fromWallet.lockedMinor || 0n;
+
+      if (fromLockedMinor < amountMinor) {
+        this.logger.warn(`Insufficient locked balance for transfer: from=${fromUserId}, amount=${amountMinor}`);
+        throw new BadRequestException('Insufficient locked balance');
+      }
+
+      await client.wallet.update({
+        where: { userId: fromUserId },
+        data: {
+          lockedMinor: fromLockedMinor - amountMinor,
+          balanceMinor: fromWallet.balanceMinor - amountMinor,
+          updatedAt: new Date(),
+        },
+      });
+
+      await client.wallet.update({
+        where: { userId: toUserId },
+        data: {
+          balanceMinor: toWallet.balanceMinor + amountMinor,
+          updatedAt: new Date(),
+        },
+      });
+
+      await client.auditLog.createMany({
+        data: [
+          {
+            action: 'BALANCE_TRANSFER_OUT',
+            performedBy: 'system',
+            entityType: 'WALLET',
+            entityId: fromWallet.id,
+            details: {
+              before: {
+                balanceMinor: fromWallet.balanceMinor.toString(),
+                lockedMinor: fromLockedMinor.toString(),
+              },
+              after: {
+                balanceMinor: (fromWallet.balanceMinor - amountMinor).toString(),
+                lockedMinor: (fromLockedMinor - amountMinor).toString(),
+              },
+              amount: amountMinor.toString(),
+              reason,
+              toUserId,
+            },
+          },
+          {
+            action: 'BALANCE_TRANSFER_IN',
+            performedBy: 'system',
+            entityType: 'WALLET',
+            entityId: toWallet.id,
+            details: {
+              before: { balanceMinor: toWallet.balanceMinor.toString() },
+              after: { balanceMinor: (toWallet.balanceMinor + amountMinor).toString() },
+              amount: amountMinor.toString(),
+              reason,
+              fromUserId,
+            },
+          },
+        ],
+      });
+
+      this.logger.log(`Balance transferred: from=${fromUserId}, to=${toUserId}, amount=${amountMinor}`);
+      return { success: true };
+    };
+
+    if (tx) {
+      return execute(tx);
+    }
+
+    return await this.prisma.$transaction(async (txn) => execute(txn), {
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       timeout: 5000,
     });
   }
 
-  /**
-   * Get user's withdrawal history
-   * @param userId - User ID
-   * @param status - Optional status filter
-   * @param page - Page number
-   * @param limit - Items per page
-   */
   async getWithdrawals(userId: string, status?: string, page: number = 1, limit: number = 20) {
     if (page < 1 || limit < 1 || limit > 100) {
       throw new BadRequestException('Invalid pagination parameters');
@@ -515,14 +460,6 @@ export class WalletService {
     };
   }
 
-  /**
-   * Cancel a pending withdrawal
-   * @param userId - User ID
-   * @param withdrawalId - Withdrawal ID
-   * @param initiatedBy - Who initiated the cancellation
-   * @param ipAddress - IP address
-   * @param userAgent - User agent
-   */
   async cancelPendingWithdrawal(
     userId: string,
     withdrawalId: string,
@@ -560,9 +497,7 @@ export class WalletService {
         },
       });
 
-      // Unlock the balance
-      // SECURITY: Ensure input is properly sanitized
-      const wallets = await tx.$queryRaw<Wallet[]>`
+      const wallets = await tx.$queryRaw<WalletRecord[]>`
         SELECT * FROM "Wallet"
         WHERE "userId" = ${userId}::uuid
         FOR UPDATE
@@ -580,7 +515,6 @@ export class WalletService {
           },
         });
 
-        // Audit log
         await tx.auditLog.create({
           data: {
             action: 'WITHDRAWAL_CANCELLED',
@@ -606,11 +540,7 @@ export class WalletService {
     });
   }
 
-  /**
-   * Get list of supported banks
-   */
   async getSupportedBanks() {
-    // NOTE: Implement actual bank list from database or config - Tracked in backlog
     return [
       { code: 'BCA', name: 'Bank Central Asia' },
       { code: 'BNI', name: 'Bank Negara Indonesia' },
@@ -623,25 +553,16 @@ export class WalletService {
     ];
   }
 
-  /**
-   * Get withdrawal history
-   */
   async getWithdrawalHistory(userId: string, options: { page?: number; limit?: number; status?: string }) {
     const { page = 1, limit = 20, status } = options;
     return this.getWithdrawals(userId, status, page, limit);
   }
 
-  /**
-   * Get deposit history
-   */
   async getDepositHistory(userId: string, options: { page?: number; limit?: number; status?: string }) {
     const { page = 1, limit = 20, status } = options;
     return this.getDeposits(userId, status, page, limit);
   }
 
-  /**
-   * Get user's deposit history
-   */
   async getDeposits(userId: string, status?: string, page: number = 1, limit: number = 20) {
     if (page < 1 || limit < 1 || limit > 100) {
       throw new BadRequestException('Invalid pagination parameters');
@@ -685,9 +606,6 @@ export class WalletService {
     };
   }
 
-  /**
-   * Get deposit detail
-   */
   async getDepositDetail(userId: string, depositId: string) {
     const wallet = await this.prisma.wallet.findUnique({
       where: { userId },
@@ -711,16 +629,10 @@ export class WalletService {
     return deposit;
   }
 
-  /**
-   * Get deposit by ID
-   */
   async getDepositById(id: string, userId: string) {
     return this.getDepositDetail(userId, id);
   }
 
-  /**
-   * Get withdrawal detail
-   */
   async getWithdrawalDetail(userId: string, withdrawalId: string) {
     const wallet = await this.prisma.wallet.findUnique({
       where: { userId },
@@ -744,16 +656,12 @@ export class WalletService {
     return withdrawal;
   }
 
-  /**
-   * Create a top-up (deposit) request via payment gateway
-   * Returns invoice URL for the user to complete payment
-   */
   async topUp(
     userId: string,
     dto: { amount: number; paymentMethod?: string },
   ) {
-    const MIN_AMOUNT = 10_000; // 10,000 IDR minimum
-    const MAX_AMOUNT = 100_000_000; // 100M IDR maximum
+    const MIN_AMOUNT = 10_000;
+    const MAX_AMOUNT = 100_000_000;
 
     if (dto.amount < MIN_AMOUNT) {
       throw new BadRequestException(`Minimum top-up amount is ${MIN_AMOUNT} IDR`);
@@ -772,11 +680,9 @@ export class WalletService {
       throw new NotFoundException('Wallet not found');
     }
 
-    // Convert to minor units (1 IDR = 100 minor units)
     const amountMinor = BigInt(Math.round(dto.amount * 100));
 
     return await this.prisma.$transaction(async (tx) => {
-      // Create Payment record first (required by Deposit model)
       const payment = await tx.payment.create({
         data: {
           userId,
@@ -784,11 +690,10 @@ export class WalletService {
           currency: wallet.currency as Currency,
           amountMinor,
           status: PaymentStatus.PENDING,
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h expiry
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         },
       });
 
-      // Create Deposit linked to Payment
       const deposit = await tx.deposit.create({
         data: {
           walletId: wallet.id,
@@ -799,7 +704,6 @@ export class WalletService {
         },
       });
 
-      // Build payment URL (frontend handles gateway redirect)
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const paymentUrl = `${frontendUrl}/payment/${payment.id}`;
 
@@ -816,16 +720,13 @@ export class WalletService {
     });
   }
 
-  /**
-   * Create a withdrawal request
-   */
   async withdraw(
     userId: string,
     dto: { amount: number; bankAccountId: string },
     idempotencyKey?: string,
   ) {
-    const MIN_AMOUNT = 50_000; // 50,000 IDR minimum
-    const MAX_AMOUNT = 100_000_000; // 100M IDR maximum
+    const MIN_AMOUNT = 50_000;
+    const MAX_AMOUNT = 100_000_000;
 
     if (dto.amount < MIN_AMOUNT) {
       throw new BadRequestException(`Minimum withdrawal amount is ${MIN_AMOUNT} IDR`);
@@ -835,7 +736,6 @@ export class WalletService {
       throw new BadRequestException(`Maximum withdrawal amount is ${MAX_AMOUNT} IDR`);
     }
 
-    // Check idempotency
     if (idempotencyKey) {
       const existing = await this.prisma.withdrawal.findFirst({
         where: {
@@ -864,7 +764,6 @@ export class WalletService {
       throw new BadRequestException('Insufficient balance');
     }
 
-    // Verify bank account belongs to user
     const bankAccount = await this.prisma.bankAccount.findFirst({
       where: { id: dto.bankAccountId, userId },
     });
@@ -874,7 +773,6 @@ export class WalletService {
     }
 
     return await this.prisma.$transaction(async (tx) => {
-      // Lock the balance
       const updatedWallet = await tx.wallet.update({
         where: { id: wallet.id },
         data: {
@@ -886,7 +784,6 @@ export class WalletService {
         throw new BadRequestException('Failed to lock balance');
       }
 
-      // Create withdrawal record
       const withdrawal = await tx.withdrawal.create({
         data: {
           walletId: wallet.id,
