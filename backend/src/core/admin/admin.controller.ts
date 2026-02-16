@@ -1,9 +1,9 @@
-
-import {
-import {
-import {
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Logger, BadRequestException, ForbiddenException, NotFoundException } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from "@nestjs/swagger";
+import { AdminAdjustBalanceDto, AdminFreezeWalletDto, AdminUnfreezeWalletDto, AdminWalletAdjustmentType } from "./dto/admin-wallet.dto";
 import { AdminReasonDto, SuspendUserDto } from "./dto/admin-action.dto";
 import { AdminUpdateUserDto } from "./dto/admin-update-user.dto";
+import { CreateOrderCommentDto, UpdateOrderCommentDto } from "../order/dto/order-comment.dto";
 import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { DisputeDecision } from "@prisma/client";
 import { DisputeService } from "../dispute/dispute.service";
@@ -12,31 +12,6 @@ import { Prisma } from "@prisma/client";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { Roles } from "@common/decorators/roles.decorator";
 import { RolesGuard } from "@common/guards/roles.guard";
-
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  Query,
-  UseGuards,
-  Logger,
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from "@nestjs/common";
-  ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-} from "@nestjs/swagger";
-  AdminAdjustBalanceDto,
-  AdminFreezeWalletDto,
-  AdminUnfreezeWalletDto,
-  AdminWalletAdjustmentType,
-} from "./dto/admin-wallet.dto";
 
 // ============================================================================
 // ADMIN CONTROLLER - Production Ready
@@ -83,38 +58,27 @@ export class AdminController {
           lastLoginAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
         },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({ where: { deletedAt: null } }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         where: { status: { in: ["PAID", "DISPUTED"] }, deletedAt: null },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).withdrawal.count({
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         where: { status: "PENDING" },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).dispute.count({ where: { status: "OPEN" } }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.aggregate({
         where: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           status: { in: ["PAID", "COMPLETED"] },
           paidAt: { gte: today },
         },
         _sum: { amountMinor: true },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.aggregate({
         where: {
           status: { in: ["PAID", "COMPLETED"] },
         },
         _sum: { amountMinor: true },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.findMany({
         where: { deletedAt: null },
         orderBy: { createdAt: "desc" },
@@ -130,7 +94,6 @@ export class AdminController {
       stats: {
         totalUsers,
         activeUsers,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         totalTransactions,
         activeTransactions,
         pendingWithdrawals,
@@ -138,7 +101,6 @@ export class AdminController {
         todayVolume: Number(todayVolume._sum?.amountMinor || 0n) / 100,
         totalVolume: Number(totalVolume._sum?.amountMinor || 0n) / 100,
       },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       recentTransactions: recentTransactions.map((t: any) => ({
         id: t.id,
         orderNumber: t.orderNumber,
@@ -162,7 +124,6 @@ export class AdminController {
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "kycStatus", required: false })
   @ApiQuery({ name: "page", required: false })
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ApiQuery({ name: "limit", required: false })
   async getUsers(
     @Query("status") status?: string,
@@ -171,7 +132,6 @@ export class AdminController {
     @Query("limit") limit: number = 20,
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { deletedAt: null };
 
     if (status === "active") {
@@ -379,7 +339,6 @@ export class AdminController {
       },
     });
 
-    // Store rejection reason in the latest KYC submission
     await this.prisma.kYCSubmission.updateMany({
       where: { userId: id },
       data: { rejectionReason: dto.reason },
@@ -402,7 +361,6 @@ export class AdminController {
   @Get("transactions")
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get all transactions" })
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "page", required: false })
   @ApiQuery({ name: "limit", required: false })
@@ -410,10 +368,8 @@ export class AdminController {
     @Query("status") status?: string,
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 20,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { deletedAt: null };
 
     if (status) {
@@ -421,12 +377,9 @@ export class AdminController {
     }
 
     const [transactions, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.findMany({
         where,
         include: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           initiator: { select: { id: true, username: true, email: true } },
           counterparty: { select: { id: true, username: true, email: true } },
         },
@@ -434,12 +387,10 @@ export class AdminController {
         skip,
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({ where }),
     ]);
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: transactions.map((t: any) => ({
         id: t.id,
         orderNumber: t.orderNumber,
@@ -451,7 +402,6 @@ export class AdminController {
         counterparty: t.counterparty,
         createdAt: t.createdAt,
         paidAt: t.paidAt,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         completedAt: t.completedAt,
       })),
       total,
@@ -465,7 +415,6 @@ export class AdminController {
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get transaction details" })
   async getTransaction(@Param("id") id: string) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const transaction = await (this.prisma as any).order.findUnique({
       where: { id },
       include: {
@@ -482,7 +431,6 @@ export class AdminController {
     }
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...transaction,
       amount: Number(transaction.amountMinor) / 100,
       platformFee: Number(transaction.platformFeeMinor) / 100,
@@ -491,14 +439,12 @@ export class AdminController {
 
   @Post("transactions/:id/force-complete")
   @Roles("ADMIN")
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ApiOperation({ summary: "Force complete transaction" })
   async forceCompleteTransaction(
     @Param("id") id: string,
     @CurrentUser("id") adminId: string,
     @Body() dto: AdminReasonDto,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const transaction = await (this.prisma as any).order.findUnique({
       where: { id },
     });
@@ -507,7 +453,6 @@ export class AdminController {
       throw new NotFoundException("Transaction not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (this.prisma as any).order.update({
       where: { id },
       data: {
@@ -519,7 +464,6 @@ export class AdminController {
 
     await this.createAuditLog(adminId, "UPDATE", "Order", id, {
       action: "FORCE_COMPLETED",
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       reason: dto.reason,
     });
 
@@ -528,7 +472,6 @@ export class AdminController {
     return { message: "Transaction force completed" };
   }
 
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Post("transactions/:id/force-cancel")
   @Roles("ADMIN")
   @ApiOperation({ summary: "Force cancel transaction" })
@@ -537,7 +480,6 @@ export class AdminController {
     @CurrentUser("id") adminId: string,
     @Body() dto: AdminReasonDto,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const transaction = await (this.prisma as any).order.findUnique({
       where: { id },
     });
@@ -546,7 +488,6 @@ export class AdminController {
       throw new NotFoundException("Transaction not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (this.prisma as any).order.update({
       where: { id },
       data: {
@@ -565,7 +506,6 @@ export class AdminController {
     return { message: "Transaction force cancelled" };
   }
 
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   // ============================================================================
   // DISPUTE MANAGEMENT
   // ============================================================================
@@ -573,7 +513,6 @@ export class AdminController {
   @Get("disputes")
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get all disputes" })
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "priority", required: false })
   @ApiQuery({ name: "page", required: false })
@@ -585,16 +524,13 @@ export class AdminController {
     @Query("limit") limit: number = 20,
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, unknown> = {};
 
     if (status) {
       where.status = status.toUpperCase();
     }
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     const [disputes, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).dispute.findMany({
         where,
         include: {
@@ -608,12 +544,10 @@ export class AdminController {
           },
           openedBy: { select: { id: true, username: true, email: true } },
         },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         orderBy: { openedAt: "desc" },
         skip,
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).dispute.count({ where }),
     ]);
 
@@ -630,14 +564,12 @@ export class AdminController {
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get dispute details" })
   async getDispute(@Param("id") id: string) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispute = await (this.prisma as any).dispute.findUnique({
       where: { id },
       include: {
         order: {
           include: {
             initiator: { select: { id: true, username: true, email: true } },
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             counterparty: { select: { id: true, username: true, email: true } },
           },
         },
@@ -646,7 +578,6 @@ export class AdminController {
       },
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!dispute) {
       throw new NotFoundException("Dispute not found");
     }
@@ -661,7 +592,6 @@ export class AdminController {
     @Param("id") id: string,
     @CurrentUser("id") adminId: string,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispute = await (this.prisma as any).dispute.findUnique({
       where: { id },
     });
@@ -670,7 +600,6 @@ export class AdminController {
       throw new NotFoundException("Dispute not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (this.prisma as any).dispute.update({
       where: { id },
       data: {
@@ -744,7 +673,6 @@ export class AdminController {
   async assignArbitrator(
     @Param("id") id: string,
     @CurrentUser("id") adminId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body("arbitratorId") arbitratorId: string,
   ) {
     if (!arbitratorId) {
@@ -767,10 +695,8 @@ export class AdminController {
 
   @Get("withdrawals/pending")
   @Roles("ADMIN")
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ApiOperation({ summary: "Get pending withdrawals" })
   async getPendingWithdrawals() {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const withdrawals = await (this.prisma as any).withdrawal.findMany({
       where: { status: "PENDING" },
       include: {
@@ -785,7 +711,6 @@ export class AdminController {
               },
             },
           },
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         },
         bankAccount: {
           select: { id: true, bankName: true, accountNumberLast4: true },
@@ -794,14 +719,11 @@ export class AdminController {
       orderBy: { requestedAt: "asc" },
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return withdrawals.map((w: any) => ({
       id: w.id,
       amount: Number(w.amountMinor) / 100,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       bankAccount: w.bankAccount,
       status: w.status,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       user: w.wallet.user,
       requestedAt: w.requestedAt,
     }));
@@ -814,7 +736,6 @@ export class AdminController {
     @Param("id") id: string,
     @CurrentUser("id") adminId: string,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const withdrawal = await (this.prisma as any).withdrawal.findUnique({
       where: { id },
     });
@@ -827,10 +748,7 @@ export class AdminController {
       throw new BadRequestException("Withdrawal is not pending");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
-      // Update withdrawal status
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).withdrawal.update({
         where: { id },
         data: {
@@ -839,9 +757,7 @@ export class AdminController {
           approvedAt: new Date(),
         },
       });
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
-      // Deduct from wallet (locked amount)
       await tx.wallet.update({
         where: { id: withdrawal.walletId },
         data: {
@@ -852,10 +768,8 @@ export class AdminController {
     });
 
     await this.createAuditLog(adminId, "UPDATE", "Withdrawal", id, {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       action: "APPROVED",
       amount: withdrawal.amountMinor.toString(),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     this.logger.log(`Withdrawal ${id} approved by admin ${adminId}`);
@@ -871,7 +785,6 @@ export class AdminController {
     @CurrentUser("id") adminId: string,
     @Body() dto: AdminReasonDto,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const withdrawal = await (this.prisma as any).withdrawal.findUnique({
       where: { id },
     });
@@ -884,10 +797,7 @@ export class AdminController {
       throw new BadRequestException("Withdrawal is not pending");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
-      // Update withdrawal status
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).withdrawal.update({
         where: { id },
         data: {
@@ -896,14 +806,12 @@ export class AdminController {
         },
       });
 
-      // Unlock the amount
       await tx.wallet.update({
         where: { id: withdrawal.walletId },
         data: {
           lockedMinor: { decrement: withdrawal.amountMinor },
         },
       });
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     await this.createAuditLog(adminId, "UPDATE", "Withdrawal", id, {
@@ -935,9 +843,7 @@ export class AdminController {
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 20,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { deletedAt: null };
 
     if (status === "frozen") {
@@ -969,7 +875,6 @@ export class AdminController {
     ]);
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: wallets.map((w: any) => ({
         id: w.id,
         userId: w.userId,
@@ -985,13 +890,11 @@ export class AdminController {
         user: w.user,
         createdAt: w.createdAt,
         updatedAt: w.updatedAt,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       })),
       total,
       page,
       limit,
       totalPages: Math.ceil(total / limit),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     };
   }
 
@@ -1004,36 +907,27 @@ export class AdminController {
       include: {
         user: {
           select: {
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             id: true,
             username: true,
             email: true,
             phone: true,
             kycStatus: true,
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             suspendedAt: true,
           },
         },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     if (!wallet) {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       throw new NotFoundException("Wallet not found for this user");
     }
 
-    // Get recent transactions (deposits & withdrawals)
     const [deposits, withdrawals] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).deposit.findMany({
         where: { walletId: wallet.id },
         orderBy: { createdAt: "desc" },
         take: 10,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).withdrawal.findMany({
         where: { walletId: wallet.id },
         orderBy: { requestedAt: "desc" },
@@ -1046,32 +940,24 @@ export class AdminController {
       userId: wallet.userId,
       balance: Number(wallet.balanceMinor) / 100,
       locked: Number(wallet.lockedMinor) / 100,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       frozen: Number((wallet as any).frozenMinor || 0n) / 100,
       available:
         Number(
           wallet.balanceMinor -
             wallet.lockedMinor -
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             ((wallet as any).frozenMinor || 0n),
         ) / 100,
       currency: wallet.currency,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       isFrozen: (wallet as any).isFrozen || false,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       frozenAt: (wallet as any).frozenAt,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       frozenReason: (wallet as any).frozenReason,
       user: wallet.user,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       recentDeposits: deposits.map((d: any) => ({
         id: d.id,
         amount: Number(d.amountMinor) / 100,
         status: d.status,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         createdAt: d.createdAt,
       })),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       recentWithdrawals: withdrawals.map((w: any) => ({
         id: w.id,
         amount: Number(w.amountMinor) / 100,
@@ -1081,7 +967,6 @@ export class AdminController {
       createdAt: wallet.createdAt,
       updatedAt: wallet.updatedAt,
     };
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   }
 
   @Post("wallets/:userId/adjust")
@@ -1091,22 +976,17 @@ export class AdminController {
     @Param("userId") userId: string,
     @CurrentUser("id") adminId: string,
     @Body() dto: AdminAdjustBalanceDto,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) {
-    // Validate user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
-    // Get or create wallet
     let wallet = await this.prisma.wallet.findUnique({ where: { userId } });
     if (!wallet) {
-      // Create wallet if not exists
       wallet = await this.prisma.wallet.create({
         data: {
           userId,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           currency: "IDR",
           balanceMinor: 0n,
           lockedMinor: 0n,
@@ -1121,12 +1001,10 @@ export class AdminController {
     const amountMinor = BigInt(Math.round(dto.amount * 100));
     const isCredit = dto.type === AdminWalletAdjustmentType.CREDIT;
 
-    // For debit, check sufficient balance
     if (!isCredit) {
       const availableBalance =
         wallet.balanceMinor -
         wallet.lockedMinor -
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         ((wallet as any).frozenMinor || 0n);
       if (availableBalance < amountMinor) {
         throw new BadRequestException(
@@ -1135,24 +1013,18 @@ export class AdminController {
       }
     }
 
-    // Perform the adjustment in a transaction
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await this.prisma.$transaction(async (tx: any) => {
-      // Update wallet balance
       const updatedWallet = await tx.wallet.update({
         where: { userId },
         data: {
           balanceMinor: isCredit
             ? { increment: amountMinor }
             : { decrement: amountMinor },
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           version: { increment: 1 },
           updatedAt: new Date(),
         },
       });
 
-      // Create ledger journal entry
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const journal = await (tx as any).ledgerJournal.create({
         data: {
           type: isCredit ? "ADMIN_CREDIT" : "ADMIN_DEBIT",
@@ -1166,7 +1038,6 @@ export class AdminController {
       return { wallet: updatedWallet, journal };
     });
 
-    // Create audit log
     await this.createAuditLog(adminId, "UPDATE", "Wallet", wallet.id, {
       action: isCredit ? "BALANCE_CREDITED" : "BALANCE_DEBITED",
       amount: dto.amount,
@@ -1186,7 +1057,6 @@ export class AdminController {
       wallet: {
         id: result.wallet.id,
         userId: result.wallet.userId,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         previousBalance: Number(wallet.balanceMinor) / 100,
         adjustedAmount: isCredit ? dto.amount : -dto.amount,
         newBalance: Number(result.wallet.balanceMinor) / 100,
@@ -1194,7 +1064,6 @@ export class AdminController {
           Number(
             result.wallet.balanceMinor -
               result.wallet.lockedMinor -
-              // Eslint-disable-next-line @typescript-eslint/no-explicit-any
               ((result.wallet as any).frozenMinor || 0n),
           ) / 100,
       },
@@ -1208,7 +1077,6 @@ export class AdminController {
       },
     };
   }
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   @Post("wallets/:userId/freeze")
   @Roles("ADMIN")
@@ -1218,31 +1086,24 @@ export class AdminController {
     @CurrentUser("id") adminId: string,
     @Body() dto: AdminFreezeWalletDto,
   ) {
-    // Validate user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // Cannot freeze admin wallet
     if (user.isAdmin) {
       throw new ForbiddenException("Cannot freeze admin wallet");
     }
 
-    // Get wallet
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
     if (!wallet) {
       throw new NotFoundException("Wallet not found for this user");
     }
 
-    // Check if already frozen
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((wallet as any).isFrozen) {
       throw new BadRequestException("Wallet is already frozen");
     }
 
-    // Calculate amount to freeze
     const availableBalance = wallet.balanceMinor - wallet.lockedMinor;
     let freezeAmountMinor: bigint;
 
@@ -1254,19 +1115,13 @@ export class AdminController {
         );
       }
     } else {
-      // Freeze entire available balance
       freezeAmountMinor = BigInt(availableBalance);
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
 
-    // Perform freeze in transaction
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await this.prisma.$transaction(async (tx: any) => {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updatedWallet = await tx.wallet.update({
         where: { userId },
         data: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           frozenMinor: freezeAmountMinor,
           isFrozen: true,
           frozenAt: new Date(),
@@ -1277,8 +1132,6 @@ export class AdminController {
         },
       });
 
-      // Create ledger journal entry
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).ledgerJournal.create({
         data: {
           type: "ADMIN_FREEZE",
@@ -1292,14 +1145,11 @@ export class AdminController {
       return updatedWallet;
     });
 
-    // Create audit log
     await this.createAuditLog(adminId, "UPDATE", "Wallet", wallet.id, {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       action: "WALLET_FROZEN",
       frozenAmount: Number(freezeAmountMinor) / 100,
       reason: dto.reason,
     });
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     this.logger.log(
       `Wallet ${wallet.id} frozen (Rp ${Number(freezeAmountMinor) / 100}) by admin ${adminId}. Reason: ${dto.reason}`,
@@ -1312,26 +1162,20 @@ export class AdminController {
         userId: result.userId,
         balance: Number(result.balanceMinor) / 100,
         locked: Number(result.lockedMinor) / 100,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         frozen: Number((result as any).frozenMinor) / 100,
         available:
           Number(
             result.balanceMinor -
               result.lockedMinor -
-              // Eslint-disable-next-line @typescript-eslint/no-explicit-any
               (result as any).frozenMinor,
           ) / 100,
         isFrozen: true,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         frozenAt: (result as any).frozenAt,
         frozenReason: dto.reason,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     };
   }
 
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Post("wallets/:userId/unfreeze")
   @Roles("ADMIN")
   @ApiOperation({ summary: "Unfreeze user wallet balance" })
@@ -1339,27 +1183,21 @@ export class AdminController {
     @Param("userId") userId: string,
     @CurrentUser("id") adminId: string,
     @Body() dto: AdminUnfreezeWalletDto,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) {
-    // Validate user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
-    // Get wallet
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
     if (!wallet) {
       throw new NotFoundException("Wallet not found for this user");
     }
 
-    // Check if frozen
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(wallet as any).isFrozen) {
       throw new BadRequestException("Wallet is not frozen");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const currentFrozen = (wallet as any).frozenMinor || 0n;
     let unfreezeAmountMinor: bigint;
 
@@ -1371,39 +1209,28 @@ export class AdminController {
         );
       }
     } else {
-      // Unfreeze entire frozen balance
       unfreezeAmountMinor = currentFrozen;
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const remainingFrozen = currentFrozen - unfreezeAmountMinor;
     const isFullyUnfrozen = remainingFrozen === 0n;
 
-    // Perform unfreeze in transaction
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await this.prisma.$transaction(async (tx: any) => {
       const updatedWallet = await tx.wallet.update({
         where: { userId },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           frozenMinor: remainingFrozen,
           isFrozen: !isFullyUnfrozen,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           frozenAt: isFullyUnfrozen ? null : (wallet as any).frozenAt,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           frozenReason: isFullyUnfrozen ? null : (wallet as any).frozenReason,
           frozenByUserId: isFullyUnfrozen
             ? null
-            : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (wallet as any).frozenByUserId,
+            : (wallet as any).frozenByUserId,
           version: { increment: 1 },
           updatedAt: new Date(),
         },
       });
 
-      // Create ledger journal entry
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).ledgerJournal.create({
         data: {
           type: "ADMIN_UNFREEZE",
@@ -1411,14 +1238,12 @@ export class AdminController {
           amountMinor: unfreezeAmountMinor,
           description: `Wallet unfrozen: ${dto.reason}`,
           idempotencyKey: `ADMIN_UNFREEZE_${userId}_${Date.now()}`,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         },
       });
 
       return updatedWallet;
     });
 
-    // Create audit log
     await this.createAuditLog(adminId, "UPDATE", "Wallet", wallet.id, {
       action: "WALLET_UNFROZEN",
       unfrozenAmount: Number(unfreezeAmountMinor) / 100,
@@ -1428,7 +1253,6 @@ export class AdminController {
     });
 
     this.logger.log(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       `Wallet ${wallet.id} unfrozen (Rp ${Number(unfreezeAmountMinor) / 100}) by admin ${adminId}. Reason: ${dto.reason}`,
     );
 
@@ -1441,20 +1265,15 @@ export class AdminController {
         userId: result.userId,
         balance: Number(result.balanceMinor) / 100,
         locked: Number(result.lockedMinor) / 100,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         frozen: Number((result as any).frozenMinor) / 100,
         available:
           Number(
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             result.balanceMinor -
               result.lockedMinor -
-              // Eslint-disable-next-line @typescript-eslint/no-explicit-any
               ((result as any).frozenMinor || 0n),
           ) / 100,
         isFrozen: !isFullyUnfrozen,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         frozenAt: (result as any).frozenAt,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         frozenReason: (result as any).frozenReason,
       },
     };
@@ -1477,14 +1296,10 @@ export class AdminController {
 
     const skip = (page - 1) * limit;
 
-    // Get admin adjustment journals
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [journals, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).ledgerJournal.findMany({
         where: {
           type: {
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             in: [
               "ADMIN_CREDIT",
               "ADMIN_DEBIT",
@@ -1496,10 +1311,8 @@ export class AdminController {
         },
         orderBy: { createdAt: "desc" },
         skip,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).ledgerJournal.count({
         where: {
           type: {
@@ -1516,10 +1329,8 @@ export class AdminController {
     ]);
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: journals.map((j: any) => ({
         id: j.id,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         type: j.type,
         amount: Number(j.amountMinor) / 100,
         description: j.description,
@@ -1531,11 +1342,9 @@ export class AdminController {
       totalPages: Math.ceil(total / limit),
     };
   }
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   // ============================================================================
   // AUDIT LOGS
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   // ============================================================================
 
   @Get("audit-logs")
@@ -1552,13 +1361,11 @@ export class AdminController {
     @Query("limit") limit: number = 50,
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, unknown> = {};
 
     if (action) where.action = action;
 
     const [logs, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).auditLog.findMany({
         where,
         include: {
@@ -1568,10 +1375,8 @@ export class AdminController {
         },
         orderBy: { createdAt: "desc" },
         skip,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).auditLog.count({ where }),
     ]);
 
@@ -1585,22 +1390,17 @@ export class AdminController {
   }
 
   // ============================================================================
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   // SETTINGS
   // ============================================================================
 
   @Get("settings")
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get system settings" })
   async getSettings() {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const settings = await (this.prisma as any).systemConfig.findMany();
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return settings.reduce((acc: any, s: any) => {
       acc[s.key] = s.value;
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       return acc;
     }, {});
   }
@@ -1610,11 +1410,9 @@ export class AdminController {
   @ApiOperation({ summary: "Update system settings" })
   async updateSettings(
     @CurrentUser("id") adminId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() dto: Record<string, any>,
   ) {
     for (const [key, value] of Object.entries(dto)) {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (this.prisma as any).systemConfig.upsert({
         where: { key },
         update: { value: JSON.stringify(value), updatedAt: new Date() },
@@ -1642,16 +1440,13 @@ export class AdminController {
     @Query("startDate") startDate?: string,
     @Query("endDate") endDate?: string,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const start = startDate
       ? new Date(startDate)
       : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const end = endDate ? new Date(endDate) : new Date();
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const completedOrders = await (this.prisma as any).order.findMany({
       where: {
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         status: "COMPLETED",
         completedAt: {
           gte: start,
@@ -1660,38 +1455,30 @@ export class AdminController {
       },
       select: {
         amountMinor: true,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         platformFeeMinor: true,
         completedAt: true,
       },
     });
 
     const totalRevenue = completedOrders.reduce(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (sum: bigint, o: any) => sum + (o.platformFeeMinor || 0n),
       0n,
     );
     const totalVolume = completedOrders.reduce(
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (sum: bigint, o: any) => sum + (o.amountMinor || 0n),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       0n,
     );
 
-    // Group by date for chart data
     const dailyRevenue: Record<
       string,
       { revenue: number; volume: number; count: number }
     > = {};
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     completedOrders.forEach((order: any) => {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const date = order.completedAt.toISOString().split("T")[0];
       if (!dailyRevenue[date]) {
         dailyRevenue[date] = { revenue: 0, volume: 0, count: 0 };
       }
       dailyRevenue[date].revenue += Number(order.platformFeeMinor || 0n) / 100;
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       dailyRevenue[date].volume += Number(order.amountMinor || 0n) / 100;
       dailyRevenue[date].count += 1;
     });
@@ -1727,7 +1514,6 @@ export class AdminController {
     const end = endDate ? new Date(endDate) : new Date();
 
     const [statusCounts, categoryCounts, dailyCounts] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.groupBy({
         by: ["status"],
         where: {
@@ -1736,7 +1522,6 @@ export class AdminController {
         _count: { id: true },
         _sum: { amountMinor: true },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.groupBy({
         by: ["category"],
         where: {
@@ -1745,7 +1530,6 @@ export class AdminController {
         _count: { id: true },
         _sum: { amountMinor: true },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.findMany({
         where: {
           createdAt: { gte: start, lte: end },
@@ -1757,11 +1541,8 @@ export class AdminController {
       }),
     ]);
 
-    // Group daily counts
     const dailyData: Record<string, Record<string, number>> = {};
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     dailyCounts.forEach((order: any) => {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const date = order.createdAt.toISOString().split("T")[0];
       if (!dailyData[date]) {
         dailyData[date] = { total: 0 };
@@ -1771,14 +1552,11 @@ export class AdminController {
     });
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       byStatus: statusCounts.map((s: any) => ({
         status: s.status,
         count: s._count.id,
         volume: Number(s._sum.amountMinor || 0n) / 100,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       })),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       byCategory: categoryCounts.map((c: any) => ({
         category: c.category,
         count: c._count.id,
@@ -1807,7 +1585,6 @@ export class AdminController {
       ? new Date(startDate)
       : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const end = endDate ? new Date(endDate) : new Date();
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     const [totalUsers, newUsers, verifiedUsers, kycStats, activeUsers] =
       await Promise.all([
@@ -1815,7 +1592,6 @@ export class AdminController {
         this.prisma.user.count({
           where: {
             createdAt: { gte: start, lte: end },
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             deletedAt: null,
           },
         }),
@@ -1832,17 +1608,14 @@ export class AdminController {
         }),
         this.prisma.user.count({
           where: {
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
             lastLoginAt: {
               gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
             },
             deletedAt: null,
-            // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           },
         }),
       ]);
 
-    // Get daily registrations
     const dailyRegistrations = await this.prisma.user.findMany({
       where: {
         createdAt: { gte: start, lte: end },
@@ -1852,7 +1625,6 @@ export class AdminController {
     });
 
     const dailyData: Record<string, number> = {};
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     dailyRegistrations.forEach((user: any) => {
       const date = user.createdAt.toISOString().split("T")[0];
       dailyData[date] = (dailyData[date] || 0) + 1;
@@ -1865,10 +1637,8 @@ export class AdminController {
         verifiedUsers,
         activeUsers,
         verificationRate:
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           totalUsers > 0 ? ((verifiedUsers / totalUsers) * 100).toFixed(2) : 0,
       },
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       kycBreakdown: kycStats.map((k: any) => ({
         status: k.kycStatus,
         count: k._count.id,
@@ -1899,7 +1669,6 @@ export class AdminController {
     @Query("limit") limit: number = 20,
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, unknown> = {};
 
     if (status) {
@@ -1907,7 +1676,6 @@ export class AdminController {
     }
 
     const [deposits, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).deposit.findMany({
         where,
         include: {
@@ -1919,22 +1687,16 @@ export class AdminController {
             },
           },
           payment: true,
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         },
         orderBy: { createdAt: "desc" },
         skip,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).deposit.count({ where }),
     ]);
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: deposits.map((d: any) => ({
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         id: d.id,
         amount: Number(d.amountMinor) / 100,
         method:
@@ -1942,7 +1704,6 @@ export class AdminController {
           d.payment?.paymentDetails?.method ||
           "VIRTUAL_ACCOUNT",
         status: d.status,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         reference:
           d.payment?.providerInvoiceId ||
           d.payment?.paymentDetails?.externalId ||
@@ -1950,7 +1711,6 @@ export class AdminController {
         user: d.wallet?.user,
         createdAt: d.createdAt,
         completedAt: d.completedAt ?? d.payment?.paidAt ?? null,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       })),
       total,
       page,
@@ -1958,13 +1718,11 @@ export class AdminController {
       totalPages: Math.ceil(total / limit),
     };
   }
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   @Get("deposits/:id")
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get deposit details" })
   async getDeposit(@Param("id") id: string) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const deposit = await (this.prisma as any).deposit.findUnique({
       where: { id },
       include: {
@@ -1975,11 +1733,9 @@ export class AdminController {
             },
           },
         },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       },
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!deposit) {
       throw new NotFoundException("Deposit not found");
     }
@@ -2020,32 +1776,25 @@ export class AdminController {
       pendingWithdrawals,
       pendingKYC,
     ] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({
         where: { createdAt: { gte: today } },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({
         where: { createdAt: { gte: thisWeek } },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({
         where: { createdAt: { gte: thisMonth } },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.count({
         where: { createdAt: { gte: lastMonth, lt: thisMonth } },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.aggregate({
         where: {
           status: { in: ["PAID", "COMPLETED"] },
           paidAt: { gte: today },
         },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         _sum: { amountMinor: true },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.aggregate({
         where: {
           status: { in: ["PAID", "COMPLETED"] },
@@ -2053,17 +1802,13 @@ export class AdminController {
         },
         _sum: { amountMinor: true },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.aggregate({
         where: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           status: { in: ["PAID", "COMPLETED"] },
           paidAt: { gte: thisMonth },
         },
         _sum: { amountMinor: true },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.aggregate({
         where: {
           status: { in: ["PAID", "COMPLETED"] },
@@ -2072,7 +1817,6 @@ export class AdminController {
         _sum: { amountMinor: true },
       }),
       this.prisma.user.count({
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         where: { createdAt: { gte: today }, deletedAt: null },
       }),
       this.prisma.user.count({
@@ -2081,17 +1825,14 @@ export class AdminController {
       this.prisma.user.count({
         where: { createdAt: { gte: thisMonth }, deletedAt: null },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).dispute.count({
         where: { openedAt: { gte: today } },
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).withdrawal.count({ where: { status: "PENDING" } }),
       this.prisma.user.count({ where: { kycStatus: "PENDING" } }),
     ]);
 
     const monthVolumeNum = Number(monthVolume._sum?.amountMinor || 0n) / 100;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const lastMonthVolumeNum =
       Number(lastMonthVolume._sum?.amountMinor || 0n) / 100;
     const volumeChange =
@@ -2101,7 +1842,6 @@ export class AdminController {
             100
           ).toFixed(1)
         : 0;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const txChange =
       lastMonthTransactions > 0
         ? (
@@ -2109,15 +1849,13 @@ export class AdminController {
               lastMonthTransactions) *
             100
           ).toFixed(1)
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          0;
+        : 0;
 
     return {
       transactions: {
         today: todayTransactions,
         week: weekTransactions,
         month: monthTransactions,
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         change: txChange,
       },
       volume: {
@@ -2127,7 +1865,6 @@ export class AdminController {
         change: volumeChange,
       },
       users: {
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
         today: todayUsers,
         week: weekUsers,
         month: monthUsers,
@@ -2153,7 +1890,6 @@ export class AdminController {
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
     const [orders, users, deposits, withdrawals] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).order.findMany({
         where: { createdAt: { gte: startDate } },
         select: {
@@ -2166,18 +1902,13 @@ export class AdminController {
       this.prisma.user.findMany({
         where: { createdAt: { gte: startDate }, deletedAt: null },
         select: { createdAt: true },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).deposit.findMany({
         where: { createdAt: { gte: startDate }, status: "COMPLETED" },
         select: { createdAt: true, amountMinor: true },
-        // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).withdrawal.findMany({
         where: {
-          // Eslint-disable-next-line @typescript-eslint/no-explicit-any
           requestedAt: { gte: startDate },
           status: { in: ["COMPLETED", "APPROVED"] },
         },
@@ -2185,11 +1916,8 @@ export class AdminController {
       }),
     ]);
 
-    // Group by date
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dailyData: Record<string, any> = {};
 
-    // Initialize all dates
     for (let i = 0; i < days; i++) {
       const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000)
         .toISOString()
@@ -2205,7 +1933,6 @@ export class AdminController {
       };
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     orders.forEach((o: any) => {
       const date = o.createdAt.toISOString().split("T")[0];
       if (dailyData[date]) {
@@ -2215,16 +1942,13 @@ export class AdminController {
       }
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     users.forEach((u: any) => {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       const date = u.createdAt.toISOString().split("T")[0];
       if (dailyData[date]) {
         dailyData[date].users += 1;
       }
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     deposits.forEach((d: any) => {
       const date = d.createdAt.toISOString().split("T")[0];
       if (dailyData[date]) {
@@ -2232,7 +1956,6 @@ export class AdminController {
       }
     });
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     withdrawals.forEach((w: any) => {
       const date = w.requestedAt.toISOString().split("T")[0];
       if (dailyData[date]) {
@@ -2242,7 +1965,6 @@ export class AdminController {
 
     return {
       period,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: Object.values(dailyData).sort((a: any, b: any) =>
         a.date.localeCompare(b.date),
       ),
@@ -2254,10 +1976,8 @@ export class AdminController {
   @ApiOperation({ summary: "Get analytics overview and charts" })
   @ApiQuery({ name: "period", required: false })
   async getAnalytics(@Query("period") period: string = "30d") {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [overview, charts] = await Promise.all([
       this.getAnalyticsOverview(),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.getAnalyticsCharts(period),
     ]);
 
@@ -2266,7 +1986,6 @@ export class AdminController {
       charts,
     };
   }
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   // ============================================================================
   // PROMO MANAGEMENT
@@ -2284,19 +2003,15 @@ export class AdminController {
     const skip = (page - 1) * limit;
 
     const [promos, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).promoCode.findMany({
         orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).promoCode.count(),
     ]);
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: promos.map((p: any) => ({
         ...p,
         discountAmount: p.discountAmountMinor
@@ -2323,7 +2038,6 @@ export class AdminController {
     @CurrentUser("id") adminId: string,
     @Body()
     dto: {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       code: string;
       description?: string;
       discountType: "PERCENTAGE" | "FIXED";
@@ -2337,7 +2051,6 @@ export class AdminController {
       isActive?: boolean;
     },
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const promo = await (this.prisma as any).promoCode.create({
       data: {
         code: dto.code.toUpperCase(),
@@ -2374,10 +2087,8 @@ export class AdminController {
   async updatePromo(
     @Param("id") id: string,
     @CurrentUser("id") adminId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() dto: any,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: Record<string, unknown> = {};
 
     if (dto.description !== undefined) updateData.description = dto.description;
@@ -2386,7 +2097,6 @@ export class AdminController {
     if (dto.validUntil !== undefined)
       updateData.validUntil = dto.validUntil ? new Date(dto.validUntil) : null;
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const promo = await (this.prisma as any).promoCode.update({
       where: { id },
       data: updateData,
@@ -2404,7 +2114,6 @@ export class AdminController {
     @Param("id") id: string,
     @CurrentUser("id") adminId: string,
   ) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (this.prisma as any).promoCode.update({
       where: { id },
       data: { isActive: false },
@@ -2437,14 +2146,12 @@ export class AdminController {
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "page", required: false })
   @ApiQuery({ name: "limit", required: false })
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getKYCSubmissions(
     @Query("status") status?: string,
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 20,
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, unknown> = {};
 
     if (status) {
@@ -2466,12 +2173,10 @@ export class AdminController {
       this.prisma.kYCSubmission.count({ where }),
     ]);
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {
       data: submissions,
       total,
       page,
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       limit,
       totalPages: Math.ceil(total / limit),
     };
@@ -2501,7 +2206,6 @@ export class AdminController {
     if (!user) {
       throw new NotFoundException("User not found");
     }
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     await this.prisma.user.update({
       where: { id },
@@ -2542,11 +2246,9 @@ export class AdminController {
       throw new NotFoundException("KYC submission not found");
     }
 
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     return submission;
   }
 
-  // Eslint-disable-next-line @typescript-eslint/no-explicit-any
   // ============================================================================
   // WITHDRAWALS - Extended
   // ============================================================================
@@ -2563,7 +2265,6 @@ export class AdminController {
     @Query("limit") limit: number = 20,
   ) {
     const skip = (page - 1) * limit;
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, unknown> = {};
 
     if (status) {
@@ -2571,7 +2272,6 @@ export class AdminController {
     }
 
     const [withdrawals, total] = await Promise.all([
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).withdrawal.findMany({
         where,
         include: {
@@ -2593,12 +2293,10 @@ export class AdminController {
         skip,
         take: limit,
       }),
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.prisma as any).withdrawal.count({ where }),
     ]);
 
     return {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: withdrawals.map((w: any) => ({
         id: w.id,
         amount: Number(w.amountMinor) / 100,
@@ -2628,7 +2326,6 @@ export class AdminController {
   @Roles("ADMIN")
   @ApiOperation({ summary: "Get withdrawal details" })
   async getWithdrawal(@Param("id") id: string) {
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const withdrawal = await (this.prisma as any).withdrawal.findUnique({
       where: { id },
       include: {
@@ -2669,11 +2366,9 @@ export class AdminController {
     action: string,
     entityType: string,
     entityId: string,
-    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     details: any,
   ) {
     try {
-      // Eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (this.prisma as any).auditLog.create({
         data: {
           performedBy: userId,
