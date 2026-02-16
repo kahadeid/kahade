@@ -1,6 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { Injectable, Logger, BadRequestException, ForbiddenException, NotFoundException, ConflictException } from "@nestjs/common";
-import { EscrowHold, EscrowHoldStatus, Order, OrderStatus, LedgerAccountType } from "@prisma/client";
+import { EscrowHold, EscrowHoldStatus, Order, OrderStatus, LedgerAccountType, Wallet } from "@prisma/client";
 import { LedgerService } from "../ledger/ledger.service";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
@@ -71,9 +71,9 @@ const ESCROW_STATE_MACHINE: Record<EscrowHoldStatus, EscrowHoldStatus[]> = {
     EscrowHoldStatus.RELEASED,
     EscrowHoldStatus.REFUNDED,
   ],
-  [EscrowHoldStatus.RELEASED]: [], // Terminal state
-  [EscrowHoldStatus.REFUNDED]: [], // Terminal state
-  [EscrowHoldStatus.ADJUSTED]: [], // Terminal state (dispute resolution)
+  [EscrowHoldStatus.RELEASED]: [],
+  [EscrowHoldStatus.REFUNDED]: [],
+  [EscrowHoldStatus.ADJUSTED]: [],
 };
 
 /**
@@ -92,10 +92,10 @@ const ORDER_STATE_MACHINE: Record<OrderStatus, OrderStatus[]> = {
     OrderStatus.REFUNDED,
     OrderStatus.DISPUTED,
   ],
-  [OrderStatus.COMPLETED]: [], // Terminal state
-  [OrderStatus.CANCELLED]: [], // Terminal state
-  [OrderStatus.REFUNDED]: [], // Terminal state
-  [OrderStatus.DISPUTED]: [OrderStatus.COMPLETED, OrderStatus.REFUNDED], // After dispute resolution
+  [OrderStatus.COMPLETED]: [],
+  [OrderStatus.CANCELLED]: [],
+  [OrderStatus.REFUNDED]: [],
+  [OrderStatus.DISPUTED]: [OrderStatus.COMPLETED, OrderStatus.REFUNDED],
 };
 
 export interface CreateEscrowOptions {
@@ -132,11 +132,16 @@ export interface ResolveDisputeOptions {
   idempotencyKey: string;
 }
 
+type EscrowWithRelations = EscrowHold & {
+  order: Order;
+  buyerWallet: Wallet;
+  sellerWallet: Wallet | null;
+};
+
 @Injectable()
 export class EscrowService {
   private readonly logger = new Logger(EscrowService.name);
-  private readonly DEFAULT_TIMEOUT_HOURS = 72; // 3 days
-  // FIX REL-001: Configuration for lock retry mechanism
+  private readonly DEFAULT_TIMEOUT_HOURS = 72;
   private readonly LOCK_MAX_RETRIES = 3;
   private readonly LOCK_RETRY_DELAY_MS = 200;
 
@@ -170,20 +175,16 @@ export class EscrowService {
 
   /**
    * FIX REL-001: Acquire pessimistic lock with retry logic
-   * Removes NOWAIT to allow waiting for lock, adds exponential backoff
    */
   private async acquireEscrowLockWithRetry<T>(
     escrowId: string,
-    operation: (escrow: EscrowHold & { order: Order; buyerWallet: any; sellerWallet: any | null }) => Promise<T>,
+    operation: (escrow: EscrowWithRelations) => Promise<T>,
     tx: any,
   ): Promise<T> {
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt < this.LOCK_MAX_RETRIES; attempt++) {
       try {
-        // FIX REL-001: Remove NOWAIT, use default wait behavior with statement timeout
-        // This allows the query to wait for lock instead of failing immediately
-        // SECURITY: Ensure input is properly sanitized
         const escrowRows = await tx.$queryRaw<any[]>`
           SELECT * FROM "EscrowHold"
           WHERE id = ${escrowId}::uuid
@@ -194,7 +195,6 @@ export class EscrowService {
           throw new NotFoundException('Escrow not found');
         }
 
-        // Get full escrow with relations
         const escrow = await tx.escrowHold.findUnique({
           where: { id: escrowId },
           include: { order: true, buyerWallet: true, sellerWallet: true },
@@ -204,16 +204,15 @@ export class EscrowService {
           throw new NotFoundException('Escrow not found');
         }
 
-        // Execute the operation with locked escrow
         return await operation(escrow);
 
-      } catch (error: any) {
-        lastError = error;
+      } catch (error: unknown) {
+        lastError = error as Error;
 
-        // If it's a lock timeout or deadlock, retry with exponential backoff
+        const err = error as any;
         if (
-          error.code === '40P01' || // deadlock_detected
-          error.code === '55P03'    // lock_not_available
+          err.code === '40P01' ||
+          err.code === '55P03'
         ) {
           if (attempt < this.LOCK_MAX_RETRIES - 1) {
             const delay = this.LOCK_RETRY_DELAY_MS * Math.pow(2, attempt);
@@ -225,12 +224,10 @@ export class EscrowService {
           }
         }
 
-        // For other errors, throw immediately
         throw error;
       }
     }
 
-    // If all retries exhausted
     throw new EscrowLockTimeoutError(escrowId);
   }
 
@@ -272,7 +269,6 @@ export class EscrowService {
 
   /**
    * FIX #85: Correctly validate actor permissions
-   * BANK-GRADE: Validate actor can perform transition
    */
   validateActorPermission(
     escrow: EscrowHold & { order: Order },
@@ -281,7 +277,6 @@ export class EscrowService {
   ): boolean {
     const order = escrow.order;
 
-    // Determine buyer and seller IDs based on order initiator role
     const buyerId = order.initiatorRole === "BUYER"
       ? order.initiatorId
       : order.counterpartyId;
@@ -292,29 +287,24 @@ export class EscrowService {
 
     switch (action) {
       case "RELEASE":
-        // FIX #85: Only buyer can release (confirm delivery)
         if (actorId !== buyerId) {
           throw new UnauthorizedTransitionError(actorId, action);
         }
         break;
 
       case "REFUND":
-        // Only seller can initiate refund
         if (actorId !== sellerId) {
           throw new UnauthorizedTransitionError(actorId, action);
         }
         break;
 
       case "DISPUTE":
-        // Both parties can dispute
         if (actorId !== order.initiatorId && actorId !== order.counterpartyId) {
           throw new UnauthorizedTransitionError(actorId, action);
         }
         break;
 
       case "RESOLVE":
-        // Only admin can resolve disputes
-        // This should be checked at controller level with admin guard
         break;
 
       default:
@@ -342,7 +332,6 @@ export class EscrowService {
         idempotencyKey,
       } = options;
 
-      // Check idempotency
       const existing = await this.prisma.escrowHold.findFirst({
         where: { orderId },
       });
@@ -352,7 +341,6 @@ export class EscrowService {
         return existing;
       }
 
-      // Get buyer wallet
       const buyerWallet = await this.prisma.wallet.findUnique({
         where: { userId: buyerUserId },
       });
@@ -361,7 +349,6 @@ export class EscrowService {
         throw new NotFoundException("Buyer wallet not found");
       }
 
-      // Get seller wallet if provided
       let sellerWallet: { id: string } | null = null;
       if (sellerUserId) {
         sellerWallet = await this.prisma.wallet.findUnique({
@@ -369,12 +356,9 @@ export class EscrowService {
         });
       }
 
-      // Calculate timeout
       const timeoutAt = new Date(Date.now() + timeoutHours * 60 * 60 * 1000);
 
-      // Create escrow in transaction
       const escrow = await this.prisma.$transaction(async (tx: any) => {
-        // Lock buyer's balance
         await this.walletService.lockBalance({
           userId: buyerUserId,
           amount: amountMinor,
@@ -382,7 +366,6 @@ export class EscrowService {
           initiatedBy: 'system',
         });
 
-        // Create escrow record
         const newEscrow = await tx.escrowHold.create({
           data: {
             orderId,
@@ -394,7 +377,6 @@ export class EscrowService {
           },
         });
 
-        // Get or create accounts for ledger
         const buyerAccount = await this.ledgerService.getOrCreateUserAccount(
           buyerWallet.id,
           LedgerAccountType.ASSET,
@@ -409,7 +391,6 @@ export class EscrowService {
           tx,
         );
 
-        // Record in ledger
         await this.ledgerService.recordEscrowHold(
           buyerAccount.id,
           escrowAccount.id,
@@ -420,7 +401,6 @@ export class EscrowService {
           tx,
         );
 
-        // Update order status
         await tx.order.update({
           where: { id: orderId },
           data: {
@@ -444,28 +424,23 @@ export class EscrowService {
   }
 
   /**
-   * FIX #87 + REL-001: Implement pessimistic locking with retry logic
-   * BANK-GRADE: Release escrow to seller
+   * FIX #87 + REL-001: Release escrow to seller
    */
   async releaseEscrow(options: ReleaseEscrowOptions): Promise<EscrowHold> {
     const { escrowId, actorId, platformFeeMinor, idempotencyKey } = options;
 
-    // FIX REL-001: Execute in transaction with pessimistic locking and retry
     const updatedEscrow = await this.prisma.$transaction(async (tx: any) => {
       return await this.acquireEscrowLockWithRetry(
         escrowId,
         async (escrow) => {
-          // FIX #87: Validate state INSIDE transaction with fresh data
           if (escrow.status !== EscrowHoldStatus.ACTIVE) {
             throw new BadRequestException(
               `Escrow already processed: ${escrow.status}`,
             );
           }
 
-          // Validate state transition
           this.validateEscrowTransition(escrow.status, EscrowHoldStatus.RELEASED);
 
-          // FIX #86: Validate actor permission (skip for system)
           if (!this.isSystemActor(actorId)) {
             this.validateActorPermission(escrow, actorId as string, "RELEASE");
           }
@@ -474,11 +449,9 @@ export class EscrowService {
             throw new BadRequestException("Seller wallet not set");
           }
 
-          // Store seller wallet reference after null check for type safety
           const sellerWallet = escrow.sellerWallet;
           const sellerAmount = escrow.amountMinor - platformFeeMinor;
 
-          // Get accounts
           const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
             "ESCROW_HOLDING",
             LedgerAccountType.LIABILITY,
@@ -501,7 +474,6 @@ export class EscrowService {
               tx,
             );
 
-          // Record in ledger
           await this.ledgerService.recordEscrowRelease(
             escrowAccount.id,
             sellerAccount.id,
@@ -514,7 +486,6 @@ export class EscrowService {
             tx,
           );
 
-          // Transfer locked balance from buyer to seller
           await this.walletService.transferLockedBalance(
             escrow.buyerWallet.userId,
             sellerWallet.userId,
@@ -523,7 +494,6 @@ export class EscrowService {
             tx,
           );
 
-          // Deduct platform fee from buyer's locked balance
           if (platformFeeMinor > 0n) {
             await tx.wallet.update({
               where: { id: escrow.buyerWallet.id },
@@ -534,7 +504,6 @@ export class EscrowService {
             });
           }
 
-          // Update escrow status
           const updated = await tx.escrowHold.update({
             where: { id: escrowId },
             data: {
@@ -543,7 +512,6 @@ export class EscrowService {
             },
           });
 
-          // Update order status
           await tx.order.update({
             where: { id: escrow.orderId },
             data: {
@@ -558,41 +526,33 @@ export class EscrowService {
       );
     });
 
-    this.logger.log(
-      `Released escrow ${escrowId}`,
-    );
+    this.logger.log(`Released escrow ${escrowId}`);
 
     return updatedEscrow;
   }
 
   /**
-   * FIX #87 + REL-001: Implement pessimistic locking with retry logic
-   * BANK-GRADE: Refund escrow to buyer
+   * FIX #87 + REL-001: Refund escrow to buyer
    */
   async refundEscrow(options: RefundEscrowOptions): Promise<EscrowHold> {
     const { escrowId, actorId, reason, idempotencyKey } = options;
 
-    // FIX REL-001: Execute in transaction with pessimistic locking and retry
     const updatedEscrow = await this.prisma.$transaction(async (tx: any) => {
       return await this.acquireEscrowLockWithRetry(
         escrowId,
         async (escrow) => {
-          // FIX #87: Validate state INSIDE transaction with fresh data
           if (escrow.status !== EscrowHoldStatus.ACTIVE) {
             throw new BadRequestException(
               `Escrow already processed: ${escrow.status}`,
             );
           }
 
-          // Validate state transition
           this.validateEscrowTransition(escrow.status, EscrowHoldStatus.REFUNDED);
 
-          // FIX #86: Validate actor permission (skip for system timeout)
           if (!this.isSystemActor(actorId)) {
             this.validateActorPermission(escrow, actorId as string, "REFUND");
           }
 
-          // Get accounts
           const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
             "ESCROW_HOLDING",
             LedgerAccountType.LIABILITY,
@@ -607,7 +567,6 @@ export class EscrowService {
             tx,
           );
 
-          // Record in ledger
           await this.ledgerService.recordEscrowRefund(
             escrowAccount.id,
             buyerAccount.id,
@@ -618,7 +577,6 @@ export class EscrowService {
             tx,
           );
 
-          // Unlock buyer's balance
           await this.walletService.unlockBalance(
             escrow.buyerWallet.userId,
             escrow.amountMinor,
@@ -626,7 +584,6 @@ export class EscrowService {
             tx,
           );
 
-          // Update escrow status
           const updated = await tx.escrowHold.update({
             where: { id: escrowId },
             data: {
@@ -635,7 +592,6 @@ export class EscrowService {
             },
           });
 
-          // Update order status
           await tx.order.update({
             where: { id: escrow.orderId },
             data: {
@@ -674,13 +630,9 @@ export class EscrowService {
       throw new NotFoundException("Escrow not found");
     }
 
-    // Validate state transition
     this.validateEscrowTransition(escrow.status, EscrowHoldStatus.DISPUTED);
-
-    // Validate actor permission
     this.validateActorPermission(escrow, actorId, "DISPUTE");
 
-    // Update escrow and order status
     const [updatedEscrow] = await this.prisma.$transaction([
       this.prisma.escrowHold.update({
         where: { id: escrowId },
@@ -733,13 +685,11 @@ export class EscrowService {
         throw new NotFoundException("Escrow not found");
       }
 
-      // Validate state transition
       this.validateEscrowTransition(
         escrow.status,
         resolution as any,
       );
 
-      // Validate amounts
       const totalDistribution =
         buyerRefundMinor + sellerAmountMinor + platformFeeMinor;
       if (totalDistribution !== escrow.amountMinor) {
@@ -754,9 +704,7 @@ export class EscrowService {
         );
       }
 
-      // Execute resolution in transaction
       const updatedEscrow = await this.prisma.$transaction(async (tx: any) => {
-        // Get accounts
         const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
           "ESCROW_HOLDING",
           LedgerAccountType.LIABILITY,
@@ -788,16 +736,14 @@ export class EscrowService {
             tx,
           );
 
-        // Get dispute
         const dispute = await tx.dispute.findFirst({
           where: { orderId: escrow.orderId },
         });
 
-        // Record in ledger
         await this.ledgerService.recordDisputeResolution(
           escrowAccount.id,
           buyerAccount.id,
-          sellerAccount?.id ?? buyerAccount.id, // Fallback to buyer if no seller
+          sellerAccount?.id ?? buyerAccount.id,
           platformFeeAccount.id,
           buyerRefundMinor,
           sellerAmountMinor,
@@ -808,8 +754,6 @@ export class EscrowService {
           tx,
         );
 
-        // Distribute funds
-        // First, unlock all from buyer
         await tx.wallet.update({
           where: { id: escrow.buyerWallet.id },
           data: {
@@ -818,7 +762,6 @@ export class EscrowService {
           },
         });
 
-        // Credit seller if applicable
         if (sellerAmountMinor > 0n && escrow.sellerWallet) {
           await tx.wallet.update({
             where: { id: escrow.sellerWallet.id },
@@ -828,7 +771,6 @@ export class EscrowService {
           });
         }
 
-        // Update escrow status
         const updated = await tx.escrowHold.update({
           where: { id: escrowId },
           data: {
@@ -837,7 +779,6 @@ export class EscrowService {
           },
         });
 
-        // Update order status
         await tx.order.update({
           where: { id: escrow.orderId },
           data: {
@@ -846,7 +787,6 @@ export class EscrowService {
           },
         });
 
-        // Update dispute
         if (dispute) {
           await tx.dispute.update({
             where: { id: dispute.id },
@@ -875,7 +815,6 @@ export class EscrowService {
 
   /**
    * FIX #86: Use internal system actor instead of string
-   * BANK-GRADE: Auto-release expired escrows (cron job)
    */
   async processExpiredEscrows(): Promise<number> {
     try {
@@ -893,10 +832,8 @@ export class EscrowService {
 
       for (const escrow of expiredEscrows) {
         try {
-          // FIX #86: Use internal system actor marker
           const systemActor = this.createSystemActor('auto-release-timeout');
 
-          // Auto-release to seller (default behavior for timeout)
           await this.releaseEscrow({
             escrowId: escrow.id,
             actorId: systemActor,
