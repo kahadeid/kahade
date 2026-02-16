@@ -360,7 +360,7 @@ export default function Register() {
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             className="w-24 h-24 rounded-3xl bg-green-100 flex items-center justify-center mx-auto mb-8"
           >
-            <CheckCircle className="w-12 h-12 text-green-600" aria-hidden="true" weight="fill" aria-hidden="true" />
+            <CheckCircle className="w-12 h-12 text-green-600" weight="fill" aria-hidden="true" />
           </motion.div>
           
           <h1 className="text-3xl font-bold mb-4 text-foreground">Welcome to Kahade!</h1>
@@ -372,7 +372,7 @@ export default function Register() {
             <Link href="/login">
               <Button className="w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl font-semibold">
                 Continue to Login
-                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-5 h-5" weight="bold" aria-hidden="true" />
               </Button>
             </Link>
             <Link href="/">
@@ -450,7 +450,7 @@ export default function Register() {
       </div>
       
       {/* Right Side - Form */}
-      <div className="flex-1 flex flex-col justify-start px-6 py-12 lg:px-12 xl:px-20 bg-white overflow-y-auto">
+      <div className="flex-1 flex flex-col justify-start px-4 py-8 md:px-12 xl:px-20 bg-white overflow-y-auto">
         <div className="w-full max-w-md mx-auto">
           <AnimatePresence mode="wait">
             {/* Step 1: Account Info */}
@@ -462,15 +462,15 @@ export default function Register() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-8">
-                  <img src="/images/logo.svg" alt="Kahade" className="h-10 w-auto" />
+                <Link href="/" className="inline-flex items-center gap-2 mb-6 md:mb-8">
+                  <img src="/images/logo.svg" alt="Kahade" className="h-8 md:h-10 w-auto" />
                 </Link>
                 
                 {/* Title */}
-                <h1 className="text-3xl xl:text-4xl font-bold mb-2 text-foreground">Create your account</h1>
+                <h1 className="text-2xl md:text-3xl xl:text-4xl font-bold mb-1 text-foreground">Create your account</h1>
                 
                 {/* Subtitle */}
-                <p className="text-neutral-600 mb-8">
+                <p className="text-sm md:text-base text-neutral-600 mb-6 md:mb-8">
                   Enter your details to get started
                 </p>
                 
