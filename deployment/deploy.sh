@@ -384,13 +384,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Verify Prisma client was generated
-if [ ! -d "node_modules/.prisma/client" ]; then
-    log_error "Prisma client not found after generation"
+# Verify Prisma client was generated (pnpm-compatible check)
+log_info "Verifying Prisma client installation..."
+if sudo -u $DEPLOY_USER node -e "require('@prisma/client')" 2>/dev/null; then
+    log_success "Prisma client generated and importable"
+elif [ -d "node_modules/@prisma/client" ] || [ -n "$(find node_modules -type d -name '@prisma' 2>/dev/null)" ]; then
+    log_success "Prisma client found in node_modules"
+else
+    log_error "Prisma client not found or cannot be imported"
+    log_error "Tried to import @prisma/client but failed"
+    log_error "Check: ls -la node_modules/@prisma/ or find node_modules -name '@prisma'"
     exit 1
 fi
-
-log_success "Prisma client generated successfully"
 
 # Build backend with production config
 log_info "Building backend for production..."
