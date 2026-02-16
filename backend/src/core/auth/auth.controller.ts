@@ -1,9 +1,8 @@
 import { ConfigService } from "@nestjs/config";
 import { Throttle, SkipThrottle } from "@nestjs/throttler";
-
-import {
-import {
-import {
+import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Request, Get, Ip, Headers, Delete, Param, Res, Query, BadRequestException, Req } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from "@nestjs/swagger";
+import { ResetPasswordDto, ForgotPasswordDto, ChangePasswordDto } from "./dto/reset-password.dto";
 import { AdminLoginDto } from "./dto/admin-login.dto";
 import { AuthService } from "./auth.service";
 import { CookieUtil } from "@common/utils/cookie.util";
@@ -16,34 +15,6 @@ import { Public } from "@common/decorators/public.decorator";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { Request as ExpressRequest, Response } from "express";
-
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  HttpCode,
-  HttpStatus,
-  Request,
-  Get,
-  Ip,
-  Headers,
-  Delete,
-  Param,
-  Res,
-  Query,
-  BadRequestException,
-  Req,
-} from "@nestjs/common";
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiQuery,
-} from "@nestjs/swagger";
-  ResetPasswordDto,
-  ForgotPasswordDto,
-  ChangePasswordDto,
-} from "./dto/reset-password.dto";
 
 @ApiTags("auth")
 @Controller("auth")
