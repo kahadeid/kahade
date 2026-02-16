@@ -327,7 +327,7 @@ chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR
 log_success "Application files deployed"
 
 # ============================================================================
-# BACKEND SETUP
+# BACKEND SETUP - ENHANCED FOR PRODUCTION
 # ============================================================================
 
 log_info "Setting up backend..."
@@ -351,22 +351,89 @@ APP_URL=https://$DOMAIN
 API_URL=https://$API_DOMAIN
 EOF
 
-# Install dependencies
-log_info "Installing backend dependencies..."
 cd $DEPLOY_DIR/backend
-sudo -u $DEPLOY_USER pnpm install --no-frozen-lockfile
 
-# Generate Prisma Client BEFORE build
+# Cleanup before fresh install
+log_info "Cleaning up old dependencies..."
+sudo -u $DEPLOY_USER rm -rf node_modules
+sudo -u $DEPLOY_USER rm -rf dist
+sudo -u $DEPLOY_USER rm -rf .pnpm-store
+
+# Clear pnpm cache
+log_info "Clearing pnpm cache..."
+sudo -u $DEPLOY_USER pnpm store prune || true
+
+# Install dependencies with production optimizations
+log_info "Installing backend dependencies..."
+export NODE_ENV=production
+sudo -u $DEPLOY_USER NODE_ENV=production pnpm install --prod=false --frozen-lockfile=false --force
+
+if [ $? -ne 0 ]; then
+    log_error "Failed to install dependencies"
+    log_error "Try running: cd $DEPLOY_DIR/backend && pnpm install --force"
+    exit 1
+fi
+
+# Generate Prisma Client
 log_info "Generating Prisma Client..."
-sudo -u $DEPLOY_USER npx prisma generate
+sudo -u $DEPLOY_USER npx prisma generate --schema=./prisma/schema.prisma
 
-# Build backend
-log_info "Building backend..."
-sudo -u $DEPLOY_USER pnpm run build
+if [ $? -ne 0 ]; then
+    log_error "Failed to generate Prisma client"
+    log_error "Check if prisma/schema.prisma exists and is valid"
+    exit 1
+fi
+
+# Verify Prisma client was generated
+if [ ! -d "node_modules/.prisma/client" ]; then
+    log_error "Prisma client not found after generation"
+    exit 1
+fi
+
+log_success "Prisma client generated successfully"
+
+# Build backend with production config
+log_info "Building backend for production..."
+
+# Use production tsconfig if exists, otherwise regular build with skip lib check
+if [ -f "tsconfig.production.json" ]; then
+    log_info "Using tsconfig.production.json for build"
+    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build --tsc --project tsconfig.production.json
+else
+    log_info "Using default tsconfig.build.json with skipLibCheck"
+    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build --skipLibCheck
+fi
+
+BUILD_EXIT_CODE=$?
+
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
+    log_error "Backend build failed with exit code: $BUILD_EXIT_CODE"
+    log_error ""
+    log_error "Troubleshooting steps:"
+    log_error "1. Check TypeScript errors: cd $DEPLOY_DIR/backend && npx tsc --noEmit"
+    log_error "2. Verify Prisma schema: npx prisma validate"
+    log_error "3. Check for missing dependencies: pnpm install"
+    log_error "4. Review build logs above for specific errors"
+    exit 1
+fi
+
+# Verify build output
+if [ ! -d "dist" ] || [ ! -f "dist/main.js" ]; then
+    log_error "Build completed but dist/ directory is missing or incomplete"
+    exit 1
+fi
+
+log_success "Backend build completed successfully"
 
 # Run migrations
 log_info "Running database migrations..."
-sudo -u $DEPLOY_USER npx prisma migrate deploy
+sudo -u $DEPLOY_USER NODE_ENV=production npx prisma migrate deploy
+
+if [ $? -ne 0 ]; then
+    log_warning "Migrations may have failed - check database connectivity"
+else
+    log_success "Database migrations completed"
+fi
 
 log_success "Backend setup complete"
 
@@ -386,7 +453,7 @@ VITE_WS_URL=wss://$API_DOMAIN
 EOF
 
 # Install and build
-sudo -u $DEPLOY_USER pnpm install --no-frozen-lockfile
+sudo -u $DEPLOY_USER pnpm install --frozen-lockfile=false
 sudo -u $DEPLOY_USER pnpm run build
 
 log_success "Frontend build complete"
