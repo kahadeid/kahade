@@ -11,6 +11,7 @@ import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
 // Implements: Proper State Machine, Evidence Handling, Resolution Flow
 // ============================================================================
 
+// Local DTO (no separate file exists)
 export interface EscalateDisputeDto {
   escalatedTo: string;
   notes?: string;
@@ -66,7 +67,7 @@ export class DisputeService {
         Date.now() + this.RESPONSE_DEADLINE_HOURS * 60 * 60 * 1000,
       );
 
-      const dispute = await this.prisma.$transaction(async (tx) => {
+      const dispute = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const newDispute = await tx.dispute.create({
           data: {
             orderId: dto.orderId,
@@ -223,7 +224,7 @@ export class DisputeService {
       );
     }
 
-    const updated = await this.prisma.$transaction(async (tx) => {
+    const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const updatedDispute = await tx.dispute.update({
         where: { id },
         data: { status: DisputeStatus.RESPONDED },
@@ -266,7 +267,7 @@ export class DisputeService {
       );
     }
 
-    const updated = await this.prisma.$transaction(async (tx) => {
+    const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const updatedDispute = await tx.dispute.update({
         where: { id },
         data: {
@@ -304,7 +305,7 @@ export class DisputeService {
       throw new NotFoundException("Dispute not found");
     }
 
-    const updated = await this.prisma.$transaction(async (tx) => {
+    const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const updatedDispute = await tx.dispute.update({
         where: { id },
         data: {
@@ -349,7 +350,7 @@ export class DisputeService {
       Date.now() + this.APPEAL_DEADLINE_DAYS * 24 * 60 * 60 * 1000,
     );
 
-    const updated = await this.prisma.$transaction(async (tx) => {
+    const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const updatedDispute = await tx.dispute.update({
         where: { id },
         data: {
@@ -447,7 +448,7 @@ export class DisputeService {
         throw new ForbiddenException("Not authorized to appeal this dispute");
       }
 
-      const updated = await this.prisma.$transaction(async (tx) => {
+      const updated = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const updatedDispute = await tx.dispute.update({
           where: { id },
           data: {
@@ -544,9 +545,9 @@ export class DisputeService {
       orderBy: { createdAt: "asc" },
     });
 
-    return messages.map((message) => ({
+    return messages.map((message: any) => ({
       id: message.id,
-      message: (message.details as any)?.message,
+      message: message.details?.message,
       createdAt: message.createdAt,
       sender: message.user,
     }));

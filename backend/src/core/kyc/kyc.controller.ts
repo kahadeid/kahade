@@ -1,14 +1,40 @@
-import { Controller, Get, Post, Body, UseGuards, UseInterceptors, UploadedFile, BadRequestException, Logger, Param } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiBody } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
-import { CurrentUser } from "@common/decorators/current-user.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
-import { memoryStorage } from "multer";
-import { PrismaService } from "@infrastructure/database/prisma.service";
+
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
+
+import {
+import {
+import { CurrentUser } from "@common/decorators/current-user.decorator";
+import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
+import { PrismaService } from "@infrastructure/database/prisma.service";
+import { memoryStorage } from "multer";
+
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+  Logger,
+  Param,
+} from "@nestjs/common";
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+} from "@nestjs/swagger";
+// Eslint-disable-next-line @typescript-eslint/no-unused-vars
+// Eslint-disable-next-line @typescript-eslint/no-unused-vars
+// Eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+// Eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // ============================================================================
 // KYC CONTROLLER - BANK-GRADE SECURITY
@@ -37,8 +63,10 @@ export class KycController {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
   ) {
+    // Ensure upload directory exists
     this.ensureUploadDir();
 
+    // Initialize encryption key from environment
     const keyHex = this.configService.get<string>("KYC_ENCRYPTION_KEY");
     const nodeEnv = this.configService.get<string>("NODE_ENV")?.toLowerCase();
     const isProduction = nodeEnv === "production";
@@ -54,6 +82,7 @@ export class KycController {
           "KYC_ENCRYPTION_KEY must be set to a 32-byte hex string in production",
         );
       }
+      // Generate a key for development (MUST be set in production)
       this.encryptionKey = crypto.randomBytes(32);
       this.logger.warn(
         "KYC_ENCRYPTION_KEY not set or invalid. Using random key (NOT FOR PRODUCTION)",
@@ -61,21 +90,21 @@ export class KycController {
     }
   }
 
-  private ensureUploadDir(): void {
+  private _ensureUploadDir(): void {
     const kycDir = path.join(UPLOAD_DIR, "kyc");
     if (!fs.existsSync(kycDir)) {
       fs.mkdirSync(kycDir, { recursive: true });
     }
   }
 
-  private generateFileHash(buffer: Buffer): string {
+  private _generateFileHash(buffer: Buffer): string {
     return crypto.createHash("sha256").update(buffer).digest("hex");
   }
 
   /**
    * BANK-GRADE: Encrypt sensitive PII data using AES-256-GCM
    */
-  private encryptPII(plaintext: string): string {
+  private _encryptPII(plaintext: string): string {
     if (!plaintext) return "";
 
     const iv = crypto.randomBytes(16);
@@ -90,13 +119,14 @@ export class KycController {
 
     const authTag = cipher.getAuthTag();
 
+    // Format: iv:authTag:ciphertext
     return `${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted}`;
   }
 
   /**
    * BANK-GRADE: Decrypt sensitive PII data
    */
-  private decryptPII(encryptedData: string): string {
+  private _decryptPII(encryptedData: string): string {
     if (!encryptedData || !encryptedData.includes(":")) return encryptedData;
 
     try {
@@ -125,6 +155,8 @@ export class KycController {
   }
 
   private async saveFile(
+    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     file: any,
     userId: string,
   ): Promise<{ path: string; hash: string }> {
@@ -139,6 +171,7 @@ export class KycController {
     const filePath = path.join(userDir, fileName);
     const relativePath = `/uploads/kyc/${userId}/${fileName}`;
 
+    // Write file to disk
     await fs.promises.writeFile(filePath, file.buffer);
 
     return { path: relativePath, hash: fileHash };
@@ -215,7 +248,9 @@ export class KycController {
   @ApiResponse({ status: 201, description: "KYC document submitted" })
   @ApiResponse({ status: 400, description: "Invalid document or data" })
   async submitKyc(
+    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     @CurrentUser("id") userId: string,
+    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     @UploadedFile() file: any,
     @Body()
     body: {
@@ -226,6 +261,7 @@ export class KycController {
       address?: string;
     },
   ) {
+    // Validate file
     if (!file) {
       throw new BadRequestException("Document file is required");
     }
@@ -240,6 +276,7 @@ export class KycController {
       throw new BadRequestException("File size exceeds 5MB limit");
     }
 
+    // Validate document type
     const validDocTypes = ["KTP", "SIM", "PASSPORT"];
     if (!validDocTypes.includes(body.documentType?.toUpperCase())) {
       throw new BadRequestException(
@@ -247,6 +284,7 @@ export class KycController {
       );
     }
 
+    // Validate required fields
     if (!body.fullName || body.fullName.length < 2) {
       throw new BadRequestException("Full name is required (min 2 characters)");
     }
@@ -255,8 +293,10 @@ export class KycController {
       throw new BadRequestException("ID number is required (min 6 characters)");
     }
 
+    // Sanitize ID number (remove spaces and special chars)
     const sanitizedIdNumber = body.idNumber.replace(/[^a-zA-Z0-9]/g, "");
 
+    // Check for existing pending submission
     const existingPending = await this.prisma.kYCSubmission.findFirst({
       where: {
         userId,
@@ -270,22 +310,28 @@ export class KycController {
       );
     }
 
+    // Save file and generate hash
     const { path: filePath, hash: fileHash } = await this.saveFile(
       file,
       userId,
     );
 
+    // BANK-GRADE: Encrypt all PII data before storage
     const encryptedFullName = this.encryptPII(body.fullName.trim());
     const encryptedIdNumber = this.encryptPII(sanitizedIdNumber);
     const encryptedDateOfBirth = this.encryptPII(body.dateOfBirth || "");
     const encryptedAddress = this.encryptPII(body.address?.trim() || "");
+    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
 
+    // Create KYC submission
+    // Eslint-disable-next-line @typescript-eslint/no-explicit-any
     const submission = await this.prisma.$transaction(async (tx: any) => {
+      // Create submission record with encrypted PII
       const kycSubmission = await tx.kYCSubmission.create({
         data: {
           userId,
           idCardObjectKey: filePath,
-          selfieObjectKey: filePath,
+          selfieObjectKey: filePath, // Same file for now, can be separate in future
           idCardHash: fileHash,
           selfieHash: fileHash,
           fullNameEnc: encryptedFullName,
@@ -296,6 +342,7 @@ export class KycController {
         },
       });
 
+      // Update user KYC status
       await tx.user.update({
         where: { id: userId },
         data: { kycStatus: "PENDING" },
@@ -344,7 +391,7 @@ export class KycController {
     const submission = await this.prisma.kYCSubmission.findFirst({
       where: {
         id: submissionId,
-        userId,
+        userId, // Ensure user can only access their own submissions
       },
       select: {
         id: true,
@@ -362,6 +409,7 @@ export class KycController {
       throw new BadRequestException("Submission not found");
     }
 
+    // Decrypt PII for display
     return {
       id: submission.id,
       status: submission.status,
