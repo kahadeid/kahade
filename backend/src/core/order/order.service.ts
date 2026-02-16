@@ -27,6 +27,7 @@ export class OrderService {
     private readonly walletService: WalletService,
     private readonly notificationService: NotificationService,
   ) {
+    // Load configurable values from config service
     this.PLATFORM_FEE_PERCENTAGE = this.configService.get<number>(
       "platform.feePercentage",
       1,
@@ -37,14 +38,23 @@ export class OrderService {
     );
   }
 
+  /**
+   * Calculate platform fee based on amount
+   */
   private calculatePlatformFee(amountMinor: bigint): bigint {
     return (amountMinor * BigInt(this.PLATFORM_FEE_PERCENTAGE)) / 100n;
   }
 
+  /**
+   * Generate invite token
+   */
   private generateInviteToken(): string {
     return uuidv4().replace(/-/g, "");
   }
 
+  /**
+   * Create a new order
+   */
   async createOrder(
     userId: string,
     dto: CreateOrderDto,
@@ -52,6 +62,7 @@ export class OrderService {
   ) {
     this.logger.log(`Creating order for user ${userId}`);
 
+    // Check idempotency - use title and amount hash for deduplication
     if (idempotencyKey) {
       const existing = await this.prisma.order.findFirst({
         where: {
@@ -59,7 +70,7 @@ export class OrderService {
           title: dto.title,
           amountMinor: BigInt(dto.amountMinor),
           createdAt: {
-            gte: new Date(Date.now() - 5 * 60 * 1000),
+            gte: new Date(Date.now() - 5 * 60 * 1000), // Last 5 minutes
           },
         },
       });
@@ -95,6 +106,7 @@ export class OrderService {
 
     const order = await this.orderRepository.create(orderData);
 
+    // Send invite email if counterparty email provided
     if (dto.counterpartyEmail) {
       await this.notificationService.sendOrderInvite(
         dto.counterpartyEmail,
@@ -116,6 +128,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Get orders with filters
+   */
   async getOrders(userId: string, filterDto: OrderFilterExtendedDto) {
     const options = {
       userId,
@@ -135,6 +150,9 @@ export class OrderService {
     return this.orderRepository.findMany(options);
   }
 
+  /**
+   * Get order by ID
+   */
   async getOrderById(userId: string, orderId: string) {
     const order = await this.orderRepository.findById(orderId);
 
@@ -142,6 +160,7 @@ export class OrderService {
       throw new NotFoundException("Order not found");
     }
 
+    // Check access
     if (order.initiatorId !== userId && order.counterpartyId !== userId) {
       throw new ForbiddenException("You do not have access to this order");
     }
@@ -149,6 +168,9 @@ export class OrderService {
     return order;
   }
 
+  /**
+   * Get order by order number
+   */
   async getOrderByNumber(userId: string, orderNumber: string) {
     const order = await this.orderRepository.findByOrderNumber(orderNumber);
 
@@ -163,14 +185,19 @@ export class OrderService {
     return order;
   }
 
+  /**
+   * Get order by invite token (public preview)
+   */
   async getOrderByInviteToken(inviteToken: string) {
-    const order = await this.orderRepository.findByInviteToken(inviteToken);
+    const order = (await this.orderRepository.findByInviteToken(
+      inviteToken,
+    )) as any;
 
     if (!order) {
       throw new NotFoundException("Invalid invite token");
     }
 
-    if (order.inviteExpiresAt && order.inviteExpiresAt < new Date()) {
+    if (order.inviteExpiresAt < new Date()) {
       throw new BadRequestException("Invite token has expired");
     }
 
@@ -178,6 +205,7 @@ export class OrderService {
       throw new BadRequestException("This order has already been accepted");
     }
 
+    // Return limited info for preview
     return {
       orderNumber: order.orderNumber,
       title: order.title,
@@ -187,15 +215,18 @@ export class OrderService {
       initiatorRole: order.initiatorRole,
       holdingPeriodDays: order.holdingPeriodDays,
       customTerms: order.customTerms,
-      initiator: order.initiator ? {
+      initiator: {
         username: order.initiator.username,
         reputationScore: order.initiator.reputationScore,
         totalTransactions: order.initiator.totalTransactions,
-      } : null,
+      },
       expiresAt: order.inviteExpiresAt,
     };
   }
 
+  /**
+   * Update order (only before acceptance)
+   */
   async updateOrder(userId: string, orderId: string, dto: UpdateOrderDto) {
     const order = await this.orderRepository.findById(orderId);
 
@@ -222,6 +253,7 @@ export class OrderService {
     if (dto.category) updateData.category = dto.category;
     if (dto.customTerms !== undefined) updateData.customTerms = dto.customTerms;
 
+    // Only allow amount/period changes before acceptance
     if (order.status === "WAITING_COUNTERPARTY") {
       if (dto.amountMinor) {
         updateData.amountMinor = BigInt(dto.amountMinor);
@@ -242,6 +274,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Accept order invitation
+   */
   async acceptOrder(userId: string, dto: AcceptOrderDto) {
     const order = await this.orderRepository.findByInviteToken(dto.inviteToken);
 
@@ -249,7 +284,7 @@ export class OrderService {
       throw new NotFoundException("Invalid invite token");
     }
 
-    if (order.inviteExpiresAt && order.inviteExpiresAt < new Date()) {
+    if (order.inviteExpiresAt < new Date()) {
       throw new BadRequestException("Invite token has expired");
     }
 
@@ -261,15 +296,16 @@ export class OrderService {
       throw new BadRequestException("You cannot accept your own order");
     }
 
-    const updated = await this.orderRepository.updateStatus(
+    const updated = (await this.orderRepository.updateStatus(
       order.id,
       "PENDING_ACCEPT" as any,
       {
         counterpartyId: userId,
       },
       undefined,
-    );
+    )) as any;
 
+    // Notify initiator
     await this.notificationService.sendOrderAccepted(
       order.initiatorId,
       order.orderNumber,
@@ -285,6 +321,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Pay for order (lock funds in escrow)
+   */
   async payOrder(userId: string, orderId: string, idempotencyKey: string) {
     if (!idempotencyKey) {
       throw new BadRequestException("Idempotency key is required for payment");
@@ -296,6 +335,7 @@ export class OrderService {
       throw new NotFoundException("Order not found");
     }
 
+    // Determine buyer
     const buyerId =
       order.initiatorRole === "BUYER"
         ? order.initiatorId
@@ -311,6 +351,7 @@ export class OrderService {
       );
     }
 
+    // Calculate total amount including fee if buyer pays
     let totalAmount = order.amountMinor;
     if (order.feePayer === "BUYER" || order.feePayer === "FIFTY_FIFTY") {
       const feeAmount =
@@ -320,12 +361,15 @@ export class OrderService {
       totalAmount += feeAmount;
     }
 
+    // Check buyer balance
     const balance = await this.walletService.getBalance(buyerId);
 
+    // getBalance returns {balance, currency} - convert to minor units for comparison
     if (BigInt(Math.round(Number(balance.balance) * 100)) < totalAmount) {
       throw new BadRequestException("Insufficient balance");
     }
 
+    // Create escrow
     const sellerId =
       order.initiatorRole === "SELLER"
         ? order.initiatorId
@@ -340,6 +384,7 @@ export class OrderService {
       idempotencyKey,
     });
 
+    // Update order status
     const autoReleaseAt = new Date(
       Date.now() + order.holdingPeriodDays * 24 * 60 * 60 * 1000,
     );
@@ -352,6 +397,7 @@ export class OrderService {
       undefined,
     );
 
+    // Notify seller
     if (sellerId) {
       await this.notificationService.sendPaymentReceived(
         sellerId,
@@ -370,6 +416,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Confirm delivery and release escrow
+   */
   async confirmDelivery(
     userId: string,
     orderId: string,
@@ -379,12 +428,13 @@ export class OrderService {
       throw new BadRequestException("Idempotency key is required");
     }
 
-    const order = await this.orderRepository.findById(orderId);
+    const order = (await this.orderRepository.findById(orderId)) as any;
 
     if (!order) {
       throw new NotFoundException("Order not found");
     }
 
+    // Only buyer can confirm
     const buyerId =
       order.initiatorRole === "BUYER"
         ? order.initiatorId
@@ -404,6 +454,7 @@ export class OrderService {
       throw new BadRequestException("No escrow found for this order");
     }
 
+    // Release escrow
     await this.escrowService.releaseEscrow({
       escrowId: order.escrowHold.id,
       actorId: userId,
@@ -411,6 +462,7 @@ export class OrderService {
       idempotencyKey,
     });
 
+    // Update order status
     const updated = await this.orderRepository.updateStatus(
       orderId,
       "COMPLETED" as any,
@@ -418,6 +470,7 @@ export class OrderService {
       undefined,
     );
 
+    // Notify seller
     const sellerId =
       order.initiatorRole === "SELLER"
         ? order.initiatorId
@@ -440,6 +493,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Cancel order
+   */
   async cancelOrder(userId: string, orderId: string, dto: CancelOrderDto) {
     const order = await this.orderRepository.findById(orderId);
 
@@ -451,6 +507,7 @@ export class OrderService {
       throw new ForbiddenException("You do not have access to this order");
     }
 
+    // Can only cancel before payment
     if (order.status === "PAID" || order.status === "COMPLETED") {
       throw new BadRequestException(
         "Cannot cancel order after payment. Please open a dispute instead.",
@@ -462,6 +519,7 @@ export class OrderService {
       "CANCELLED" as any,
     );
 
+    // Notify other party
     const otherPartyId =
       order.initiatorId === userId ? order.counterpartyId : order.initiatorId;
     if (otherPartyId) {
@@ -482,6 +540,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Open dispute
+   */
   async openDispute(
     userId: string,
     orderId: string,
@@ -501,10 +562,14 @@ export class OrderService {
       throw new BadRequestException("Can only dispute paid orders");
     }
 
+    // Update order status
     const updated = await this.orderRepository.updateStatus(
       orderId,
       "DISPUTED" as any,
     );
+
+    // Create dispute record (handled by dispute service)
+    // This is a simplified version - full implementation would call DisputeService
 
     this.logger.log(
       `Dispute opened for order ${order.orderNumber} by user ${userId}`,
@@ -517,6 +582,9 @@ export class OrderService {
     };
   }
 
+  /**
+   * Resend invite
+   */
   async resendInvite(userId: string, orderId: string, email: string) {
     const order = await this.orderRepository.findById(orderId);
 
@@ -532,6 +600,7 @@ export class OrderService {
       throw new BadRequestException("Order has already been accepted");
     }
 
+    // Generate new invite token
     const newInviteToken = this.generateInviteToken();
     const newInviteExpiresAt = new Date(
       Date.now() + this.INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
@@ -542,6 +611,7 @@ export class OrderService {
       inviteExpiresAt: newInviteExpiresAt,
     } as any);
 
+    // Send email
     await this.notificationService.sendOrderInvite(
       email,
       order.orderNumber,
@@ -555,8 +625,11 @@ export class OrderService {
     };
   }
 
+  /**
+   * Get order comments
+   */
   async getComments(userId: string, orderId: string) {
-    const order = await this.orderRepository.findById(orderId);
+    const order = (await this.orderRepository.findById(orderId)) as any;
 
     if (!order) {
       throw new NotFoundException("Order not found");
@@ -569,6 +642,9 @@ export class OrderService {
     return order.comments || [];
   }
 
+  /**
+   * Add comment
+   */
   async addComment(
     userId: string,
     orderId: string,
@@ -604,6 +680,9 @@ export class OrderService {
     return comment;
   }
 
+  /**
+   * Update comment
+   */
   async updateComment(
     userId: string,
     orderId: string,
@@ -632,6 +711,9 @@ export class OrderService {
     return updated;
   }
 
+  /**
+   * Delete comment
+   */
   async deleteComment(userId: string, orderId: string, commentId: string) {
     const comment = await this.prisma.orderComment.findUnique({
       where: { id: commentId },
