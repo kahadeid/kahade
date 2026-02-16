@@ -1,24 +1,9 @@
 import { ConfigService } from "@nestjs/config";
-
-import {
-import {
+import { Injectable, Logger, BadRequestException, ForbiddenException, NotFoundException, ConflictException } from "@nestjs/common";
+import { EscrowHold, EscrowHoldStatus, Order, OrderStatus, LedgerAccountType } from "@prisma/client";
 import { LedgerService } from "../ledger/ledger.service";
 import { PrismaService } from "@infrastructure/database/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
-
-  Injectable,
-  Logger,
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-  ConflictException,
-} from "@nestjs/common";
-  EscrowHold,
-  EscrowHoldStatus,
-  Order,
-  OrderStatus,
-  LedgerAccountType,
-} from "@prisma/client";
 
 // ============================================================================
 // BANK-GRADE ESCROW SERVICE
@@ -169,7 +154,7 @@ export class EscrowService {
   /**
    * FIX #86: Create system actor marker (internal use only)
    */
-  private _createSystemActor(reason: string): SystemActor {
+  private createSystemActor(reason: string): SystemActor {
     return {
       type: SYSTEM_ACTOR,
       reason,
@@ -179,7 +164,7 @@ export class EscrowService {
   /**
    * FIX #86: Check if actor is system
    */
-  private _isSystemActor(actor: string | SystemActor): actor is SystemActor {
+  private isSystemActor(actor: string | SystemActor): actor is SystemActor {
     return typeof actor === 'object' && actor.type === SYSTEM_ACTOR;
   }
 
@@ -222,7 +207,7 @@ export class EscrowService {
         // Execute the operation with locked escrow
         return await operation(escrow);
 
-      } catch (error: Error) {
+      } catch (error: any) {
         lastError = error;
 
         // If it's a lock timeout or deadlock, retry with exponential backoff
@@ -250,7 +235,6 @@ export class EscrowService {
   }
 
   private async delay(ms: number): Promise<void> {
-    try {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
@@ -264,10 +248,6 @@ export class EscrowService {
   validateEscrowTransition(
     currentStatus: EscrowHoldStatus,
     targetStatus: EscrowHoldStatus,
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
   ): boolean {
     const allowedTransitions = ESCROW_STATE_MACHINE[currentStatus];
     if (!allowedTransitions.includes(targetStatus)) {
@@ -353,114 +333,114 @@ export class EscrowService {
    */
   async createEscrow(options: CreateEscrowOptions): Promise<EscrowHold> {
     try {
-    const {
-      orderId,
-      buyerUserId,
-      sellerUserId,
-      amountMinor,
-      timeoutHours = this.DEFAULT_TIMEOUT_HOURS,
-      idempotencyKey,
+      const {
+        orderId,
+        buyerUserId,
+        sellerUserId,
+        amountMinor,
+        timeoutHours = this.DEFAULT_TIMEOUT_HOURS,
+        idempotencyKey,
+      } = options;
+
+      // Check idempotency
+      const existing = await this.prisma.escrowHold.findFirst({
+        where: { orderId },
+      });
+
+      if (existing) {
+        this.logger.warn(`Escrow already exists for order ${orderId}`);
+        return existing;
+      }
+
+      // Get buyer wallet
+      const buyerWallet = await this.prisma.wallet.findUnique({
+        where: { userId: buyerUserId },
+      });
+
+      if (!buyerWallet) {
+        throw new NotFoundException("Buyer wallet not found");
+      }
+
+      // Get seller wallet if provided
+      let sellerWallet: { id: string } | null = null;
+      if (sellerUserId) {
+        sellerWallet = await this.prisma.wallet.findUnique({
+          where: { userId: sellerUserId },
+        });
+      }
+
+      // Calculate timeout
+      const timeoutAt = new Date(Date.now() + timeoutHours * 60 * 60 * 1000);
+
+      // Create escrow in transaction
+      const escrow = await this.prisma.$transaction(async (tx: any) => {
+        // Lock buyer's balance
+        await this.walletService.lockBalance({
+          userId: buyerUserId,
+          amount: amountMinor,
+          reason: `Escrow hold for order ${orderId}`,
+          initiatedBy: 'system',
+        });
+
+        // Create escrow record
+        const newEscrow = await tx.escrowHold.create({
+          data: {
+            orderId,
+            buyerWalletId: buyerWallet.id,
+            sellerWalletId: sellerWallet?.id,
+            amountMinor,
+            status: EscrowHoldStatus.ACTIVE,
+            timeoutAt,
+          },
+        });
+
+        // Get or create accounts for ledger
+        const buyerAccount = await this.ledgerService.getOrCreateUserAccount(
+          buyerWallet.id,
+          LedgerAccountType.ASSET,
+          "IDR",
+          tx,
+        );
+
+        const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
+          "ESCROW_HOLDING",
+          LedgerAccountType.LIABILITY,
+          "IDR",
+          tx,
+        );
+
+        // Record in ledger
+        await this.ledgerService.recordEscrowHold(
+          buyerAccount.id,
+          escrowAccount.id,
+          amountMinor,
+          newEscrow.id,
+          orderId,
+          idempotencyKey,
+          tx,
+        );
+
+        // Update order status
+        await tx.order.update({
+          where: { id: orderId },
+          data: {
+            status: OrderStatus.PAID,
+            autoReleaseAt: timeoutAt,
+          },
+        });
+
+        return newEscrow;
+      });
+
+      this.logger.log(
+        `Created escrow ${escrow.id} for order ${orderId}, amount: ${amountMinor}`,
+      );
+
+      return escrow;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in createEscrow: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    } = options;
-
-    // Check idempotency
-    const existing = await this.prisma.escrowHold.findFirst({
-      where: { orderId },
-    });
-
-    if (existing) {
-      this.logger.warn(`Escrow already exists for order ${orderId}`);
-      return existing;
-    }
-
-    // Get buyer wallet
-    const buyerWallet = await this.prisma.wallet.findUnique({
-      where: { userId: buyerUserId },
-    });
-
-    if (!buyerWallet) {
-      throw new NotFoundException("Buyer wallet not found");
-    }
-
-    // Get seller wallet if provided
-    let sellerWallet: { id: string } | null = null;
-    if (sellerUserId) {
-      sellerWallet = await this.prisma.wallet.findUnique({
-        where: { userId: sellerUserId },
-      });
-    }
-
-    // Calculate timeout
-    const timeoutAt = new Date(Date.now() + timeoutHours * 60 * 60 * 1000);
-
-    // Create escrow in transaction
-    const escrow = await this.prisma.$transaction(async (tx: any) => {
-      // Lock buyer's balance
-      await this.walletService.lockBalance({
-        userId: buyerUserId,
-        amount: amountMinor,
-        reason: `Escrow hold for order ${orderId}`,
-        initiatedBy: 'system',
-      });
-
-      // Create escrow record
-      const newEscrow = await tx.escrowHold.create({
-        data: {
-          orderId,
-          buyerWalletId: buyerWallet.id,
-          sellerWalletId: sellerWallet?.id,
-          amountMinor,
-          status: EscrowHoldStatus.ACTIVE,
-          timeoutAt,
-        },
-      });
-
-      // Get or create accounts for ledger
-      const buyerAccount = await this.ledgerService.getOrCreateUserAccount(
-        buyerWallet.id,
-        LedgerAccountType.ASSET,
-        "IDR",
-        tx,
-      );
-
-      const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
-        "ESCROW_HOLDING",
-        LedgerAccountType.LIABILITY,
-        "IDR",
-        tx,
-      );
-
-      // Record in ledger
-      await this.ledgerService.recordEscrowHold(
-        buyerAccount.id,
-        escrowAccount.id,
-        amountMinor,
-        newEscrow.id,
-        orderId,
-        idempotencyKey,
-        tx,
-      );
-
-      // Update order status
-      await tx.order.update({
-        where: { id: orderId },
-        data: {
-          status: OrderStatus.PAID,
-          autoReleaseAt: timeoutAt,
-        },
-      });
-
-      return newEscrow;
-    });
-
-    this.logger.log(
-      `Created escrow ${escrow.id} for order ${orderId}, amount: ${amountMinor}`,
-    );
-
-    return escrow;
   }
 
   /**
@@ -733,164 +713,164 @@ export class EscrowService {
    */
   async resolveDispute(options: ResolveDisputeOptions): Promise<EscrowHold> {
     try {
-    const {
-      escrowId,
-      resolverId,
-      buyerRefundMinor,
-      sellerAmountMinor,
-      platformFeeMinor,
-      resolution,
-      notes,
-      idempotencyKey,
-    } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
-      throw error;
-    }
-    } = options;
+      const {
+        escrowId,
+        resolverId,
+        buyerRefundMinor,
+        sellerAmountMinor,
+        platformFeeMinor,
+        resolution,
+        notes,
+        idempotencyKey,
+      } = options;
 
-    const escrow = await this.prisma.escrowHold.findUnique({
-      where: { id: escrowId },
-      include: { order: true, buyerWallet: true, sellerWallet: true },
-    });
+      const escrow = await this.prisma.escrowHold.findUnique({
+        where: { id: escrowId },
+        include: { order: true, buyerWallet: true, sellerWallet: true },
+      });
 
-    if (!escrow) {
-      throw new NotFoundException("Escrow not found");
-    }
+      if (!escrow) {
+        throw new NotFoundException("Escrow not found");
+      }
 
-    // Validate state transition
-    this.validateEscrowTransition(
-      escrow.status,
-      resolution as EscrowHoldStatus,
-    );
-
-    // Validate amounts
-    const totalDistribution =
-      buyerRefundMinor + sellerAmountMinor + platformFeeMinor;
-    if (totalDistribution !== escrow.amountMinor) {
-      throw new BadRequestException(
-        `Distribution total (${totalDistribution}) must equal escrow amount (${escrow.amountMinor})`,
-      );
-    }
-
-    if (!escrow.sellerWallet && sellerAmountMinor > 0n) {
-      throw new BadRequestException(
-        "Seller wallet not set but seller amount > 0",
-      );
-    }
-
-    // Execute resolution in transaction
-    const updatedEscrow = await this.prisma.$transaction(async (tx: any) => {
-      // Get accounts
-      const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
-        "ESCROW_HOLDING",
-        LedgerAccountType.LIABILITY,
-        "IDR",
-        tx,
+      // Validate state transition
+      this.validateEscrowTransition(
+        escrow.status,
+        resolution as any,
       );
 
-      const buyerAccount = await this.ledgerService.getOrCreateUserAccount(
-        escrow.buyerWallet.id,
-        LedgerAccountType.ASSET,
-        "IDR",
-        tx,
-      );
+      // Validate amounts
+      const totalDistribution =
+        buyerRefundMinor + sellerAmountMinor + platformFeeMinor;
+      if (totalDistribution !== escrow.amountMinor) {
+        throw new BadRequestException(
+          `Distribution total (${totalDistribution}) must equal escrow amount (${escrow.amountMinor})`,
+        );
+      }
 
-      const sellerAccount = escrow.sellerWallet
-        ? await this.ledgerService.getOrCreateUserAccount(
-            escrow.sellerWallet.id,
-            LedgerAccountType.ASSET,
-            "IDR",
-            tx,
-          )
-        : null;
+      if (!escrow.sellerWallet && sellerAmountMinor > 0n) {
+        throw new BadRequestException(
+          "Seller wallet not set but seller amount > 0",
+        );
+      }
 
-      const platformFeeAccount =
-        await this.ledgerService.getOrCreatePlatformAccount(
-          "PLATFORM_FEES",
-          LedgerAccountType.REVENUE,
+      // Execute resolution in transaction
+      const updatedEscrow = await this.prisma.$transaction(async (tx: any) => {
+        // Get accounts
+        const escrowAccount = await this.ledgerService.getOrCreatePlatformAccount(
+          "ESCROW_HOLDING",
+          LedgerAccountType.LIABILITY,
           "IDR",
           tx,
         );
 
-      // Get dispute
-      const dispute = await tx.dispute.findFirst({
-        where: { orderId: escrow.orderId },
+        const buyerAccount = await this.ledgerService.getOrCreateUserAccount(
+          escrow.buyerWallet.id,
+          LedgerAccountType.ASSET,
+          "IDR",
+          tx,
+        );
+
+        const sellerAccount = escrow.sellerWallet
+          ? await this.ledgerService.getOrCreateUserAccount(
+              escrow.sellerWallet.id,
+              LedgerAccountType.ASSET,
+              "IDR",
+              tx,
+            )
+          : null;
+
+        const platformFeeAccount =
+          await this.ledgerService.getOrCreatePlatformAccount(
+            "PLATFORM_FEES",
+            LedgerAccountType.REVENUE,
+            "IDR",
+            tx,
+          );
+
+        // Get dispute
+        const dispute = await tx.dispute.findFirst({
+          where: { orderId: escrow.orderId },
+        });
+
+        // Record in ledger
+        await this.ledgerService.recordDisputeResolution(
+          escrowAccount.id,
+          buyerAccount.id,
+          sellerAccount?.id ?? buyerAccount.id, // Fallback to buyer if no seller
+          platformFeeAccount.id,
+          buyerRefundMinor,
+          sellerAmountMinor,
+          platformFeeMinor,
+          dispute?.id ?? escrow.id,
+          escrow.orderId,
+          idempotencyKey,
+          tx,
+        );
+
+        // Distribute funds
+        // First, unlock all from buyer
+        await tx.wallet.update({
+          where: { id: escrow.buyerWallet.id },
+          data: {
+            lockedMinor: { decrement: escrow.amountMinor },
+            balanceMinor: { decrement: escrow.amountMinor - buyerRefundMinor },
+          },
+        });
+
+        // Credit seller if applicable
+        if (sellerAmountMinor > 0n && escrow.sellerWallet) {
+          await tx.wallet.update({
+            where: { id: escrow.sellerWallet.id },
+            data: {
+              balanceMinor: { increment: sellerAmountMinor },
+            },
+          });
+        }
+
+        // Update escrow status
+        const updated = await tx.escrowHold.update({
+          where: { id: escrowId },
+          data: {
+            status: resolution as any,
+            resolvedAt: new Date(),
+          },
+        });
+
+        // Update order status
+        await tx.order.update({
+          where: { id: escrow.orderId },
+          data: {
+            status: OrderStatus.COMPLETED,
+            completedAt: new Date(),
+          },
+        });
+
+        // Update dispute
+        if (dispute) {
+          await tx.dispute.update({
+            where: { id: dispute.id },
+            data: {
+              status: "CLOSED",
+              arbitratorId: resolverId,
+              decidedAt: new Date(),
+              resolutionNotes: notes,
+            },
+          });
+        }
+
+        return updated;
       });
 
-      // Record in ledger
-      await this.ledgerService.recordDisputeResolution(
-        escrowAccount.id,
-        buyerAccount.id,
-        sellerAccount?.id ?? buyerAccount.id, // Fallback to buyer if no seller
-        platformFeeAccount.id,
-        buyerRefundMinor,
-        sellerAmountMinor,
-        platformFeeMinor,
-        dispute?.id ?? escrow.id,
-        escrow.orderId,
-        idempotencyKey,
-        tx,
+      this.logger.log(
+        `Resolved dispute for escrow ${escrowId}: buyer=${buyerRefundMinor}, seller=${sellerAmountMinor}, fee=${platformFeeMinor}`,
       );
 
-      // Distribute funds
-      // First, unlock all from buyer
-      await tx.wallet.update({
-        where: { id: escrow.buyerWallet.id },
-        data: {
-          lockedMinor: { decrement: escrow.amountMinor },
-          balanceMinor: { decrement: escrow.amountMinor - buyerRefundMinor },
-        },
-      });
-
-      // Credit seller if applicable
-      if (sellerAmountMinor > 0n && escrow.sellerWallet) {
-        await tx.wallet.update({
-          where: { id: escrow.sellerWallet.id },
-          data: {
-            balanceMinor: { increment: sellerAmountMinor },
-          },
-        });
-      }
-
-      // Update escrow status
-      const updated = await tx.escrowHold.update({
-        where: { id: escrowId },
-        data: {
-          status: resolution as EscrowHoldStatus,
-          resolvedAt: new Date(),
-        },
-      });
-
-      // Update order status
-      await tx.order.update({
-        where: { id: escrow.orderId },
-        data: {
-          status: OrderStatus.COMPLETED,
-          completedAt: new Date(),
-        },
-      });
-
-      // Update dispute
-      if (dispute) {
-        await tx.dispute.update({
-          where: { id: dispute.id },
-          data: {
-            status: "CLOSED",
-            arbitratorId: resolverId,
-            decidedAt: new Date(),
-            resolutionNotes: notes,
-          },
-        });
-      }
-
-      return updated;
-    });
-
-    this.logger.log(
-      `Resolved dispute for escrow ${escrowId}: buyer=${buyerRefundMinor}, seller=${sellerAmountMinor}, fee=${platformFeeMinor}`,
-    );
-
-    return updatedEscrow;
+      return updatedEscrow;
+    } catch (error) {
+      this.logger.error(`Error in resolveDispute: ${(error as Error).message}`, (error as Error).stack);
+      throw error;
+    }
   }
 
   /**
@@ -899,44 +879,44 @@ export class EscrowService {
    */
   async processExpiredEscrows(): Promise<number> {
     try {
-    const now = new Date();
+      const now = new Date();
 
-    const expiredEscrows = await this.prisma.escrowHold.findMany({
-      where: {
-        status: EscrowHoldStatus.ACTIVE,
-        timeoutAt: { lte: now },
-      },
-      include: { order: true },
+      const expiredEscrows = await this.prisma.escrowHold.findMany({
+        where: {
+          status: EscrowHoldStatus.ACTIVE,
+          timeoutAt: { lte: now },
+        },
+        include: { order: true },
+      });
+
+      let processedCount = 0;
+
+      for (const escrow of expiredEscrows) {
+        try {
+          // FIX #86: Use internal system actor marker
+          const systemActor = this.createSystemActor('auto-release-timeout');
+
+          // Auto-release to seller (default behavior for timeout)
+          await this.releaseEscrow({
+            escrowId: escrow.id,
+            actorId: systemActor,
+            platformFeeMinor: escrow.order.platformFeeMinor,
+            idempotencyKey: `auto-release-${escrow.id}-${Date.now()}`,
+          });
+          processedCount++;
+          this.logger.log(`Auto-released expired escrow ${escrow.id}`);
+        } catch (error: unknown) {
+          this.logger.error(
+            `Failed to auto-release escrow ${escrow.id}: ${(error as Error).message}`,
+          );
+        }
+      }
+
+      return processedCount;
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in processExpiredEscrows: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    });
-
-    let processedCount = 0;
-
-    for (const escrow of expiredEscrows) {
-      try {
-        // FIX #86: Use internal system actor marker
-        const systemActor = this.createSystemActor('auto-release-timeout');
-
-        // Auto-release to seller (default behavior for timeout)
-        await this.releaseEscrow({
-          escrowId: escrow.id,
-          actorId: systemActor,
-          platformFeeMinor: escrow.order.platformFeeMinor,
-          idempotencyKey: `auto-release-${escrow.id}-${Date.now()}`,
-        });
-        processedCount++;
-        this.logger.log(`Auto-released expired escrow ${escrow.id}`);
-      } catch (error: unknown) {
-        this.logger.error(
-          `Failed to auto-release escrow ${escrow.id}: ${(error as Error).message}`,
-        );
-      }
-    }
-
-    return processedCount;
   }
 
   /**
@@ -944,11 +924,11 @@ export class EscrowService {
    */
   async healthCheck(): Promise<{ status: string }> {
     try {
-    this.logger.debug("Health check called");
+      this.logger.debug("Health check called");
+      return { status: "ok" };
     } catch (error) {
-      this.logger.error(`Error in method: ${error.message}`, error.stack);
+      this.logger.error(`Error in healthCheck: ${(error as Error).message}`, (error as Error).stack);
       throw error;
     }
-    return { status: "ok" };
   }
 }
