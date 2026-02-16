@@ -400,16 +400,35 @@ fi
 # Build backend with production config
 log_info "Building backend for production..."
 
-# Use production tsconfig if exists, otherwise regular build
-if [ -f "tsconfig.production.json" ]; then
-    log_info "Using tsconfig.production.json for build"
-    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build -p tsconfig.production.json
-else
-    log_info "Using default tsconfig.build.json"
-    sudo -u $DEPLOY_USER NODE_ENV=production npx nest build
+# WORKAROUND: Temporarily disable Swagger plugin to avoid type checking issues
+if [ -f "nest-cli.json" ]; then
+    log_info "Backing up nest-cli.json and creating build config without Swagger plugin..."
+    cp nest-cli.json nest-cli.json.backup
+    
+    # Create minimal nest-cli.json without swagger plugin
+    cat > nest-cli.json << 'NESTCLI'
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": false,
+    "tsConfigPath": "tsconfig.build.json"
+  }
+}
+NESTCLI
 fi
 
+# Build
+sudo -u $DEPLOY_USER NODE_ENV=production npx nest build
 BUILD_EXIT_CODE=$?
+
+# Restore original nest-cli.json
+if [ -f "nest-cli.json.backup" ]; then
+    mv nest-cli.json.backup nest-cli.json
+    log_info "Restored original nest-cli.json"
+fi
 
 if [ $BUILD_EXIT_CODE -ne 0 ]; then
     log_error "Backend build failed with exit code: $BUILD_EXIT_CODE"
