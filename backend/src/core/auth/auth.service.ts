@@ -8,8 +8,21 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '@infrastructure/database/prisma.service';
 import { nanoid } from 'nanoid';
 
+interface UserWithoutPassword {
+  id: string;
+  email: string;
+  username: string;
+  phone: string | null;
+  emailVerifiedAt: Date | null;
+  isAdmin: boolean;
+  role: string;
+  mfaEnabled: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface LoginResult {
-  user: any;
+  user: UserWithoutPassword;
   accessToken: string;
   refreshToken: string;
   expiresIn: string;
@@ -27,10 +40,7 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  /**
-   * Validateuser
-   */
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<UserWithoutPassword> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
@@ -55,7 +65,7 @@ export class AuthService {
       }
 
       const { passwordHash, ...result } = user;
-      return result;
+      return result as UserWithoutPassword;
     } catch (error) {
       this.logger.error(`Error in validateUser: ${(error as Error).message}`, (error as Error).stack);
       throw error;
@@ -67,7 +77,7 @@ export class AuthService {
     username: string;
     password: string;
     phone?: string;
-  }): Promise<{ user: any; message: string }> {
+  }): Promise<{ user: Omit<any, 'passwordHash'>; message: string }> {
     const existingUser = await this.prisma.user.findFirst({
       where: {
         OR: [
@@ -97,7 +107,6 @@ export class AuthService {
 
     const { passwordHash: _, ...userWithoutPassword } = user;
 
-    // Send verification email
     const frontendUrl = this.configService.get<string>('app.frontendUrl') || 'http://localhost:3000';
     const verificationLink = `${frontendUrl}/auth/verify-email?token=${verificationToken}`;
     await this.emailService.sendEmail(
@@ -110,9 +119,9 @@ export class AuthService {
         <p>This link will expire in 24 hours.</p>
         <p>If you did not create an account, you can safely ignore this email.</p>
       `,
-    ).catch((err) => {
+    ).catch(() => {
       // Non-blocking: log but don't fail registration
-      });
+    });
 
     return {
       user: userWithoutPassword,
@@ -140,17 +149,15 @@ export class AuthService {
       expiresIn: this.configService.get('security.jwt.refreshExpiresIn'),
     });
 
-    // Hash refresh token before storing
     const refreshHash = await HashUtil.hashPassword(refreshToken);
 
-    // Create session
     await this.prisma.session.create({
       data: {
         userId: user.id,
         refreshHash,
         ipAddress: ip || 'unknown',
         userAgent: userAgent || 'unknown',
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
 
@@ -176,16 +183,12 @@ export class AuthService {
     return result;
   }
 
-  /**
-   * Refreshtoken
-   */
   async refreshToken(refreshToken: string, actualRefreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('security.jwt.refreshSecret'),
       });
 
-      // Get all sessions for user
       const sessions = await this.prisma.session.findMany({
         where: {
           userId: payload.sub,
@@ -193,7 +196,6 @@ export class AuthService {
         },
       });
 
-      // Verify token against stored hashes
       let validSession = null;
       for (const session of sessions) {
         const isValid = await HashUtil.verifyPassword(actualRefreshToken, session.refreshHash);
@@ -220,12 +222,8 @@ export class AuthService {
     }
   }
 
-  /**
-   * Logout
-   */
   async logout(userId: string, refreshToken: string): Promise<{ message: string }> {
     try {
-      // Find and delete matching session
       const sessions = await this.prisma.session.findMany({
         where: { userId },
       });
@@ -247,9 +245,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Logoutall
-   */
   async logoutAll(userId: string, _currentToken: string): Promise<{ message: string }> {
     try {
       await this.prisma.session.deleteMany({
@@ -263,9 +258,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Getcurrentuser
-   */
   async getCurrentUser(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -289,9 +281,6 @@ export class AuthService {
     return user;
   }
 
-  /**
-   * Forgotpassword
-   */
   async forgotPassword(email: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findUnique({
@@ -299,12 +288,11 @@ export class AuthService {
       });
 
       if (!user) {
-        // Don't reveal if user exists
         return { message: 'If the email exists, a reset link has been sent' };
       }
 
       const resetToken = nanoid(32);
-      const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+      const resetTokenExpiry = new Date(Date.now() + 3600000);
 
       await this.prisma.user.update({
         where: { id: user.id },
@@ -314,7 +302,6 @@ export class AuthService {
         },
       });
 
-      // Send password reset email
       const frontendUrl = this.configService.get<string>('app.frontendUrl') || 'http://localhost:3000';
       const resetLink = `${frontendUrl}/auth/reset-password?token=${resetToken}`;
       await this.emailService.sendEmail(
@@ -327,8 +314,7 @@ export class AuthService {
         <p>This link will expire in 1 hour.</p>
         <p>If you did not request a password reset, please ignore this email. Your password will not be changed.</p>
       `,
-      ).catch((err) => {
-        });
+      ).catch(() => {});
 
       return { message: 'If the email exists, a reset link has been sent' };
     } catch (error) {
@@ -337,9 +323,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Validateresettoken
-   */
   async validateResetToken(token: string): Promise<{ valid: boolean }> {
     try {
       const user = await this.prisma.user.findFirst({
@@ -356,9 +339,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Resetpassword
-   */
   async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findFirst({
@@ -383,7 +363,6 @@ export class AuthService {
         },
       });
 
-      // Invalidate all sessions
       await this.prisma.session.deleteMany({
         where: { userId: user.id },
       });
@@ -423,9 +402,6 @@ export class AuthService {
     return { message: 'Password changed successfully' };
   }
 
-  /**
-   * Verifyemail
-   */
   async verifyEmail(token: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findFirst({
@@ -451,9 +427,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Resendverificationemail
-   */
   async resendVerificationEmail(email: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findUnique({
@@ -461,7 +434,6 @@ export class AuthService {
       });
 
       if (!user) {
-        // Don't reveal if user exists
         return { message: 'If the email exists, a verification email has been sent' };
       }
 
@@ -476,7 +448,6 @@ export class AuthService {
         data: { emailVerificationToken: verificationToken },
       });
 
-      // Send verification email
       const frontendUrl = this.configService.get<string>('app.frontendUrl') || 'http://localhost:3000';
       const verificationLink = `${frontendUrl}/auth/verify-email?token=${verificationToken}`;
       await this.emailService.sendEmail(
@@ -488,8 +459,7 @@ export class AuthService {
         <p><a href="${verificationLink}" style="background:#2563eb;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">Verify Email</a></p>
         <p>This link will expire in 24 hours.</p>
       `,
-      ).catch((err) => {
-        });
+      ).catch(() => {});
 
       return { message: 'If the email exists, a verification email has been sent' };
     } catch (error) {
@@ -498,9 +468,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Setupmfa
-   */
   async setupMfa(userId: string): Promise<{ secret: string; qrCode: string }> {
     try {
       const user = await this.prisma.user.findUnique({
@@ -514,7 +481,6 @@ export class AuthService {
       const secret = this.mfaService.generateSecret();
       const qrCode = await this.mfaService.generateQRCode(user.email, secret);
 
-      // Store encrypted secret temporarily (not enabled yet)
       await this.prisma.user.update({
         where: { id: userId },
         data: { totpSecretEnc: secret },
@@ -527,9 +493,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Enablemfa
-   */
   async enableMfa(userId: string, code: string): Promise<{ message: string; backupCodes: string[] }> {
     try {
       const user = await this.prisma.user.findUnique({
@@ -603,9 +566,6 @@ export class AuthService {
     return { message: 'MFA disabled successfully' };
   }
 
-  /**
-   * Listsessions
-   */
   async listSessions(userId: string) {
     return this.prisma.session.findMany({
       where: {
@@ -623,9 +583,6 @@ export class AuthService {
     });
   }
 
-  /**
-   * Revokesession
-   */
   async revokeSession(userId: string, sessionId: string): Promise<{ message: string }> {
     try {
       await this.prisma.session.delete({
@@ -642,9 +599,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Revokeallsessions
-   */
   async revokeAllSessions(userId: string): Promise<{ message: string }> {
     try {
       await this.prisma.session.deleteMany({
