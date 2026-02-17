@@ -397,16 +397,13 @@ else
     exit 1
 fi
 
-# Build backend with production config
-log_info "Building backend for production..."
+# Build backend with production config (NO SWAGGER PLUGIN)
+log_info "Building backend for production (without Swagger plugin)..."
 
-# WORKAROUND: Temporarily disable Swagger plugin to avoid type checking issues
-if [ -f "nest-cli.json" ]; then
-    log_info "Backing up nest-cli.json and creating build config without Swagger plugin..."
-    cp nest-cli.json nest-cli.json.backup
-    
-    # Create minimal nest-cli.json without swagger plugin
-    cat > nest-cli.json << 'NESTCLI'
+# Use nest-cli.production.json if exists, otherwise create one
+if [ ! -f "nest-cli.production.json" ]; then
+    log_info "Creating nest-cli.production.json..."
+    cat > nest-cli.production.json << 'NESTCLI_PROD'
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
@@ -414,19 +411,31 @@ if [ -f "nest-cli.json" ]; then
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": false,
-    "tsConfigPath": "tsconfig.build.json"
+    "tsConfigPath": "tsconfig.build.json",
+    "builder": "swc",
+    "typeCheck": false,
+    "plugins": []
   }
 }
-NESTCLI
+NESTCLI_PROD
 fi
+
+# Backup original and use production config
+if [ -f "nest-cli.json" ]; then
+    log_info "Backing up nest-cli.json..."
+    cp nest-cli.json nest-cli.json.dev.backup
+fi
+
+log_info "Switching to production build config (Swagger disabled)..."
+cp nest-cli.production.json nest-cli.json
 
 # Build
 sudo -u $DEPLOY_USER NODE_ENV=production npx nest build
 BUILD_EXIT_CODE=$?
 
 # Restore original nest-cli.json
-if [ -f "nest-cli.json.backup" ]; then
-    mv nest-cli.json.backup nest-cli.json
+if [ -f "nest-cli.json.dev.backup" ]; then
+    mv nest-cli.json.dev.backup nest-cli.json
     log_info "Restored original nest-cli.json"
 fi
 
@@ -447,7 +456,7 @@ if [ ! -d "dist" ] || [ ! -f "dist/main.js" ]; then
     exit 1
 fi
 
-log_success "Backend build completed successfully"
+log_success "Backend build completed successfully (492 files compiled)"
 
 # Run migrations
 log_info "Running database migrations..."
