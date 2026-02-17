@@ -74,8 +74,8 @@ read -p "Enter database password for user 'kahade_user': " DB_PASSWORD
 echo
 
 su - postgres -c "psql << EOF
-CREATE DATABASE kahade_prod;
-CREATE USER kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+CREATE DATABASE IF NOT EXISTS kahade_prod;
+CREATE USER IF NOT EXISTS kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
 GRANT ALL PRIVILEGES ON DATABASE kahade_prod TO kahade_user;
 ALTER DATABASE kahade_prod OWNER TO kahade_user;
 \\\\c kahade_prod
@@ -120,7 +120,7 @@ if ! id "$DEPLOY_USER" &>/dev/null; then
     usermod -aG sudo $DEPLOY_USER
 fi
 
-mkdir -p $DEPLOY_DIR/{backend,frontend} $BACKUP_DIR $LOG_DIR /var/www/kahade/uploads
+mkdir -p $DEPLOY_DIR/{backend,frontend} $BACKUP_DIR $LOG_DIR /var/www/kahade/uploads /var/www/certbot
 chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR $LOG_DIR /var/www/kahade/uploads
 
 ufw --force enable
@@ -231,10 +231,73 @@ sudo -u $DEPLOY_USER pnpm run build
 log_success "Frontend built"
 
 log_info "Configuring Nginx..."
-[ -f "$PROJECT_ROOT/nginx/nginx.conf" ] && cp "$PROJECT_ROOT/nginx/nginx.conf" /etc/nginx/nginx.conf
-[ -d "$PROJECT_ROOT/nginx/conf.d" ] && cp "$PROJECT_ROOT/nginx/conf.d/"*.conf /etc/nginx/conf.d/ 2>/dev/null
 
-nginx -t && systemctl enable nginx && systemctl restart nginx
+# Copy main nginx.conf but fix upstream for VPS
+cat > /etc/nginx/nginx.conf << 'NGINXCONF'
+user www-data;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 2048;
+    use epoll;
+    multi_accept on;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for" '
+                    'rt=$request_time uct="$upstream_connect_time" '
+                    'uht="$upstream_header_time" urt="$upstream_response_time"';
+
+    access_log /var/log/nginx/access.log main;
+
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+    client_max_body_size 10M;
+    server_tokens off;
+
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript 
+               application/json application/javascript application/xml+rss;
+
+    # Rate limiting
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=100r/m;
+    limit_req_zone $binary_remote_addr zone=auth_limit:10m rate=5r/m;
+    limit_req_status 429;
+    limit_conn_zone $binary_remote_addr zone=addr:10m;
+    limit_conn addr 10;
+
+    # Upstream backend (VPS uses localhost)
+    upstream api_backend {
+        server localhost:3000 max_fails=3 fail_timeout=30s;
+        keepalive 32;
+    }
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+NGINXCONF
+
+# Copy site configs from repo
+[ -d "$PROJECT_ROOT/nginx/conf.d" ] && cp "$PROJECT_ROOT/nginx/conf.d/"*.conf /etc/nginx/conf.d/
+
+# Remove default site
+rm -f /etc/nginx/sites-enabled/default
+
+# Test and reload
+nginx -t && systemctl enable nginx && systemctl reload nginx
 log_success "Nginx configured"
 
 log_info "Setting up PM2..."
@@ -247,7 +310,11 @@ if [ -f "ecosystem.config.prod.js" ]; then
     pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
     log_success "PM2 configured"
 else
-    log_warning "ecosystem.config.prod.js not found"
+    log_warning "ecosystem.config.prod.js not found, starting manually"
+    sudo -u $DEPLOY_USER pm2 delete kahade-api 2>/dev/null || true
+    sudo -u $DEPLOY_USER pm2 start dist/main.js --name kahade-api --env production
+    sudo -u $DEPLOY_USER pm2 save
+    pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
 fi
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local 2>/dev/null || true
@@ -285,8 +352,11 @@ chmod +x /usr/local/bin/kahade-backup.sh
 log_success "Deployment completed!"
 echo
 echo "==========================================================================="
-echo "Frontend: https://$DOMAIN"
-echo "API: https://$API_DOMAIN"
+echo "Frontend: http://$DOMAIN (HTTPS after certbot)"
+echo "API: http://$API_DOMAIN (HTTPS after certbot)"
+echo ""
+echo "Run certbot for SSL:"
+echo "  sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
 echo "==========================================================================="
 
 CREDS_FILE="$BACKUP_DIR/credentials_$(date +%Y%m%d_%H%M%S).txt"
