@@ -174,13 +174,11 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
   }, []);
 
-  // Memoize navbar classes for performance
+  // Memoize navbar classes for performance - NO GLASS, NO SHADOW
   const navClasses = useMemo(() => cn(
     'fixed top-0 left-0 right-0 z-50 py-3 md:py-4 transition-all duration-300',
-    scrolled 
-      ? 'glass shadow-sm border-b border-black/5' 
-      : 'bg-background border-b border-border'
-  ), [scrolled]);
+    'bg-[#FFFFFF] border-b border-[#E8E8E8]'
+  ), []);
 
   return (
     <>
@@ -263,7 +261,7 @@ export default function Navbar() {
                 {...ariaProps('Go to dashboard')}
               >
                 Dashboard
-                <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-4 h-4" weight="bold" aria-hidden="true" />
               </Button>
             ) : (
               <>
@@ -316,7 +314,7 @@ export default function Navbar() {
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" weight="bold" aria-hidden="true" />
               ) : (
-                <List className="w-6 h-6" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <List className="w-6 h-6" weight="bold" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -405,7 +403,7 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
   return (
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-[600px] bg-white rounded-lg border border-border shadow-2xl shadow-black/5 p-6"
+      className="absolute top-full left-0 mt-2 w-[600px] bg-white rounded-lg border border-border p-6"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -420,10 +418,10 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200 group"
+                  className="flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all duration-200 group"
                   onClick={onClose}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
+                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
                     <link.icon className="w-5 h-5" weight="bold" aria-hidden="true" />
                   </div>
                   <div>
@@ -445,7 +443,7 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
       <div className="mt-6 pt-6 border-t border-border">
         <Link
           href={data.featured.href}
-          className="flex items-center justify-between p-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200 group"
+          className="flex items-center justify-between p-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 group"
           onClick={onClose}
         >
           <div>
@@ -460,7 +458,7 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
             </p>
           </div>
           <ArrowUpRight 
-            className="w-5 h-5 text-primary-foreground/70 group-hover:text-primary-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" 
+            className="w-5 h-5 text-primary-foreground/70 group-hover:text-primary-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" 
             weight="bold" 
             aria-hidden="true"
           />
@@ -481,7 +479,7 @@ function MegaMenuResources({ data, onClose, onMouseEnter, onMouseLeave }: MegaMe
   return (
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-[500px] bg-white rounded-lg border border-border shadow-2xl shadow-black/5 p-6"
+      className="absolute top-full left-0 mt-2 w-[500px] bg-white rounded-lg border border-border p-6"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -496,10 +494,10 @@ function MegaMenuResources({ data, onClose, onMouseEnter, onMouseLeave }: MegaMe
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200 group"
+                  className="flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all duration-200 group"
                   onClick={onClose}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
+                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
                     <link.icon className="w-5 h-5" weight="bold" aria-hidden="true" />
                   </div>
                   <div>
@@ -531,7 +529,7 @@ function SimpleDropdown({ links, onClose, onMouseEnter, onMouseLeave }: SimpleDr
   return (
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg border border-border shadow-2xl shadow-black/5 p-2"
+      className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg border border-border p-2"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -539,7 +537,7 @@ function SimpleDropdown({ links, onClose, onMouseEnter, onMouseLeave }: SimpleDr
         <Link
           key={link.href}
           href={link.href}
-          className="block px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200"
+          className="block px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all duration-200"
           onClick={onClose}
         >
           {link.label}

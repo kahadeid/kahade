@@ -43,26 +43,10 @@
 
 @font-face {
   font-family: 'Amazon Ember';
-  font-style: italic;
-  font-weight: 100;
-  font-display: swap;
-  src: local('Amazon Ember Thin Italic'), url('/fonts/Amazon Ember Thin Italic.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember';
   font-style: normal;
   font-weight: 300;
   font-display: swap;
   src: local('Amazon Ember Light'), url('/fonts/Amazon Ember Light.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember';
-  font-style: italic;
-  font-weight: 300;
-  font-display: swap;
-  src: local('Amazon Ember Light Italic'), url('/fonts/Amazon Ember Light Italic.woff') format('woff');
 }
 
 @font-face {
@@ -75,26 +59,10 @@
 
 @font-face {
   font-family: 'Amazon Ember';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Amazon Ember Italic'), url('/fonts/Amazon Ember Italic.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src: local('Amazon Ember Medium'), url('/fonts/Amazon Ember Medium.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember';
-  font-style: italic;
-  font-weight: 500;
-  font-display: swap;
-  src: local('Amazon Ember Medium Italic'), url('/fonts/Amazon Ember Medium Italic.woff') format('woff');
 }
 
 @font-face {
@@ -107,26 +75,10 @@
 
 @font-face {
   font-family: 'Amazon Ember';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: local('Amazon Ember Bold Italic'), url('/fonts/Amazon Ember Bold Italic.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember';
   font-style: normal;
   font-weight: 900;
   font-display: swap;
   src: local('Amazon Ember Heavy'), url('/fonts/Amazon Ember Heavy.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember';
-  font-style: italic;
-  font-weight: 900;
-  font-display: swap;
-  src: local('Amazon Ember Heavy Italic'), url('/fonts/Amazon Ember Heavy Italic.woff') format('woff');
 }
 
 /* Display Variant for Large Text */
@@ -148,26 +100,10 @@
 
 @font-face {
   font-family: 'Amazon Ember Display';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Amazon Ember Display Italic'), url('/fonts/Amazon Ember Display Italic.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember Display';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src: local('Amazon Ember Display Medium'), url('/fonts/Amazon Ember Display Medium.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember Display';
-  font-style: italic;
-  font-weight: 500;
-  font-display: swap;
-  src: local('Amazon Ember Display Medium Italic'), url('/fonts/Amazon Ember Display Medium Italic.woff') format('woff');
 }
 
 @font-face {
@@ -184,14 +120,6 @@
   font-weight: 900;
   font-display: swap;
   src: local('Amazon Ember Display Heavy'), url('/fonts/Amazon Ember Display Heavy.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Amazon Ember Display';
-  font-style: italic;
-  font-weight: 900;
-  font-display: swap;
-  src: local('Amazon Ember Display Heavy Italic'), url('/fonts/Amazon Ember Display Heavy Italic.woff') format('woff');
 }
 
 /* Monospace Variant for Code */
