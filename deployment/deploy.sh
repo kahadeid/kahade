@@ -355,14 +355,10 @@ pm2 start dist/main.js \
   --node-args="--max-old-space-size=480" \
   --max-memory-restart 512M \
   --error /var/log/kahade/pm2-error.log \
-  --out /var/log/kahade/pm2-out.log \
-  --log-date-format="YYYY-MM-DD HH:mm:ss Z" \
+  --output /var/log/kahade/pm2-out.log \
+  --log-date-format "YYYY-MM-DD HH:mm:ss Z" \
   --merge-logs \
-  --autorestart \
-  --max-restarts 10 \
-  --min-uptime 10000 \
-  --kill-timeout 5000 \
-  --listen-timeout 10000
+  --time
 EOFPM2
 
 # Save PM2 process list
