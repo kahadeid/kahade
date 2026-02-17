@@ -73,12 +73,12 @@ systemctl start postgresql
 read -p "Enter database password for user 'kahade_user': " DB_PASSWORD
 echo
 
+# Create database and user separately (CREATE DATABASE cannot be in DO block)
+su - postgres -c "psql -c \"SELECT 1 FROM pg_database WHERE datname = 'kahade_prod'\" | grep -q 1 || psql -c 'CREATE DATABASE kahade_prod;'"
+
 su - postgres -c "psql << EOF
 DO \\\$\\\$
 BEGIN
-    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'kahade_prod') THEN
-        CREATE DATABASE kahade_prod;
-    END IF;
     IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'kahade_user') THEN
         CREATE USER kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
     ELSE
@@ -88,9 +88,9 @@ END
 \\\$\\\$;
 GRANT ALL PRIVILEGES ON DATABASE kahade_prod TO kahade_user;
 ALTER DATABASE kahade_prod OWNER TO kahade_user;
-\\\\c kahade_prod
-GRANT ALL ON SCHEMA public TO kahade_user;
 EOF"
+
+su - postgres -c "psql -d kahade_prod -c 'GRANT ALL ON SCHEMA public TO kahade_user;'"
 
 log_success "PostgreSQL configured"
 
