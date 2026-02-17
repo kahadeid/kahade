@@ -496,7 +496,7 @@
   }
   
   h1 {
-    font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+    font-size: clamp(1.75rem, 5vw + 1rem, 4.5rem);
     letter-spacing: -0.04em;
     line-height: 1.05;
   }
