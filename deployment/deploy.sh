@@ -74,8 +74,18 @@ read -p "Enter database password for user 'kahade_user': " DB_PASSWORD
 echo
 
 su - postgres -c "psql << EOF
-CREATE DATABASE IF NOT EXISTS kahade_prod;
-CREATE USER IF NOT EXISTS kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+DO \\$\\$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'kahade_prod') THEN
+        CREATE DATABASE kahade_prod;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'kahade_user') THEN
+        CREATE USER kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+    ELSE
+        ALTER USER kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+    END IF;
+END
+\\$\\$;
 GRANT ALL PRIVILEGES ON DATABASE kahade_prod TO kahade_user;
 ALTER DATABASE kahade_prod OWNER TO kahade_user;
 \\\\c kahade_prod
@@ -167,13 +177,13 @@ chown $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR/backend/.env.production
 
 cd $DEPLOY_DIR/backend
 
-log_info "Cleaning..."
-sudo -u $DEPLOY_USER rm -rf node_modules dist .pnpm-store
-sudo -u $DEPLOY_USER pnpm store prune || true
+log_info "Cleaning old build artifacts..."
+sudo -u $DEPLOY_USER rm -rf dist .pnpm-store
 
 log_info "Installing dependencies..."
 sudo -u $DEPLOY_USER NODE_ENV=production pnpm install --prod=false --frozen-lockfile=false
 [ $? -ne 0 ] && log_error "Install failed" && exit 1
+log_success "Dependencies installed"
 
 log_info "Generating Prisma Client..."
 sudo -u $DEPLOY_USER bash -c "export \$(grep -v '^#' .env.production | xargs) && npx prisma generate"
@@ -213,6 +223,13 @@ BUILD_EXIT=$?
 
 log_success "Backend built"
 
+log_info "Verifying node_modules exists..."
+if [ ! -d "node_modules" ]; then
+    log_error "node_modules missing after build!"
+    exit 1
+fi
+log_success "node_modules verified"
+
 log_info "Running migrations..."
 sudo -u $DEPLOY_USER bash -c "export \$(grep -v '^#' .env.production | xargs) && npx prisma migrate deploy"
 [ $? -eq 0 ] && log_success "Migrations complete" || log_warning "Migrations may have failed"
@@ -232,7 +249,7 @@ log_success "Frontend built"
 
 log_info "Configuring Nginx..."
 
-# Copy main nginx.conf but fix upstream for VPS
+# Create nginx.conf for VPS
 cat > /etc/nginx/nginx.conf << 'NGINXCONF'
 user www-data;
 worker_processes auto;
@@ -293,6 +310,9 @@ NGINXCONF
 # Copy site configs from repo
 [ -d "$PROJECT_ROOT/nginx/conf.d" ] && cp "$PROJECT_ROOT/nginx/conf.d/"*.conf /etc/nginx/conf.d/
 
+# Fix frontend root path in config
+sed -i 's|root /var/www/frontend;|root /var/www/kahade/frontend/dist;|g' /etc/nginx/conf.d/frontend.conf
+
 # Remove default site
 rm -f /etc/nginx/sites-enabled/default
 
@@ -303,18 +323,28 @@ log_success "Nginx configured"
 log_info "Setting up PM2..."
 cd $DEPLOY_DIR/backend
 
+# Stop any existing PM2 processes
+sudo -u $DEPLOY_USER pm2 delete kahade-api 2>/dev/null || true
+sudo -u $DEPLOY_USER pm2 delete all 2>/dev/null || true
+
 if [ -f "ecosystem.config.prod.js" ]; then
-    sudo -u $DEPLOY_USER pm2 delete kahade-api 2>/dev/null || true
     sudo -u $DEPLOY_USER pm2 start ecosystem.config.prod.js
-    sudo -u $DEPLOY_USER pm2 save
-    pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
-    log_success "PM2 configured"
 else
     log_warning "ecosystem.config.prod.js not found, starting manually"
-    sudo -u $DEPLOY_USER pm2 delete kahade-api 2>/dev/null || true
     sudo -u $DEPLOY_USER pm2 start dist/main.js --name kahade-api --env production
-    sudo -u $DEPLOY_USER pm2 save
-    pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
+fi
+
+sudo -u $DEPLOY_USER pm2 save
+pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
+
+log_success "PM2 configured"
+
+# Verify PM2 is running
+sleep 3
+if sudo -u $DEPLOY_USER pm2 list | grep -q "online"; then
+    log_success "Backend is running"
+else
+    log_error "Backend failed to start! Check logs: pm2 logs"
 fi
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local 2>/dev/null || true
@@ -352,11 +382,16 @@ chmod +x /usr/local/bin/kahade-backup.sh
 log_success "Deployment completed!"
 echo
 echo "==========================================================================="
-echo "Frontend: http://$DOMAIN (HTTPS after certbot)"
-echo "API: http://$API_DOMAIN (HTTPS after certbot)"
+echo "Frontend: http://$DOMAIN (HTTPS if SSL configured)"
+echo "API: http://$API_DOMAIN (HTTPS if SSL configured)"
 echo ""
-echo "Run certbot for SSL:"
+echo "To setup SSL (if not done yet):"
 echo "  sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
+echo ""
+echo "Check status:"
+echo "  sudo -u kahade pm2 list"
+echo "  sudo -u kahade pm2 logs kahade-api"
+echo "  curl http://localhost:3000/health"
 echo "==========================================================================="
 
 CREDS_FILE="$BACKUP_DIR/credentials_$(date +%Y%m%d_%H%M%S).txt"
@@ -369,3 +404,4 @@ JWT Secret: $JWT_SECRET
 EOF
 
 chmod 600 $CREDS_FILE
+log_info "Credentials saved to: $CREDS_FILE"
