@@ -177,13 +177,25 @@ chown $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR/backend/.env.production
 
 cd $DEPLOY_DIR/backend
 
-log_info "Cleaning old build artifacts..."
-sudo -u $DEPLOY_USER rm -rf dist .pnpm-store node_modules
+log_info "Force cleaning all build artifacts and dependencies..."
+sudo -u $DEPLOY_USER rm -rf dist node_modules .pnpm-store pnpm-lock.yaml
 
-log_info "Installing ALL dependencies (including devDependencies)..."
+log_info "Fresh install of ALL dependencies..."
 sudo -u $DEPLOY_USER pnpm install
-[ $? -ne 0 ] && log_error "Install failed" && exit 1
-log_success "Dependencies installed"
+[ $? -ne 0 ] && log_error "pnpm install failed" && exit 1
+
+# Verify critical dependencies
+if [ ! -d "node_modules/express" ]; then
+    log_error "express module missing after install!"
+    exit 1
+fi
+
+if [ ! -d "node_modules/@nestjs/core" ]; then
+    log_error "@nestjs/core missing after install!"
+    exit 1
+fi
+
+log_success "All dependencies installed and verified"
 
 log_info "Generating Prisma Client..."
 sudo -u $DEPLOY_USER bash -c "export \$(grep -v '^#' .env.production | xargs) && npx prisma generate"
@@ -221,20 +233,7 @@ BUILD_EXIT=$?
 [ $BUILD_EXIT -ne 0 ] && log_error "Build failed" && exit 1
 [ ! -f "dist/main.js" ] && log_error "Build output missing" && exit 1
 
-log_success "Backend built"
-
-log_info "Verifying node_modules exists..."
-if [ ! -d "node_modules" ]; then
-    log_error "node_modules missing after build!"
-    exit 1
-fi
-
-if [ ! -d "node_modules/express" ]; then
-    log_error "express module missing!"
-    exit 1
-fi
-
-log_success "node_modules verified (express found)"
+log_success "Backend built successfully"
 
 log_info "Running migrations..."
 sudo -u $DEPLOY_USER bash -c "export \$(grep -v '^#' .env.production | xargs) && npx prisma migrate deploy"
@@ -249,6 +248,7 @@ VITE_API_URL=https://${API_DOMAIN}/api
 VITE_WS_URL=wss://${API_DOMAIN}
 EOF
 
+sudo -u $DEPLOY_USER rm -rf node_modules pnpm-lock.yaml .pnpm-store
 sudo -u $DEPLOY_USER pnpm install
 sudo -u $DEPLOY_USER pnpm run build
 log_success "Frontend built"
