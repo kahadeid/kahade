@@ -1,7 +1,9 @@
 // =============================================================================
 // KAHADE - PM2 ECOSYSTEM PRODUCTION CONFIG
 // Usage:
-//   pm2 start ecosystem.config.prod.js --env production
+//   # Load env FIRST, then start (env_file requires PM2 >= 5.x):
+//   set -a && source .env.production && set +a
+//   pm2 start ecosystem.config.prod.js
 //   pm2 reload ecosystem.config.prod.js --update-env
 //   pm2 delete ecosystem.config.prod.js
 // =============================================================================
@@ -12,23 +14,23 @@ module.exports = {
       name: 'kahade-api',
       script: './dist/main.js',
 
-      // ── Cluster mode for multi-core utilization ──────────────────────────
-      // FIX: was `instances: 1, exec_mode: 'fork'` which doesn't scale.
-      // Use 'max' to spawn one worker per CPU, or set a fixed number like 2/4.
-      instances: process.env.PM2_INSTANCES || 'max',
-      exec_mode: 'cluster',
+      // FIX: 'cluster' mode breaks Socket.IO WebSocket (requires sticky sessions / shared adapter).
+      // Use 'fork' mode with instances: 1 unless you have Redis-based Socket.IO adapter configured.
+      // If you scale horizontally (e.g. 4 instances), add socket.io-redis adapter first.
+      instances: process.env.PM2_INSTANCES || 1,
+      exec_mode: 'fork',
 
-      // ── Environment ───────────────────────────────────────────────────────
-      // FIX: `env_file` is NOT a valid PM2 option — PM2 ignores it silently!
-      // Solution: load .env.production in deploy.sh with `source .env.production`
-      // BEFORE calling `pm2 start/reload` so PM2 inherits the vars.
-      // The env_production block below overrides/ensures critical vars.
-      env_production: {
+      // ── Environment ───────────────────────────────────────────────────────────
+      // env_file is supported in PM2 >= 5.x.
+      // IMPORTANT: always `source .env.production` in your shell BEFORE calling pm2
+      // so that older PM2 versions also get the env vars.
+      env_file: '.env.production',
+      env: {
         NODE_ENV: 'production',
         PORT: 3000,
       },
 
-      // ── Memory & Restart ─────────────────────────────────────────────────
+      // ── Memory & Restart ─────────────────────────────────────────────────────
       max_memory_restart: '512M',
       node_args: '--max-old-space-size=480',
       autorestart: true,
@@ -39,16 +41,16 @@ module.exports = {
       listen_timeout: 15000,
       kill_timeout: 5000,
 
-      // ── Logging ──────────────────────────────────────────────────────────
+      // ── Logging ──────────────────────────────────────────────────────────────
       error_file: '/var/log/kahade/pm2-error.log',
       out_file: '/var/log/kahade/pm2-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
 
-      // ── Scheduling ───────────────────────────────────────────────────────
+      // ── Scheduling ───────────────────────────────────────────────────────────
       cron_restart: '0 3 * * *', // Restart at 3 AM daily for memory cleanup
 
-      // ── Misc ─────────────────────────────────────────────────────────────
+      // ── Misc ─────────────────────────────────────────────────────────────────
       watch: false, // Never watch in production
     },
   ],
