@@ -380,7 +380,7 @@ log_success "PM2 configured"
 # Verify PM2 is running - wait longer and retry
 log_info "Verifying backend startup..."
 RETRY_COUNT=0
-MAX_RETRIES=10
+MAX_RETRIES=15
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     sleep 2
@@ -393,24 +393,24 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
         RETRY_COUNT=$((RETRY_COUNT + 1))
         if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
             log_error "Backend failed to start after $MAX_RETRIES attempts"
-            log_error "Check logs with: sudo -u kahade pm2 logs kahade-api"
+            log_error "Showing error logs:"
             sudo -u $DEPLOY_USER pm2 list
-            sudo -u $DEPLOY_USER pm2 logs kahade-api --lines 50 --nostream --err
+            sudo -u $DEPLOY_USER pm2 logs kahade-api --lines 100 --nostream --err
             exit 1
         fi
         log_warning "Waiting for backend to start... (attempt $RETRY_COUNT/$MAX_RETRIES)"
     fi
 done
 
-# Test backend health endpoint
+# Test backend health endpoint - CORRECT PATH: /api/v1/health
 log_info "Testing backend health..."
 sleep 3
-for HEALTH_PATH in "/health" "/api/health" "/" ; do
-    if curl -f -s http://localhost:3000$HEALTH_PATH > /dev/null 2>&1; then
-        log_success "Backend health check passed on http://localhost:3000$HEALTH_PATH"
-        break
-    fi
-done
+if curl -f -s http://localhost:3000/api/v1/health > /dev/null 2>&1; then
+    log_success "Backend health check passed: http://localhost:3000/api/v1/health"
+else
+    log_warning "Health check failed, but backend may still be starting..."
+    log_info "You can test manually: curl http://localhost:3000/api/v1/health"
+fi
 
 log_info "Configuring fail2ban..."
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local 2>/dev/null || true
@@ -452,16 +452,17 @@ echo "==========================================================================
 echo "🚀 Kahade Platform Deployed"
 echo "==========================================================================="
 echo
-echo "📱 Frontend: http://$DOMAIN (HTTPS if SSL configured)"
-echo "🔌 API: http://$API_DOMAIN (HTTPS if SSL configured)"
+echo "📱 Frontend: https://$DOMAIN"
+echo "🔌 API: https://$API_DOMAIN/api/v1"
+echo "❤️  Health: https://$API_DOMAIN/api/v1/health"
 echo
-echo "🔐 To setup SSL certificates (recommended):"
+echo "🔐 To setup SSL certificates (if not configured):"
 echo "   sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
 echo
 echo "📊 Check application status:"
 echo "   sudo -u kahade pm2 list"
 echo "   sudo -u kahade pm2 logs kahade-api"
-echo "   curl http://localhost:3000/health"
+echo "   curl http://localhost:3000/api/v1/health"
 echo "   systemctl status nginx"
 echo
 echo "🔧 Services:"
