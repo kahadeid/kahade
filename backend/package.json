@@ -7,6 +7,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "build:prod": "NODE_ENV=production nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -28,7 +29,8 @@
     "scan:not-implemented": "ts-node scripts/not-implemented-scanner.ts",
     "backup:db": "./scripts/backup-database.sh",
     "deploy:staging": "./scripts/deploy.sh staging develop",
-    "deploy:production": "./scripts/deploy.sh production main",
+    "deploy:production": "./scripts/deploy.sh production master",
+    "deploy:prod": "./scripts/deploy-production.sh",
     "load:test": "k6 run test/load/load-test.js"
   },
   "dependencies": {
