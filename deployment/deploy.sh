@@ -4,43 +4,6 @@
 # =============================================================================
 # Usage: sudo bash deploy.sh
 # Requires: Ubuntu 24.04, run as root dari root project (bukan dari deployment/)
-#
-# ── DAFTAR LENGKAP BUG YANG DIPERBAIKI ───────────────────────────────────────
-#
-# [DEPLOY SCRIPT BUGS - original deploy.sh]
-#  FIX-01: Nginx langsung load HTTPS config padahal cert belum ada → crash
-#  FIX-02: REDIS_ENABLED tidak di-set 'true' → Redis/Queue/Session diam-diam mati
-#  FIX-03: PM2 start via raw command, bukan ecosystem config → env_file tidak terbaca
-#  FIX-04: export $(xargs) pecah jika DATABASE_URL punya char &,=,! → crash saat start
-#  FIX-05: JWT var name salah → jwt.config.ts baca JWT_ACCESS_TOKEN_EXPIRY, deploy set JWT_EXPIRES_IN
-#  FIX-06: QUEUE_REDIS_PASSWORD tidak di-set → Bull queue gagal auth ke Redis
-#  FIX-07: pnpm install sebagai root → deploy user tidak bisa akses pnpm store
-#  FIX-08: nest-cli.json tidak di-restore jika build gagal → deploy ulang rusak
-#  FIX-09: PM2 startup detection pakai grep "sudo env" yang fragile → skip startup
-#  FIX-10: PostgreSQL setup tidak idempotent → gagal saat re-run (DB sudah ada)
-#  FIX-11: ClamAV tidak diinstall padahal CLAMAV_ENABLED=true di kode
-#  FIX-12: .env.production terlalu minimal → banyak required var hilang (STORAGE_TYPE, LOG_LEVEL, dll)
-#  FIX-13: Frontend double-proxy: nginx kahade.id proxies /api/ ke https://api.kahade.id
-#          → TLS double-hop + potential circular route, harusnya ke http://127.0.0.1:3000
-#  FIX-14: Nginx auth_limit 5r/m burst=3 terlalu ketat → register+login+verify-email = blocked
-#  FIX-15: Certbot tidak di-run interaktif setelah nginx HTTP siap
-#
-# [ENV VARIABLE BUGS - .env.production tidak match kode yang membacanya]
-#  FIX-16: REDIS_TLS=true di .env tapi kode baca REDIS_TLS_ENABLED → TLS tidak aktif
-#  FIX-17: REDIS_URL tidak di-set → BruteForceService + RedisFallbackService fallback ke in-memory
-#          (brute-force protection tidak persistent, hilang tiap restart!)
-#  FIX-18: UPLOAD_DEST tidak di-set → StorageService baca UPLOAD_DEST bukan UPLOAD_PATH
-#          → file upload ke ./uploads (relatif ke dist/) bukan /var/www/kahade/uploads
-#  FIX-19: ENCRYPTION_IV di-set kosong '' → security.config.ts default ke 'dev-iv-16-chars!!'
-#          (value dev masuk ke production)
-#  FIX-20: SMTP_PASS=placeholder di .env lama yang di-copy ke production
-#
-# [SOURCE CODE BUGS - diperbaiki di deploy dengan workaround/config]
-#  FIX-21: queue.config.ts tidak ada field 'prefix' → queue.module.ts pakai default 'kahade' ✓ OK
-#  FIX-22: pnpm-workspace.yaml ignoredBuiltDependencies skip prisma generate postinstall
-#          → sudah di-handle dengan explicit prisma generate di script ini ✓
-#  FIX-23: ENCRYPTION_KEY harus 32 hex chars (32 bytes) untuk AES-256 ✓ sudah fix di v1
-#
 # =============================================================================
 
 set -euo pipefail
