@@ -2,15 +2,15 @@ module.exports = {
   apps: [{
     name: 'kahade-api',
     script: './dist/main.js',
-    instances: 2,
-    exec_mode: 'cluster',
+    instances: 1,
+    exec_mode: 'fork',
     env_file: '.env.production',
     env: {
       NODE_ENV: 'production',
       PORT: 3000
     },
-    max_memory_restart: '500M',
-    node_args: '--max-old-space-size=460',
+    max_memory_restart: '512M',
+    node_args: '--max-old-space-size=480',
     error_file: '/var/log/kahade/pm2-error.log',
     out_file: '/var/log/kahade/pm2-out.log',
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
@@ -21,8 +21,7 @@ module.exports = {
     min_uptime: '10s',
     listen_timeout: 10000,
     kill_timeout: 5000,
-    wait_ready: true,
-    cron_restart: '0 3 * * *', // Restart setiap jam 3 pagi
+    cron_restart: '0 3 * * *', // Restart setiap jam 3 pagi untuk clear memory
     exp_backoff_restart_delay: 100
   }]
 };
