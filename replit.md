@@ -1,39 +1,37 @@
-# Kahade - Enterprise Escrow Platform
+# Kahade Platform - Enterprise Escrow Platform
 
 ## Overview
-Kahade is an enterprise-grade escrow platform built with a NestJS backend and React (Vite) frontend. It provides secure transaction escrow services with features including KYC, wallet management, dispute resolution, messaging, and payment gateway integration.
+Kahade is an enterprise-grade P2P escrow platform built with a NestJS backend and React (Vite) frontend. It provides secure transaction handling, KYC verification, wallet management, and dispute resolution.
 
 ## Project Architecture
-- **Frontend**: React 18 + Vite + TypeScript + Tailwind CSS v4 (port 5000)
-  - Uses wouter for routing, axios for API calls, i18next for localization (Indonesian/English)
-  - Radix UI components with shadcn-style patterns
-  - Located in `/frontend`
-- **Backend**: NestJS 10 + Prisma ORM + PostgreSQL (port 3001)
-  - RESTful API with versioning, Swagger docs at `/api/docs`
-  - Modular architecture: core/, infrastructure/, integrations/, security/, jobs/
-  - Located in `/backend`
-- **Database**: PostgreSQL (Replit built-in, Neon-backed)
-  - Prisma ORM with migrations in `/backend/prisma/migrations`
+- **Frontend**: React + Vite + Tailwind CSS v4, served on port 5000
+- **Backend**: NestJS with Prisma ORM, runs on port 3001
+- **Database**: PostgreSQL (Replit-managed via DATABASE_URL)
+- **Proxy**: Frontend proxies `/api` requests to backend on port 3001
+
+## Directory Structure
+```
+/backend       - NestJS backend API
+  /src         - Source code (modules, controllers, services)
+  /prisma      - Database schema and migrations
+  /.env        - Environment configuration
+/frontend      - React + Vite frontend
+  /src         - React components, pages, hooks
+```
 
 ## Key Configuration
-- Frontend Vite dev server: `0.0.0.0:5000` with `allowedHosts: true`
-- Backend NestJS: `0.0.0.0:3001`
-- Vite proxy: `/api` -> `http://localhost:3001`
-- Frontend env: `/frontend/.env` (VITE_API_BASE_URL=/api)
-- Backend env: `/backend/.env` (DATABASE_URL from Replit env)
-- CORS configured for Replit domain
-- Redis disabled (in-memory fallback for cache/queues)
+- Backend port: 3001 (configured in backend/.env)
+- Frontend port: 5000 (configured in frontend/vite.config.ts)
+- Vite proxies `/api` to `http://localhost:3001`
+- CORS: All origins allowed in development mode
+- Redis: Disabled (REDIS_ENABLED=false), using in-memory fallback
+- Database: Prisma with PostgreSQL, migrations applied
 
-## Recent Changes
-- 2026-02-16: Initial Replit setup
-  - Installed missing npm dependencies (nodemailer, otplib, qrcode, etc.)
-  - Fixed CacheModule missing import
-  - Created stub email/notification processors
-  - Fixed IsBigInt validator (not in class-validator)
-  - Allowed empty SMTP_HOST/SMTP_USER in env validation
-  - Relaxed VITE_API_BASE_URL validation to accept relative paths
-  - Configured DATABASE_URL to use Replit PostgreSQL
-  - Ran Prisma migrations
+## Running
+Single workflow runs both:
+- `cd backend && npm run start:dev` (backend with hot reload)
+- `cd frontend && npm run dev` (Vite dev server)
 
-## User Preferences
-- None recorded yet
+## Deployment
+- Build: Frontend `npm run build`, Backend `nest build`
+- Production: Backend serves on port 5000 with `node dist/main`
