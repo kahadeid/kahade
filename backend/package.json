@@ -55,7 +55,7 @@
     "bcrypt": "^5.1.1",
     "bull": "^4.16.3",
     "cache-manager": "^5.7.6",
-    "cache-manager-ioredis-yet": "^2.1.1",
+    "cache-manager-ioredis-yet": "^2.1.2",
     "clamscan": "^2.3.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -71,7 +71,7 @@
     "multer": "^2.0.2",
     "nanoid": "^5.0.9",
     "nodemailer": "^8.0.1",
-    "otplib": "^13.3.1",
+    "otplib": "^13.3.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -152,5 +152,11 @@
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "inflight": "npm:@filesystems/inflight@latest",
+      "glob@<8": "^8.0.0"
+    }
   }
 }
