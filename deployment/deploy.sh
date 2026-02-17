@@ -178,10 +178,10 @@ chown $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR/backend/.env.production
 cd $DEPLOY_DIR/backend
 
 log_info "Cleaning old build artifacts..."
-sudo -u $DEPLOY_USER rm -rf dist .pnpm-store
+sudo -u $DEPLOY_USER rm -rf dist .pnpm-store node_modules
 
-log_info "Installing dependencies..."
-sudo -u $DEPLOY_USER NODE_ENV=production pnpm install --prod=false --frozen-lockfile=false
+log_info "Installing ALL dependencies (including devDependencies)..."
+sudo -u $DEPLOY_USER pnpm install
 [ $? -ne 0 ] && log_error "Install failed" && exit 1
 log_success "Dependencies installed"
 
@@ -228,7 +228,13 @@ if [ ! -d "node_modules" ]; then
     log_error "node_modules missing after build!"
     exit 1
 fi
-log_success "node_modules verified"
+
+if [ ! -d "node_modules/express" ]; then
+    log_error "express module missing!"
+    exit 1
+fi
+
+log_success "node_modules verified (express found)"
 
 log_info "Running migrations..."
 sudo -u $DEPLOY_USER bash -c "export \$(grep -v '^#' .env.production | xargs) && npx prisma migrate deploy"
@@ -243,7 +249,7 @@ VITE_API_URL=https://${API_DOMAIN}/api
 VITE_WS_URL=wss://${API_DOMAIN}
 EOF
 
-sudo -u $DEPLOY_USER pnpm install --frozen-lockfile=false
+sudo -u $DEPLOY_USER pnpm install
 sudo -u $DEPLOY_USER pnpm run build
 log_success "Frontend built"
 
