@@ -345,13 +345,25 @@ cd $DEPLOY_DIR/backend
 sudo -u $DEPLOY_USER pm2 delete kahade-api 2>/dev/null || true
 sudo -u $DEPLOY_USER pm2 delete all 2>/dev/null || true
 
-# Start PM2
-if [ -f "ecosystem.config.prod.js" ]; then
-    sudo -u $DEPLOY_USER pm2 start ecosystem.config.prod.js
-else
-    log_warning "ecosystem.config.prod.js not found, starting manually"
-    sudo -u $DEPLOY_USER pm2 start dist/main.js --name kahade-api --env production
-fi
+# Always start with direct command to ensure proper naming
+log_info "Starting backend with PM2..."
+sudo -u $DEPLOY_USER bash << 'EOFPM2'
+export $(grep -v '^#' /var/www/kahade/backend/.env.production | xargs)
+cd /var/www/kahade/backend
+pm2 start dist/main.js \
+  --name kahade-api \
+  --node-args="--max-old-space-size=480" \
+  --max-memory-restart 512M \
+  --error /var/log/kahade/pm2-error.log \
+  --out /var/log/kahade/pm2-out.log \
+  --log-date-format="YYYY-MM-DD HH:mm:ss Z" \
+  --merge-logs \
+  --autorestart \
+  --max-restarts 10 \
+  --min-uptime 10000 \
+  --kill-timeout 5000 \
+  --listen-timeout 10000
+EOFPM2
 
 # Save PM2 process list
 sudo -u $DEPLOY_USER pm2 save
@@ -376,15 +388,18 @@ MAX_RETRIES=10
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     sleep 2
-    if sudo -u $DEPLOY_USER pm2 list | grep -q "online"; then
+    PM2_STATUS=$(sudo -u $DEPLOY_USER pm2 list | grep "kahade-api" | grep "online" || echo "")
+    if [ -n "$PM2_STATUS" ]; then
         log_success "Backend is running!"
+        sudo -u $DEPLOY_USER pm2 list
         break
     else
         RETRY_COUNT=$((RETRY_COUNT + 1))
         if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
             log_error "Backend failed to start after $MAX_RETRIES attempts"
             log_error "Check logs with: sudo -u kahade pm2 logs kahade-api"
-            sudo -u $DEPLOY_USER pm2 logs kahade-api --lines 50 --nostream
+            sudo -u $DEPLOY_USER pm2 list
+            sudo -u $DEPLOY_USER pm2 logs kahade-api --lines 50 --nostream --err
             exit 1
         fi
         log_warning "Waiting for backend to start... (attempt $RETRY_COUNT/$MAX_RETRIES)"
@@ -393,12 +408,13 @@ done
 
 # Test backend health endpoint
 log_info "Testing backend health..."
-sleep 2
-if curl -f -s http://localhost:3000/health > /dev/null 2>&1; then
-    log_success "Backend health check passed"
-else
-    log_warning "Backend health check failed, but process is running"
-fi
+sleep 3
+for HEALTH_PATH in "/health" "/api/health" "/" ; do
+    if curl -f -s http://localhost:3000$HEALTH_PATH > /dev/null 2>&1; then
+        log_success "Backend health check passed on http://localhost:3000$HEALTH_PATH"
+        break
+    fi
+done
 
 log_info "Configuring fail2ban..."
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local 2>/dev/null || true
