@@ -74,7 +74,7 @@ read -p "Enter database password for user 'kahade_user': " DB_PASSWORD
 echo
 
 su - postgres -c "psql << EOF
-DO \\$\\$
+DO \\\$\\\$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'kahade_prod') THEN
         CREATE DATABASE kahade_prod;
@@ -85,7 +85,7 @@ BEGIN
         ALTER USER kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
     END IF;
 END
-\\$\\$;
+\\\$\\\$;
 GRANT ALL PRIVILEGES ON DATABASE kahade_prod TO kahade_user;
 ALTER DATABASE kahade_prod OWNER TO kahade_user;
 \\\\c kahade_prod
@@ -316,9 +316,27 @@ sed -i 's|root /var/www/frontend;|root /var/www/kahade/frontend/dist;|g' /etc/ng
 # Remove default site
 rm -f /etc/nginx/sites-enabled/default
 
-# Test and reload
-nginx -t && systemctl enable nginx && systemctl reload nginx
-log_success "Nginx configured"
+# Test nginx config
+if ! nginx -t; then
+    log_error "Nginx configuration test failed"
+    exit 1
+fi
+
+# Enable and start nginx
+systemctl enable nginx
+
+# Force restart nginx (not reload) to ensure it starts fresh
+systemctl stop nginx 2>/dev/null || true
+sleep 1
+systemctl start nginx
+
+if systemctl is-active --quiet nginx; then
+    log_success "Nginx running"
+else
+    log_error "Nginx failed to start"
+    systemctl status nginx
+    exit 1
+fi
 
 log_info "Setting up PM2..."
 cd $DEPLOY_DIR/backend
@@ -327,6 +345,7 @@ cd $DEPLOY_DIR/backend
 sudo -u $DEPLOY_USER pm2 delete kahade-api 2>/dev/null || true
 sudo -u $DEPLOY_USER pm2 delete all 2>/dev/null || true
 
+# Start PM2
 if [ -f "ecosystem.config.prod.js" ]; then
     sudo -u $DEPLOY_USER pm2 start ecosystem.config.prod.js
 else
@@ -334,19 +353,54 @@ else
     sudo -u $DEPLOY_USER pm2 start dist/main.js --name kahade-api --env production
 fi
 
+# Save PM2 process list
 sudo -u $DEPLOY_USER pm2 save
-pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
+
+# Setup PM2 startup script
+log_info "Configuring PM2 startup on boot..."
+PM2_STARTUP_CMD=$(sudo -u $DEPLOY_USER pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER | grep "sudo env")
+if [ -n "$PM2_STARTUP_CMD" ]; then
+    eval $PM2_STARTUP_CMD
+    log_success "PM2 startup configured"
+else
+    log_warning "PM2 startup command not found, trying alternative method"
+    env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
+fi
 
 log_success "PM2 configured"
 
-# Verify PM2 is running
-sleep 3
-if sudo -u $DEPLOY_USER pm2 list | grep -q "online"; then
-    log_success "Backend is running"
+# Verify PM2 is running - wait longer and retry
+log_info "Verifying backend startup..."
+RETRY_COUNT=0
+MAX_RETRIES=10
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    sleep 2
+    if sudo -u $DEPLOY_USER pm2 list | grep -q "online"; then
+        log_success "Backend is running!"
+        break
+    else
+        RETRY_COUNT=$((RETRY_COUNT + 1))
+        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+            log_error "Backend failed to start after $MAX_RETRIES attempts"
+            log_error "Check logs with: sudo -u kahade pm2 logs kahade-api"
+            sudo -u $DEPLOY_USER pm2 logs kahade-api --lines 50 --nostream
+            exit 1
+        fi
+        log_warning "Waiting for backend to start... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+    fi
+done
+
+# Test backend health endpoint
+log_info "Testing backend health..."
+sleep 2
+if curl -f -s http://localhost:3000/health > /dev/null 2>&1; then
+    log_success "Backend health check passed"
 else
-    log_error "Backend failed to start! Check logs: pm2 logs"
+    log_warning "Backend health check failed, but process is running"
 fi
 
+log_info "Configuring fail2ban..."
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local 2>/dev/null || true
 
 cat > /etc/fail2ban/filter.d/kahade.conf << 'EOF'
@@ -367,6 +421,7 @@ EOF
 
 systemctl enable fail2ban && systemctl restart fail2ban
 
+log_info "Setting up automated backups..."
 cat > /usr/local/bin/kahade-backup.sh << 'EOF'
 #!/bin/bash
 BACKUP_DIR="/var/backups/kahade"
@@ -379,19 +434,30 @@ EOF
 chmod +x /usr/local/bin/kahade-backup.sh
 (crontab -l 2>/dev/null; echo "0 2 * * * /usr/local/bin/kahade-backup.sh >> /var/log/kahade/backup.log 2>&1") | crontab -
 
-log_success "Deployment completed!"
+log_success "Deployment completed successfully!"
 echo
 echo "==========================================================================="
-echo "Frontend: http://$DOMAIN (HTTPS if SSL configured)"
-echo "API: http://$API_DOMAIN (HTTPS if SSL configured)"
-echo ""
-echo "To setup SSL (if not done yet):"
-echo "  sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
-echo ""
-echo "Check status:"
-echo "  sudo -u kahade pm2 list"
-echo "  sudo -u kahade pm2 logs kahade-api"
-echo "  curl http://localhost:3000/health"
+echo "🚀 Kahade Platform Deployed"
+echo "==========================================================================="
+echo
+echo "📱 Frontend: http://$DOMAIN (HTTPS if SSL configured)"
+echo "🔌 API: http://$API_DOMAIN (HTTPS if SSL configured)"
+echo
+echo "🔐 To setup SSL certificates (recommended):"
+echo "   sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
+echo
+echo "📊 Check application status:"
+echo "   sudo -u kahade pm2 list"
+echo "   sudo -u kahade pm2 logs kahade-api"
+echo "   curl http://localhost:3000/health"
+echo "   systemctl status nginx"
+echo
+echo "🔧 Services:"
+echo "   - Backend: Running on port 3000 (PM2)"
+echo "   - Frontend: Served by Nginx"
+echo "   - Database: PostgreSQL on port 5432"
+echo "   - Cache: Redis on port 6379"
+echo
 echo "==========================================================================="
 
 CREDS_FILE="$BACKUP_DIR/credentials_$(date +%Y%m%d_%H%M%S).txt"
@@ -401,7 +467,15 @@ Kahade Deployment - $(date)
 Database Password: $DB_PASSWORD
 Redis Password: $REDIS_PASSWORD
 JWT Secret: $JWT_SECRET
+JWT Refresh Secret: $JWT_REFRESH_SECRET
+Session Secret: $SESSION_SECRET
+Cookie Secret: $COOKIE_SECRET
+CSRF Secret: $CSRF_SECRET
+Encryption Key: $ENCRYPTION_KEY
 EOF
 
 chmod 600 $CREDS_FILE
-log_info "Credentials saved to: $CREDS_FILE"
+log_info "🔑 Credentials saved securely to: $CREDS_FILE"
+echo
+echo "⚠️  IMPORTANT: Save the credentials file in a secure location!"
+echo
