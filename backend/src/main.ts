@@ -97,6 +97,11 @@ async function bootstrap() {
         return;
       }
 
+      if (NODE_ENV === 'development') {
+        callback(null, true);
+        return;
+      }
+
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
