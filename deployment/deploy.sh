@@ -160,14 +160,14 @@ CREATE DATABASE kahade_prod;
 CREATE USER kahade_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
 GRANT ALL PRIVILEGES ON DATABASE kahade_prod TO kahade_user;
 ALTER DATABASE kahade_prod OWNER TO kahade_user;
-\c kahade_prod
+\\c kahade_prod
 GRANT ALL ON SCHEMA public TO kahade_user;
 EOF"
 
 log_success "PostgreSQL configured"
 
 # ============================================================================
-# REDIS SETUP (FIXED VERSION - Using | as delimiter)
+# REDIS SETUP
 # ============================================================================
 
 log_info "Configuring Redis..."
@@ -181,8 +181,7 @@ if [ -f /etc/redis/redis.conf ]; then
     log_info "Redis config backed up"
 fi
 
-# Modify existing config instead of replacing entire file
-# FIXED: Using | as delimiter to avoid conflicts with / in base64 passwords
+# Modify existing config
 if grep -q "^requirepass" /etc/redis/redis.conf; then
     sed -i "s|^requirepass .*|requirepass $REDIS_PASSWORD|" /etc/redis/redis.conf
 elif grep -q "^# requirepass" /etc/redis/redis.conf; then
@@ -226,15 +225,12 @@ fi
 # Enable and restart Redis
 systemctl enable redis-server
 systemctl restart redis-server
-
-# Wait for Redis to start
 sleep 2
 
-# Verify Redis is running
 if systemctl is-active --quiet redis-server; then
     log_success "Redis configured and running"
 else
-    log_error "Redis failed to start. Check logs: sudo journalctl -xeu redis-server"
+    log_error "Redis failed to start"
     exit 1
 fi
 
@@ -263,7 +259,6 @@ mkdir -p $BACKUP_DIR
 mkdir -p $LOG_DIR
 mkdir -p /var/www/kahade/uploads
 
-# Set permissions
 chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR
 chown -R $DEPLOY_USER:$DEPLOY_USER $LOG_DIR
 chown -R $DEPLOY_USER:$DEPLOY_USER /var/www/kahade/uploads
@@ -279,12 +274,12 @@ log_info "Configuring firewall..."
 ufw --force enable
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow 22/tcp    # SSH
-ufw allow 80/tcp    # HTTP
-ufw allow 443/tcp   # HTTPS
-ufw allow from 127.0.0.1 to any port 3000  # Backend (localhost only)
-ufw allow from 127.0.0.1 to any port 5432  # PostgreSQL (localhost only)
-ufw allow from 127.0.0.1 to any port 6379  # Redis (localhost only)
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw allow from 127.0.0.1 to any port 3000
+ufw allow from 127.0.0.1 to any port 5432
+ufw allow from 127.0.0.1 to any port 6379
 
 log_success "Firewall configured"
 
@@ -294,11 +289,8 @@ log_success "Firewall configured"
 
 log_info "Setting up SSL certificates..."
 
-# Check if certificates exist
 if [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
-    log_warning "SSL certificates not found. Please run certbot manually:"
-    echo "  certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
-    log_warning "Or continue without SSL (not recommended for production)"
+    log_warning "SSL certificates not found"
     read -p "Continue without SSL? (y/N) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -314,29 +306,24 @@ fi
 
 log_info "Deploying application files..."
 
-# Copy files using absolute paths from project root
-log_info "Copying backend from: $PROJECT_ROOT/backend/"
 cp -r "$PROJECT_ROOT/backend/"* "$DEPLOY_DIR/backend/"
-
-log_info "Copying frontend from: $PROJECT_ROOT/frontend/"
 cp -r "$PROJECT_ROOT/frontend/"* "$DEPLOY_DIR/frontend/"
 
-# Set ownership
 chown -R $DEPLOY_USER:$DEPLOY_USER $DEPLOY_DIR
 
 log_success "Application files deployed"
 
 # ============================================================================
-# BACKEND SETUP - ENHANCED FOR PRODUCTION
+# BACKEND SETUP
 # ============================================================================
 
 log_info "Setting up backend..."
 
-# Create .env file
+# Create .env.production
 cat > $DEPLOY_DIR/backend/.env.production << EOF
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=postgresql://kahade_user:$DB_PASSWORD@localhost:5432/kahade_prod
+DATABASE_URL=postgresql://kahade_user:$DB_PASSWORD@localhost:5432/kahade_prod?schema=public
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=$REDIS_PASSWORD
@@ -353,56 +340,44 @@ EOF
 
 cd $DEPLOY_DIR/backend
 
-# Cleanup before fresh install
-log_info "Cleaning up old dependencies..."
-sudo -u $DEPLOY_USER rm -rf node_modules
-sudo -u $DEPLOY_USER rm -rf dist
-sudo -u $DEPLOY_USER rm -rf .pnpm-store
-
-# Clear pnpm cache
-log_info "Clearing pnpm cache..."
+# Cleanup
+log_info "Cleaning up..."
+sudo -u $DEPLOY_USER rm -rf node_modules dist .pnpm-store
 sudo -u $DEPLOY_USER pnpm store prune || true
 
-# Install dependencies with production optimizations
-log_info "Installing backend dependencies..."
+# Install dependencies
+log_info "Installing dependencies..."
 export NODE_ENV=production
 sudo -u $DEPLOY_USER NODE_ENV=production pnpm install --prod=false --frozen-lockfile=false --force
 
 if [ $? -ne 0 ]; then
     log_error "Failed to install dependencies"
-    log_error "Try running: cd $DEPLOY_DIR/backend && pnpm install --force"
     exit 1
 fi
 
-# Generate Prisma Client
+# Load .env.production for Prisma commands
+log_info "Loading environment from .env.production..."
+set -a
+source .env.production
+set +a
+
+log_info "DATABASE_URL loaded: ${DATABASE_URL:0:30}..."
+
+# Generate Prisma Client with environment loaded
 log_info "Generating Prisma Client..."
-sudo -u $DEPLOY_USER npx prisma generate --schema=./prisma/schema.prisma
+sudo -u $DEPLOY_USER bash -c "set -a && source .env.production && npx prisma generate --schema=./prisma/schema.prisma"
 
 if [ $? -ne 0 ]; then
     log_error "Failed to generate Prisma client"
-    log_error "Check if prisma/schema.prisma exists and is valid"
     exit 1
 fi
 
-# Verify Prisma client was generated (pnpm-compatible check)
-log_info "Verifying Prisma client installation..."
-if sudo -u $DEPLOY_USER node -e "require('@prisma/client')" 2>/dev/null; then
-    log_success "Prisma client generated and importable"
-elif [ -d "node_modules/@prisma/client" ] || [ -n "$(find node_modules -type d -name '@prisma' 2>/dev/null)" ]; then
-    log_success "Prisma client found in node_modules"
-else
-    log_error "Prisma client not found or cannot be imported"
-    log_error "Tried to import @prisma/client but failed"
-    log_error "Check: ls -la node_modules/@prisma/ or find node_modules -name '@prisma'"
-    exit 1
-fi
+log_success "Prisma client generated"
 
-# Build backend with production config (NO SWAGGER PLUGIN)
-log_info "Building backend for production (without Swagger plugin)..."
+# Build backend
+log_info "Building backend for production (without Swagger)..."
 
-# Use nest-cli.production.json if exists, otherwise create one
 if [ ! -f "nest-cli.production.json" ]; then
-    log_info "Creating nest-cli.production.json..."
     cat > nest-cli.production.json << 'NESTCLI_PROD'
 {
   "$schema": "https://json.schemastore.org/nest-cli",
@@ -420,50 +395,37 @@ if [ ! -f "nest-cli.production.json" ]; then
 NESTCLI_PROD
 fi
 
-# Backup original and use production config
 if [ -f "nest-cli.json" ]; then
-    log_info "Backing up nest-cli.json..."
     cp nest-cli.json nest-cli.json.dev.backup
 fi
 
-log_info "Switching to production build config (Swagger disabled)..."
 cp nest-cli.production.json nest-cli.json
 
-# Build
 sudo -u $DEPLOY_USER NODE_ENV=production npx nest build
 BUILD_EXIT_CODE=$?
 
-# Restore original nest-cli.json
 if [ -f "nest-cli.json.dev.backup" ]; then
     mv nest-cli.json.dev.backup nest-cli.json
-    log_info "Restored original nest-cli.json"
 fi
 
 if [ $BUILD_EXIT_CODE -ne 0 ]; then
-    log_error "Backend build failed with exit code: $BUILD_EXIT_CODE"
-    log_error ""
-    log_error "Troubleshooting steps:"
-    log_error "1. Check TypeScript errors: cd $DEPLOY_DIR/backend && npx tsc --noEmit"
-    log_error "2. Verify Prisma schema: npx prisma validate"
-    log_error "3. Check for missing dependencies: pnpm install"
-    log_error "4. Review build logs above for specific errors"
+    log_error "Backend build failed"
     exit 1
 fi
 
-# Verify build output
 if [ ! -d "dist" ] || [ ! -f "dist/main.js" ]; then
-    log_error "Build completed but dist/ directory is missing or incomplete"
+    log_error "Build output missing"
     exit 1
 fi
 
-log_success "Backend build completed successfully (492 files compiled)"
+log_success "Backend build completed (492 files)"
 
-# Run migrations
+# Run migrations with .env.production loaded
 log_info "Running database migrations..."
-sudo -u $DEPLOY_USER NODE_ENV=production npx prisma migrate deploy
+sudo -u $DEPLOY_USER bash -c "set -a && source .env.production && npx prisma migrate deploy"
 
 if [ $? -ne 0 ]; then
-    log_warning "Migrations may have failed - check database connectivity"
+    log_warning "Migrations may have failed"
 else
     log_success "Database migrations completed"
 fi
@@ -478,14 +440,12 @@ log_info "Building frontend..."
 
 cd $DEPLOY_DIR/frontend
 
-# Create production env
 cat > .env.production << EOF
 VITE_APP_ENV=production
 VITE_API_URL=https://$API_DOMAIN/api
 VITE_WS_URL=wss://$API_DOMAIN
 EOF
 
-# Install and build
 sudo -u $DEPLOY_USER pnpm install --frozen-lockfile=false
 sudo -u $DEPLOY_USER pnpm run build
 
@@ -497,19 +457,15 @@ log_success "Frontend build complete"
 
 log_info "Configuring Nginx..."
 
-# Copy nginx configs using absolute paths
 if [ -f "$PROJECT_ROOT/nginx/nginx.conf" ]; then
     cp "$PROJECT_ROOT/nginx/nginx.conf" /etc/nginx/nginx.conf
 fi
 
 if [ -d "$PROJECT_ROOT/nginx/conf.d" ]; then
-    cp "$PROJECT_ROOT/nginx/conf.d/"*.conf /etc/nginx/conf.d/ 2>/dev/null || log_warning "No nginx conf.d files found"
+    cp "$PROJECT_ROOT/nginx/conf.d/"*.conf /etc/nginx/conf.d/ 2>/dev/null || log_warning "No nginx conf.d files"
 fi
 
-# Test nginx configuration
 nginx -t
-
-# Enable and restart nginx
 systemctl enable nginx
 systemctl restart nginx
 
@@ -528,27 +484,23 @@ if [ -f "ecosystem.config.prod.js" ]; then
     pm2 startup systemd -u $DEPLOY_USER --hp /home/$DEPLOY_USER
     log_success "PM2 configured"
 else
-    log_warning "ecosystem.config.prod.js not found, skipping PM2 setup"
+    log_warning "ecosystem.config.prod.js not found"
 fi
 
 # ============================================================================
-# MONITORING SETUP
+# MONITORING & BACKUP
 # ============================================================================
 
 log_info "Setting up monitoring..."
 
-# Setup fail2ban
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 
-# Add custom filters for Kahade
 cat > /etc/fail2ban/filter.d/kahade.conf << EOF
 [Definition]
 failregex = ^.*Failed login attempt from <HOST>.*$
-            ^.*Too many requests from <HOST>.*$
 ignoreregex =
 EOF
 
-# Add jail for Kahade
 cat >> /etc/fail2ban/jail.local << EOF
 
 [kahade]
@@ -558,7 +510,6 @@ filter = kahade
 logpath = /var/log/kahade/app.log
 maxretry = 5
 bantime = 3600
-findtime = 600
 EOF
 
 systemctl enable fail2ban
@@ -566,33 +517,17 @@ systemctl restart fail2ban
 
 log_success "Monitoring configured"
 
-# ============================================================================
-# BACKUP SETUP
-# ============================================================================
-
-log_info "Setting up automated backups..."
-
-# Create backup script
+# Backup setup
 cat > /usr/local/bin/kahade-backup.sh << 'EOF'
 #!/bin/bash
 BACKUP_DIR="/var/backups/kahade"
 DATE=$(date +%Y%m%d_%H%M%S)
-
-# Database backup
 sudo -u postgres pg_dump kahade_prod | gzip > "$BACKUP_DIR/db_$DATE.sql.gz"
-
-# Application backup
 tar -czf "$BACKUP_DIR/app_$DATE.tar.gz" -C /var/www/kahade .
-
-# Remove backups older than 30 days
 find $BACKUP_DIR -name "*.gz" -mtime +30 -delete
-
-echo "Backup completed: $DATE"
 EOF
 
 chmod +x /usr/local/bin/kahade-backup.sh
-
-# Add cron job
 (crontab -l 2>/dev/null; echo "0 2 * * * /usr/local/bin/kahade-backup.sh >> /var/log/kahade/backup.log 2>&1") | crontab -
 
 log_success "Automated backups configured"
@@ -603,45 +538,40 @@ log_success "Automated backups configured"
 
 log_info "Performing final checks..."
 
-# Check if services are running
-systemctl status postgresql --no-pager || log_warning "PostgreSQL not running"
-systemctl status redis-server --no-pager || log_warning "Redis not running"
-systemctl status nginx --no-pager || log_warning "Nginx not running"
-pm2 list || log_warning "PM2 not running"
+systemctl status postgresql --no-pager || log_warning "PostgreSQL check"
+systemctl status redis-server --no-pager || log_warning "Redis check"
+systemctl status nginx --no-pager || log_warning "Nginx check"
+pm2 list || log_warning "PM2 check"
 
 # ============================================================================
-# DEPLOYMENT SUMMARY
+# SUMMARY
 # ============================================================================
 
 log_success "Deployment completed!"
 echo
-echo "============================================================================"
+echo "==========================================================================="
 echo "DEPLOYMENT SUMMARY"
-echo "============================================================================"
+echo "==========================================================================="
 echo "Frontend URL: https://$DOMAIN"
 echo "API URL: https://$API_DOMAIN"
 echo "Deployment Directory: $DEPLOY_DIR"
 echo "Log Directory: $LOG_DIR"
 echo "Backup Directory: $BACKUP_DIR"
 echo
-echo "Database:"
-echo "  Name: kahade_prod"
-echo "  User: kahade_user"
-echo "  Password: $DB_PASSWORD"
-echo
+echo "Database: kahade_prod"
+echo "Database User: kahade_user"
+echo "Database Password: $DB_PASSWORD"
 echo "Redis Password: $REDIS_PASSWORD"
 echo
 echo "IMPORTANT: Save these credentials securely!"
 echo
 echo "Next Steps:"
-echo "1. Configure SSL certificates: sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
-echo "2. Update .env files with production API keys (payment, KYC, email, SMS)"
-echo "3. Test all endpoints"
-echo "4. Monitor logs: pm2 logs"
-echo "5. Set up monitoring dashboard (Grafana/Prometheus)"
-echo "============================================================================"
+echo "1. Configure SSL: sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN -d $API_DOMAIN"
+echo "2. Update .env.production with production API keys"
+echo "3. Test endpoints"
+echo "4. Monitor logs: pm2 logs kahade-api"
+echo "==========================================================================="
 
-# Save credentials to a secure file
 CREDS_FILE="$BACKUP_DIR/credentials_$(date +%Y%m%d_%H%M%S).txt"
 cat > $CREDS_FILE << EOF
 Kahade Deployment Credentials
@@ -656,4 +586,4 @@ chmod 600 $CREDS_FILE
 chown root:root $CREDS_FILE
 
 log_info "Credentials saved to: $CREDS_FILE"
-log_warning "Please backup this file and delete it from the server!"
+log_warning "Backup and delete this file from server!"
