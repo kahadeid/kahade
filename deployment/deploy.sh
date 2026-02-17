@@ -184,14 +184,19 @@ log_info "Fresh install of ALL dependencies..."
 sudo -u $DEPLOY_USER pnpm install
 [ $? -ne 0 ] && log_error "pnpm install failed" && exit 1
 
-# Verify critical dependencies
-if [ ! -d "node_modules/express" ]; then
-    log_error "express module missing after install!"
+# Verify critical NestJS dependencies
+if [ ! -d "node_modules/@nestjs/core" ]; then
+    log_error "@nestjs/core missing after install!"
     exit 1
 fi
 
-if [ ! -d "node_modules/@nestjs/core" ]; then
-    log_error "@nestjs/core missing after install!"
+if [ ! -d "node_modules/@nestjs/platform-express" ]; then
+    log_error "@nestjs/platform-express missing after install!"
+    exit 1
+fi
+
+if [ ! -d "node_modules/@prisma/client" ]; then
+    log_error "@prisma/client missing after install!"
     exit 1
 fi
 
