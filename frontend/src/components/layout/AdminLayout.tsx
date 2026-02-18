@@ -195,7 +195,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
         </div>
         
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-6 overflow-y-auto min-w-0">
+        <nav className="flex-1 p-4 space-y-6 overflow-y-auto">
           {navSections.map((section) => (
             <div key={section.title}>
               <div className="px-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -289,7 +289,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
       </AnimatePresence>
       
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen min-w-0">
+      <main className="flex-1 flex flex-col min-h-screen">
         {/* Top Bar */}
         <header className="sticky top-0 z-30 border-b border-border bg-white">
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
