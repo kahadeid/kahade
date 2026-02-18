@@ -261,7 +261,7 @@ export default function About() {
         </div>
       </section>
       
-      {/* Team Section */}
+      {/* Team Section - AUDIT FIX #3: Changed from grid-cols-2 to grid-cols-1 on mobile */}
       <section className="section-padding-lg bg-muted">
         <div className="container">
           <div className="section-header">
@@ -276,7 +276,8 @@ export default function About() {
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto">
+          {/* AUDIT FIX #3: grid-cols-1 sm:grid-cols-2 md:grid-cols-4 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto">
             {team.map((member, index) => (
               <motion.div
                 key={member.name}
@@ -294,8 +295,9 @@ export default function About() {
                 >
                   {member.avatar}
                 </motion.div>
-                <h3 className="text-sm md:text-base font-bold mb-1">{member.name}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">{member.role}</p>
+                {/* AUDIT FIX #3: Added break-words to prevent overflow */}
+                <h3 className="text-sm md:text-base font-bold mb-1 break-words">{member.name}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground break-words">{member.role}</p>
               </motion.div>
             ))}
           </div>
