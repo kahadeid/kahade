@@ -386,7 +386,8 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    /* AUDIT FIX #4: Ensure mobile/tablet uses column layout, desktop uses split layout */
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Branding (Desktop only) */}
       <div className="hidden lg:flex lg:w-1/2 bg-black text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-10" aria-hidden="true" />
@@ -449,7 +450,8 @@ export default function Register() {
       </div>
       
       {/* Right Side - Form */}
-      <div className="flex-1 flex flex-col justify-start px-4 py-8 md:px-12 xl:px-20 bg-white overflow-y-auto">
+      {/* AUDIT FIX #4: Ensure form column is full width on mobile/tablet */}
+      <div className="w-full lg:flex-1 min-w-0 flex flex-col justify-start px-4 py-8 md:px-12 xl:px-20 bg-white overflow-y-auto">
         <div className="w-full max-w-md mx-auto">
           <AnimatePresence mode="wait">
             {/* Step 1: Account Info */}

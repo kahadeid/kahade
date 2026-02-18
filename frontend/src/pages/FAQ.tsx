@@ -157,14 +157,14 @@ export default function FAQ() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="relative max-w-xl mx-auto"
+              className="relative max-w-xl mx-auto w-full"
             >
               <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
               <Input
                 placeholder="Cari pertanyaan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-12 md:h-14 text-base bg-white border-neutral-200 focus:border-black focus:ring-black rounded-xl shadow-sm"
+                className="w-full pl-12 h-12 md:h-14 text-base bg-white border-neutral-200 focus:border-black focus:ring-black rounded-xl shadow-sm"
               />
             </motion.div>
           </motion.div>
