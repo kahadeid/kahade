@@ -154,12 +154,16 @@ ENVFILE
     [[ -d "$DIST_LANDING/dist" ]] || error "dist/ tidak ada setelah build ${MODE}"
 
     # Pindahkan hasil build ke direktori tujuan
-    # Kalau OUT_DIR == DIST_LANDING (variant landing), dist sudah di tempat yang benar
-    # — jangan rm dulu baru mv ke path yang sama (akan error "No such file or directory")
+    # FIX: gunakan cp + rm (bukan mv) agar jika OUT_DIR == DIST_LANDING (landing),
+    # dist/ tidak hilang ketika variant berikutnya (app/admin) mulai build.
+    # Untuk non-landing: cp dulu ke OUT_DIR, baru rm dari DIST_LANDING.
+    # Untuk landing (OUT_DIR == DIST_LANDING): dist sudah di tempat yang benar,
+    # tidak perlu dipindahkan.
     if [[ "$OUT_DIR" != "$DIST_LANDING" ]]; then
         rm -rf "$OUT_DIR/dist"
         mkdir -p "$OUT_DIR"
-        mv "$DIST_LANDING/dist" "$OUT_DIR/dist"
+        cp -r "$DIST_LANDING/dist" "$OUT_DIR/dist"
+        rm -rf "$DIST_LANDING/dist"
     fi
     chown -R "$DEPLOY_USER:$DEPLOY_USER" "$OUT_DIR/dist"
     chmod -R 755 "$OUT_DIR/dist"
@@ -174,9 +178,13 @@ case "$BUILD_VARIANT" in
     app)     _build_variant "app"     "$DIST_APP"     "App (app.kahade.id)" ;;
     admin)   _build_variant "admin"   "$DIST_ADMIN"   "Admin (admin.kahade.id)" ;;
     all)
-        _build_variant "landing" "$DIST_LANDING" "Landing (kahade.id)"
+        # Urutan: app → admin → landing TERAKHIR
+        # Landing di-build paling akhir agar dist/ tetap ada di $DIST_LANDING
+        # (app dan admin pakai cp+rm sehingga dist/ di DIST_LANDING bersih setelah mv,
+        # tapi landing tidak perlu dipindahkan — langsung tinggal di tempatnya)
         _build_variant "app"     "$DIST_APP"     "App (app.kahade.id)"
         _build_variant "admin"   "$DIST_ADMIN"   "Admin (admin.kahade.id)"
+        _build_variant "landing" "$DIST_LANDING" "Landing (kahade.id)"
         ;;
     *) error "Variant tidak dikenal: $BUILD_VARIANT. Pilih: all | landing | app | admin" ;;
 esac
