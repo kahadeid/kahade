@@ -57,7 +57,7 @@ export default function FinalCTA() {
                 {...ariaProps('Start free account with Kahade')}
               >
                 Mulai Gratis
-                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
               </Button>
             </Link>
             <Link href="/contact" className="w-full sm:w-auto">
@@ -65,7 +65,7 @@ export default function FinalCTA() {
                 className="btn-lg w-full sm:w-auto border-2 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/50 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                 {...ariaProps('Contact sales team')}
               >
-                <ChatCircleDots className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <ChatCircleDots className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 Hubungi Sales
               </Button>
             </Link>

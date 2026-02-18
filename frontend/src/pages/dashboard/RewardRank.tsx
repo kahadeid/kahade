@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import { CheckCircle, Crown, Medal, Star, Trophy } from '@phosphor-icons/react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
@@ -20,7 +19,7 @@ export default function RewardRank() {
               <h2 className="text-2xl font-bold">Silver Member</h2>
               <p className="text-sm mt-1 text-white/90">760 poin lagi menuju Gold</p>
             </div>
-            <Trophy className="w-10 h-10" aria-hidden="true" weight="duotone" aria-hidden="true" />
+            <Trophy className="w-10 h-10" aria-hidden="true" weight="duotone" />
           </div>
         </section>
 
@@ -34,16 +33,16 @@ export default function RewardRank() {
               <ul className="space-y-1.5">
                 {rank.perks.map((perk) => (
                   <li key={perk} className="text-sm text-neutral-600 flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" aria-hidden="true" />
+                    <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" />
                     {perk}
                   </li>
                 ))}
               </ul>
               <div className="mt-2 text-xs text-neutral-500 flex items-center gap-1">
-                {idx === 0 && <Medal className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />}
-                {idx === 1 && <Star className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />}
-                {idx === 2 && <Crown className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />}
-                {idx === 3 && <Trophy className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />}
+                {idx === 0 && <Medal className="w-4 h-4" aria-hidden="true" weight="regular" />}
+                {idx === 1 && <Star className="w-4 h-4" aria-hidden="true" weight="regular" />}
+                {idx === 2 && <Crown className="w-4 h-4" aria-hidden="true" weight="regular" />}
+                {idx === 3 && <Trophy className="w-4 h-4" aria-hidden="true" weight="regular" />}
                 Program benefit dapat berubah sesuai kebijakan Kahade.
               </div>
             </div>

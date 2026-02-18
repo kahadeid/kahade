@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE PARTNERS & INTEGRATIONS PAGE
  * 
@@ -118,7 +117,7 @@ export default function Partners() {
               className="mb-6"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
-                <Handshake className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                <Handshake className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Partners & Integrations
               </span>
             </motion.div>
@@ -150,11 +149,11 @@ export default function Partners() {
               <Link href="/register">
                 <Button className="h-14 px-8 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                   Mulai Integrasi
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
               <Button className="h-14 px-8 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 rounded-xl font-semibold">
-                <BookOpen className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <BookOpen className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 Lihat API Docs
               </Button>
             </motion.div>
@@ -196,7 +195,7 @@ export default function Partners() {
                 className="bg-neutral-50 border-2 border-neutral-200 rounded-xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 flex flex-col items-center justify-center text-center"
               >
                 <div className="w-16 h-16 rounded-lg bg-white border border-neutral-200 flex items-center justify-center mb-3">
-                  <CreditCard className="w-8 h-8 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                  <CreditCard className="w-8 h-8 text-black" aria-hidden="true" weight="duotone" />
                 </div>
                 <div className="font-bold text-black mb-1">{partner.name}</div>
                 <div className="text-xs text-neutral-600">{partner.type}</div>
@@ -240,7 +239,7 @@ export default function Partners() {
                 className="bg-white border-2 border-neutral-200 rounded-xl p-6 hover:border-neutral-900 transition-colors flex flex-col items-center justify-center text-center"
               >
                 <div className="w-14 h-14 rounded-lg bg-blue-50 border-2 border-blue-100 flex items-center justify-center mb-3">
-                  <Bank className="w-7 h-7 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                  <Bank className="w-7 h-7 text-blue-600" aria-hidden="true" weight="duotone" />
                 </div>
                 <div className="font-bold text-black text-sm">{bank.name}</div>
               </motion.div>
@@ -343,7 +342,7 @@ const transaction = await kahade.transactions.create({
                 <ul className="space-y-4 mb-8">
                   {partnerBenefits.map((benefit, index) => (
                     <li key={index} className="flex items-center gap-3">
-                      <Check className="w-6 h-6 text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
+                      <Check className="w-6 h-6 text-black" aria-hidden="true" weight="bold" />
                       <span className="text-black font-medium">{benefit}</span>
                     </li>
                   ))}
@@ -351,7 +350,7 @@ const transaction = await kahade.transactions.create({
                 <Link href="/contact">
                   <Button className="h-14 px-8 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                     Apply as Partner
-                    <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                   </Button>
                 </Link>
               </motion.div>
@@ -418,11 +417,11 @@ const transaction = await kahade.transactions.create({
               <Link href="/register">
                 <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
                   Get API Keys
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
               <Button className="h-14 px-8 border-2 border-white/30 bg-transparent text-white hover:bg-white/10 rounded-xl font-semibold">
-                <BookOpen className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <BookOpen className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 View Documentation
               </Button>
             </motion.div>

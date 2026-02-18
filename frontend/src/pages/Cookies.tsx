@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE COOKIE POLICY PAGE - PROFESSIONAL REDESIGN
  * 
@@ -103,11 +102,11 @@ export default function Cookies() {
             </h1>
             <div className="flex flex-wrap items-center gap-4 md:gap-4 text-sm text-neutral-600">
               <span className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" />
                 Terakhir diperbarui: 1 Januari 2026
               </span>
               <Button variant="ghost" size="sm" className="gap-2 text-neutral-600 hover:text-neutral-900" onClick={() => window.print()}>
-                <Printer className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                <Printer className="w-4 h-4" aria-hidden="true" weight="regular" />
                 Cetak
               </Button>
             </div>
@@ -176,7 +175,7 @@ export default function Cookies() {
             onClick={() => setShowToc(!showToc)}
           >
             <span className="flex items-center gap-2">
-              <List className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <List className="w-4 h-4" aria-hidden="true" weight="bold" />
               Daftar Isi
             </span>
             <span className="text-xs text-neutral-600">{showToc ? 'Sembunyikan' : 'Tampilkan'}</span>
@@ -260,7 +259,7 @@ export default function Cookies() {
                     </p>
                   </div>
                   <Button className="h-10 md:h-11 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl gap-2">
-                    <Gear className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <Gear className="w-5 h-5" aria-hidden="true" weight="bold" />
                     Pengaturan Cookie
                   </Button>
                 </div>

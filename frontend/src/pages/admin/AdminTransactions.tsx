@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN TRANSACTIONS PAGE
  * Icons: Phosphor Icons only
@@ -194,7 +193,7 @@ export default function AdminTransactions() {
     return (
       <AdminLayout title="Transaction Management" subtitle="Manage all platform transactions">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -232,7 +231,7 @@ export default function AdminTransactions() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
             <Input
               placeholder="Search order, title, buyer, seller..."
               value={searchQuery}
@@ -290,11 +289,11 @@ export default function AdminTransactions() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-1 text-sm">
-                          <ArrowUpRight className="w-3 h-3 text-red-500" aria-hidden="true" weight="bold" aria-hidden="true" />
+                          <ArrowUpRight className="w-3 h-3 text-red-500" aria-hidden="true" weight="bold" />
                           <span>{tx.initiator?.username || '-'}</span>
                         </div>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <ArrowDownRight className="w-3 h-3 text-emerald-500" aria-hidden="true" weight="bold" aria-hidden="true" />
+                          <ArrowDownRight className="w-3 h-3 text-emerald-500" aria-hidden="true" weight="bold" />
                           <span>{tx.counterparty?.username || '-'}</span>
                         </div>
                       </td>
@@ -309,25 +308,25 @@ export default function AdminTransactions() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
-                              <DotsThreeVertical className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                              <DotsThreeVertical className="w-4 h-4" aria-hidden="true" weight="bold" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => setSelectedTx(tx)}>
-                              <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+                              <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
                               View Details
                             </DropdownMenuItem>
                             {!['COMPLETED', 'CANCELLED', 'REJECTED'].includes(tx.status) && (
                               <>
                                 <DropdownMenuItem onClick={() => { setActionTxId(tx.id); setForceCompleteOpen(true); }}>
-                                  <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                                  <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                                   Force Complete
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   onClick={() => { setActionTxId(tx.id); setForceCancelOpen(true); }}
                                   className="text-red-500"
                                 >
-                                  <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                                  <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                                   Force Cancel
                                 </DropdownMenuItem>
                               </>
@@ -460,7 +459,7 @@ export default function AdminTransactions() {
                 Cancel
               </Button>
               <Button className="btn-accent" onClick={handleForceComplete} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" aria-hidden="true" /> : null}
+                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
                 Force Complete
               </Button>
             </DialogFooter>
@@ -489,7 +488,7 @@ export default function AdminTransactions() {
                 Cancel
               </Button>
               <Button variant="destructive" onClick={handleForceCancel} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" aria-hidden="true" /> : null}
+                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
                 Force Cancel
               </Button>
             </DialogFooter>

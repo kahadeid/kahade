@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /**
  * KAHADE WALLET PAGE - Professional Responsive Design
  * 
@@ -487,7 +486,7 @@ export default function Wallet() {
       <DashboardLayout title="Dompet" subtitle="Memuat...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
             <p className="text-neutral-600">Memuat data dompet...</p>
           </div>
         </div>
@@ -517,7 +516,7 @@ export default function Wallet() {
               {/* Balance Info */}
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <WalletIcon className="w-5 h-5 text-white/60" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                  <WalletIcon className="w-5 h-5 text-white/60" aria-hidden="true" weight="duotone" />
                   <span className="text-white/60 text-sm font-medium">Total Balance</span>
                   <button 
                     onClick={() => setShowBalance(!showBalance)}
@@ -534,7 +533,7 @@ export default function Wallet() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 md:p-4">
                     <div className="flex items-center gap-2 text-white/60 text-xs mb-1">
-                      <CheckCircle className="w-3 .5 h-3.5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                      <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" weight="fill" />
                       Available
                     </div>
                     <div className="text-lg md:text-xl font-semibold">
@@ -543,7 +542,7 @@ export default function Wallet() {
                   </div>
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 md:p-4">
                     <div className="flex items-center gap-2 text-white/60 text-xs mb-1">
-                      <Clock className="w-3 .5 h-3.5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                      <Clock className="w-3.5 h-3.5" aria-hidden="true" weight="fill" />
                       In Escrow
                     </div>
                     <div className="text-lg md:text-xl font-semibold">
@@ -561,7 +560,7 @@ export default function Wallet() {
                 }}>
                   <DialogTrigger asChild>
                     <Button className="flex-1 lg:w-full bg-white text-black hover:bg-white/90 h-11 rounded-xl font-semibold">
-                      <ArrowDownRight className="w-5 h-5 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+                      <ArrowDownRight className="w-5 h-5 mr-2" aria-hidden="true" weight="bold" />
                       Top Up Instan
                     </Button>
                   </DialogTrigger>
@@ -701,7 +700,7 @@ export default function Wallet() {
                         {topUpCategory === 'qris' && paymentInfo.qrUrl && (
                           <div className="bg-white rounded-xl p-4 border border-neutral-200 text-center">
                             <div className="mb-3">
-                              <QrCode className="w-7 h-7 text-black mx-auto mb-1" aria-hidden="true" weight="bold" aria-hidden="true" />
+                              <QrCode className="w-7 h-7 text-black mx-auto mb-1" aria-hidden="true" weight="bold" />
                               <p className="text-sm text-neutral-600">Scan QR Code dengan aplikasi e-wallet atau mobile banking</p>
                             </div>
                             <img
@@ -785,7 +784,7 @@ export default function Wallet() {
                 >
                   <DialogTrigger asChild>
                     <Button className="flex-1 lg:w-full bg-white/10 text-white hover:bg-white/20 border border-white/20 h-11 rounded-xl font-semibold">
-                      <ArrowUpRight className="w-5 h-5 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+                      <ArrowUpRight className="w-5 h-5 mr-2" aria-hidden="true" weight="bold" />
                       Withdraw
                     </Button>
                   </DialogTrigger>
@@ -950,7 +949,7 @@ export default function Wallet() {
             ) : (
               <div className="text-center py-12">
                 <div className="w-14 h-14 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                  <WalletIcon className="w-7 h-7 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <WalletIcon className="w-7 h-7 text-neutral-500" aria-hidden="true" weight="regular" />
                 </div>
                 <h3 className="font-semibold mb-1 text-black">Belum ada transaksi</h3>
                 <p className="text-sm text-neutral-600">Riwayat transaksi dompet akan tampil di sini</p>
@@ -969,7 +968,7 @@ export default function Wallet() {
           >
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                <Clock className="w-4 h-4 text-amber-600" aria-hidden="true" weight="fill" aria-hidden="true" />
+                <Clock className="w-4 h-4 text-amber-600" aria-hidden="true" weight="fill" />
               </div>
               <h3 className="font-semibold text-amber-900">Penarikan Menunggu</h3>
             </div>

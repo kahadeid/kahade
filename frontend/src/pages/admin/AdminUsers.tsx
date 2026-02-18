@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN USERS PAGE
  * Icons: Phosphor Icons only
@@ -191,7 +190,7 @@ export default function AdminUsers() {
     return (
       <AdminLayout title="User Management" subtitle="Manage all platform users">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -229,7 +228,7 @@ export default function AdminUsers() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
             <Input
               placeholder="Search username or email..."
               value={searchQuery}
@@ -320,25 +319,25 @@ export default function AdminUsers() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
-                              <DotsThreeVertical className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                              <DotsThreeVertical className="w-4 h-4" aria-hidden="true" weight="bold" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => setSelectedUser(user)}>
-                              <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+                              <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
                               View Details
                             </DropdownMenuItem>
                             {user.kycStatus === 'PENDING' && (
                               <>
                                 <DropdownMenuItem onClick={() => handleApproveKYC(user.id)}>
-                                  <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                                  <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                                   Approve KYC
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   onClick={() => { setRejectUserId(user.id); setRejectDialogOpen(true); }}
                                   className="text-red-500"
                                 >
-                                  <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                                  <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                                   Reject KYC
                                 </DropdownMenuItem>
                               </>
@@ -348,12 +347,12 @@ export default function AdminUsers() {
                                 onClick={() => { setSuspendUserId(user.id); setSuspendDialogOpen(true); }}
                                 className="text-red-500"
                               >
-                                <Prohibit className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                                <Prohibit className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                                 Suspend
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem onClick={() => handleActivate(user.id)}>
-                                <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                                <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                                 Activate
                               </DropdownMenuItem>
                             )}
@@ -415,11 +414,11 @@ export default function AdminUsers() {
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-4 p-2 rounded-lg bg-secondary/50">
-                    <Envelope className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+                    <Envelope className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
                     <span>{selectedUser.email}</span>
                   </div>
                   <div className="flex items-center gap-4 p-2 rounded-lg bg-secondary/50">
-                    <Phone className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+                    <Phone className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
                     <span>{selectedUser.phone || '-'}</span>
                   </div>
                 </div>
@@ -472,7 +471,7 @@ export default function AdminUsers() {
                 Cancel
               </Button>
               <Button variant="destructive" onClick={handleSuspend} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" aria-hidden="true" /> : null}
+                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
                 Suspend
               </Button>
             </DialogFooter>
@@ -501,7 +500,7 @@ export default function AdminUsers() {
                 Cancel
               </Button>
               <Button variant="destructive" onClick={handleRejectKYC} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" aria-hidden="true" /> : null}
+                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
                 Reject KYC
               </Button>
             </DialogFooter>

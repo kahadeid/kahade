@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /**
  * KAHADE SETTINGS PAGE - Professional Responsive Design
  * 
@@ -367,7 +366,7 @@ export default function Settings() {
                 <div className="grid sm:grid-cols-3 gap-3">
                   <div className={`p-3 rounded-xl flex items-center gap-4 ${twoFactor ? 'bg-emerald-50' : 'bg-amber-50'}`}>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${twoFactor ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-                      {twoFactor ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" weight="bold" aria-hidden="true" /> : <Warning className="w-4 h-4 text-amber-600" aria-hidden="true" weight="fill" aria-hidden="true" />}
+                      {twoFactor ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" weight="bold" /> : <Warning className="w-4 h-4 text-amber-600" aria-hidden="true" weight="fill" />}
                     </div>
                     <div>
                       <div className="text-sm font-medium text-black">2FA</div>
@@ -379,7 +378,7 @@ export default function Settings() {
                   
                   <div className={`p-3 rounded-xl flex items-center gap-4 ${user?.kycStatus === 'VERIFIED' ? 'bg-emerald-50' : 'bg-amber-50'}`}>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${user?.kycStatus === 'VERIFIED' ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-                      {user?.kycStatus === 'VERIFIED' ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" weight="bold" aria-hidden="true" /> : <Warning className="w-4 h-4 text-amber-600" aria-hidden="true" weight="fill" aria-hidden="true" />}
+                      {user?.kycStatus === 'VERIFIED' ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" weight="bold" /> : <Warning className="w-4 h-4 text-amber-600" aria-hidden="true" weight="fill" />}
                     </div>
                     <div>
                       <div className="text-sm font-medium text-black">KYC</div>
@@ -391,7 +390,7 @@ export default function Settings() {
                   
                   <div className={`p-3 rounded-xl flex items-center gap-4 ${user?.phone ? 'bg-emerald-50' : 'bg-gray-50'}`}>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${user?.phone ? 'bg-emerald-100' : 'bg-gray-100'}`}>
-                      {user?.phone ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" weight="bold" aria-hidden="true" /> : <Info className="w-4 h-4 text-gray-400" aria-hidden="true" weight="fill" aria-hidden="true" />}
+                      {user?.phone ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" weight="bold" /> : <Info className="w-4 h-4 text-gray-400" aria-hidden="true" weight="fill" />}
                     </div>
                     <div>
                       <div className="text-sm font-medium text-black">Phone</div>
@@ -408,7 +407,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
-                      <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-black">Two-Factor Authentication</h3>
@@ -429,7 +428,7 @@ export default function Settings() {
                 {twoFactor && (
                   <div className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
                     <div className="flex items-center gap-2 text-emerald-600">
-                      <CheckCircle className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                      <CheckCircle className="w-5 h-5" aria-hidden="true" weight="fill" />
                       <span className="font-medium text-sm">Two-factor authentication is active</span>
                     </div>
                   </div>
@@ -440,7 +439,7 @@ export default function Settings() {
               <div className="bg-white rounded-2xl border border-neutral-200 p-4 md:p-6">
                 <div className="flex items-center gap-4 mb-5">
                   <div className="w-11 h-11 rounded-xl bg-neutral-100 flex items-center justify-center">
-                    <Key className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                    <Key className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-black">Change Password</h3>
@@ -559,7 +558,7 @@ export default function Settings() {
                   <div className="flex items-center justify-between p-4 md:px-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                        <Envelope className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                        <Envelope className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" />
                       </div>
                       <div>
                         <div className="font-medium text-black text-sm">Email Notifications</div>
@@ -575,7 +574,7 @@ export default function Settings() {
                   <div className="flex items-center justify-between p-4 md:px-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                        <Bell className="w-5 h-5 text-purple-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                        <Bell className="w-5 h-5 text-purple-600" aria-hidden="true" weight="duotone" />
                       </div>
                       <div>
                         <div className="font-medium text-black text-sm">Push Notifications</div>
@@ -591,7 +590,7 @@ export default function Settings() {
                   <div className="flex items-center justify-between p-4 md:px-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                        <Receipt className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                        <Receipt className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
                       </div>
                       <div>
                         <div className="font-medium text-black text-sm">Transaction Updates</div>
@@ -607,7 +606,7 @@ export default function Settings() {
                   <div className="flex items-center justify-between p-4 md:px-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                        <Info className="w-5 h-5 text-amber-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                        <Info className="w-5 h-5 text-amber-600" aria-hidden="true" weight="duotone" />
                       </div>
                       <div>
                         <div className="font-medium text-black text-sm">Marketing & Promotions</div>
@@ -724,7 +723,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-                      <DownloadSimple className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                      <DownloadSimple className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-black">Export Your Data</h3>
@@ -747,7 +746,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center">
-                      <Trash className="w-5 h-5 text-red-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                      <Trash className="w-5 h-5 text-red-600" aria-hidden="true" weight="duotone" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-red-600">Delete Account</h3>
@@ -822,7 +821,7 @@ export default function Settings() {
             <div className="space-y-4">
               <div className="p-4 bg-red-50 rounded-xl border border-red-100">
                 <div className="flex items-center gap-2 text-red-600 mb-2">
-                  <Warning className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                  <Warning className="w-5 h-5" aria-hidden="true" weight="fill" />
                   <span className="font-medium">Warning</span>
                 </div>
                 <p className="text-sm text-red-700">

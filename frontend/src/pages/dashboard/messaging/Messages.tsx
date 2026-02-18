@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";

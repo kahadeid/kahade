@@ -172,7 +172,7 @@ export default function PricingSection() {
           <div className="card bg-accent/50 border-accent p-6 md:p-8">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-accent flex items-center justify-center shrink-0">
-                <CreditCard className="w-6 h-6 md:w-7 md:h-7 text-accent-foreground" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <CreditCard className="w-6 h-6 md:w-7 md:h-7 text-accent-foreground" aria-hidden="true" weight="duotone" />
               </div>
               <div className="flex-1">
                 <h3 className="text-lg md:text-xl font-bold mb-2">Biaya Platform Per Transaksi</h3>

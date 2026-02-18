@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /**
  * KAHADE ACTIVITY LOG PAGE - Professional Responsive Design
  * 
@@ -289,7 +288,7 @@ export default function ActivityLog() {
       <DashboardLayout title="Activity Log" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
             <p className="text-neutral-600">Loading activity log...</p>
           </div>
         </div>
@@ -309,7 +308,7 @@ export default function ActivityLog() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <Clock className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.today || 0}</div>
@@ -324,7 +323,7 @@ export default function ActivityLog() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                <ClockCounterClockwise className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <ClockCounterClockwise className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.thisWeek || 0}</div>
@@ -339,7 +338,7 @@ export default function ActivityLog() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                <SignIn className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <SignIn className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.loginCountThisMonth || 0}</div>
@@ -354,7 +353,7 @@ export default function ActivityLog() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                <Receipt className="w-5 h-5 text-purple-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <Receipt className="w-5 h-5 text-purple-600" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats?.total || 0}</div>
@@ -403,7 +402,7 @@ export default function ActivityLog() {
             {(Array.isArray(activities) ? activities : []).length === 0 ? (
               <div className="p-12 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                  <ClockCounterClockwise className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <ClockCounterClockwise className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" />
                 </div>
                 <h3 className="font-semibold text-black mb-1">No Activity</h3>
                 <p className="text-sm text-neutral-600">Your activity will appear here</p>
@@ -457,7 +456,7 @@ export default function ActivityLog() {
                       {/* Time & Arrow */}
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs text-neutral-500">{formatDate(activity.createdAt)}</span>
-                        <CaretRight className="w-4 h-4 text-neutral-300 group-hover:text-neutral-900 transition-colors" aria-hidden="true" weight="bold" aria-hidden="true" />
+                        <CaretRight className="w-4 h-4 text-neutral-300 group-hover:text-neutral-900 transition-colors" aria-hidden="true" weight="bold" />
                       </div>
                     </motion.div>
                   );

@@ -298,7 +298,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                 className="lg:hidden p-2 hover:bg-secondary rounded-lg"
                 onClick={() => setIsSidebarOpen(true)}
               >
-                <List className="w-6 h-6" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <List className="w-6 h-6" aria-hidden="true" weight="bold" />
               </button>
               <div>
                 {title && <h1 className="text-xl font-bold">{title}</h1>}

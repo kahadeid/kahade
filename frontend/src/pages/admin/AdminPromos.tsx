@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN PROMOS PAGE
  * Manage promotions and vouchers
@@ -191,7 +190,7 @@ export default function AdminPromos() {
     return (
       <AdminLayout title="Promotions" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -208,7 +207,7 @@ export default function AdminPromos() {
             className="bg-white rounded-lg border border-neutral-200 p-4"
           >
             <div className="flex items-center gap-3">
-              <Tag className="w-8 h-8 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <Tag className="w-8 h-8 text-black" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-black">{stats.total}</div>
                 <div className="text-sm text-neutral-600">Total Promos</div>
@@ -223,7 +222,7 @@ export default function AdminPromos() {
             className="bg-emerald-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-emerald-700">{stats.active}</div>
                 <div className="text-sm text-emerald-600">Active</div>
@@ -238,7 +237,7 @@ export default function AdminPromos() {
             className="bg-gray-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <XCircle className="w-8 h-8 text-gray-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <XCircle className="w-8 h-8 text-gray-600" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-gray-700">{stats.expired}</div>
                 <div className="text-sm text-gray-600">Expired</div>
@@ -253,7 +252,7 @@ export default function AdminPromos() {
             className="bg-blue-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <CurrencyDollar className="w-8 h-8 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <CurrencyDollar className="w-8 h-8 text-blue-600" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-blue-700">{stats.totalUsages}</div>
                 <div className="text-sm text-blue-600">Total Usages</div>
@@ -265,7 +264,7 @@ export default function AdminPromos() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="relative flex-1 max-w-md">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -274,7 +273,7 @@ export default function AdminPromos() {
             />
           </div>
           <Button className="btn-primary" onClick={() => setIsCreateOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Plus className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
             Create Promo
           </Button>
         </div>
@@ -288,7 +287,7 @@ export default function AdminPromos() {
         >
           {filteredPromos.length === 0 ? (
             <div className="text-center py-12">
-              <Tag className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <Tag className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" />
               <h4 className="text-lg font-semibold text-black mb-2">No Promotions</h4>
               <p className="text-neutral-600">Create your first promotion to get started</p>
             </div>
@@ -327,7 +326,7 @@ export default function AdminPromos() {
                         <td className="px-4 py-3">
                           {promo.discountType === 'PERCENTAGE' ? (
                             <div className="flex items-center gap-1">
-                              <Percent className="w-4 h-4 text-neutral-600" aria-hidden="true" weight="bold" aria-hidden="true" />
+                              <Percent className="w-4 h-4 text-neutral-600" aria-hidden="true" weight="bold" />
                               <span className="font-semibold text-black">{promo.discountPercent}%</span>
                               {promo.maxDiscountMinor && (
                                 <span className="text-sm text-neutral-600">
@@ -346,7 +345,7 @@ export default function AdminPromos() {
                         </td>
                         <td className="px-4 py-3 text-sm text-neutral-600">
                           <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                            <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" />
                             {new Date(promo.validFrom).toLocaleDateString('id-ID')} - {new Date(promo.validUntil).toLocaleDateString('id-ID')}
                           </div>
                         </td>
@@ -377,7 +376,7 @@ export default function AdminPromos() {
                               className="text-red-600 hover:text-red-700 hover:border-red-600"
                               onClick={() => handleDeactivate(promo)}
                             >
-                              <Trash className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                              <Trash className="w-4 h-4" aria-hidden="true" weight="bold" />
                             </Button>
                           )}
                         </td>

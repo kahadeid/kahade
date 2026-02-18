@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE WHITEPAPER PAGE - PROFESSIONAL REDESIGN
  * 
@@ -71,22 +70,22 @@ export default function Whitepaper() {
               
               <div className="flex items-center gap-4 text-xs md:text-sm text-muted-foreground mb-6 md:mb-8">
                 <span className="flex items-center gap-1">
-                  <BookOpen className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <BookOpen className="w-4 h-4" aria-hidden="true" weight="regular" />
                   42 Pages
                 </span>
                 <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <Clock className="w-4 h-4" aria-hidden="true" weight="regular" />
                   Updated Jan 2026
                 </span>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 md:gap-4">
                 <Button className="h-11 md:h-12 px-5 md:px-6 bg-black text-white hover:bg-black/90 font-semibold rounded-xl gap-2">
-                  <Download className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <Download className="w-5 h-5" aria-hidden="true" weight="bold" />
                   Download PDF
                 </Button>
                 <Button variant="outline" className="h-11 md:h-12 px-5 md:px-6 border-neutral-200 font-semibold rounded-xl gap-2">
-                  <BookOpen className="w-5 h-5" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <BookOpen className="w-5 h-5" aria-hidden="true" weight="regular" />
                   Read Online
                 </Button>
               </div>
@@ -101,7 +100,7 @@ export default function Whitepaper() {
             >
               <div className="relative bg-white rounded-xl md:rounded-2xl shadow-2xl border border-neutral-200 p-6 md:p-8 transform rotate-2 hover:rotate-0 transition-transform">
                 <div className="absolute top-4 right-4 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-black flex items-center justify-center" aria-hidden="true">
-                  <FileText className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <FileText className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" weight="bold" />
                 </div>
                 <div className="space-y-3 md:space-y-4">
                   <div className="h-3 md:h-4 bg-neutral-200 rounded w-3/4" />
@@ -213,14 +212,14 @@ export default function Whitepaper() {
                 <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8">
                   {keyPoints.map((point, index) => (
                     <li key={index} className="flex items-start gap-2 md:gap-3">
-                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-black flex-shrink-0 mt-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-black flex-shrink-0 mt-0.5" aria-hidden="true" weight="fill" />
                       <span className="text-xs md:text-sm text-neutral-600">{point}</span>
                     </li>
                   ))}
                 </ul>
                 
                 <Button className="w-full h-11 md:h-12 bg-black text-white hover:bg-black/90 font-semibold rounded-xl gap-2">
-                  <Download className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <Download className="w-5 h-5" aria-hidden="true" weight="bold" />
                   Download Whitepaper
                 </Button>
               </div>
@@ -249,7 +248,7 @@ export default function Whitepaper() {
               <Link href="/contact">
                 <Button className="h-11 md:h-12 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl gap-2">
                   Contact Us
-                  <ArrowRight className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
               <Link href="/about">

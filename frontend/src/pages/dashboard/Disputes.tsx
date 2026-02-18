@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /**
  * KAHADE DISPUTES PAGE - Professional Responsive Design
  * 
@@ -130,7 +129,7 @@ export default function Disputes() {
       <DashboardLayout title="Disputes" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
             <p className="text-neutral-600">Loading disputes...</p>
           </div>
         </div>
@@ -150,7 +149,7 @@ export default function Disputes() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center">
-                <Scales className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <Scales className="w-5 h-5 text-black" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats.total}</div>
@@ -165,7 +164,7 @@ export default function Disputes() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                <Warning className="w-5 h-5 text-amber-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <Warning className="w-5 h-5 text-amber-600" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats.open}</div>
@@ -180,7 +179,7 @@ export default function Disputes() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <Clock className="w-5 h-5 text-blue-600" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats.underReview}</div>
@@ -195,7 +194,7 @@ export default function Disputes() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
               </div>
             </div>
             <div className="text-2xl font-bold text-black">{stats.resolved}</div>
@@ -224,7 +223,7 @@ export default function Disputes() {
             {filterDisputes(activeTab).length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                  <Scales className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <Scales className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" />
                 </div>
                 <h4 className="text-lg font-semibold text-black mb-1">No Disputes</h4>
                 <p className="text-sm text-neutral-600 max-w-sm mx-auto">
@@ -272,7 +271,7 @@ export default function Disputes() {
                             </div>
                             
                             {/* Arrow */}
-                            <CaretRight className="w-5 h-5 text-neutral-300 group-hover:text-neutral-900 transition-colors shrink-0" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <CaretRight className="w-5 h-5 text-neutral-300 group-hover:text-neutral-900 transition-colors shrink-0" aria-hidden="true" weight="bold" />
                           </div>
                         </Link>
                       </motion.div>
@@ -293,7 +292,7 @@ export default function Disputes() {
         >
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center shrink-0">
-              <ChatCircle className="w-6 h-6 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <ChatCircle className="w-6 h-6 text-white" aria-hidden="true" weight="duotone" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-black mb-1">Need Help with a Dispute?</h3>
@@ -304,7 +303,7 @@ export default function Disputes() {
             <Link href="/help">
               <Button className="bg-black text-white hover:bg-black/90 rounded-xl h-10 w-full md:w-auto">
                 Contact Support
-                <CaretRight className="w-4 h-4 ml-1" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <CaretRight className="w-4 h-4 ml-1" aria-hidden="true" weight="bold" />
               </Button>
             </Link>
           </div>
@@ -319,7 +318,7 @@ export default function Disputes() {
         >
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
             </div>
             <div>
               <h3 className="font-semibold text-black mb-1">How Disputes Work</h3>

@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN KYC PAGE
  * Review and manage KYC submissions
@@ -145,7 +144,7 @@ export default function AdminKYC() {
     return (
       <AdminLayout title="KYC Management" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -162,7 +161,7 @@ export default function AdminKYC() {
             className="bg-amber-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <Clock className="w-8 h-8 text-amber-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <Clock className="w-8 h-8 text-amber-600" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-amber-700">{stats.pending}</div>
                 <div className="text-sm text-amber-600">Pending Review</div>
@@ -177,7 +176,7 @@ export default function AdminKYC() {
             className="bg-emerald-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-emerald-700">{stats.verified}</div>
                 <div className="text-sm text-emerald-600">Verified</div>
@@ -192,7 +191,7 @@ export default function AdminKYC() {
             className="bg-red-50 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
-              <XCircle className="w-8 h-8 text-red-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <XCircle className="w-8 h-8 text-red-600" aria-hidden="true" weight="duotone" />
               <div>
                 <div className="text-2xl font-bold text-red-700">{stats.rejected}</div>
                 <div className="text-sm text-red-600">Rejected</div>
@@ -204,7 +203,7 @@ export default function AdminKYC() {
         {/* Filters */}
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -214,7 +213,7 @@ export default function AdminKYC() {
           </div>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-48" aria-hidden="true">
-              <Funnel className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+              <Funnel className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -235,7 +234,7 @@ export default function AdminKYC() {
         >
           {filteredSubmissions.length === 0 ? (
             <div className="text-center py-12">
-              <IdentificationCard className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <IdentificationCard className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" />
               <h4 className="text-lg font-semibold text-black mb-2">No Submissions</h4>
               <p className="text-neutral-600">No KYC submissions found</p>
             </div>
@@ -260,7 +259,7 @@ export default function AdminKYC() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">
-                              <User className="w-4 h-4 text-black" aria-hidden="true" weight="regular" aria-hidden="true" />
+                              <User className="w-4 h-4 text-black" aria-hidden="true" weight="regular" />
                             </div>
                             <div>
                               <div className="font-medium text-black">{submission.user.username}</div>
@@ -287,7 +286,7 @@ export default function AdminKYC() {
                               setIsReviewOpen(true);
                             }}
                           >
-                            <Eye className="w-4 h-4 mr-1" aria-hidden="true" weight="regular" aria-hidden="true" />
+                            <Eye className="w-4 h-4 mr-1" aria-hidden="true" weight="regular" />
                             Review
                           </Button>
                         </td>
@@ -395,7 +394,7 @@ export default function AdminKYC() {
                     className="text-red-600 hover:text-red-700 hover:border-red-600"
                     onClick={() => setIsRejectOpen(true)}
                   >
-                    <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
                     Reject
                   </Button>
                   <Button
@@ -406,7 +405,7 @@ export default function AdminKYC() {
                     {isSubmitting ? (
                       <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
                     ) : (
-                      <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+                      <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
                     )}
                     Approve
                   </Button>

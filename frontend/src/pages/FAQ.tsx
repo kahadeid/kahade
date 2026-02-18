@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE FAQ PAGE - CLICKUP-INSPIRED REDESIGN
  * 
@@ -160,7 +159,7 @@ export default function FAQ() {
               transition={{ delay: 0.3 }}
               className="relative max-w-xl mx-auto"
             >
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
               <Input
                 placeholder="Cari pertanyaan..."
                 value={searchQuery}
@@ -258,7 +257,7 @@ export default function FAQ() {
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4"
                 >
-                  <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" />
                 </motion.div>
                 <h3 className="font-bold text-lg md:text-xl mb-2 text-black">Tidak ada pertanyaan ditemukan</h3>
                 <p className="text-sm md:text-base text-neutral-600">Coba sesuaikan kata kunci pencarian Anda.</p>
@@ -292,7 +291,7 @@ export default function FAQ() {
               transition={{ duration: 0.2 }}
               className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
             >
-              <ChatCircle className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="fill" aria-hidden="true" />
+              <ChatCircle className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="fill" />
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Masih Punya Pertanyaan?
@@ -304,7 +303,7 @@ export default function FAQ() {
               <Link href="/contact">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
                   Hubungi Dukungan
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
               <Link href="/help">

@@ -31,7 +31,7 @@ export function ProtectedRoute({
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
-          <Spinner className="w-8 h-8 animate-spin text-primary mx-auto" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-primary mx-auto" aria-hidden="true" weight="bold" />
           <p className="text-sm text-muted-foreground">Memeriksa autentikasi...</p>
         </div>
       </div>

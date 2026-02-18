@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import { useMemo, useState } from 'react';
 import { FloppyDiskBack, PencilSimpleLine, UserCircle } from '@phosphor-icons/react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -32,7 +31,7 @@ export default function EditProfile() {
         <section className="bg-white border border-neutral-200 rounded-2xl p-5">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-neutral-100 flex items-center justify-center">
-              <UserCircle className="w-10 h-10 text-neutral-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <UserCircle className="w-10 h-10 text-neutral-600" aria-hidden="true" weight="duotone" />
             </div>
             <div>
               <h2 className="font-semibold text-lg">{user?.username || 'Pengguna Kahade'}</h2>
@@ -53,7 +52,7 @@ export default function EditProfile() {
 
         <section className="bg-white border border-neutral-200 rounded-2xl p-4 space-y-4">
           <div className="flex items-center gap-2">
-            <PencilSimpleLine className="w-5 h-5" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <PencilSimpleLine className="w-5 h-5" aria-hidden="true" weight="regular" />
             <h3 className="font-semibold">Informasi Pribadi</h3>
           </div>
 
@@ -77,7 +76,7 @@ export default function EditProfile() {
           </div>
 
           <Button onClick={handleSave} className="w-full md:w-auto bg-black text-white hover:bg-black/90">
-            <FloppyDiskBack className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <FloppyDiskBack className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
             Simpan Perubahan
           </Button>
         </section>

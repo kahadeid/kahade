@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN SETTINGS PAGE
  * Icons: Phosphor Icons only
@@ -118,7 +117,7 @@ export default function AdminSettings() {
     return (
       <AdminLayout title="Platform Settings" subtitle="Kahade system configuration">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -135,7 +134,7 @@ export default function AdminSettings() {
         >
           <div className="flex items-center gap-4 mb-6">
             <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-              <Percent className="w-5 h-5 text-accent" aria-hidden="true" weight="fill" aria-hidden="true" />
+              <Percent className="w-5 h-5 text-accent" aria-hidden="true" weight="fill" />
             </div>
             <div>
               <h3 className="font-semibold">Transaction Settings</h3>
@@ -212,7 +211,7 @@ export default function AdminSettings() {
         >
           <div className="flex items-center gap-4 mb-6">
             <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-amber-500" aria-hidden="true" weight="fill" aria-hidden="true" />
+              <Clock className="w-5 h-5 text-amber-500" aria-hidden="true" weight="fill" />
             </div>
             <div>
               <h3 className="font-semibold">Dispute Settings</h3>
@@ -260,7 +259,7 @@ export default function AdminSettings() {
         >
           <div className="flex items-center gap-4 mb-6">
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-emerald-500" aria-hidden="true" weight="fill" aria-hidden="true" />
+              <Shield className="w-5 h-5 text-emerald-500" aria-hidden="true" weight="fill" />
             </div>
             <div>
               <h3 className="font-semibold">Security & Access</h3>
@@ -313,7 +312,7 @@ export default function AdminSettings() {
         >
           <div className="flex items-center gap-4 mb-6">
             <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <Bell className="w-5 h-5 text-blue-500" aria-hidden="true" weight="fill" aria-hidden="true" />
+              <Bell className="w-5 h-5 text-blue-500" aria-hidden="true" weight="fill" />
             </div>
             <div>
               <h3 className="font-semibold">Admin Notifications</h3>
@@ -349,18 +348,18 @@ export default function AdminSettings() {
         {/* Action Buttons */}
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={handleReset} disabled={isSaving}>
-            <ArrowsClockwise className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <ArrowsClockwise className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
             Reset to Default
           </Button>
           <Button className="btn-accent" onClick={handleSave} disabled={isSaving}>
             {isSaving ? (
               <>
-                <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" />
                 Saving...
               </>
             ) : (
               <>
-                <FloppyDisk className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                <FloppyDisk className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                 Save Changes
               </>
             )}

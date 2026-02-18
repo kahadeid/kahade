@@ -26,7 +26,7 @@ export default function HeroSection() {
             {/* Badge */}
             <motion.div {...fadeInUp} className="mb-6 flex justify-center lg:justify-start">
               <span className="badge badge-secondary inline-flex items-center gap-2">
-                <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Dipercaya 10.000+ pengguna
               </span>
             </motion.div>
@@ -69,12 +69,12 @@ export default function HeroSection() {
               <Link href="/register" className="w-full sm:w-auto">
                 <Button className="btn-primary btn-lg w-full sm:w-auto">
                   Mulai Transaksi
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
               <Link href="/how-it-works" className="w-full sm:w-auto">
                 <Button variant="outline" className="btn-lg w-full sm:w-auto">
-                  <Play className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                  <Play className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" />
                   Cara Kerjanya
                 </Button>
               </Link>
@@ -111,7 +111,7 @@ export default function HeroSection() {
             <div className="card card-premium relative p-6 md:p-8">
               <div className="flex items-center justify-between">
                 <div className="badge badge-primary inline-flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                  <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" />
                   Escrow Terlindungi
                 </div>
                 <span className="text-xs text-muted-foreground">Pratinjau Langsung</span>

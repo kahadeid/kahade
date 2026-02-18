@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /**
  * KAHADE ADMIN REPORTS PAGE
  * Analytics and reporting dashboard with charts
@@ -188,7 +187,7 @@ export default function AdminReports() {
     return (
       <AdminLayout title="Reports & Analytics" subtitle="Loading...">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -216,7 +215,7 @@ export default function AdminReports() {
           <div className="flex items-center gap-3">
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-40" aria-hidden="true">
-                <Calendar className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+                <Calendar className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -228,7 +227,7 @@ export default function AdminReports() {
             </Select>
             
             <Button variant="outline" size="sm" onClick={exportCSV}>
-              <Export className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <Export className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
               Export CSV
             </Button>
           </div>
@@ -246,7 +245,7 @@ export default function AdminReports() {
               >
                 <div className="flex items-center gap-4 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-                    <CurrencyDollar className="w-6 h-6 text-emerald-600" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <CurrencyDollar className="w-6 h-6 text-emerald-600" aria-hidden="true" weight="bold" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold mb-1">{formatCompact(revenueData.summary.totalRevenue)}</div>
@@ -261,7 +260,7 @@ export default function AdminReports() {
               >
                 <div className="flex items-center gap-4 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Wallet className="w-6 h-6 text-blue-600" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <Wallet className="w-6 h-6 text-blue-600" aria-hidden="true" weight="bold" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold mb-1">{formatCompact(revenueData.summary.totalVolume)}</div>
@@ -276,7 +275,7 @@ export default function AdminReports() {
               >
                 <div className="flex items-center gap-4 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center">
-                    <Receipt className="w-6 h-6 text-violet-600" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <Receipt className="w-6 h-6 text-violet-600" aria-hidden="true" weight="bold" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold mb-1">{revenueData.summary.totalTransactions.toLocaleString()}</div>

@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE CONTACT PAGE - CLICKUP-INSPIRED REDESIGN
  * 
@@ -258,7 +257,7 @@ export default function Contact() {
                   ) : (
                     <>
                       Kirim Pesan
-                      <PaperPlaneTilt className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                      <PaperPlaneTilt className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                     </>
                   )}
                 </Button>
@@ -302,12 +301,12 @@ export default function Contact() {
                           className="inline-flex items-center text-sm font-semibold text-black hover:underline"
                         >
                           {link.cta}
-                          <ArrowRight className="ml-1 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                          <ArrowRight className="ml-1 w-4 h-4" aria-hidden="true" weight="bold" />
                         </a>
                       ) : (
                         <Link href={link.href} className="inline-flex items-center text-sm font-semibold text-black hover:underline">
                           {link.cta}
-                          <ArrowRight className="ml-1 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                          <ArrowRight className="ml-1 w-4 h-4" aria-hidden="true" weight="bold" />
                         </Link>
                       )}
                     </div>
@@ -329,7 +328,7 @@ export default function Contact() {
                     transition={{ duration: 0.2 }}
                     className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0"
                   >
-                    <Clock className="w-5 h-5 md:w-6 md:h-6 text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <Clock className="w-5 h-5 md:w-6 md:h-6 text-black" aria-hidden="true" weight="bold" />
                   </motion.div>
                   <div className="flex-1">
                     <h3 className="font-bold mb-3 text-black text-sm md:text-base">Jam Operasional</h3>
@@ -380,7 +379,7 @@ export default function Contact() {
                 transition={{ duration: 0.2 }}
                 className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
               >
-                <ChatCircle className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <ChatCircle className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" />
               </motion.div>
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Butuh bantuan segera?</h2>
               <p className="text-white/70 text-sm md:text-base mb-6 max-w-lg mx-auto">
@@ -390,7 +389,7 @@ export default function Contact() {
                 className="h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift"
                 onClick={() => window.open('https://wa.me/62811127812', '_blank')}
               >
-                <WhatsappLogo className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                <WhatsappLogo className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" />
                 Chat di WhatsApp
               </Button>
             </div>

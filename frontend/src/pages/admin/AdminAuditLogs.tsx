@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN AUDIT LOGS PAGE
  * Icons: Phosphor Icons only
@@ -138,7 +137,7 @@ export default function AdminAuditLogs() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
             <Input
               placeholder="Search actor or target..."
               value={searchQuery}
@@ -177,7 +176,7 @@ export default function AdminAuditLogs() {
         {/* Loading State */}
         {isLoading && page === 1 && (
           <div className="flex items-center justify-center h-64">
-            <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
           </div>
         )}
         
@@ -203,7 +202,7 @@ export default function AdminAuditLogs() {
                     onClick={() => setExpandedLog(isExpanded ? null : log.id)}
                   >
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${action.color}`}>
-                      <IconComponent className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                      <IconComponent className="w-5 h-5" aria-hidden="true" weight="fill" />
                     </div>
                     
                     <div className="flex-1 min-w-0">
@@ -221,14 +220,14 @@ export default function AdminAuditLogs() {
                     <div className="flex items-center gap-3">
                       <div className="text-right hidden sm:block">
                         <div className="text-sm text-muted-foreground flex items-center gap-1">
-                          <Clock className="w-3 h-3" aria-hidden="true" weight="regular" aria-hidden="true" />
+                          <Clock className="w-3 h-3" aria-hidden="true" weight="regular" />
                           {formatDate(log.timestamp)}
                         </div>
                       </div>
                       {isExpanded ? (
-                        <CaretUp className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="bold" aria-hidden="true" />
+                        <CaretUp className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="bold" />
                       ) : (
-                        <CaretDown className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="bold" aria-hidden="true" />
+                        <CaretDown className="w-5 h-5 text-muted-foreground" aria-hidden="true" weight="bold" />
                       )}
                     </div>
                   </div>
@@ -260,7 +259,7 @@ export default function AdminAuditLogs() {
                 >
                   {isLoading ? (
                     <>
-                      <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" aria-hidden="true" />
+                      <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" />
                       Loading...
                     </>
                   ) : (
@@ -275,7 +274,7 @@ export default function AdminAuditLogs() {
         {!isLoading && filteredLogs.length === 0 && (
           <div className="glass-card p-12 text-center">
             <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+              <FileText className="w-8 h-8 text-muted-foreground" aria-hidden="true" weight="regular" />
             </div>
             <h3 className="font-semibold mb-2">No logs found</h3>
             <p className="text-sm text-muted-foreground">

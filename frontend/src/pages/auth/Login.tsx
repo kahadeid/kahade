@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE LOGIN PAGE - Clean Mobile-First Design
  * 
@@ -482,7 +481,7 @@ export default function Login() {
                         onClick={() => handleSocialLogin('Apple')}
                         aria-label="Login dengan Apple"
                       >
-                        <AppleLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <AppleLogo className="w-5 h-5" aria-hidden="true" weight="fill" />
                       </button>
                       <button 
                         type="button"
@@ -490,7 +489,7 @@ export default function Login() {
                         onClick={() => handleSocialLogin('X')}
                         aria-label="Login dengan X"
                       >
-                        <XLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <XLogo className="w-5 h-5" aria-hidden="true" weight="fill" />
                       </button>
                     </div>
                     
@@ -517,12 +516,12 @@ export default function Login() {
                   className="flex items-center gap-2 text-neutral-600 hover:text-foreground mb-8 transition-colors"
                   aria-label="Kembali ke login"
                 >
-                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" />
                   Kembali ke login
                 </button>
                 
                 <div className="w-16 h-16 rounded-xl bg-neutral-100 flex items-center justify-center mb-6">
-                  <DeviceMobile className="w-8 h-8 text-foreground" aria-hidden="true" weight="duotone" aria-hidden="true" />
+                  <DeviceMobile className="w-8 h-8 text-foreground" aria-hidden="true" weight="duotone" />
                 </div>
                 
                 <h1 className="text-3xl font-bold mb-3 text-foreground">Two-Factor Authentication</h1>

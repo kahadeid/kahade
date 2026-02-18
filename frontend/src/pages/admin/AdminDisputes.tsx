@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE ADMIN DISPUTES PAGE
  * Icons: Phosphor Icons only
@@ -164,7 +163,7 @@ export default function AdminDisputes() {
     return (
       <AdminLayout title="Dispute Management" subtitle="Transaction conflict resolution">
         <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" aria-hidden="true" />
+          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
         </div>
       </AdminLayout>
     );
@@ -204,7 +203,7 @@ export default function AdminDisputes() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
             <Input
               placeholder="Search disputes..."
               value={searchQuery}
@@ -230,7 +229,7 @@ export default function AdminDisputes() {
         <div className="space-y-4">
           {filteredDisputes.length === 0 ? (
             <div className="glass-card p-8 text-center">
-              <Warning className="w-12 h-12 mx-auto text-muted-foreground mb-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+              <Warning className="w-12 h-12 mx-auto text-muted-foreground mb-4" aria-hidden="true" weight="regular" />
               <p className="text-muted-foreground">No disputes found</p>
             </div>
           ) : (
@@ -273,7 +272,7 @@ export default function AdminDisputes() {
                         size="sm"
                         onClick={() => setSelectedDispute(dispute)}
                       >
-                        <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+                        <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
                         Details
                       </Button>
                       {dispute.status === 'OPEN' && (
@@ -282,7 +281,7 @@ export default function AdminDisputes() {
                           className="btn-accent"
                           onClick={() => handleStartReview(dispute.id)}
                         >
-                          <Scales className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                          <Scales className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                           Review
                         </Button>
                       )}
@@ -295,7 +294,7 @@ export default function AdminDisputes() {
                             setIsResolveOpen(true);
                           }}
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" aria-hidden="true" />
+                          <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
                           Resolve
                         </Button>
                       )}
@@ -460,7 +459,7 @@ export default function AdminDisputes() {
                 Cancel
               </Button>
               <Button className="btn-accent" onClick={handleResolve} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" aria-hidden="true" /> : null}
+                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
                 Resolve
               </Button>
             </DialogFooter>

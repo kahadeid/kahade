@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE COMPARE PAGE
  * 
@@ -190,7 +189,7 @@ export default function Compare() {
               className="mb-6"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
-                <Scales className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                <Scales className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Bandingkan & Pilih yang Terbaik
               </span>
             </motion.div>
@@ -249,7 +248,7 @@ export default function Compare() {
             >
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-xl bg-red-50 border-2 border-red-100 flex items-center justify-center">
-                  <Warning className="w-7 h-7 text-red-600" aria-hidden="true" weight="fill" aria-hidden="true" />
+                  <Warning className="w-7 h-7 text-red-600" aria-hidden="true" weight="fill" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-black">Tanpa Escrow</h3>
@@ -278,13 +277,13 @@ export default function Compare() {
             >
               <div className="absolute top-4 right-4" aria-hidden="true">
                 <div className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1">
-                  <Crown className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                  <Crown className="w-4 h-4" aria-hidden="true" weight="fill" />
                   Recommended
                 </div>
               </div>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-xl bg-green-50 border-2 border-green-200 flex items-center justify-center">
-                  <ShieldCheck className="w-7 h-7 text-green-600" aria-hidden="true" weight="fill" aria-hidden="true" />
+                  <ShieldCheck className="w-7 h-7 text-green-600" aria-hidden="true" weight="fill" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-black">Dengan Kahade</h3>
@@ -348,7 +347,7 @@ export default function Compare() {
                         <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200 bg-green-50">
                           <div className="flex items-center justify-center gap-2">
                             Kahade
-                            <Crown className="w-5 h-5 text-green-600" aria-hidden="true" weight="fill" aria-hidden="true" />
+                            <Crown className="w-5 h-5 text-green-600" aria-hidden="true" weight="fill" />
                           </div>
                         </div>
                         <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">
@@ -369,21 +368,21 @@ export default function Compare() {
                         <div className="p-4 text-black font-medium">{feature.name}</div>
                         <div className="p-4 text-center border-l-2 border-neutral-200 bg-green-50/30">
                           {feature.kahade ? (
-                            <Check className="w-6 h-6 text-green-600 mx-auto" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <Check className="w-6 h-6 text-green-600 mx-auto" aria-hidden="true" weight="bold" />
                           ) : (
                             <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                           )}
                         </div>
                         <div className="p-4 text-center border-l-2 border-neutral-200">
                           {feature.competitor1 ? (
-                            <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" />
                           ) : (
                             <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                           )}
                         </div>
                         <div className="p-4 text-center border-l-2 border-neutral-200">
                           {feature.competitor2 ? (
-                            <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" />
                           ) : (
                             <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                           )}
@@ -442,7 +441,7 @@ export default function Compare() {
                 >
                   <div className="p-4 font-semibold text-black flex items-center gap-2">
                     {provider.provider}
-                    {provider.highlight && <Crown className="w-5 h-5 text-green-600" aria-hidden="true" weight="fill" aria-hidden="true" />}
+                    {provider.highlight && <Crown className="w-5 h-5 text-green-600" aria-hidden="true" weight="fill" />}
                   </div>
                   <div className="p-4 text-center border-l-2 border-neutral-200 font-medium text-neutral-600">
                     {provider.transactionFee}
@@ -541,7 +540,7 @@ export default function Compare() {
               <Link href="/register">
                 <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Sekarang
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
             </motion.div>

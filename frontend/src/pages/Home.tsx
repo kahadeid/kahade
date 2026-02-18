@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE HOME PAGE - OPTIMIZED V2.0
  * 

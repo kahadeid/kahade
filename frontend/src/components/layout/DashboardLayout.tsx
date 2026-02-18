@@ -165,7 +165,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
               aria-label="Collapse sidebar"
             >
-              <CaretRight className="w-4 h-4 rotate-180 text-neutral-500" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <CaretRight className="w-4 h-4 rotate-180 text-neutral-500" aria-hidden="true" weight="bold" />
             </button>
           )}
         </div>
@@ -177,7 +177,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               "w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl font-semibold shadow-lg shadow-black/20 transition-all",
               isSidebarCollapsed ? "px-0 justify-center" : "justify-center gap-2"
             )}>
-              <Plus className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <Plus className="w-5 h-5" aria-hidden="true" weight="bold" />
               {!isSidebarCollapsed && <span>New Order</span>}
             </Button>
           </Link>
@@ -221,7 +221,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               className="w-full p-2 hover:bg-neutral-100 rounded-xl transition-colors flex items-center justify-center"
               aria-label="Expand sidebar"
             >
-              <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="bold" />
             </button>
           </div>
         )}
@@ -251,7 +251,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               onClick={handleLogout}
               className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-600 hover:text-red-600 hover:bg-red-50 transition-colors"
             >
-              <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" />
               <span className="font-medium">Sign Out</span>
             </button>
           </div>
@@ -273,7 +273,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         <div className="p-3">
           <Link href="/transactions/new">
             <Button className="w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl px-0 justify-center shadow-lg shadow-black/20">
-              <Plus className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <Plus className="w-5 h-5" aria-hidden="true" weight="bold" />
             </Button>
           </Link>
         </div>
@@ -350,7 +350,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                 className="flex items-center justify-center w-10 h-10 -ml-2 rounded-xl hover:bg-neutral-100 transition-colors"
                 aria-label="Go back"
               >
-                <ArrowLeft className="w-6 h-6 text-black" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <ArrowLeft className="w-6 h-6 text-black" aria-hidden="true" weight="bold" />
               </button>
               
               {/* Page Title */}
@@ -390,7 +390,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               {/* Notifications */}
               <Link href="/notifications">
                 <button className="relative p-2.5 hover:bg-neutral-100 rounded-xl transition-colors">
-                  <Bell className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <Bell className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="bold" />
                   <span className="absolute top-2 right-2 w-2 h-2 bg-black rounded-full ring-2 ring-white" />
                 </button>
               </Link>
@@ -440,7 +440,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                             onClick={() => setIsProfileDropdownOpen(false)}
                             className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
                           >
-                            <User className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <User className="w-5 h-5" aria-hidden="true" weight="bold" />
                             <span className="font-medium">Profile</span>
                           </Link>
                           <Link
@@ -448,7 +448,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                             onClick={() => setIsProfileDropdownOpen(false)}
                             className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
                           >
-                            <Gear className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <Gear className="w-5 h-5" aria-hidden="true" weight="bold" />
                             <span className="font-medium">Settings</span>
                           </Link>
                         </div>
@@ -462,7 +462,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                             }}
                             className="w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-neutral-600 hover:text-red-600 hover:bg-red-50 transition-colors"
                           >
-                            <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" />
                             <span className="font-medium">Sign Out</span>
                           </button>
                         </div>

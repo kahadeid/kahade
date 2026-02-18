@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE 403 UNAUTHORIZED PAGE - Modern Design
  * Brand color: var(--color-black)
@@ -34,7 +33,7 @@ export default function Unauthorized() {
           </h1>
           <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
             <div className="w-24 h-24 rounded-lg bg-red-500 flex items-center justify-center">
-              <ShieldWarning className="w-12 h-12 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <ShieldWarning className="w-12 h-12 text-white" aria-hidden="true" weight="bold" />
             </div>
           </div>
         </div>
@@ -52,14 +51,14 @@ export default function Unauthorized() {
             className="btn-primary gap-2"
             onClick={handleGoToApp}
           >
-            <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" />
             Go to User Dashboard
           </Button>
           <Button 
             className="btn-secondary gap-2"
             onClick={handleLogout}
           >
-            <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" />
             Logout
           </Button>
         </div>

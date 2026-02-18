@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'wouter';
 import DashboardLayout from '@/components/layout/DashboardLayout';

@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /**
  * KAHADE BANK ACCOUNTS PAGE - Professional Responsive Design
  * 
@@ -248,7 +247,7 @@ export default function BankAccounts() {
       <DashboardLayout title="Rekening Bank" subtitle="Memuat...">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
             <p className="text-neutral-600">Memuat rekening bank...</p>
           </div>
         </div>
@@ -267,7 +266,7 @@ export default function BankAccounts() {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center">
-              <Bank className="w-6 h-6 text-white" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <Bank className="w-6 h-6 text-white" aria-hidden="true" weight="duotone" />
             </div>
             <div>
               <h2 className="font-semibold text-black">{(Array.isArray(accounts) ? accounts : []).length} Rekening Bank</h2>
@@ -278,7 +277,7 @@ export default function BankAccounts() {
             onClick={() => setIsAddOpen(true)}
             className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
           >
-            <Plus className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+            <Plus className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
             Tambah Rekening
           </Button>
         </motion.div>
@@ -293,7 +292,7 @@ export default function BankAccounts() {
           {(Array.isArray(accounts) ? accounts : []).length === 0 ? (
             <div className="bg-white rounded-2xl border border-neutral-200 p-12 text-center">
               <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-                <Bank className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" aria-hidden="true" />
+                <Bank className="w-8 h-8 text-neutral-500" aria-hidden="true" weight="regular" />
               </div>
               <h3 className="font-semibold text-black mb-1">Belum Ada Rekening Bank</h3>
               <p className="text-sm text-neutral-600 max-w-sm mx-auto mb-4">
@@ -303,7 +302,7 @@ export default function BankAccounts() {
                 onClick={() => setIsAddOpen(true)}
                 className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
               >
-                <Plus className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <Plus className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
                 Tambah Rekening Bank
               </Button>
             </div>
@@ -337,12 +336,12 @@ export default function BankAccounts() {
                           )}
                           {account.isVerified ? (
                             <Badge className="bg-emerald-50 text-emerald-600 border-0 text-[10px]">
-                              <CheckCircle className="w-3 h-3 mr-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                              <CheckCircle className="w-3 h-3 mr-0.5" aria-hidden="true" weight="fill" />
                               Terverifikasi
                             </Badge>
                           ) : (
                             <Badge className="bg-amber-50 text-amber-600 border-0 text-[10px]">
-                              <Warning className="w-3 h-3 mr-0.5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                              <Warning className="w-3 h-3 mr-0.5" aria-hidden="true" weight="fill" />
                               Belum Verifikasi
                             </Badge>
                           )}
@@ -375,7 +374,7 @@ export default function BankAccounts() {
                             onClick={() => handleSetDefault(account.id)}
                             className="border-neutral-200 rounded-lg h-8 text-xs"
                           >
-                            <Star className="w-3 h-3 mr-1" aria-hidden="true" weight="bold" aria-hidden="true" />
+                            <Star className="w-3 h-3 mr-1" aria-hidden="true" weight="bold" />
                             Jadikan Utama
                           </Button>
                         )}
@@ -388,7 +387,7 @@ export default function BankAccounts() {
                           }}
                           className="text-red-600 hover:bg-red-50 rounded-lg h-8 w-8 p-0"
                         >
-                          <Trash className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                          <Trash className="w-4 h-4" aria-hidden="true" weight="bold" />
                         </Button>
                       </div>
                     </div>
@@ -408,7 +407,7 @@ export default function BankAccounts() {
         >
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" aria-hidden="true" />
+              <ShieldCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
             </div>
             <div>
               <h3 className="font-semibold text-black mb-1">Penarikan Aman</h3>

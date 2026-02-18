@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE CAREERS PAGE - CLICKUP-INSPIRED REDESIGN
  * 
@@ -99,7 +98,7 @@ export default function Careers() {
               transition={{ delay: 0.2, duration: 0.4 }}
               className="inline-flex items-center gap-2 px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4"
             >
-              <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+              <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
               Kami Merekrut
             </motion.span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-black leading-tight">
@@ -247,7 +246,7 @@ export default function Careers() {
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mb-6 md:mb-8 max-w-4xl mx-auto">
             <div className="relative flex-1">
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
               <Input
                 placeholder="Cari posisi..."
                 value={searchQuery}
@@ -292,26 +291,26 @@ export default function Careers() {
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-neutral-600">
                       <span className="flex items-center gap-1">
-                        <Briefcase className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                        <Briefcase className="w-4 h-4" aria-hidden="true" weight="regular" />
                         {job.department}
                       </span>
                       <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                        <MapPin className="w-4 h-4" aria-hidden="true" weight="regular" />
                         {job.location}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                        <Clock className="w-4 h-4" aria-hidden="true" weight="regular" />
                         {job.type}
                       </span>
                       <span className="flex items-center gap-1">
-                        <CurrencyDollar className="w-4 h-4" aria-hidden="true" weight="regular" aria-hidden="true" />
+                        <CurrencyDollar className="w-4 h-4" aria-hidden="true" weight="regular" />
                         {job.salary}
                       </span>
                     </div>
                   </div>
                   <Button className="h-10 md:h-11 px-5 bg-black text-white hover:bg-black/90 font-semibold rounded-xl shrink-0 btn-hover-lift">
                     Lamar
-                    <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" />
                   </Button>
                 </div>
               </motion.div>
@@ -327,7 +326,7 @@ export default function Careers() {
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4"
                 >
-                  <Briefcase className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" aria-hidden="true" />
+                  <Briefcase className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" />
                 </motion.div>
                 <h3 className="font-bold text-lg md:text-xl mb-2 text-black">Tidak ada posisi ditemukan</h3>
                 <p className="text-sm md:text-base text-neutral-600">Coba sesuaikan pencarian atau filter Anda.</p>
@@ -361,7 +360,7 @@ export default function Careers() {
               transition={{ duration: 0.2 }}
               className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
             >
-              <Briefcase className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <Briefcase className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" />
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Tidak menemukan peran yang cocok?
@@ -371,7 +370,7 @@ export default function Careers() {
             </p>
             <Button className="h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
               Kirim Resume Anda
-              <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
             </Button>
           </motion.div>
         </div>

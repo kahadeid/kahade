@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import { motion } from 'framer-motion';
 import { 
   ShieldCheck, Target, Eye, Heart, Globe, Lightning, ArrowRight,
@@ -130,7 +129,7 @@ export default function About() {
                 transition={{ duration: 0.2 }}
                 className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mb-4 md:mb-6"
               >
-                <Target className="w-6 h-6 md:w-7 md:h-7" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <Target className="w-6 h-6 md:w-7 md:h-7" aria-hidden="true" weight="bold" />
               </motion.div>
               <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Misi Kami</h2>
               <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
@@ -153,7 +152,7 @@ export default function About() {
                 transition={{ duration: 0.2 }}
                 className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mb-4 md:mb-6"
               >
-                <Globe className="w-6 h-6 md:w-7 md:h-7" aria-hidden="true" weight="bold" aria-hidden="true" />
+                <Globe className="w-6 h-6 md:w-7 md:h-7" aria-hidden="true" weight="bold" />
               </motion.div>
               <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Visi Kami</h2>
               <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
@@ -321,7 +320,7 @@ export default function About() {
               transition={{ duration: 0.2 }}
               className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-6"
             >
-              <Handshake className="w-8 h-8 md:w-10 md:h-10" aria-hidden="true" weight="bold" aria-hidden="true" />
+              <Handshake className="w-8 h-8 md:w-10 md:h-10" aria-hidden="true" weight="bold" />
             </motion.div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Bergabung dengan tim kami</h2>
             <p className="text-primary-foreground/70 text-sm md:text-base lg:text-lg mb-8 max-w-xl mx-auto">
@@ -331,7 +330,7 @@ export default function About() {
               <Link href="/careers">
                 <Button className="w-full sm:w-auto btn-lg bg-primary-foreground text-primary hover:bg-primary-foreground/90">
                   Lihat Posisi Terbuka
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
               <Link href="/contact">

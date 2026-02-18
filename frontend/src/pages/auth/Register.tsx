@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 /*
  * KAHADE REGISTER PAGE - Clean Mobile-First Design
  * 
@@ -482,7 +481,7 @@ export default function Register() {
                         "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                         step >= s ? 'bg-black text-white' : 'bg-neutral-100 text-muted-foreground'
                       )}>
-                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : s}
+                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" /> : s}
                       </div>
                       {s < 3 && (
                         <div className={cn(
@@ -515,7 +514,7 @@ export default function Register() {
                     </div>
                     {errors.username && touched.username && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" />
                         {errors.username}
                       </p>
                     )}
@@ -541,7 +540,7 @@ export default function Register() {
                     </div>
                     {errors.email && touched.email && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" />
                         {errors.email}
                       </p>
                     )}
@@ -569,7 +568,7 @@ export default function Register() {
                     </div>
                     {errors.phone && touched.phone && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" />
                         {errors.phone}
                       </p>
                     )}
@@ -602,21 +601,21 @@ export default function Register() {
                     className="h-12 border-2 border-neutral-200 rounded-xl flex items-center justify-center hover:border-black hover:bg-neutral-100 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     onClick={() => handleSocialSignup('Google')}
                   >
-                    <GoogleLogo className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                    <GoogleLogo className="w-5 h-5" aria-hidden="true" weight="bold" />
                   </button>
                   <button 
                     type="button"
                     className="h-12 border-2 border-neutral-200 rounded-xl flex items-center justify-center hover:border-black hover:bg-neutral-100 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     onClick={() => handleSocialSignup('Apple')}
                   >
-                    <AppleLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                    <AppleLogo className="w-5 h-5" aria-hidden="true" weight="fill" />
                   </button>
                   <button 
                     type="button"
                     className="h-12 border-2 border-neutral-200 rounded-xl flex items-center justify-center hover:border-black hover:bg-neutral-100 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     onClick={() => handleSocialSignup('X')}
                   >
-                    <XLogo className="w-5 h-5" aria-hidden="true" weight="fill" aria-hidden="true" />
+                    <XLogo className="w-5 h-5" aria-hidden="true" weight="fill" />
                   </button>
                 </div>
                 
@@ -647,7 +646,7 @@ export default function Register() {
                   onClick={() => setStep(1)}
                   className="flex items-center gap-2 text-neutral-600 hover:text-foreground mb-4 transition-colors"
                 >
-                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" />
                   Back
                 </button>
                 
@@ -667,7 +666,7 @@ export default function Register() {
                         "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                         step >= s ? 'bg-black text-white' : 'bg-neutral-100 text-muted-foreground'
                       )}>
-                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : s}
+                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" /> : s}
                       </div>
                       {s < 3 && (
                         <div className={cn(
@@ -735,7 +734,7 @@ export default function Register() {
                               )}
                             >
                               {passwordStrength.passed.includes(item) ? (
-                                <Check className="w-3 .5 h-3.5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                                <Check className="w-3.5 h-3.5" aria-hidden="true" weight="bold" />
                               ) : (
                                 <X className="w-3.5 h-3.5" />
                               )}
@@ -774,7 +773,7 @@ export default function Register() {
                     </div>
                     {errors.confirmPassword && touched.confirmPassword && (
                       <p className="text-sm text-red-500 flex items-center gap-1.5">
-                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" aria-hidden="true" />
+                        <WarningCircle className="w-4 h-4" aria-hidden="true" weight="fill" />
                         {errors.confirmPassword}
                       </p>
                     )}
@@ -809,7 +808,7 @@ export default function Register() {
                   onClick={() => setStep(2)}
                   className="flex items-center gap-2 text-neutral-600 hover:text-foreground mb-4 transition-colors"
                 >
-                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" aria-hidden="true" />
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" />
                   Back
                 </button>
                 
@@ -829,7 +828,7 @@ export default function Register() {
                         "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
                         step >= s ? 'bg-black text-white' : 'bg-neutral-100 text-muted-foreground'
                       )}>
-                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" aria-hidden="true" /> : s}
+                        {step > s ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" /> : s}
                       </div>
                       {s < 3 && (
                         <div className={cn(

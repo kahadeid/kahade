@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import { Coins, Gift, TrendUp } from '@phosphor-icons/react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
@@ -18,7 +17,7 @@ export default function RewardPoints() {
               <p className="text-sm text-white/70">Total poin Anda</p>
               <h2 className="text-3xl font-bold mt-1">1.240 pts</h2>
             </div>
-            <Coins className="w-10 h-10 text-amber-300" aria-hidden="true" weight="duotone" aria-hidden="true" />
+            <Coins className="w-10 h-10 text-amber-300" aria-hidden="true" weight="duotone" />
           </div>
           <p className="text-sm text-white/80 mt-3">Kumpulkan 760 poin lagi untuk naik ke rank Gold.</p>
         </section>
@@ -38,12 +37,12 @@ export default function RewardPoints() {
 
         <section className="grid md:grid-cols-2 gap-4">
           <div className="bg-white border border-neutral-200 rounded-2xl p-4">
-            <TrendUp className="w-5 h-5 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <TrendUp className="w-5 h-5 mb-2" aria-hidden="true" weight="regular" />
             <h4 className="font-semibold text-sm">Tips naik poin</h4>
             <p className="text-sm text-neutral-600 mt-1">Selesaikan transaksi tanpa sengketa dan aktifkan KYC untuk bonus tambahan.</p>
           </div>
           <div className="bg-white border border-neutral-200 rounded-2xl p-4">
-            <Gift className="w-5 h-5 mb-2" aria-hidden="true" weight="regular" aria-hidden="true" />
+            <Gift className="w-5 h-5 mb-2" aria-hidden="true" weight="regular" />
             <h4 className="font-semibold text-sm">Redeem hadiah</h4>
             <p className="text-sm text-neutral-600 mt-1">Poin bisa ditukar voucher biaya admin dan bonus promosi bulanan.</p>
           </div>

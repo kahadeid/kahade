@@ -1,4 +1,3 @@
-import { SkipToContent } from '@/lib/accessibility';
 import { useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
