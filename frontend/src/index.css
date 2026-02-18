@@ -111,7 +111,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: local('Amazon Ember Display Bold'), url('/fonts/Amazon Ember Display Bold Italic.woff') format('woff');
+  src: local('Amazon Ember Display Bold'), url('/fonts/Amazon Ember Display Bold.woff') format('woff');
 }
 
 @font-face {
