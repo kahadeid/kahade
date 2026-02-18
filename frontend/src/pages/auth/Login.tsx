@@ -247,7 +247,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    /* AUDIT FIX #4: Ensure mobile/tablet uses column layout, desktop uses split layout */
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Branding (Desktop only) */}
       <div className="hidden lg:flex lg:w-1/2 bg-black text-white relative overflow-hidden">
         {/* Background Pattern */}
@@ -317,8 +318,8 @@ export default function Login() {
       </div>
       
       {/* Right Side - Form */}
-      {/* Bug #4 fix: Added min-w-0 to prevent flex item from shrinking below content size */}
-      <div className="flex-1 min-w-0 flex flex-col justify-center px-4 py-8 md:px-12 xl:px-20 bg-white">
+      {/* AUDIT FIX #4: Ensure form column is full width on mobile/tablet */}
+      <div className="w-full lg:flex-1 min-w-0 flex flex-col justify-center px-4 py-8 md:px-12 xl:px-20 bg-white">
         <div className="w-full max-w-md mx-auto">
           <AnimatePresence mode="wait">
             {!showMfaInput ? (

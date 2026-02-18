@@ -34,7 +34,7 @@ export default function FinalCTA() {
           <motion.h2 
             id="final-cta-heading"
             variants={staggerItem}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-balance"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight"
           >
             Siap mengamankan transaksi Anda?
           </motion.h2>
