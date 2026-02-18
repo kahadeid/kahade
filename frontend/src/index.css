@@ -595,26 +595,27 @@
 
 @layer components {
   /* ===== CONTAINER SYSTEM ===== */
+  /* TAILWIND V4 FIX: Added !important to prevent @layer utilities override */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
     max-width: 1400px;
   }
 
   @media (min-width: 640px) {
     .container {
-      padding-left: 2rem;
-      padding-right: 2rem;
+      padding-left: 2rem !important;
+      padding-right: 2rem !important;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 3rem;
-      padding-right: 3rem;
+      padding-left: 3rem !important;
+      padding-right: 3rem !important;
     }
   }
   
