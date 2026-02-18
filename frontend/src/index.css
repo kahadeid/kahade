@@ -144,9 +144,9 @@
    ======================================================================== */
 
 @theme inline {
-  /* Typography */
-  --font-sans: 'Amazon Ember', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Amazon Ember Display', 'Amazon Ember', system-ui, sans-serif;
+  /* Typography - Bug #10 fix: Amazon Ember primary, Inter as fallback */
+  --font-sans: 'Amazon Ember', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Amazon Ember Display', 'Amazon Ember', Inter, system-ui, sans-serif;
   --font-mono: 'Amazon Ember Mono', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   
   /* Radius Scale */
@@ -393,13 +393,14 @@
     display: none;
   }
   
-  /* HTML & Body */
+  /* HTML & Body - Bug #2 fix: overflow-x hidden */
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    overflow-x: hidden;
   }
   
   body {
@@ -410,9 +411,11 @@
     background: var(--background);
     line-height: 1.6;
     font-feature-settings: "kern" 1, "liga" 1;
+    overflow-x: hidden;
   }
   
   /* Typography Scale - Fluid & Responsive */
+  /* Bug #3 fix: text-wrap: balance → text-wrap: pretty (prevents 1-word-per-line) */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -420,7 +423,7 @@
     color: var(--foreground);
     line-height: 1.1;
     margin-bottom: 0.5em;
-    text-wrap: balance; /* Better text wrapping */
+    text-wrap: pretty;
   }
   
   h1 {
@@ -459,7 +462,7 @@
   p {
     line-height: 1.7;
     margin-bottom: 1em;
-    text-wrap: pretty; /* Better text wrapping for paragraphs */
+    text-wrap: pretty;
   }
   
   p:last-child {
@@ -593,12 +596,14 @@
 
 @layer components {
   /* ===== CONTAINER SYSTEM ===== */
+  /* Bug #9 fix: Removed duplicate .container - using Tailwind v4 compatible definition */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+    max-width: 1400px;
   }
 
   @media (min-width: 640px) {
@@ -612,7 +617,6 @@
     .container {
       padding-left: 3rem;
       padding-right: 3rem;
-      max-width: 1400px;
     }
   }
   
@@ -630,8 +634,9 @@
     max-width: 960px;
   }
 
-  /* Flex Fix for nested flex containers */
-  .flex {
+  /* Bug #1 fix: REMOVED global .flex override that caused min-width: 0 on all flex elements */
+  /* Use .flex-fix class explicitly when needed for nested flex containers */
+  .flex-fix {
     min-height: 0;
     min-width: 0;
   }
@@ -1023,13 +1028,18 @@
    ======================================================================== */
 
 @layer utilities {
-  /* Text Balance */
+  /* Text Wrap */
   .text-balance {
     text-wrap: balance;
   }
   
   .text-pretty {
     text-wrap: pretty;
+  }
+
+  /* Bug #3 fix: Use .heading-balanced only for intentional balance headings */
+  .heading-balanced {
+    text-wrap: balance;
   }
   
   /* Truncate */
@@ -1115,6 +1125,13 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  /* Bug #8 fix: Define .bg-grid utility for auth pages background pattern */
+  .bg-grid {
+    background-image: linear-gradient(to right, rgb(0 0 0 / 0.05) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgb(0 0 0 / 0.05) 1px, transparent 1px);
+    background-size: 4rem 4rem;
   }
 }
 

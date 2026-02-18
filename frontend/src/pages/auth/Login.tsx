@@ -3,6 +3,8 @@
  * 
  * VALIDATION FIX [FE-FORM-001]: Applied Zod validation
  * API FIX [FE-API-001]: Using custom hooks for error handling
+ * Bug #4 fix: Added min-w-0 to form column to prevent flex shrink issues
+ * Bug #6 fix: Wrapped features section with overflow-hidden to contain x-animations
  * 
  * Layout Order:
  * 1. Logo
@@ -278,8 +280,8 @@ export default function Login() {
               Perlindungan penuh untuk pembeli dan penjual.
             </p>
             
-            {/* Features */}
-            <div className="space-y-4">
+            {/* Bug #6 fix: Wrap features with overflow-hidden to contain Framer Motion x-animations */}
+            <div className="space-y-4 overflow-hidden">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.text}
@@ -315,7 +317,8 @@ export default function Login() {
       </div>
       
       {/* Right Side - Form */}
-      <div className="flex-1 flex flex-col justify-center px-4 py-8 md:px-12 xl:px-20 bg-white">
+      {/* Bug #4 fix: Added min-w-0 to prevent flex item from shrinking below content size */}
+      <div className="flex-1 min-w-0 flex flex-col justify-center px-4 py-8 md:px-12 xl:px-20 bg-white">
         <div className="w-full max-w-md mx-auto">
           <AnimatePresence mode="wait">
             {!showMfaInput ? (

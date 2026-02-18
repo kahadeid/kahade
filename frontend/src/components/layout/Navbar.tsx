@@ -7,6 +7,9 @@
  * - Performance optimized (useMemo, useCallback)
  * - Better code organization
  * - Reduced inline styles
+ * 
+ * Bug #5 fix: Mega menu width changed from w-[600px] fixed to w-[min(600px,calc(100vw-2rem))]
+ * to prevent horizontal overflow on mobile viewports.
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -401,9 +404,10 @@ interface MegaMenuProductProps {
 
 function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenuProductProps) {
   return (
+    // Bug #5 fix: w-[min(600px,calc(100vw-2rem))] prevents horizontal overflow on mobile
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-[600px] bg-white rounded-lg border border-border p-6"
+      className="absolute top-full left-0 mt-2 w-[min(600px,calc(100vw-2rem))] bg-white rounded-lg border border-border p-6"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -477,9 +481,10 @@ interface MegaMenuResourcesProps {
 
 function MegaMenuResources({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenuResourcesProps) {
   return (
+    // Bug #5 fix: w-[min(500px,calc(100vw-2rem))] prevents horizontal overflow on mobile
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-[500px] bg-white rounded-lg border border-border p-6"
+      className="absolute top-full left-0 mt-2 w-[min(500px,calc(100vw-2rem))] bg-white rounded-lg border border-border p-6"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
