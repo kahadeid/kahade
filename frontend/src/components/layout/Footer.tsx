@@ -126,8 +126,7 @@ export default function Footer() {
               />
             </ScrollToTopLink>
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6 md:mb-8 max-w-sm">
-              Platform escrow P2P tepercaya di Indonesia untuk transaksi online yang aman.
-              Melindungi pembeli dan penjual sejak 2024.
+              Platform escrow P2P tepercaya di Indonesia. PT Kawal Hak Dengan Aman — melindungi pembeli dan penjual sejak 2024.
             </p>
           </div>
           
@@ -181,7 +180,7 @@ export default function Footer() {
             {/* Copyright */}
             <div className="text-center lg:text-right">
               <p className="text-xs md:text-sm text-muted-foreground/70">
-                © {currentYear} Kahade. Hak cipta dilindungi undang-undang.
+                © {currentYear} PT Kawal Hak Dengan Aman (Kahade). Hak cipta dilindungi undang-undang.
               </p>
             </div>
           </div>

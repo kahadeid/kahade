@@ -39,18 +39,18 @@ const departments = [
 ];
 
 const jobs = [
-  { id: 1, title: 'Insinyur Full Stack Senior', department: 'Teknik', location: 'Remote', type: 'Penuh waktu', salary: '$120k - $180k' },
-  { id: 2, title: 'Insinyur Backend', department: 'Teknik', location: 'Remote', type: 'Penuh waktu', salary: '$100k - $150k' },
-  { id: 3, title: 'Insinyur Frontend', department: 'Teknik', location: 'Remote', type: 'Penuh waktu', salary: '$90k - $140k' },
-  { id: 4, title: 'Manajer Produk', department: 'Produk', location: 'Remote', type: 'Penuh waktu', salary: '$110k - $160k' },
-  { id: 5, title: 'Desainer Produk', department: 'Desain', location: 'Remote', type: 'Penuh waktu', salary: '$90k - $130k' },
-  { id: 6, title: 'Peneliti UX', department: 'Desain', location: 'Remote', type: 'Penuh waktu', salary: '$80k - $120k' },
-  { id: 7, title: 'Manajer Pemasaran Growth', department: 'Pemasaran', location: 'Remote', type: 'Penuh waktu', salary: '$90k - $130k' },
-  { id: 8, title: 'Spesialis Pemasaran Konten', department: 'Pemasaran', location: 'Remote', type: 'Penuh waktu', salary: '$60k - $90k' },
-  { id: 9, title: 'Insinyur DevOps', department: 'Teknik', location: 'Remote', type: 'Penuh waktu', salary: '$110k - $160k' },
-  { id: 10, title: 'Insinyur Keamanan', department: 'Teknik', location: 'Remote', type: 'Penuh waktu', salary: '$120k - $170k' },
-  { id: 11, title: 'Analis Produk', department: 'Produk', location: 'Remote', type: 'Penuh waktu', salary: '$70k - $100k' },
-  { id: 12, title: 'Manajer Keberhasilan Pelanggan', department: 'Operasional', location: 'Remote', type: 'Penuh waktu', salary: '$60k - $90k' },
+  { id: 1, title: 'Insinyur Full Stack Senior', department: 'Teknik', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 12.000.000 – Rp 18.000.000/bln' },
+  { id: 2, title: 'Insinyur Backend', department: 'Teknik', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 10.000.000 – Rp 15.000.000/bln' },
+  { id: 3, title: 'Insinyur Frontend', department: 'Teknik', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 9.000.000 – Rp 14.000.000/bln' },
+  { id: 4, title: 'Manajer Produk', department: 'Produk', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 11.000.000 – Rp 16.000.000/bln' },
+  { id: 5, title: 'Desainer Produk', department: 'Desain', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 9.000.000 – Rp 13.000.000/bln' },
+  { id: 6, title: 'Peneliti UX', department: 'Desain', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 8.000.000 – Rp 12.000.000/bln' },
+  { id: 7, title: 'Manajer Pemasaran Growth', department: 'Pemasaran', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 9.000.000 – Rp 13.000.000/bln' },
+  { id: 8, title: 'Spesialis Pemasaran Konten', department: 'Pemasaran', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 6.000.000 – Rp 9.000.000/bln' },
+  { id: 9, title: 'Insinyur DevOps', department: 'Teknik', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 11.000.000 – Rp 16.000.000/bln' },
+  { id: 10, title: 'Insinyur Keamanan', department: 'Teknik', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: '$120k - $170k' },
+  { id: 11, title: 'Analis Produk', department: 'Produk', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 7.000.000 – Rp 10.000.000/bln' },
+  { id: 12, title: 'Manajer Keberhasilan Pelanggan', department: 'Operasional', location: 'Remote / Indonesia', type: 'Penuh Waktu', salary: 'Rp 6.000.000 – Rp 9.000.000/bln' },
 ];
 
 const values = [
@@ -71,12 +71,12 @@ export default function Careers() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       {/* Hero Section */}
       <section className="pt-28 md:pt-32 lg:pt-40 pb-12 md:pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-neutral-100)_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
         <motion.div 
           animate={{ 
             scale: [1, 1.1, 1],

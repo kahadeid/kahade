@@ -235,7 +235,7 @@ export default function Profile() {
           <Divider />
           <MenuItem icon={<Headset className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Hubungi Kami" subtitle="Chat dengan tim support" href="https://wa.me/6281234567890" external />
           <Divider />
-          <MenuItem icon={<ChatCircle className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Kirim Masukan" subtitle="Saran dan kritik untuk kami" href="mailto:support@kahade.id" external />
+          <MenuItem icon={<ChatCircle className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Kirim Masukan" subtitle="Saran dan kritik untuk kami" href="mailto:bantuan@kahade.id" external />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">

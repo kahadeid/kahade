@@ -69,6 +69,9 @@ const Feedback = lazy(() => import("./pages/Feedback"));
 // Company Pages
 const Careers = lazy(() => import("./pages/Careers"));
 const Whitepaper = lazy(() => import("./pages/Whitepaper"));
+const Docs = lazy(() => import("./pages/Docs"));
+const ApiDocs = lazy(() => import("./pages/ApiDocs"));
+const IntegrationDocs = lazy(() => import("./pages/IntegrationDocs"));
 const Press = lazy(() => import("./pages/Press"));
 
 // Legal Pages
@@ -151,6 +154,9 @@ function LandingRouter() {
         {/* Company Pages */}
         <Route path="/careers" component={Careers} />
         <Route path="/whitepaper" component={Whitepaper} />
+        <Route path="/docs/api" component={ApiDocs} />
+        <Route path="/docs/integration" component={IntegrationDocs} />
+        <Route path="/docs" component={Docs} />
         <Route path="/press" component={Press} />
         
         {/* Legal Pages */}

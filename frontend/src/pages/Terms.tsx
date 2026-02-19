@@ -19,7 +19,7 @@ const sections = [
   {
     id: 'acceptance',
     title: '1. Penerimaan Syarat',
-    content: `Dengan mengakses atau menggunakan layanan Kahade, Anda setuju terikat oleh Syarat Layanan ini serta semua hukum dan peraturan yang berlaku. Jika Anda tidak menyetujui salah satu syarat, Anda dilarang menggunakan atau mengakses layanan kami.
+    content: `Dengan mengakses atau menggunakan layanan PT Kawal Hak Dengan Aman (Kahade), Anda setuju terikat oleh Syarat Layanan ini serta semua hukum dan peraturan yang berlaku. Jika Anda tidak menyetujui salah satu syarat, Anda dilarang menggunakan atau mengakses layanan kami.
 
 Syarat Layanan ini berlaku untuk semua pengguna platform, termasuk namun tidak terbatas pada pengunjung, vendor, pelanggan, pedagang, dan/atau kontributor konten.`
   },
@@ -39,7 +39,7 @@ Kami berhak mengubah, menangguhkan, atau menghentikan aspek layanan kapan saja t
   {
     id: 'eligibility',
     title: '3. Kelayakan',
-    content: `Untuk menggunakan layanan Kahade, Anda harus:
+    content: `Untuk menggunakan layanan PT Kawal Hak Dengan Aman (Kahade), Anda harus:
 
 • Berusia minimal 18 tahun
 • Memiliki kapasitas hukum untuk membuat perjanjian yang mengikat
@@ -106,7 +106,7 @@ Pelanggaran atas larangan ini dapat mengakibatkan penghentian akun secara langsu
   {
     id: 'intellectual',
     title: '8. Kekayaan Intelektual',
-    content: `Semua konten, fitur, dan fungsi pada platform Kahade adalah milik Kahade dan dilindungi oleh hukum hak cipta, merek dagang, serta kekayaan intelektual internasional lainnya.
+    content: `Semua konten, fitur, dan fungsi pada platform Kahade yang dioperasikan oleh PT Kawal Hak Dengan Aman yang dioperasikan oleh PT Kawal Hak Dengan Aman adalah milik PT Kawal Hak Dengan Aman dan dilindungi oleh hukum hak cipta, merek dagang, serta kekayaan intelektual internasional lainnya.
 
 Anda dilarang:
 • Menyalin, memodifikasi, atau mendistribusikan konten kami tanpa izin
@@ -183,7 +183,7 @@ export default function Terms() {
   const [showToc, setShowToc] = useState(false);
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       {/* Hero Section */}
@@ -321,7 +321,7 @@ export default function Terms() {
             >
               <div className="bg-white rounded-xl md:rounded-2xl border border-neutral-200 p-4 md:p-8">
                 <p className="text-base md:text-lg text-neutral-600 mb-8 leading-relaxed">
-                  Harap baca Syarat Layanan ini dengan saksama sebelum menggunakan platform dan layanan Kahade.
+                  Harap baca Syarat Layanan ini dengan saksama sebelum menggunakan platform dan layanan PT Kawal Hak Dengan Aman (Kahade).
                   Dengan menggunakan layanan kami, Anda setuju terikat oleh syarat-syarat ini.
                 </p>
                 

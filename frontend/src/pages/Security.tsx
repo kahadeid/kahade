@@ -21,14 +21,8 @@ import {
 } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/layout/Navbar';
+import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
 import Footer from '@/components/layout/Footer';
-
-// Animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
-};
 
 // Security features
 const securityFeatures = [

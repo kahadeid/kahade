@@ -18,6 +18,7 @@ import {
 } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/layout/Navbar';
+import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
 import Footer from '@/components/layout/Footer';
 import {
   Accordion,
@@ -25,13 +26,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-// Animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
-};
 
 // Pricing plans data
 const pricingPlans = [

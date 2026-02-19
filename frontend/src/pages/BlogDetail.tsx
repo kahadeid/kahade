@@ -316,7 +316,7 @@ export default function BlogDetail() {
 
   return (
     <LandingLayout>
-      <article className="min-h-screen bg-white">
+      <article className="min-h-screen bg-background">
         {/* Header */}
         <div className="bg-neutral-50 border-b border-neutral-200">
           <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-8">

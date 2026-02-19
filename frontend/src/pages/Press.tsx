@@ -50,12 +50,12 @@ export default function Press() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Navbar />
       
       {/* Hero Section */}
       <section className="pt-28 md:pt-32 lg:pt-40 pb-12 md:pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-neutral-100)_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
         <motion.div 
           animate={{ 
             scale: [1, 1.1, 1],
@@ -313,7 +313,7 @@ export default function Press() {
               whileHover={{ scale: 1.02 }}
               className="bg-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 inline-block"
             >
-              <div className="text-lg md:text-xl font-bold text-white">press@kahade.com</div>
+              <div className="text-lg md:text-xl font-bold text-white">halo@kahade.id</div>
               <div className="text-xs md:text-sm text-white/70">Kami biasanya merespons dalam 24 jam</div>
             </motion.div>
           </motion.div>
