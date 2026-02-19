@@ -146,7 +146,7 @@ export default function ForgotPassword() {
         
         <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2">
+          <Link href="/" className="block inline-flex items-center gap-2">
             <img 
               src="/images/logo-white.svg" 
               alt="Kahade" 
@@ -219,7 +219,7 @@ export default function ForgotPassword() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-8">
+                <Link href="/" className="block inline-flex items-center gap-2 mb-8">
                   <img src="/images/logo.svg" alt="Kahade" className="h-10 w-auto" />
                 </Link>
                 
@@ -297,7 +297,7 @@ export default function ForgotPassword() {
                 {/* Back to Login */}
                 <p className="mt-8 text-center text-neutral-600">
                   Remember your password?{' '}
-                  <Link href="/login" className="font-semibold text-foreground hover:underline">
+                  <Link href="/login" className="block font-semibold text-foreground hover:underline">
                     Back to login
                   </Link>
                 </p>
@@ -310,7 +310,7 @@ export default function ForgotPassword() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-8">
+                <Link href="/" className="block inline-flex items-center gap-2 mb-8">
                   <img src="/images/logo.svg" alt="Kahade" className="h-10 w-auto" />
                 </Link>
                 
@@ -403,7 +403,7 @@ export default function ForgotPassword() {
                 
                 {/* Back to Login */}
                 <p className="mt-8 text-center text-neutral-600">
-                  <Link href="/login" className="inline-flex items-center gap-2 font-semibold text-foreground hover:underline">
+                  <Link href="/login" className="block inline-flex items-center gap-2 font-semibold text-foreground hover:underline">
                     <ArrowLeft className="w-4 h-4" aria-hidden="true" weight="bold" />
                     Back to login
                   </Link>

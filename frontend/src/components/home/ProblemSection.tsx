@@ -123,7 +123,7 @@ export default function ProblemSection() {
                 Sistem escrow kami menahan dana dengan aman sampai kedua pihak puas,
                 memastikan transaksi yang adil dan terlindungi untuk semua.
               </p>
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button 
                   className="btn-lg bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-lg"
                   {...ariaProps('Mulai transaksi aman dengan Kahade')}

@@ -146,7 +146,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
           "h-16 flex items-center justify-between border-b border-border",
           isSidebarCollapsed ? "px-3" : "px-5"
         )}>
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="block flex items-center gap-3">
             {isSidebarCollapsed ? (
               <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">K</span>
@@ -172,7 +172,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         
         {/* Quick Action Button */}
         <div className={cn("p-4", isSidebarCollapsed && "px-3")}>
-          <Link href="/transactions/new">
+          <Link href="/transactions/new" className="block block">
             <Button className={cn(
               "w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl font-semibold shadow-lg shadow-black/20 transition-all",
               isSidebarCollapsed ? "px-0 justify-center" : "justify-center gap-2"
@@ -262,7 +262,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
       <aside className="hidden md:flex lg:hidden flex-col w-[72px] border-r border-border bg-card">
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-border">
-          <Link href="/">
+          <Link href="/" className="block block">
             <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">K</span>
             </div>
@@ -271,7 +271,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         
         {/* Quick Action */}
         <div className="p-3">
-          <Link href="/transactions/new">
+          <Link href="/transactions/new" className="block block">
             <Button className="w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl px-0 justify-center shadow-lg shadow-black/20">
               <Plus className="w-5 h-5" aria-hidden="true" weight="bold" />
             </Button>
@@ -388,7 +388,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               </div>
               
               {/* Notifications */}
-              <Link href="/notifications">
+              <Link href="/notifications" className="block block">
                 <button className="relative p-2.5 hover:bg-neutral-100 rounded-xl transition-colors">
                   <Bell className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="bold" />
                   <span className="absolute top-2 right-2 w-2 h-2 bg-black rounded-full ring-2 ring-white" />

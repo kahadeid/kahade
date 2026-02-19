@@ -193,7 +193,7 @@ export default function Navbar() {
       >
         <div className="container flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0 relative z-10">
+          <Link href="/" className="block flex items-center shrink-0 relative z-10">
             <img 
               src="/images/logo.svg" 
               alt="Kahade - Platform Escrow Terpercaya" 
@@ -268,7 +268,7 @@ export default function Navbar() {
               </Button>
             ) : (
               <>
-                <Link href="/login">
+                <Link href="/login" className="block block">
                   <Button 
                     variant="ghost" 
                     className="btn-ghost"
@@ -277,7 +277,7 @@ export default function Navbar() {
                     Masuk
                   </Button>
                 </Link>
-                <Link href="/register">
+                <Link href="/register" className="block block">
                   <Button 
                     className="btn-primary"
                     {...ariaProps('Buat akun baru')}
@@ -292,7 +292,7 @@ export default function Navbar() {
           {/* Mobile: CTA + Hamburger */}
           <div className="flex lg:hidden items-center gap-3">
             {!isAuthenticated && (
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="btn-primary btn-xs">
                   Mulai
                 </Button>
@@ -423,7 +423,7 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all duration-200 group"
+                  className="block flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all duration-200 group"
                   onClick={onClose}
                 >
                   <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
@@ -448,7 +448,7 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
       <div className="mt-6 pt-6 border-t border-border">
         <Link
           href={data.featured.href}
-          className="flex items-center justify-between p-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 group"
+          className="block flex items-center justify-between p-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 group"
           onClick={onClose}
         >
           <div>
@@ -500,7 +500,7 @@ function MegaMenuResources({ data, onClose, onMouseEnter, onMouseLeave }: MegaMe
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all duration-200 group"
+                  className="block flex items-start gap-4 p-2 rounded-lg hover:bg-muted transition-all duration-200 group"
                   onClick={onClose}
                 >
                   <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
@@ -614,7 +614,7 @@ function MobileMenu({
               key={link.href}
               href={link.href}
               onClick={onClose}
-              className="flex items-center gap-4 px-4 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              className="block flex items-center gap-4 px-4 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >
               <link.icon className="w-5 h-5" weight="bold" aria-hidden="true" />
               {link.label}
@@ -634,7 +634,7 @@ function MobileMenu({
               key={link.href}
               href={link.href}
               onClick={onClose}
-              className="flex items-center gap-4 px-4 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              className="block flex items-center gap-4 px-4 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >
               <link.icon className="w-5 h-5" weight="bold" aria-hidden="true" />
               {link.label}

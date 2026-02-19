@@ -258,7 +258,7 @@ export default function Login() {
         
         <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2">
+          <Link href="/" className="block inline-flex items-center gap-2">
             <img 
               src="/images/logo-white.svg" 
               alt="Kahade Logo" 
@@ -330,7 +330,7 @@ export default function Login() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-6 md:mb-8">
+                <Link href="/" className="block inline-flex items-center gap-2 mb-6 md:mb-8">
                   <img src="/images/logo.svg" alt="Kahade Logo" className="h-8 md:h-10 w-auto" />
                 </Link>
                 
@@ -434,7 +434,7 @@ export default function Login() {
                     </div>
                     <Link
                       href="/forgot-password"
-                      className="text-sm text-neutral-600 hover:text-foreground transition-colors leading-none flex items-center"
+                      className="block text-sm text-neutral-600 hover:text-foreground transition-colors leading-none flex items-center"
                     >
                       Lupa password?
                     </Link>
@@ -500,7 +500,7 @@ export default function Login() {
                     {/* Create Account Link */}
                     <p className="mt-8 text-center text-neutral-600">
                       Belum punya akun?{' '}
-                      <Link href="/register" className="font-semibold text-foreground hover:underline">
+                      <Link href="/register" className="block font-semibold text-foreground hover:underline">
                         Daftar sekarang
                       </Link>
                     </p>
@@ -571,7 +571,7 @@ export default function Login() {
                 
                 <p className="mt-8 text-center text-neutral-600">
                   Kehilangan akses ke authenticator?{' '}
-                  <Link href="/support" className="font-semibold text-foreground hover:underline">
+                  <Link href="/support" className="block font-semibold text-foreground hover:underline">
                     Hubungi support
                   </Link>
                 </p>

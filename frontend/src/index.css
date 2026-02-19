@@ -1551,3 +1551,29 @@
     padding-right: 1.5rem;
   }
 }
+
+/* ========================================================================
+   CRITICAL FIX — TAILWIND V4 TEXT-WRAP OVERRIDE (TW4-FIX-V2-2026)
+   TW v4 preflight adds text-wrap:balance to headings & text-wrap:pretty
+   to paragraphs. On narrow mobile screens this causes 1-word-per-line.
+   ======================================================================== */
+h1, h2, h3, h4, h5, h6,
+p, li, dt, dd, blockquote, caption, figcaption, label, span, div {
+  text-wrap: unset !important;
+}
+pre {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: pre-wrap !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+}
+a.block {
+  display: block !important;
+}
+@media (max-width: 639px) {
+  * { text-wrap: unset !important; -webkit-text-wrap: unset !important; }
+  pre, code { font-size: 0.7rem !important; max-width: 100%; white-space: pre-wrap !important; }
+}

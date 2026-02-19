@@ -285,7 +285,7 @@ export default function Contact() {
                     </Button>
                     <p className="text-xs text-muted-foreground text-center">
                       Dengan mengirim formulir ini, Anda setuju dengan{' '}
-                      <Link href="/privacy" className="underline hover:text-foreground transition-colors">
+                      <Link href="/privacy" className="block underline hover:text-foreground transition-colors">
                         Kebijakan Privasi
                       </Link>{' '}
                       kami.
@@ -308,7 +308,7 @@ export default function Contact() {
                     <Link
                       key={channel.title}
                       href={channel.href}
-                      className="card card-hover p-4 flex items-start gap-4 group"
+                      className="block card card-hover p-4 flex items-start gap-4 group"
                     >
                       <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                         <channel.icon className="w-5 h-5" weight="duotone" aria-hidden="true" />

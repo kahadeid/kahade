@@ -245,13 +245,13 @@ export default function Whitepaper() {
               Have questions about our whitepaper or want to discuss partnership opportunities?
             </p>
             <div className="flex flex-col sm:flex-row gap-4 md:gap-4 justify-center">
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button className="h-11 md:h-12 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl gap-2">
                   Contact Us
                   <ArrowRight className="w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
-              <Link href="/about">
+              <Link href="/about" className="block block">
                 <Button variant="outline" className="h-11 md:h-12 px-6 md:px-8 bg-transparent text-white border-white/30 hover:bg-white/10 font-semibold rounded-xl">
                   About Kahade
                 </Button>

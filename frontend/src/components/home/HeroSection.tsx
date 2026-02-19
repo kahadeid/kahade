@@ -66,13 +66,13 @@ export default function HeroSection() {
 
             {/* CTAs */}
             <motion.div {...fadeInUp} className="flex flex-col sm:flex-row gap-4 sm:gap-4 items-center justify-center lg:justify-start w-full">
-              <Link href="/register" className="w-full sm:w-auto">
+              <Link href="/register" className="block w-full sm:w-auto">
                 <Button className="btn-primary btn-lg w-full sm:w-auto">
                   Mulai Transaksi
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
-              <Link href="/how-it-works" className="w-full sm:w-auto">
+              <Link href="/how-it-works" className="block w-full sm:w-auto">
                 <Button variant="outline" className="btn-lg w-full sm:w-auto">
                   <Play className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" />
                   Cara Kerjanya

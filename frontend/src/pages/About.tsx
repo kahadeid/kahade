@@ -262,13 +262,13 @@ export default function About() {
               transaksi mereka kepada Kahade.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="btn-primary btn-lg">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button variant="outline" className="btn-lg">
                   Hubungi Kami
                 </Button>

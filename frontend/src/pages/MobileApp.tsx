@@ -215,13 +215,13 @@ export default function MobileApp() {
               Be the first to know when Kahade Mobile is available for download.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl">
                   Create Account
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl bg-transparent">
                   Contact Us
                 </Button>

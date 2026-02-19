@@ -147,7 +147,7 @@ export default function PricingSection() {
                   </li>
                 ))}
               </ul>
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className={cn(
                   'w-full btn-lg',
                   plan.popular 

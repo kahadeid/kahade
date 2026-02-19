@@ -368,13 +368,13 @@ export default function Register() {
           </p>
           
           <div className="space-y-3">
-            <Link href="/login">
+            <Link href="/login" className="block block">
               <Button className="w-full h-12 bg-black hover:bg-black/90 text-white rounded-xl font-semibold">
                 Continue to Login
                 <ArrowRight className="ml-2 w-5 h-5" weight="bold" aria-hidden="true" />
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="/" className="block block">
               <Button variant="ghost" className="w-full text-neutral-600">
                 Back to Home
               </Button>
@@ -395,7 +395,7 @@ export default function Register() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-3xl" aria-hidden="true" />
         
         <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
-          <Link href="/" className="inline-flex items-center gap-2">
+          <Link href="/" className="block inline-flex items-center gap-2">
             <img 
               src="/images/logo-white.svg" 
               alt="Kahade" 
@@ -463,7 +463,7 @@ export default function Register() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-6 md:mb-8">
+                <Link href="/" className="block inline-flex items-center gap-2 mb-6 md:mb-8">
                   <img src="/images/logo.svg" alt="Kahade" className="h-8 md:h-10 w-auto" />
                 </Link>
                 
@@ -624,7 +624,7 @@ export default function Register() {
                 {/* Sign in link */}
                 <p className="mt-8 text-center text-neutral-600">
                   Already have an account?{' '}
-                  <Link href="/login" className="font-semibold text-foreground hover:underline">
+                  <Link href="/login" className="block font-semibold text-foreground hover:underline">
                     Sign in
                   </Link>
                 </p>
@@ -640,7 +640,7 @@ export default function Register() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-8">
+                <Link href="/" className="block inline-flex items-center gap-2 mb-8">
                   <img src="/images/logo.svg" alt="Kahade" className="h-10 w-auto" />
                 </Link>
                 
@@ -802,7 +802,7 @@ export default function Register() {
                 exit={{ opacity: 0, y: -20 }}
               >
                 {/* Logo */}
-                <Link href="/" className="inline-flex items-center gap-2 mb-8">
+                <Link href="/" className="block inline-flex items-center gap-2 mb-8">
                   <img src="/images/logo.svg" alt="Kahade" className="h-10 w-auto" />
                 </Link>
                 
@@ -904,9 +904,9 @@ export default function Register() {
                         className="text-sm text-neutral-600 cursor-pointer leading-relaxed select-none"
                       >
                         I agree to the{' '}
-                        <Link href="/terms" className="text-foreground hover:underline">Terms of Service</Link>
+                        <Link href="/terms" className="block text-foreground hover:underline">Terms of Service</Link>
                         {' '}and{' '}
-                        <Link href="/privacy" className="text-foreground hover:underline">Privacy Policy</Link>
+                        <Link href="/privacy" className="block text-foreground hover:underline">Privacy Policy</Link>
                       </label>
                     </div>
                     

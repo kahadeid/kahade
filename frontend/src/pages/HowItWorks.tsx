@@ -171,7 +171,7 @@ export default function HowItWorks() {
               Mulai hanya dalam hitungan menit.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-black text-white hover:bg-black/90 font-semibold rounded-xl btn-hover-lift">
                   Mulai Gratis
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
@@ -352,7 +352,7 @@ export default function HowItWorks() {
             </Accordion>
             
             <div className="text-center mt-8">
-              <Link href="/faq">
+              <Link href="/faq" className="block block">
                 <Button variant="outline" className="h-11 md:h-12 px-6 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 font-semibold rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
                   Lihat Semua FAQ
                   <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" />
@@ -397,13 +397,13 @@ export default function HowItWorks() {
               Gratis untuk memulai.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
                   Daftar Gratis
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl bg-transparent transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
                   Hubungi Kami
                 </Button>

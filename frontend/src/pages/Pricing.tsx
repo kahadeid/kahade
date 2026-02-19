@@ -599,7 +599,7 @@ export default function Pricing() {
               className="mt-8 text-center"
             >
               <p className="text-muted-foreground mb-4">Masih ada pertanyaan?</p>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button className="h-12 px-6 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                   Hubungi Tim Sales
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
@@ -639,7 +639,7 @@ export default function Pricing() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold text-base">
                   Mulai Gratis Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />

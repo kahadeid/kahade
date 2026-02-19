@@ -44,7 +44,7 @@ export default function NotFound() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 md:gap-4 justify-center">
-          <Link href="/">
+          <Link href="/" className="block block">
             <Button className="h-10 md:h-11 px-5 md:px-6 bg-black text-white hover:bg-black/90 font-semibold rounded-xl gap-2">
               <House className="w-5 h-5" aria-hidden="true" weight="bold" />
               Kembali ke Beranda
@@ -64,16 +64,16 @@ export default function NotFound() {
         <div className="mt-10 md:mt-12 pt-6 md:pt-8 border-t border-border">
           <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">Atau kunjungi halaman populer berikut:</p>
           <div className="flex flex-wrap justify-center gap-4 md:gap-4">
-            <Link href="/how-it-works" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
+            <Link href="/how-it-works" className="block text-xs md:text-sm text-foreground hover:underline font-semibold">
               Cara Kerja
             </Link>
-            <Link href="/about" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
+            <Link href="/about" className="block text-xs md:text-sm text-foreground hover:underline font-semibold">
               Tentang Kami
             </Link>
-            <Link href="/contact" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
+            <Link href="/contact" className="block text-xs md:text-sm text-foreground hover:underline font-semibold">
               Kontak
             </Link>
-            <Link href="/faq" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
+            <Link href="/faq" className="block text-xs md:text-sm text-foreground hover:underline font-semibold">
               FAQ
             </Link>
           </div>

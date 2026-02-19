@@ -146,7 +146,7 @@ export default function Partners() {
               transition={{ delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                   Mulai Integrasi
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
@@ -347,7 +347,7 @@ const transaction = await kahade.transactions.create({
                     </li>
                   ))}
                 </ul>
-                <Link href="/contact">
+                <Link href="/contact" className="block block">
                   <Button className="h-14 px-8 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                     Apply as Partner
                     <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
@@ -414,7 +414,7 @@ const transaction = await kahade.transactions.create({
               transition={{ delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Get API Keys
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />

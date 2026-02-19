@@ -51,7 +51,7 @@ export default function FinalCTA() {
             variants={staggerItem}
             className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center items-center"
           >
-            <Link href="/register" className="w-full sm:w-auto">
+            <Link href="/register" className="block w-full sm:w-auto">
               <Button 
                 className="btn-lg w-full sm:w-auto bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-2xl hover:shadow-primary-foreground/20 hover:-translate-y-1 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                 {...ariaProps('Mulai akun gratis dengan Kahade')}
@@ -60,7 +60,7 @@ export default function FinalCTA() {
                 <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
               </Button>
             </Link>
-            <Link href="/contact" className="w-full sm:w-auto">
+            <Link href="/contact" className="block w-full sm:w-auto">
               <Button 
                 className="btn-lg w-full sm:w-auto border-2 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/50 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                 {...ariaProps('Hubungi tim sales')}

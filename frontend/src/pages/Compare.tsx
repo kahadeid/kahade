@@ -537,7 +537,7 @@ export default function Compare() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />

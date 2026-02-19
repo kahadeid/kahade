@@ -231,7 +231,7 @@ export default function Security() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-black text-white hover:bg-black/90 rounded-xl font-semibold text-base">
                   Mulai Transaksi Aman
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
@@ -255,7 +255,7 @@ export default function Security() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2">
+                <div className="text-xl sm:text-3xl md:text-5xl font-bold text-foreground mb-2">
                   {stat.value}
                 </div>
                 <div className="text-sm md:text-base text-muted-foreground">{stat.label}</div>
@@ -644,13 +644,13 @@ export default function Security() {
               transition={{ delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button className="h-14 px-8 border-2 border-white/30 bg-transparent text-white hover:bg-white/10 rounded-xl font-semibold">
                   Hubungi Security Team
                 </Button>

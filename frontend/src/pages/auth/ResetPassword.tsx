@@ -145,13 +145,13 @@ export default function ResetPassword() {
             This password reset link is invalid or has expired. Please request a new password reset link.
           </p>
           <div className="space-y-3">
-            <Link href="/forgot-password">
+            <Link href="/forgot-password" className="block block">
               <Button className="w-full h-12 bg-black text-white hover:bg-black/90">
                 Request New Link
                 <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/login" className="block block">
               <Button variant="outline" className="w-full h-12 border-neutral-200">
                 <ArrowLeft className="mr-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 Back to Login
@@ -179,7 +179,7 @@ export default function ResetPassword() {
           <p className="text-neutral-600 mb-8">
             Your password has been successfully reset. You can now sign in with your new password.
           </p>
-          <Link href="/login">
+          <Link href="/login" className="block block">
             <Button className="w-full h-12 bg-black text-white hover:bg-black/90">
               Sign In
               <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
@@ -196,7 +196,7 @@ export default function ResetPassword() {
       <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-12 xl:px-20">
         <div className="w-full max-w-md mx-auto">
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2 mb-8 group">
+          <Link href="/" className="block inline-flex items-center gap-2 mb-8 group">
             <img src="/images/logo.svg" alt="Kahade" className="h-8 w-auto" />
           </Link>
 
@@ -317,7 +317,7 @@ export default function ResetPassword() {
           
           <p className="mt-8 text-center text-sm text-neutral-600">
             Remember your password?{' '}
-            <Link href="/login" className="text-black hover:underline font-semibold">
+            <Link href="/login" className="block text-black hover:underline font-semibold">
               Sign in
             </Link>
           </p>

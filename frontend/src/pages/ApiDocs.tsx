@@ -118,13 +118,13 @@ export default function ApiDocs() {
               REST API yang terdokumentasi, aman, dan mudah digunakan.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Link href="/docs/integration">
+              <Link href="/docs/integration" className="block block">
                 <Button className="btn-primary">
                   Panduan Mulai Cepat
                   <ArrowRight className="ml-2 w-4 h-4" weight="bold" aria-hidden="true" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button variant="outline">
                   Minta API Key
                 </Button>
@@ -294,13 +294,13 @@ curl -X POST https://api.kahade.id/v1/transactions \\
       <section className="section-padding bg-muted/30">
         <div className="container">
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/docs/integration">
+            <Link href="/docs/integration" className="block block">
               <Button className="btn-primary w-full sm:w-auto">
                 <BookOpen className="mr-2 w-4 h-4" weight="duotone" aria-hidden="true" />
                 Panduan Integrasi
               </Button>
             </Link>
-            <Link href="/docs">
+            <Link href="/docs" className="block block">
               <Button variant="outline" className="w-full sm:w-auto">
                 Kembali ke Dokumentasi
               </Button>

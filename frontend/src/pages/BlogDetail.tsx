@@ -256,7 +256,7 @@ export default function BlogDetail() {
           >
             <h1 className="text-xl md:text-2xl font-bold text-foreground mb-4">Artikel Tidak Ditemukan</h1>
             <p className="text-sm md:text-base text-muted-foreground mb-6">Artikel yang Anda cari tidak tersedia atau telah dihapus.</p>
-            <Link href="/blog">
+            <Link href="/blog" className="block block">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button className="h-10 md:h-11 bg-black text-white hover:bg-black/90 rounded-xl">
                   <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
@@ -327,9 +327,9 @@ export default function BlogDetail() {
               transition={{ duration: 0.4 }}
               className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground mb-4 md:mb-6"
             >
-              <Link href="/" className="hover:text-neutral-900 transition-colors">Beranda</Link>
+              <Link href="/" className="block hover:text-neutral-900 transition-colors">Beranda</Link>
               <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" />
-              <Link href="/blog" className="hover:text-neutral-900 transition-colors">Blog</Link>
+              <Link href="/blog" className="block hover:text-neutral-900 transition-colors">Blog</Link>
               <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" />
               <span className="text-foreground">{post.category}</span>
             </motion.nav>
@@ -625,7 +625,7 @@ export default function BlogDetail() {
               className="flex items-center justify-between mb-6 md:mb-8"
             >
               <h2 className="text-xl md:text-2xl font-bold text-foreground">Artikel Terkait</h2>
-              <Link href="/blog">
+              <Link href="/blog" className="block block">
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button variant="outline" className="h-9 md:h-10 border-border rounded-lg text-sm">
                     Lihat semua

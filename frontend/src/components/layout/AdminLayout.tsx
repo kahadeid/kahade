@@ -186,7 +186,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
       <aside className="hidden lg:flex flex-col w-72 border-r border-border bg-card">
         {/* Logo */}
         <div className="p-4 border-b border-border">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="block flex items-center gap-3">
             <img src="/images/logo.svg" alt="Kahade" className="h-8 w-auto" />
             <span className="px-2 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded-md">
               ADMIN
@@ -257,7 +257,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
               className="fixed left-0 top-0 bottom-0 w-72 bg-card border-r border-border z-50 lg:hidden overflow-y-auto"
             >
               <div className="p-4 flex items-center justify-between border-b border-border sticky top-0 bg-card">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/" className="block flex items-center gap-2">
                   <img src="/images/logo.svg" alt="Kahade" className="h-8 w-auto" />
                   <span className="px-2 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded-md">
                     ADMIN

@@ -245,7 +245,7 @@ export default function Help() {
             <p className="text-white/70 text-sm md:text-base mb-8">
               Lihat pertanyaan yang sering diajukan untuk jawaban instan.
             </p>
-            <Link href="/faq">
+            <Link href="/faq" className="block block">
               <Button className="h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl">
                 Lihat FAQ
                 <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />

@@ -433,13 +433,13 @@ export default function UseCases() {
               transition={{ delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/register">
+              <Link href="/register" className="block block">
                 <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Gratis
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button className="h-14 px-8 border-2 border-white/30 bg-transparent text-white hover:bg-white/10 rounded-xl font-semibold">
                   Diskusi dengan Sales
                 </Button>

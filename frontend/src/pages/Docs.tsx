@@ -151,14 +151,14 @@ export default function Docs() {
                 <ul className="space-y-2 mb-4">
                   {cat.articles.map((article) => (
                     <li key={article.title}>
-                      <Link href={article.href} className="text-sm hover:text-foreground text-muted-foreground transition-colors flex items-center gap-2 group">
+                      <Link href={article.href} className="block text-sm hover:text-foreground text-muted-foreground transition-colors flex items-center gap-2 group">
                         <ArrowRight className="w-3 h-3 flex-shrink-0 group-hover:translate-x-1 transition-transform" weight="bold" aria-hidden="true" />
                         {article.title}
                       </Link>
                     </li>
                   ))}
                 </ul>
-                <Link href={cat.href} className="text-sm font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+                <Link href={cat.href} className="block text-sm font-semibold flex items-center gap-1 hover:gap-2 transition-all">
                   Lihat semua
                   <ArrowRight className="w-4 h-4" weight="bold" aria-hidden="true" />
                 </Link>
@@ -181,7 +181,7 @@ export default function Docs() {
                 Integrasikan Kahade langsung ke aplikasi atau platform Anda menggunakan
                 REST API kami yang terdokumentasi lengkap.
               </p>
-              <Link href="/docs/api">
+              <Link href="/docs/api" className="block block">
                 <Button className="btn-primary">
                   Lihat Dokumentasi API
                   <ArrowRight className="ml-2 w-4 h-4" weight="bold" aria-hidden="true" />
@@ -197,7 +197,7 @@ export default function Docs() {
                 Panduan langkah demi langkah untuk mengintegrasikan sistem escrow
                 Kahade ke platform Anda dengan cepat dan aman.
               </p>
-              <Link href="/docs/integration">
+              <Link href="/docs/integration" className="block block">
                 <Button variant="outline" className="btn-lg">
                   Panduan Integrasi
                   <ArrowRight className="ml-2 w-4 h-4" weight="bold" aria-hidden="true" />
@@ -218,12 +218,12 @@ export default function Docs() {
               email, atau telepon.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/help">
+              <Link href="/help" className="block block">
                 <Button className="btn-primary">
                   Buka Pusat Bantuan
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/contact" className="block block">
                 <Button variant="outline">
                   Hubungi Tim Kami
                 </Button>
