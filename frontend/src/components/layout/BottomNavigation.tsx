@@ -54,7 +54,7 @@ export default function BottomNavigation() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-      {/* White background var(--color-white) */}
+      {/* White background white */}
       <div className="absolute inset-0 bg-white border-t border-neutral-200" aria-hidden="true" />
       
       {/* Safe area padding for notched devices */}

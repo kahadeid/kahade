@@ -44,9 +44,9 @@ const megaMenuData = {
       {
         title: 'Solusi',
         links: [
-          { href: '/solutions/marketplace', label: 'Marketplace', icon: Users, description: 'Untuk marketplace online' },
-          { href: '/solutions/freelance', label: 'Freelancer', icon: Briefcase, description: 'Pembayaran freelance yang aman' },
-          { href: '/solutions/enterprise', label: 'Enterprise', icon: Buildings, description: 'Solusi enterprise kustom' },
+          { href: '/use-cases', label: 'Marketplace', icon: Users, description: 'Untuk marketplace online' },
+          { href: '/use-cases#freelance', label: 'Freelancer', icon: Briefcase, description: 'Pembayaran freelance yang aman' },
+          { href: '/contact', label: 'Enterprise', icon: Buildings, description: 'Solusi enterprise kustom' },
         ]
       }
     ],
@@ -71,9 +71,9 @@ const megaMenuData = {
       {
         title: 'Dokumentasi',
         links: [
-          { href: '/docs/api', label: 'Dokumentasi API', icon: FileText, description: 'Dokumentasi untuk developer' },
-          { href: '/docs/integration', label: 'Panduan Integrasi', icon: ChartLine, description: 'Tutorial integrasi' },
-          { href: '/support', label: 'Pusat Bantuan', icon: Headset, description: 'Sumber bantuan 24/7' },
+          { href: '/help#api', label: 'Dokumentasi API', icon: FileText, description: 'Dokumentasi untuk developer' },
+          { href: '/help#integration', label: 'Panduan Integrasi', icon: ChartLine, description: 'Tutorial integrasi' },
+          { href: '/help', label: 'Pusat Bantuan', icon: Headset, description: 'Sumber bantuan 24/7' },
         ]
       }
     ]
@@ -310,8 +310,9 @@ export default function Navbar() {
               className="p-2 hover:bg-muted rounded-lg transition-colors relative z-10"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               {...ariaProps(
-                isMobileMenuOpen ? 'Close menu' : 'Open menu',
-                isMobileMenuOpen ? 'true' : 'false'
+                isMobileMenuOpen ? 'Tutup menu' : 'Buka menu',
+                undefined,
+                isMobileMenuOpen
               )}
             >
               {isMobileMenuOpen ? (
