@@ -35,25 +35,25 @@ interface DashboardLayoutProps {
 
 // Main navigation items for desktop/tablet sidebar
 const mainNavItems = [
-  { href: '/', icon: House, label: 'Home' },
-  { href: '/transactions', icon: Receipt, label: 'Orders' },
-  { href: '/wallet', icon: Wallet, label: 'Wallet' },
-  { href: '/bank-accounts', icon: Bank, label: 'Bank Accounts' },
+  { href: '/', icon: House, label: 'Beranda' },
+  { href: '/transactions', icon: Receipt, label: 'Pesanan' },
+  { href: '/wallet', icon: Wallet, label: 'Dompet' },
+  { href: '/bank-accounts', icon: Bank, label: 'Rekening Bank' },
 ];
 
 // Secondary navigation items for desktop/tablet sidebar
 const secondaryNavItems = [
-  { href: '/disputes', icon: Scales, label: 'Disputes' },
-  { href: '/referrals', icon: Users, label: 'Referrals' },
-  { href: '/kyc', icon: IdentificationCard, label: 'KYC Verification' },
-  { href: '/activity', icon: ClockCounterClockwise, label: 'Activity Log' },
+  { href: '/disputes', icon: Scales, label: 'Sengketa' },
+  { href: '/referrals', icon: Users, label: 'Referral' },
+  { href: '/kyc', icon: IdentificationCard, label: 'Verifikasi KYC' },
+  { href: '/activity', icon: ClockCounterClockwise, label: 'Log Aktivitas' },
 ];
 
 // Bottom navigation items for desktop/tablet sidebar
 const bottomNavItems = [
-  { href: '/notifications', icon: Bell, label: 'Notifications' },
-  { href: '/profile', icon: User, label: 'Profile' },
-  { href: '/settings', icon: Gear, label: 'Settings' },
+  { href: '/notifications', icon: Bell, label: 'Notifikasi' },
+  { href: '/profile', icon: User, label: 'Profil' },
+  { href: '/settings', icon: Gear, label: 'Pengaturan' },
 ];
 
 // Pages where bottom navigation should be shown (main pages)
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
   };
 
   return (
-    <div className="min-h-screen flex bg-[var(--color-white)]">
+    <div className="min-h-screen flex bg-white">
       {/* ========== DESKTOP SIDEBAR ========== */}
       <aside 
         className={cn(
@@ -163,7 +163,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
             <button
               onClick={() => setIsSidebarCollapsed(true)}
               className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
-              aria-label="Collapse sidebar"
+              aria-label="Sembunyikan sidebar"
             >
               <CaretRight className="w-4 h-4 rotate-180 text-neutral-500" aria-hidden="true" weight="bold" />
             </button>
@@ -178,7 +178,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               isSidebarCollapsed ? "px-0 justify-center" : "justify-center gap-2"
             )}>
               <Plus className="w-5 h-5" aria-hidden="true" weight="bold" />
-              {!isSidebarCollapsed && <span>New Order</span>}
+              {!isSidebarCollapsed && <span>Order Baru</span>}
             </Button>
           </Link>
         </div>
@@ -219,7 +219,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
             <button
               onClick={() => setIsSidebarCollapsed(false)}
               className="w-full p-2 hover:bg-neutral-100 rounded-xl transition-colors flex items-center justify-center"
-              aria-label="Expand sidebar"
+              aria-label="Tampilkan sidebar"
             >
               <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="bold" />
             </button>
@@ -252,7 +252,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-600 hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" />
-              <span className="font-medium">Sign Out</span>
+              <span className="font-medium">Keluar</span>
             </button>
           </div>
         )}
@@ -348,7 +348,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
               <button
                 onClick={handleGoBack}
                 className="flex items-center justify-center w-10 h-10 -ml-2 rounded-xl hover:bg-neutral-100 transition-colors"
-                aria-label="Go back"
+                aria-label="Kembali"
               >
                 <ArrowLeft className="w-6 h-6 text-black" aria-hidden="true" weight="bold" />
               </button>
@@ -380,7 +380,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                 <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" aria-hidden="true" />
                 <Input
                   type="search"
-                  placeholder="Search..."
+                  placeholder="Cari..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-11 w-48 lg:w-64 h-10 bg-neutral-100 border-0 rounded-xl focus:ring-2 focus:ring-black focus:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
@@ -441,7 +441,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                             className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
                           >
                             <User className="w-5 h-5" aria-hidden="true" weight="bold" />
-                            <span className="font-medium">Profile</span>
+                            <span className="font-medium">Profil</span>
                           </Link>
                           <Link
                             href="/settings"
@@ -449,7 +449,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                             className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
                           >
                             <Gear className="w-5 h-5" aria-hidden="true" weight="bold" />
-                            <span className="font-medium">Settings</span>
+                            <span className="font-medium">Pengaturan</span>
                           </Link>
                         </div>
                         
@@ -463,7 +463,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                             className="w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-neutral-600 hover:text-red-600 hover:bg-red-50 transition-colors"
                           >
                             <SignOut className="w-5 h-5" aria-hidden="true" weight="bold" />
-                            <span className="font-medium">Sign Out</span>
+                            <span className="font-medium">Keluar</span>
                           </button>
                         </div>
                       </motion.div>

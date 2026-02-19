@@ -40,39 +40,39 @@ interface AdminLayoutProps {
 // Nested navigation structure
 const navSections = [
   {
-    title: 'Overview',
+    title: 'Ikhtisar',
     items: [
       { href: '/', icon: House, label: 'Dashboard' },
     ]
   },
   {
-    title: 'Management',
+    title: 'Manajemen',
     items: [
-      { href: '/users', icon: Users, label: 'Users' },
-      { href: '/kyc', icon: IdentificationCard, label: 'KYC Verification' },
-      { href: '/transactions', icon: ArrowsLeftRight, label: 'Transactions' },
-      { href: '/disputes', icon: Warning, label: 'Disputes' },
-      { href: '/withdrawals', icon: ArrowDown, label: 'Withdrawals' },
-      { href: '/deposits', icon: Wallet, label: 'Deposits' },
+      { href: '/users', icon: Users, label: 'Pengguna' },
+      { href: '/kyc', icon: IdentificationCard, label: 'Verifikasi KYC' },
+      { href: '/transactions', icon: ArrowsLeftRight, label: 'Transaksi' },
+      { href: '/disputes', icon: Warning, label: 'Sengketa' },
+      { href: '/withdrawals', icon: ArrowDown, label: 'Penarikan' },
+      { href: '/deposits', icon: Wallet, label: 'Setoran' },
     ]
   },
   {
-    title: 'Analytics',
+    title: 'Analitik',
     items: [
-      { href: '/reports', icon: ChartBar, label: 'Reports' },
+      { href: '/reports', icon: ChartBar, label: 'Laporan' },
     ]
   },
   {
-    title: 'Marketing',
+    title: 'Pemasaran',
     items: [
-      { href: '/promos', icon: Tag, label: 'Promotions' },
+      { href: '/promos', icon: Tag, label: 'Promosi' },
     ]
   },
   {
-    title: 'System',
+    title: 'Sistem',
     items: [
-      { href: '/audit-logs', icon: ClockCounterClockwise, label: 'Audit Logs' },
-      { href: '/settings', icon: Gear, label: 'Settings' },
+      { href: '/audit-logs', icon: ClockCounterClockwise, label: 'Log Audit' },
+      { href: '/settings', icon: Gear, label: 'Pengaturan' },
     ]
   },
 ];
@@ -312,7 +312,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                 <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                 <Input
                   type="search"
-                  placeholder="Search users, transactions..."
+                  placeholder="Cari pengguna, transaksi..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 w-80 bg-secondary border-0"
@@ -350,7 +350,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                       className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg border border-border shadow-lg py-2 z-50"
                     >
                       <div className="px-4 py-2 border-b border-border">
-                        <div className="font-medium">Administrator</div>
+                        <div className="font-medium"> Administrator</div>
                         <div className="text-sm text-muted-foreground truncate">{user?.email}</div>
                       </div>
                       <Link

@@ -189,7 +189,7 @@ export default function Navbar() {
         ref={navRef}
         className={navClasses}
         role="navigation"
-        aria-label="Main navigation"
+        aria-label="Navigasi utama"
       >
         <div className="container flex items-center justify-between">
           {/* Logo */}
@@ -211,7 +211,7 @@ export default function Navbar() {
               label="Produk"
               activeMenu={activeMenu}
               onMenuEnter={handleMenuEnter}
-              onMenuLeave={handleMenuLeave}
+              onMouseLeave={handleMenuLeave}
             >
               <MegaMenuProduct
                 data={megaMenuData.product}
@@ -261,7 +261,7 @@ export default function Navbar() {
               <Button 
                 onClick={handleDashboardClick}
                 className="btn-primary"
-                {...ariaProps('Go to dashboard')}
+                {...ariaProps('Pergi ke dashboard')}
               >
                 Dashboard
                 <ArrowRight className="ml-2 w-4 h-4" weight="bold" aria-hidden="true" />
@@ -272,7 +272,7 @@ export default function Navbar() {
                   <Button 
                     variant="ghost" 
                     className="btn-ghost"
-                    {...ariaProps('Login to your account')}
+                    {...ariaProps('Masuk ke akun Anda')}
                   >
                     Masuk
                   </Button>
@@ -280,7 +280,7 @@ export default function Navbar() {
                 <Link href="/register">
                   <Button 
                     className="btn-primary"
-                    {...ariaProps('Create new account')}
+                    {...ariaProps('Buat akun baru')}
                   >
                     Mulai
                   </Button>
@@ -578,7 +578,7 @@ function MobileMenu({
       className="fixed inset-0 bg-background z-50 lg:hidden overflow-y-auto"
       role="dialog"
       aria-modal="true"
-      aria-label="Mobile navigation menu"
+      aria-label="Menu navigasi mobile"
     >
       {/* Header */}
       <div className="sticky top-0 bg-background border-b border-border px-6 py-4 flex items-center justify-between">
@@ -586,7 +586,7 @@ function MobileMenu({
         <button
           onClick={onClose}
           className="p-2 hover:bg-muted rounded-lg transition-colors"
-          {...ariaProps('Close menu')}
+          {...ariaProps('Tutup menu')}
         >
           <X className="w-6 h-6" weight="bold" aria-hidden="true" />
         </button>
@@ -600,7 +600,7 @@ function MobileMenu({
       </div>
       
       {/* Navigation */}
-      <nav className="p-6 space-y-2" aria-label="Mobile main navigation">
+      <nav className="p-6 space-y-2" aria-label="Navigasi utama mobile">
         {/* Product */}
         <MobileMenuItem
           title="Produk"

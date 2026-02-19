@@ -25,11 +25,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/', icon: House, label: 'Home' },
-  { href: '/transactions', icon: Receipt, label: 'Order' },
+  { href: '/', icon: House, label: 'Beranda' },
+  { href: '/transactions', icon: Receipt, label: 'Pesanan' },
   { href: '/transactions/new', icon: Plus, label: '', isAction: true },
-  { href: '/wallet', icon: Wallet, label: 'Wallet' },
-  { href: '/profile', icon: User, label: 'Profile' },
+  { href: '/wallet', icon: Wallet, label: 'Dompet' },
+  { href: '/profile', icon: User, label: 'Profil' },
 ];
 
 // Pages where bottom navigation should be shown
@@ -55,7 +55,7 @@ export default function BottomNavigation() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
       {/* White background var(--color-white) */}
-      <div className="absolute inset-0 bg-[var(--color-white)] border-t border-neutral-200" aria-hidden="true" />
+      <div className="absolute inset-0 bg-white border-t border-neutral-200" aria-hidden="true" />
       
       {/* Safe area padding for notched devices */}
       <div className="relative">

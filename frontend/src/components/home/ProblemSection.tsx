@@ -125,7 +125,7 @@ export default function ProblemSection() {\n  return (
               <Link href="/register">
                 <Button 
                   className="btn-lg bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-lg"
-                  {...ariaProps('Start secure transaction with Kahade')}
+                  {...ariaProps('Mulai transaksi aman dengan Kahade')}
                 >
                   Mulai Transaksi Aman
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />

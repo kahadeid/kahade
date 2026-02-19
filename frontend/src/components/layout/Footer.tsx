@@ -106,7 +106,7 @@ export default function Footer() {
     <footer 
       className="bg-background border-t border-border relative overflow-hidden"
       role="contentinfo"
-      aria-label="Site footer"
+      aria-label="Footer situs"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" aria-hidden="true" />
@@ -135,7 +135,7 @@ export default function Footer() {
           <div className="lg:col-span-8">
             <nav 
               className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-              aria-label="Footer navigation"
+              aria-label="Navigasi footer"
             >
               {Object.entries(footerLinks).map(([key, section]) => (
                 <FooterLinkSection
@@ -157,7 +157,7 @@ export default function Footer() {
             <div 
               className="flex flex-wrap items-center justify-center lg:justify-start gap-2"
               role="navigation"
-              aria-label="Social media links"
+              aria-label="Tautan media sosial"
             >
               {socialLinks.map((social) => (
                 <a
@@ -171,7 +171,7 @@ export default function Footer() {
                     'hover:bg-primary hover:text-primary-foreground',
                     'transition-all duration-200'
                   )}
-                  {...ariaProps(`Visit our ${social.label} page`)}
+                  {...ariaProps(`Kunjungi halaman ${social.label} kami`)}
                 >
                   <social.icon className="w-4 h-4" weight="regular" aria-hidden="true" />
                 </a>
@@ -181,7 +181,7 @@ export default function Footer() {
             {/* Copyright */}
             <div className="text-center lg:text-right">
               <p className="text-xs md:text-sm text-muted-foreground/70">
-                © {currentYear} Kahade. All rights reserved.
+                © {currentYear} Kahade. Hak cipta dilindungi undang-undang.
               </p>
             </div>
           </div>
