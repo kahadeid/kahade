@@ -23,6 +23,9 @@ export function navigateToAdmin(path: string = '/') {
   window.location.href = APP_URLS.admin + path;
 }
 
-export function canAccessAdmin(): boolean {
+export function canAccessAdmin(user?: { role?: string; isAdmin?: boolean } | null): boolean {
+  if (user) {
+    return user.role === 'ADMIN' || user.isAdmin === true;
+  }
   return getAppMode() === 'admin';
 }

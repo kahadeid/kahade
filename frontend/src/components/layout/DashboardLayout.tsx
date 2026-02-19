@@ -383,7 +383,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                   placeholder="Cari..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 w-48 lg:w-64 h-10 bg-neutral-100 border-0 rounded-xl focus:ring-2 focus:ring-black focus:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                  className="pl-11 w-48 lg:w-64 h-10 bg-neutral-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:bg-white transition-all"
                 />
               </div>
               

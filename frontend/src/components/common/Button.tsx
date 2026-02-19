@@ -43,37 +43,37 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Variant styles - Complete implementation
     const variantStyles = {
       primary: cn(
-        'bg-blue-600 text-white',
-        'hover:bg-blue-700 active:bg-blue-800',
-        'focus:ring-blue-500',
-        'disabled:bg-blue-300 disabled:cursor-not-allowed'
+        'bg-foreground text-background',
+        'hover:bg-foreground/90 active:bg-foreground/80',
+        'focus:ring-foreground',
+        'disabled:opacity-50 disabled:cursor-not-allowed'
       ),
       secondary: cn(
-        'bg-gray-200 text-gray-900',
-        'hover:bg-gray-300 active:bg-gray-400',
-        'focus:ring-gray-500',
+        'bg-secondary text-secondary-foreground',
+        'hover:bg-secondary/80',
+        'focus:ring-foreground',
         'disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed',
         'dark:bg-gray-700 dark:text-gray-100',
         'dark:hover:bg-gray-600 dark:active:bg-gray-500'
       ),
       danger: cn(
-        'bg-red-600 text-white',
-        'hover:bg-red-700 active:bg-red-800',
-        'focus:ring-red-500',
-        'disabled:bg-red-300 disabled:cursor-not-allowed'
+        'bg-destructive text-destructive-foreground',
+        'hover:bg-destructive/90',
+        'focus:ring-destructive',
+        'disabled:opacity-50 disabled:cursor-not-allowed'
       ),
       ghost: cn(
-        'bg-transparent text-gray-700',
-        'hover:bg-gray-100 active:bg-gray-200',
-        'focus:ring-gray-500',
+        'bg-transparent text-foreground',
+        'hover:bg-muted active:bg-muted/80',
+        'focus:ring-foreground',
         'disabled:text-gray-400 disabled:cursor-not-allowed',
         'dark:text-gray-300 dark:hover:bg-gray-800'
       ),
       outline: cn(
-        'bg-transparent border-2 border-blue-600 text-blue-600',
-        'hover:bg-blue-50 active:bg-blue-100',
-        'focus:ring-blue-500',
-        'disabled:border-blue-300 disabled:text-blue-300 disabled:cursor-not-allowed',
+        'bg-transparent border-2 border-foreground text-foreground',
+        'hover:bg-foreground hover:text-background',
+        'focus:ring-foreground',
+        'disabled:opacity-50 disabled:cursor-not-allowed',
         'dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950'
       ),
     };

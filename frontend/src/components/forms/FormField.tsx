@@ -22,14 +22,14 @@ export function FormLabel({ required, children, className, ...props }: FormLabel
   return (
     <label
       className={cn(
-        'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
+        'block text-sm font-medium text-foreground mb-1',
         className
       )}
       {...props}
     >
       {children}
       {required && (
-        <span className="text-red-500 ml-1" aria-label="wajib diisi">
+        <span className="text-destructive ml-1" aria-label="wajib diisi">
           *
         </span>
       )}
@@ -53,7 +53,7 @@ export function FormError({ error, className }: FormErrorProps) {
   return (
     <p
       className={cn(
-        'text-sm text-red-600 dark:text-red-400 mt-1',
+        'text-sm text-destructive mt-1',
         className
       )}
       role="alert"
@@ -76,7 +76,7 @@ export function FormHelperText({ children, className }: FormHelperTextProps) {
   return (
     <p
       className={cn(
-        'text-sm text-gray-500 dark:text-gray-400 mt-1',
+        'text-sm text-muted-foreground mt-1',
         className
       )}
     >
@@ -137,12 +137,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         className={cn(
           'flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm',
           'placeholder:text-gray-400',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+          'focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'dark:bg-gray-800 dark:text-gray-100',
           error
-            ? 'border-red-500 focus:ring-red-500'
-            : 'border-gray-300 dark:border-gray-600',
+            ? 'border-destructive focus:ring-destructive'
+            : 'border-input',
           className
         )}
         ref={ref}
@@ -171,12 +171,12 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         className={cn(
           'flex min-h-[80px] w-full rounded-md border bg-white px-3 py-2 text-sm',
           'placeholder:text-gray-400',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+          'focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'dark:bg-gray-800 dark:text-gray-100',
           error
-            ? 'border-red-500 focus:ring-red-500'
-            : 'border-gray-300 dark:border-gray-600',
+            ? 'border-destructive focus:ring-destructive'
+            : 'border-input',
           className
         )}
         ref={ref}
@@ -206,12 +206,12 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       <select
         className={cn(
           'flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+          'focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'dark:bg-gray-800 dark:text-gray-100',
           error
-            ? 'border-red-500 focus:ring-red-500'
-            : 'border-gray-300 dark:border-gray-600',
+            ? 'border-destructive focus:ring-destructive'
+            : 'border-input',
           className
         )}
         ref={ref}
@@ -253,9 +253,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           type="checkbox"
           className={cn(
             'h-4 w-4 rounded border-gray-300 text-blue-600',
-            'focus:ring-2 focus:ring-blue-500',
+            'focus:ring-2 focus:ring-ring',
             'disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-red-500',
+            error && 'border-destructive',
             className
           )}
           ref={ref}
@@ -264,7 +264,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           {...props}
         />
         {label && (
-          <span className="text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-sm text-foreground">
             {label}
           </span>
         )}
@@ -312,16 +312,16 @@ export function RadioGroup({
             disabled={option.disabled}
             className={cn(
               'h-4 w-4 border-gray-300 text-blue-600',
-              'focus:ring-2 focus:ring-blue-500',
+              'focus:ring-2 focus:ring-ring',
               'disabled:cursor-not-allowed disabled:opacity-50',
-              error && 'border-red-500'
+              error && 'border-destructive'
             )}
             aria-invalid={error ? 'true' : 'false'}
             {...registration}
           />
           <span
             className={cn(
-              'text-sm text-gray-700 dark:text-gray-300',
+              'text-sm text-foreground',
               option.disabled && 'opacity-50'
             )}
           >

@@ -408,7 +408,7 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
     // Bug #5 fix: w-[min(600px,calc(100vw-2rem))] prevents horizontal overflow on mobile
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-[min(600px,calc(100vw-2rem))] bg-white rounded-lg border border-border p-6"
+      className="absolute top-full left-0 mt-2 w-[min(600px,calc(100vw-2rem))] bg-popover rounded-lg border border-border p-6 shadow-lg"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -485,7 +485,7 @@ function MegaMenuResources({ data, onClose, onMouseEnter, onMouseLeave }: MegaMe
     // Bug #5 fix: w-[min(500px,calc(100vw-2rem))] prevents horizontal overflow on mobile
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-[min(500px,calc(100vw-2rem))] bg-white rounded-lg border border-border p-6"
+      className="absolute top-full left-0 mt-2 w-[min(500px,calc(100vw-2rem))] bg-popover rounded-lg border border-border p-6 shadow-lg"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

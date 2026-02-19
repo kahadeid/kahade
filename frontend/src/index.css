@@ -350,17 +350,17 @@
   *,
   *::before,
   *::after {
-    @apply border-border;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+  @apply border-border;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
   
   /* Scrollbar Styling */
   * {
-    scrollbar-width: thin;
-    scrollbar-color: #E8E8E8 transparent;
-  }
+  scrollbar-width: thin;
+  scrollbar-color: #E8E8E8 transparent;
+}
   
   *::-webkit-scrollbar {
     width: 8px;
@@ -1329,14 +1329,14 @@
 /* Tablet Optimizations */
 @media (min-width: 641px) and (max-width: 1024px) {
   .hide-tablet {
-    display: none !important;
+    display: none;
   }
 }
 
 /* Desktop Optimizations */
 @media (min-width: 1025px) {
   .hide-desktop {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -1344,7 +1344,7 @@
 
 @media (max-width: 640px) {
   .show-desktop {
-    display: none !important;
+    display: none;
   }
 }
 
