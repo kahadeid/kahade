@@ -535,7 +535,7 @@ function SimpleDropdown({ links, onClose, onMouseEnter, onMouseLeave }: SimpleDr
   return (
     <motion.div
       {...slideInDown}
-      className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg border border-border p-2"
+      className="absolute top-full left-0 mt-2 w-48 bg-popover rounded-lg border border-border p-2 shadow-md"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

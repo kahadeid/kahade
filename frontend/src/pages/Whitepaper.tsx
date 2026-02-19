@@ -57,13 +57,13 @@ export default function Whitepaper() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+              <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
                 Official Document
               </span>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
                 Kahade Whitepaper
               </h1>
-              <p className="text-base md:text-lg text-neutral-600 mb-4 md:mb-6">
+              <p className="text-base md:text-lg text-muted-foreground mb-4 md:mb-6">
                 A comprehensive overview of our vision, technology, and strategy for building 
                 the most trusted P2P escrow platform in the world.
               </p>
@@ -84,7 +84,7 @@ export default function Whitepaper() {
                   <Download className="w-5 h-5" aria-hidden="true" weight="bold" />
                   Download PDF
                 </Button>
-                <Button variant="outline" className="h-11 md:h-12 px-5 md:px-6 border-neutral-200 font-semibold rounded-xl gap-2">
+                <Button variant="outline" className="h-11 md:h-12 px-5 md:px-6 border-border font-semibold rounded-xl gap-2">
                   <BookOpen className="w-5 h-5" aria-hidden="true" weight="regular" />
                   Read Online
                 </Button>
@@ -98,21 +98,21 @@ export default function Whitepaper() {
               transition={{ delay: 0.2 }}
               className="relative hidden md:block"
             >
-              <div className="relative bg-white rounded-xl md:rounded-2xl shadow-2xl border border-neutral-200 p-6 md:p-8 transform rotate-2 hover:rotate-0 transition-transform">
+              <div className="relative bg-card rounded-xl md:rounded-2xl shadow-2xl border border-border p-6 md:p-8 transform rotate-2 hover:rotate-0 transition-transform">
                 <div className="absolute top-4 right-4 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-black flex items-center justify-center" aria-hidden="true">
                   <FileText className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true" weight="bold" />
                 </div>
                 <div className="space-y-3 md:space-y-4">
-                  <div className="h-3 md:h-4 bg-neutral-200 rounded w-3/4" />
-                  <div className="h-2.5 md:h-3 bg-neutral-100 rounded w-full" />
-                  <div className="h-2.5 md:h-3 bg-neutral-100 rounded w-5/6" />
-                  <div className="h-2.5 md:h-3 bg-neutral-100 rounded w-4/5" />
+                  <div className="h-3 md:h-4 bg-muted rounded w-3/4" />
+                  <div className="h-2.5 md:h-3 bg-muted rounded w-full" />
+                  <div className="h-2.5 md:h-3 bg-muted rounded w-5/6" />
+                  <div className="h-2.5 md:h-3 bg-muted rounded w-4/5" />
                   <div className="h-6 md:h-8" />
-                  <div className="h-2.5 md:h-3 bg-neutral-100 rounded w-full" />
-                  <div className="h-2.5 md:h-3 bg-neutral-100 rounded w-3/4" />
-                  <div className="h-2.5 md:h-3 bg-neutral-100 rounded w-5/6" />
+                  <div className="h-2.5 md:h-3 bg-muted rounded w-full" />
+                  <div className="h-2.5 md:h-3 bg-muted rounded w-3/4" />
+                  <div className="h-2.5 md:h-3 bg-muted rounded w-5/6" />
                   <div className="h-6 md:h-8" />
-                  <div className="h-16 md:h-20 bg-neutral-100 rounded-xl" />
+                  <div className="h-16 md:h-20 bg-muted rounded-xl" />
                 </div>
               </div>
               <div className="absolute -bottom-3 md:-bottom-4 -left-3 md:-left-4 bg-black rounded-xl p-4 md:p-6 shadow-lg" aria-hidden="true">
@@ -125,7 +125,7 @@ export default function Whitepaper() {
       </section>
       
       {/* Key Highlights */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -133,11 +133,11 @@ export default function Whitepaper() {
             viewport={{ once: true }}
             className="text-center mb-8 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Overview
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-black">Key Highlights</h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-foreground">Key Highlights</h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Important metrics and projections from our whitepaper.
             </p>
           </motion.div>
@@ -150,14 +150,14 @@ export default function Whitepaper() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center"
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-neutral-100 flex items-center justify-center mx-auto mb-3 md:mb-4">
-                  <item.icon className="w-5 h-5 md:w-6 md:h-6 text-black" weight="bold" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3 md:mb-4">
+                  <item.icon className="w-5 h-5 md:w-6 md:h-6 text-foreground" weight="bold" />
                 </div>
-                <div className="text-xl md:text-3xl font-bold text-black mb-0.5 md:mb-1">{item.stat}</div>
-                <div className="font-semibold text-xs md:text-sm mb-1 md:mb-2 text-black">{item.label}</div>
-                <p className="text-[10px] md:text-sm text-neutral-600 hidden sm:block">{item.description}</p>
+                <div className="text-xl md:text-3xl font-bold text-foreground mb-0.5 md:mb-1">{item.stat}</div>
+                <div className="font-semibold text-xs md:text-sm mb-1 md:mb-2 text-foreground">{item.label}</div>
+                <p className="text-[10px] md:text-sm text-muted-foreground hidden sm:block">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -173,11 +173,11 @@ export default function Whitepaper() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+              <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
                 Contents
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-black">Table of Contents</h2>
-              <p className="text-sm md:text-base text-neutral-600 mb-6 md:mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-foreground">Table of Contents</h2>
+              <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
                 Explore the comprehensive coverage of our platform, technology, and vision.
               </p>
               
@@ -189,11 +189,11 @@ export default function Whitepaper() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.03 }}
-                    className="flex items-center justify-between p-2 md:p-4 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition-colors cursor-pointer group border border-transparent hover:border-neutral-200"
+                    className="flex items-center justify-between p-2 md:p-4 rounded-xl bg-muted hover:bg-muted transition-colors cursor-pointer group border border-transparent hover:border-border"
                   >
                     <div className="flex items-center gap-4 md:gap-4">
-                      <span className="text-black font-mono font-bold text-sm md:text-base">{item.number}</span>
-                      <span className="font-semibold text-sm md:text-base text-black">{item.title}</span>
+                      <span className="text-foreground font-mono font-bold text-sm md:text-base">{item.number}</span>
+                      <span className="font-semibold text-sm md:text-base text-foreground">{item.title}</span>
                     </div>
                     <span className="text-xs md:text-sm text-muted-foreground">p. {item.page}</span>
                   </motion.div>
@@ -207,13 +207,13 @@ export default function Whitepaper() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 sticky top-24">
-                <h3 className="text-lg md:text-xl font-bold mb-4 text-black">What You'll Learn</h3>
+              <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border sticky top-24">
+                <h3 className="text-lg md:text-xl font-bold mb-4 text-foreground">What You'll Learn</h3>
                 <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8">
                   {keyPoints.map((point, index) => (
                     <li key={index} className="flex items-start gap-2 md:gap-3">
-                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-black flex-shrink-0 mt-0.5" aria-hidden="true" weight="fill" />
-                      <span className="text-xs md:text-sm text-neutral-600">{point}</span>
+                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-foreground flex-shrink-0 mt-0.5" aria-hidden="true" weight="fill" />
+                      <span className="text-xs md:text-sm text-muted-foreground">{point}</span>
                     </li>
                   ))}
                 </ul>
@@ -236,7 +236,7 @@ export default function Whitepaper() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto px-4"
+            className="text-center max-w-2xl mx-auto"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-white">
               Ready to Learn More?
@@ -246,7 +246,7 @@ export default function Whitepaper() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 md:gap-4 justify-center">
               <Link href="/contact">
-                <Button className="h-11 md:h-12 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl gap-2">
+                <Button className="h-11 md:h-12 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl gap-2">
                   Contact Us
                   <ArrowRight className="w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

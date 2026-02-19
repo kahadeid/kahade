@@ -239,7 +239,7 @@ export default function BlogDetail() {
     return (
       <LandingLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <Spinner className="w-8 h-8 md:w-10 md:h-10 animate-spin text-black" aria-hidden="true" weight="bold" />
+          <Spinner className="w-8 h-8 md:w-10 md:h-10 animate-spin text-foreground" aria-hidden="true" weight="bold" />
         </div>
       </LandingLayout>
     );
@@ -254,8 +254,8 @@ export default function BlogDetail() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="text-xl md:text-2xl font-bold text-black mb-4">Artikel Tidak Ditemukan</h1>
-            <p className="text-sm md:text-base text-neutral-600 mb-6">Artikel yang Anda cari tidak tersedia atau telah dihapus.</p>
+            <h1 className="text-xl md:text-2xl font-bold text-foreground mb-4">Artikel Tidak Ditemukan</h1>
+            <p className="text-sm md:text-base text-muted-foreground mb-6">Artikel yang Anda cari tidak tersedia atau telah dihapus.</p>
             <Link href="/blog">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button className="h-10 md:h-11 bg-black text-white hover:bg-black/90 rounded-xl">
@@ -318,20 +318,20 @@ export default function BlogDetail() {
     <LandingLayout>
       <article className="min-h-screen bg-background">
         {/* Header */}
-        <div className="bg-neutral-50 border-b border-neutral-200">
-          <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-8">
+        <div className="bg-muted border-b border-border">
+          <div className="max-w-4xl mx-auto md:px-6 py-6 md:py-8">
             {/* Breadcrumb */}
             <motion.nav 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
-              className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-neutral-600 mb-4 md:mb-6"
+              className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground mb-4 md:mb-6"
             >
               <Link href="/" className="hover:text-neutral-900 transition-colors">Beranda</Link>
               <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" />
               <Link href="/blog" className="hover:text-neutral-900 transition-colors">Blog</Link>
               <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" />
-              <span className="text-black">{post.category}</span>
+              <span className="text-foreground">{post.category}</span>
             </motion.nav>
 
             {/* Category & Meta */}
@@ -342,7 +342,7 @@ export default function BlogDetail() {
               className="flex flex-wrap items-center gap-4 md:gap-4 mb-3 md:mb-4"
             >
               <Badge className="bg-black text-white hover:bg-black/90 text-xs">{post.category}</Badge>
-              <div className="flex items-center gap-4 md:gap-4 text-xs md:text-sm text-neutral-600">
+              <div className="flex items-center gap-4 md:gap-4 text-xs md:text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" aria-hidden="true" weight="regular" />
                   {post.readTime} menit baca
@@ -359,7 +359,7 @@ export default function BlogDetail() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 md:mb-6 leading-tight"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6 leading-tight"
             >
               {post.title}
             </motion.h1>
@@ -379,8 +379,8 @@ export default function BlogDetail() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-semibold text-sm md:text-base text-black">{post.author.name}</div>
-                  <div className="text-xs md:text-sm text-neutral-600">
+                  <div className="font-semibold text-sm md:text-base text-foreground">{post.author.name}</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">
                     {post.author.role} • {formatDate(post.publishedAt)}
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export default function BlogDetail() {
                     variant="outline" 
                     size="sm"
                     onClick={handleLike}
-                    className={`h-9 border-neutral-200 rounded-lg transition-all ${isLiked ? 'bg-red-50 border-red-200 text-red-600' : ''}`}
+                    className={`h-9 border-border rounded-lg transition-all ${isLiked ? 'bg-red-50 border-red-200 text-red-600' : ''}`}
                   >
                     <Heart className="w-4 h-4 mr-1" aria-hidden="true" weight={isLiked ? 'fill' : 'regular'} />
                     {post.likes + (isLiked ? 1 : 0)}
@@ -404,7 +404,7 @@ export default function BlogDetail() {
                     variant="outline" 
                     size="sm"
                     onClick={handleBookmark}
-                    className={`h-9 border-neutral-200 rounded-lg transition-all ${isBookmarked ? 'bg-amber-50 border-amber-200 text-amber-600' : ''}`}
+                    className={`h-9 border-border rounded-lg transition-all ${isBookmarked ? 'bg-amber-50 border-amber-200 text-amber-600' : ''}`}
                   >
                     <BookmarkSimple className="w-4 h-4" aria-hidden="true" weight={isBookmarked ? 'fill' : 'regular'} />
                   </Button>
@@ -415,12 +415,12 @@ export default function BlogDetail() {
         </div>
 
         {/* Cover Image */}
-        <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-2 md:-mt-4">
+        <div className="max-w-5xl mx-auto md:px-6 -mt-2 md:-mt-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="aspect-[16/9] md:aspect-[2/1] rounded-xl md:rounded-2xl overflow-hidden bg-neutral-100 shadow-clickup"
+            className="aspect-[16/9] md:aspect-[2/1] rounded-xl md:rounded-2xl overflow-hidden bg-muted shadow-clickup"
           >
             <img 
               src={post.coverImage} 
@@ -434,7 +434,7 @@ export default function BlogDetail() {
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12">
+        <div className="max-w-4xl mx-auto md:px-6 py-8 md:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-8 lg:gap-12">
             {/* Main Content */}
             <motion.div
@@ -442,15 +442,15 @@ export default function BlogDetail() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               className="prose prose-sm md:prose-lg max-w-none
-                prose-headings:text-black prose-headings:font-bold
+                prose-headings:text-foreground prose-headings:font-bold
                 prose-h2:text-xl md:prose-h2:text-2xl prose-h2:mt-8 md:prose-h2:mt-10 prose-h2:mb-3 md:prose-h2:mb-4
                 prose-h3:text-lg md:prose-h3:text-xl prose-h3:mt-6 md:prose-h3:mt-8 prose-h3:mb-2 md:prose-h3:mb-3
-                prose-p:text-neutral-600 prose-p:leading-relaxed
-                prose-a:text-black prose-a:underline hover:prose-a:no-underline
-                prose-strong:text-black
-                prose-ul:my-3 md:prose-ul:my-4 prose-li:text-neutral-600
-                prose-blockquote:border-l-4 prose-blockquote:border-black prose-blockquote:bg-neutral-50 prose-blockquote:py-3 md:prose-blockquote:py-4 prose-blockquote:px-4 md:prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic
-                prose-blockquote:text-neutral-600"
+                prose-p:text-muted-foreground prose-p:leading-relaxed
+                prose-a:text-foreground prose-a:underline hover:prose-a:no-underline
+                prose-strong:text-foreground
+                prose-ul:my-3 md:prose-ul:my-4 prose-li:text-muted-foreground
+                prose-blockquote:border-l-4 prose-blockquote:border-black prose-blockquote:bg-muted prose-blockquote:py-3 md:prose-blockquote:py-4 prose-blockquote:px-4 md:prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic
+                prose-blockquote:text-muted-foreground"
             >
               {/* SECURITY FIX [FE-SEC-001]: Using html-react-parser instead of dangerouslySetInnerHTML */}
               {parsedContent}
@@ -465,14 +465,14 @@ export default function BlogDetail() {
                 className="sticky top-24 space-y-4"
               >
                 {/* Share */}
-                <div className="bg-neutral-50 rounded-xl p-4">
-                  <div className="text-sm font-bold text-black mb-3">Bagikan artikel ini</div>
+                <div className="bg-muted rounded-xl p-4">
+                  <div className="text-sm font-bold text-foreground mb-3">Bagikan artikel ini</div>
                   <div className="flex flex-col gap-2">
                     <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.98 }}>
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={() => handleShare('twitter')}
                       >
                         <TwitterLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
@@ -483,7 +483,7 @@ export default function BlogDetail() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={() => handleShare('facebook')}
                       >
                         <FacebookLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
@@ -494,7 +494,7 @@ export default function BlogDetail() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={() => handleShare('linkedin')}
                       >
                         <LinkedinLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
@@ -505,7 +505,7 @@ export default function BlogDetail() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="w-full justify-start border-neutral-200 rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         onClick={handleCopyLink}
                       >
                         {copied ? (
@@ -525,8 +525,8 @@ export default function BlogDetail() {
                 </div>
 
                 {/* Tags */}
-                <div className="bg-neutral-50 rounded-xl p-4">
-                  <div className="text-sm font-bold text-black mb-3">Tag</div>
+                <div className="bg-muted rounded-xl p-4">
+                  <div className="text-sm font-bold text-foreground mb-3">Tag</div>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
@@ -537,7 +537,7 @@ export default function BlogDetail() {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          <Badge variant="outline" className="border-neutral-200 hover:bg-black hover:text-white transition-colors cursor-pointer text-xs">
+                          <Badge variant="outline" className="border-border hover:bg-black hover:text-white transition-colors cursor-pointer text-xs">
                             {tag}
                           </Badge>
                         </motion.div>
@@ -550,13 +550,13 @@ export default function BlogDetail() {
           </div>
 
           {/* Tags - Mobile */}
-          <div className="lg:hidden mt-6 md:mt-8 pt-6 md:pt-8 border-t border-neutral-200">
-            <div className="text-sm font-bold text-black mb-3">Tag</div>
+          <div className="lg:hidden mt-6 md:mt-8 pt-6 md:pt-8 border-t border-border">
+            <div className="text-sm font-bold text-foreground mb-3">Tag</div>
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
                 <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Badge variant="outline" className="border-neutral-200 hover:bg-black hover:text-white transition-colors cursor-pointer text-xs">
+                    <Badge variant="outline" className="border-border hover:bg-black hover:text-white transition-colors cursor-pointer text-xs">
                       {tag}
                     </Badge>
                   </motion.div>
@@ -571,7 +571,7 @@ export default function BlogDetail() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mt-8 md:mt-12 p-4 md:p-6 bg-neutral-50 rounded-xl md:rounded-2xl"
+            className="mt-8 md:mt-12 p-4 md:p-6 bg-muted rounded-xl md:rounded-2xl"
           >
             <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-4">
               <Avatar className="w-12 h-12 md:w-16 md:h-16" aria-hidden="true">
@@ -581,34 +581,34 @@ export default function BlogDetail() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <div className="text-xs md:text-sm text-neutral-600 mb-1">Ditulis oleh</div>
-                <div className="text-base md:text-lg font-bold text-black">{post.author.name}</div>
-                <div className="text-xs md:text-sm text-neutral-600 mb-2 md:mb-3">{post.author.role}</div>
-                <p className="text-sm md:text-base text-neutral-600">{post.author.bio}</p>
+                <div className="text-xs md:text-sm text-muted-foreground mb-1">Ditulis oleh</div>
+                <div className="text-base md:text-lg font-bold text-foreground">{post.author.name}</div>
+                <div className="text-xs md:text-sm text-muted-foreground mb-2 md:mb-3">{post.author.role}</div>
+                <p className="text-sm md:text-base text-muted-foreground">{post.author.bio}</p>
               </div>
             </div>
           </motion.div>
 
           {/* Share - Mobile */}
           <div className="lg:hidden mt-6 md:mt-8 flex items-center justify-center gap-2 md:gap-3">
-            <span className="text-xs md:text-sm text-neutral-600">Bagikan:</span>
+            <span className="text-xs md:text-sm text-muted-foreground">Bagikan:</span>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={() => handleShare('twitter')}>
+              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={() => handleShare('twitter')}>
                 <TwitterLogo className="w-4 h-4" aria-hidden="true" weight="fill" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={() => handleShare('facebook')}>
+              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={() => handleShare('facebook')}>
                 <FacebookLogo className="w-4 h-4" aria-hidden="true" weight="fill" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={() => handleShare('linkedin')}>
+              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={() => handleShare('linkedin')}>
                 <LinkedinLogo className="w-4 h-4" aria-hidden="true" weight="fill" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-neutral-200 rounded-lg" onClick={handleCopyLink}>
+              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={handleCopyLink}>
                 {copied ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" /> : <Copy className="w-4 h-4" aria-hidden="true" weight="regular" />}
               </Button>
             </motion.div>
@@ -616,18 +616,18 @@ export default function BlogDetail() {
         </div>
 
         {/* Related Posts */}
-        <div className="bg-neutral-50 border-t border-neutral-200 py-10 md:py-12 lg:py-16">
-          <div className="max-w-6xl mx-auto px-4 md:px-6">
+        <div className="bg-muted border-t border-border py-10 md:py-12 lg:py-16">
+          <div className="max-w-6xl mx-auto md:px-6">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="flex items-center justify-between mb-6 md:mb-8"
             >
-              <h2 className="text-xl md:text-2xl font-bold text-black">Artikel Terkait</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">Artikel Terkait</h2>
               <Link href="/blog">
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button variant="outline" className="h-9 md:h-10 border-neutral-200 rounded-lg text-sm">
+                  <Button variant="outline" className="h-9 md:h-10 border-border rounded-lg text-sm">
                     Lihat semua
                     <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" />
                   </Button>
@@ -644,10 +644,10 @@ export default function BlogDetail() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                   whileHover={{ y: -6 }}
-                  className="bg-white rounded-xl md:rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 group"
+                  className="bg-card rounded-xl md:rounded-2xl border border-border overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 group"
                 >
                   <Link href={`/blog/${relatedPost.slug}`}>
-                    <div className="aspect-[16/9] overflow-hidden bg-neutral-100">
+                    <div className="aspect-[16/9] overflow-hidden bg-muted">
                       <motion.img 
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.3 }}
@@ -660,11 +660,11 @@ export default function BlogDetail() {
                       />
                     </div>
                     <div className="p-4 md:p-5">
-                      <Badge variant="outline" className="mb-2 md:mb-3 border-neutral-200 text-xs">{relatedPost.category}</Badge>
-                      <h3 className="font-bold text-sm md:text-base text-black mb-2 line-clamp-2 group-hover:text-neutral-600 transition-colors">
+                      <Badge variant="outline" className="mb-2 md:mb-3 border-border text-xs">{relatedPost.category}</Badge>
+                      <h3 className="font-bold text-sm md:text-base text-foreground mb-2 line-clamp-2 group-hover:text-muted-foreground transition-colors">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-xs md:text-sm text-neutral-600 line-clamp-2 mb-3">{relatedPost.excerpt}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mb-3">{relatedPost.excerpt}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>{formatDate(relatedPost.publishedAt)}</span>
                         <span className="flex items-center gap-1">

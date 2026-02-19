@@ -183,7 +183,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
   return (
     <div className="min-h-screen flex bg-neutral-50">
       {/* Sidebar - Desktop */}
-      <aside className="hidden lg:flex flex-col w-72 border-r border-border bg-white">
+      <aside className="hidden lg:flex flex-col w-72 border-r border-border bg-card">
         {/* Logo */}
         <div className="p-4 border-b border-border">
           <Link href="/" className="flex items-center gap-3">
@@ -254,9 +254,9 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
               animate={{ x: 0 }}
               exit={{ x: -300 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-border z-50 lg:hidden overflow-y-auto"
+              className="fixed left-0 top-0 bottom-0 w-72 bg-card border-r border-border z-50 lg:hidden overflow-y-auto"
             >
-              <div className="p-4 flex items-center justify-between border-b border-border sticky top-0 bg-white">
+              <div className="p-4 flex items-center justify-between border-b border-border sticky top-0 bg-card">
                 <Link href="/" className="flex items-center gap-2">
                   <img src="/images/logo.svg" alt="Kahade" className="h-8 w-auto" />
                   <span className="px-2 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded-md">
@@ -291,7 +291,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 border-b border-border bg-white">
+        <header className="sticky top-0 z-30 border-b border-border bg-card">
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
             <div className="flex items-center gap-4">
               <button 
@@ -347,7 +347,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg border border-border shadow-lg py-2 z-50"
+                      className="absolute right-0 top-full mt-2 w-56 bg-card rounded-lg border border-border shadow-lg py-2 z-50"
                     >
                       <div className="px-4 py-2 border-b border-border">
                         <div className="font-medium"> Administrator</div>

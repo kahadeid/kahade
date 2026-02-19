@@ -138,7 +138,7 @@ export default function Contact() {
         <div className="container relative z-10">
           <motion.div
             {...fadeInUp}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <span className="badge badge-secondary mb-4 inline-block">Hubungi Kami</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
@@ -153,7 +153,7 @@ export default function Contact() {
 
       {/* Contact Cards */}
       <section className="pb-12 md:pb-16">
-        <div className="container px-4">
+        <div className="container">
           <motion.div
             variants={staggerContainer}
             initial="initial"
@@ -184,8 +184,8 @@ export default function Contact() {
 
       {/* Main Content: Form + Sidebar */}
       <section className="section-padding">
-        <div className="container px-4">
-          <div className="grid lg:grid-cols-[1fr_380px] gap-10 lg:gap-16 max-w-6xl mx-auto">
+        <div className="container">
+          <div className="grid lg:grid-cols-[1fr_380px] gap-8 lg:gap-16 max-w-6xl mx-auto">
 
             {/* Contact Form */}
             <motion.div

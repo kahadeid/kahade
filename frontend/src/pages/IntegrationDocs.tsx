@@ -95,7 +95,7 @@ export default function IntegrationDocs() {
       <section className="section-padding-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         <div className="container relative z-10">
-          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto">
             <span className="badge badge-secondary mb-4 inline-block">Panduan Integrasi</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Integrasikan Kahade ke Platform Anda
@@ -116,8 +116,8 @@ export default function IntegrationDocs() {
 
       {/* Quick Stats */}
       <section className="py-8 border-b border-border">
-        <div className="container px-4">
-          <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto text-center">
+        <div className="container">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto text-center">
             {[
               { value: '5 Langkah', label: 'Integrasi Penuh' },
               { value: '< 1 Hari', label: 'Estimasi Waktu' },
@@ -134,7 +134,7 @@ export default function IntegrationDocs() {
 
       {/* Steps */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <motion.div {...fadeInUp} className="text-center mb-12 max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold mb-4">Langkah-Langkah Integrasi</h2>
             <p className="text-muted-foreground">
@@ -186,7 +186,7 @@ export default function IntegrationDocs() {
 
       {/* Pre-launch Checklist */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-3xl mx-auto">
             <motion.div {...fadeInUp} className="mb-8">
               <h2 className="text-2xl font-bold mb-2">Checklist Sebelum Go-Live</h2>
@@ -225,7 +225,7 @@ export default function IntegrationDocs() {
 
       {/* Warning & Support */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-3xl mx-auto space-y-6">
             <motion.div {...fadeInUp} className="card border-amber-200 bg-amber-50/50 p-5 flex items-start gap-3">
               <Warning className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" weight="duotone" aria-hidden="true" />
@@ -258,7 +258,7 @@ export default function IntegrationDocs() {
 
       {/* Nav */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/docs/api">
               <Button className="btn-primary w-full sm:w-auto">

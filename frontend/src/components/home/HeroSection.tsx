@@ -19,7 +19,7 @@ export default function HeroSection() {
       
       <div className="container relative z-10">
         <motion.div
-          className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center px-4"
+          className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center"
           {...staggerContainer}
         >
           <div className="text-center lg:text-left">

@@ -20,7 +20,7 @@ export default function Unauthorized() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -38,11 +38,11 @@ export default function Unauthorized() {
           </div>
         </div>
         
-        <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
           Access Denied
         </h2>
         
-        <p className="text-neutral-600 mb-8 max-w-sm mx-auto">
+        <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
           You don't have permission to access the admin panel. This area is restricted to administrators only.
         </p>
         
@@ -64,7 +64,7 @@ export default function Unauthorized() {
         </div>
         
         {/* Help Text */}
-        <div className="mt-12 pt-8 border-t border-neutral-200">
+        <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-neutral-500">
             If you believe you should have access, please contact your system administrator.
           </p>

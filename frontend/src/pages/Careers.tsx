@@ -90,25 +90,25 @@ export default function Careers() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4"
+              className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
             >
               <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
               Kami Merekrut
             </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-black leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-foreground leading-tight">
               Bangun Masa Depan Kepercayaan
             </h1>
-            <p className="text-base md:text-lg lg:text-xl text-neutral-600 mb-8">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-8">
               Bergabung dalam misi kami untuk membuat transaksi online aman dan tepercaya bagi semua orang.
               Kami mencari orang-orang bersemangat untuk tumbuh bersama.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-xs md:text-sm text-neutral-600">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-xs md:text-sm text-muted-foreground">
               {[{icon: Users, label: '50+ Anggota Tim'}, {icon: Globe, label: '15+ Negara'}, {icon: Briefcase, label: `${jobs.length} Posisi Terbuka`}].map((stat, index) => (
                 <motion.span 
                   key={stat.label}
@@ -121,9 +121,9 @@ export default function Careers() {
                   <motion.div 
                     whileHover={{ scale: 1.15, rotate: 5 }}
                     transition={{ duration: 0.2 }}
-                    className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-neutral-100 flex items-center justify-center"
+                    className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-muted flex items-center justify-center"
                   >
-                    <stat.icon className="w-4 h-4 md:w-5 md:h-5 text-black" weight="bold" />
+                    <stat.icon className="w-4 h-4 md:w-5 md:h-5 text-foreground" weight="bold" />
                   </motion.div>
                   {stat.label}
                 </motion.span>
@@ -134,7 +134,7 @@ export default function Careers() {
       </section>
       
       {/* Values Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -143,13 +143,13 @@ export default function Careers() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Nilai Kami
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Prinsip yang memandu kami
             </h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Nilai-nilai ini membentuk segala yang kami lakukan di Kahade.
             </p>
           </motion.div>
@@ -163,10 +163,10 @@ export default function Careers() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08, duration: 0.5 }}
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
-                <h3 className="font-bold text-base md:text-lg mb-2 text-black">{value.title}</h3>
-                <p className="text-xs md:text-sm text-neutral-600 leading-relaxed">{value.description}</p>
+                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">{value.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{value.description}</p>
               </motion.div>
             ))}
           </div>
@@ -183,13 +183,13 @@ export default function Careers() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Manfaat
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Keuntungan bergabung dengan Kahade
             </h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Kami menjaga tim agar mereka dapat fokus memberikan hasil terbaik.
             </p>
           </motion.div>
@@ -203,18 +203,18 @@ export default function Careers() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05, duration: 0.5 }}
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-neutral-200 flex items-start gap-4 md:gap-4 hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 group"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-5 border border-border flex items-start gap-4 md:gap-4 hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 group"
               >
                 <motion.div 
                   whileHover={{ scale: 1.15, rotate: 5 }}
                   transition={{ duration: 0.2 }}
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-black group-hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-black group-hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                 >
                   <benefit.icon className="w-5 h-5 md:w-6 md:h-6" weight="bold" />
                 </motion.div>
                 <div>
-                  <h3 className="font-bold text-sm md:text-base mb-1 text-black">{benefit.title}</h3>
-                  <p className="text-xs md:text-sm text-neutral-600">{benefit.description}</p>
+                  <h3 className="font-bold text-sm md:text-base mb-1 text-foreground">{benefit.title}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">{benefit.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -223,7 +223,7 @@ export default function Careers() {
       </section>
       
       {/* Open Positions */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -232,13 +232,13 @@ export default function Careers() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Posisi Terbuka
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Temukan peluang berikutnya
             </h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Bergabung dengan tim kami yang terus berkembang dan berikan dampak nyata.
             </p>
           </motion.div>
@@ -246,12 +246,12 @@ export default function Careers() {
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mb-6 md:mb-8 max-w-4xl mx-auto">
             <div className="relative flex-1">
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
               <Input
                 placeholder="Cari posisi..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-11 md:h-12 bg-white border-neutral-200 focus:border-black focus:ring-black rounded-xl"
+                className="pl-12 h-11 md:h-12 bg-card border-border focus:border-black focus:ring-black rounded-xl"
               />
             </div>
             <div className="flex overflow-x-auto pb-2 md:pb-0 gap-2 scrollbar-hide">
@@ -264,7 +264,7 @@ export default function Careers() {
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
                     selectedDepartment === dept.name
                       ? 'bg-black text-white'
-                      : 'bg-white border border-neutral-200 hover:bg-neutral-100 text-black'
+                      : 'bg-card border border-border hover:bg-muted text-foreground'
                   }`}
                 >
                   {dept.name} ({dept.count})
@@ -282,14 +282,14 @@ export default function Careers() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03, duration: 0.4 }}
                 whileHover={{ y: -4 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 hover:shadow-clickup hover:border-neutral-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 cursor-pointer group"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border hover:shadow-clickup hover:border-neutral-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 cursor-pointer group"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-bold text-base md:text-lg text-black group-hover:text-neutral-900/80 transition-colors mb-2">
+                    <h3 className="font-bold text-base md:text-lg text-foreground group-hover:text-neutral-900/80 transition-colors mb-2">
                       {job.title}
                     </h3>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-neutral-600">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Briefcase className="w-4 h-4" aria-hidden="true" weight="regular" />
                         {job.department}
@@ -324,12 +324,12 @@ export default function Careers() {
               >
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4"
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4"
                 >
-                  <Briefcase className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" />
+                  <Briefcase className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" aria-hidden="true" weight="regular" />
                 </motion.div>
-                <h3 className="font-bold text-lg md:text-xl mb-2 text-black">Tidak ada posisi ditemukan</h3>
-                <p className="text-sm md:text-base text-neutral-600">Coba sesuaikan pencarian atau filter Anda.</p>
+                <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">Tidak ada posisi ditemukan</h3>
+                <p className="text-sm md:text-base text-muted-foreground">Coba sesuaikan pencarian atau filter Anda.</p>
               </motion.div>
             )}
           </div>
@@ -353,7 +353,7 @@ export default function Careers() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.div 
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -368,7 +368,7 @@ export default function Careers() {
             <p className="text-white/70 text-sm md:text-base mb-8 max-w-lg mx-auto">
               Kami selalu mencari talenta terbaik. Kirimkan resume Anda dan kami akan menghubungi jika ada peluang yang sesuai.
             </p>
-            <Button className="h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
+            <Button className="h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
               Kirim Resume Anda
               <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
             </Button>

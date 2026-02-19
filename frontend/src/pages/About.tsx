@@ -4,7 +4,7 @@
  * Perbaikan:
  * - Tambah entitas hukum resmi: PT Kawal Hak Dengan Aman
  * - Konsisten dengan design system (bg-background, section-padding, badge)
- * - Hapus hardcoded bg-white
+ * - Hapus hardcoded bg-card
  * - Informasi kontak yang benar
  */
 
@@ -72,7 +72,7 @@ export default function About() {
       <section className="section-padding-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         <div className="container relative z-10">
-          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto">
             <span className="badge badge-secondary mb-4 inline-block">Tentang Kami</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Membangun Kepercayaan<br />
@@ -97,7 +97,7 @@ export default function About() {
 
       {/* Stats */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <motion.div
             variants={staggerContainer}
             initial="initial"
@@ -118,7 +118,7 @@ export default function About() {
 
       {/* Mission */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
             <motion.div {...fadeInUp}>
               <span className="badge badge-secondary mb-4 inline-block">Misi Kami</span>
@@ -138,7 +138,7 @@ export default function About() {
             </motion.div>
             <motion.div
               {...fadeInUp}
-              className="grid grid-cols-2 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
             >
               {values.map((val) => (
                 <div key={val.title} className="card p-5 hover:border-foreground/20 transition-colors">
@@ -154,7 +154,7 @@ export default function About() {
 
       {/* Timeline */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <motion.div {...fadeInUp} className="text-center mb-12 max-w-2xl mx-auto">
             <span className="badge badge-secondary mb-4 inline-block">Perjalanan Kami</span>
             <h2 className="text-3xl md:text-4xl font-bold">Tonggak Sejarah Kahade</h2>
@@ -189,7 +189,7 @@ export default function About() {
 
       {/* Team */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <motion.div {...fadeInUp} className="text-center mb-12 max-w-2xl mx-auto">
             <span className="badge badge-secondary mb-4 inline-block">Tim Kami</span>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Orang-Orang di Balik Kahade</h2>
@@ -219,7 +219,7 @@ export default function About() {
 
       {/* Legal Info */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-3xl mx-auto">
             <motion.div {...fadeInUp} className="card card-premium p-6 md:p-8">
               <div className="flex items-start gap-4">
@@ -253,7 +253,7 @@ export default function About() {
 
       {/* CTA */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <motion.div {...fadeInUp} className="card card-premium p-8 md:p-12 text-center max-w-3xl mx-auto">
             <Handshake className="w-12 h-12 mx-auto mb-6" weight="duotone" aria-hidden="true" />
             <h2 className="text-3xl font-bold mb-4">Bergabung dengan Komunitas Kahade</h2>

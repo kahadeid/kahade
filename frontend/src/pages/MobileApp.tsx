@@ -47,14 +47,14 @@ export default function MobileApp() {
               transition={{ duration: 0.6 }}
               className="text-center lg:text-left"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
                 <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Coming Soon
               </span>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-black leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-foreground leading-tight">
                 Kahade in Your Pocket
               </h1>
-              <p className="text-base md:text-lg lg:text-xl text-neutral-600 mb-8 max-w-lg mx-auto lg:mx-0">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
                 Experience the full power of Kahade escrow on your mobile device. 
                 Secure transactions, instant notifications, and complete control wherever you go.
               </p>
@@ -68,7 +68,7 @@ export default function MobileApp() {
                     <div className="font-semibold text-sm md:text-base">App Store</div>
                   </div>
                 </Button>
-                <Button className="border-2 border-neutral-200 bg-white text-black hover:bg-neutral-100 px-5 md:px-6 py-3 md:py-4 h-auto rounded-xl gap-3">
+                <Button className="border-2 border-border bg-card text-foreground hover:bg-muted px-5 md:px-6 py-3 md:py-4 h-auto rounded-xl gap-3">
                   <GooglePlayLogo className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" weight="fill" />
                   <div className="text-left">
                     <div className="text-[10px] md:text-xs opacity-80">Get it on</div>
@@ -78,13 +78,13 @@ export default function MobileApp() {
               </div>
               
               {/* QR Code */}
-              <div className="hidden md:flex items-center gap-4 p-4 rounded-xl bg-neutral-100 max-w-sm mx-auto lg:mx-0">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-white flex items-center justify-center border border-neutral-200">
-                  <QrCode className="w-10 h-10 md:w-12 md:h-12 text-black" aria-hidden="true" weight="regular" />
+              <div className="hidden md:flex items-center gap-4 p-4 rounded-xl bg-muted max-w-sm mx-auto lg:mx-0">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-card flex items-center justify-center border border-border">
+                  <QrCode className="w-10 h-10 md:w-12 md:h-12 text-foreground" aria-hidden="true" weight="regular" />
                 </div>
                 <div>
-                  <div className="font-semibold text-sm md:text-base text-black">Scan to Download</div>
-                  <div className="text-xs md:text-sm text-neutral-600">Point your camera at the QR code</div>
+                  <div className="font-semibold text-sm md:text-base text-foreground">Scan to Download</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">Point your camera at the QR code</div>
                 </div>
               </div>
             </motion.div>
@@ -103,8 +103,8 @@ export default function MobileApp() {
                     <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-black flex items-center justify-center mx-auto mb-3 md:mb-4">
                       <DeviceMobile className="w-7 h-7 md:w-10 md:h-10 text-white" aria-hidden="true" weight="fill" />
                     </div>
-                    <div className="font-bold text-base md:text-lg text-black">Kahade Mobile</div>
-                    <div className="text-xs md:text-sm text-neutral-600">Coming Soon</div>
+                    <div className="font-bold text-base md:text-lg text-foreground">Kahade Mobile</div>
+                    <div className="text-xs md:text-sm text-muted-foreground">Coming Soon</div>
                   </div>
                 </div>
               </div>
@@ -114,7 +114,7 @@ export default function MobileApp() {
       </section>
       
       {/* Features Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -122,13 +122,13 @@ export default function MobileApp() {
             viewport={{ once: true }}
             className="text-center mb-10 md:mb-16"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Features
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Powerful Features on the Go
             </h2>
-            <p className="text-sm md:text-base lg:text-lg text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto">
               Everything you need to manage your escrow transactions from your mobile device.
             </p>
           </motion.div>
@@ -141,13 +141,13 @@ export default function MobileApp() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center group hover:shadow-lg transition-shadow"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center group hover:shadow-lg transition-shadow"
               >
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-neutral-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-black group-hover:text-white transition-colors">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center mx-auto mb-4 group-hover:bg-black group-hover:text-white transition-colors">
                   <feature.icon className="w-6 h-6 md:w-7 md:h-7" weight="bold" />
                 </div>
-                <h3 className="font-bold text-base md:text-lg mb-2 text-black">{feature.title}</h3>
-                <p className="text-xs md:text-sm text-neutral-600 leading-relaxed">{feature.description}</p>
+                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">{feature.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -163,13 +163,13 @@ export default function MobileApp() {
             viewport={{ once: true }}
             className="text-center mb-10 md:mb-16"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Preview
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Beautiful & Intuitive Design
             </h2>
-            <p className="text-sm md:text-base lg:text-lg text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto">
               A seamless experience designed for simplicity and efficiency.
             </p>
           </motion.div>
@@ -184,11 +184,11 @@ export default function MobileApp() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-full aspect-[9/16] max-w-[180px] md:max-w-[200px] mx-auto bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] rounded-2xl md:rounded-3xl mb-3 md:mb-4 flex items-center justify-center border border-neutral-200">
+                <div className="w-full aspect-[9/16] max-w-[180px] md:max-w-[200px] mx-auto bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] rounded-2xl md:rounded-3xl mb-3 md:mb-4 flex items-center justify-center border border-border">
                   <span className="text-xs md:text-sm text-muted-foreground">Preview</span>
                 </div>
-                <h3 className="font-bold text-sm md:text-base mb-1 text-black">{screen.title}</h3>
-                <p className="text-xs md:text-sm text-neutral-600">{screen.description}</p>
+                <h3 className="font-bold text-sm md:text-base mb-1 text-foreground">{screen.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">{screen.description}</p>
               </motion.div>
             ))}
           </div>
@@ -203,7 +203,7 @@ export default function MobileApp() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto px-4"
+            className="text-center max-w-2xl mx-auto"
           >
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6">
               <DeviceMobile className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" />
@@ -216,7 +216,7 @@ export default function MobileApp() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
               <Link href="/register">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl">
+                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl">
                   Create Account
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

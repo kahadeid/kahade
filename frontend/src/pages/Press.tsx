@@ -69,20 +69,20 @@ export default function Press() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4"
+              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
             >
               Pers & Berita
             </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               Kahade di Berita
             </h1>
-            <p className="text-base md:text-lg text-neutral-600 mb-8">
+            <p className="text-base md:text-lg text-muted-foreground mb-8">
               Tetap terbarui dengan berita terbaru, siaran pers, dan liputan media tentang Kahade.
             </p>
             
@@ -94,7 +94,7 @@ export default function Press() {
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button variant="outline" className="h-11 md:h-12 px-5 md:px-6 border-neutral-200 font-semibold rounded-xl">
+                <Button variant="outline" className="h-11 md:h-12 px-5 md:px-6 border-border font-semibold rounded-xl">
                   <Download className="w-5 h-5 mr-2" aria-hidden="true" weight="bold" />
                   Unduh Media Kit
                 </Button>
@@ -105,7 +105,7 @@ export default function Press() {
       </section>
       
       {/* Press Releases */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -114,10 +114,10 @@ export default function Press() {
             className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8"
           >
             <div>
-              <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-3">
+              <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-3">
                 Terbaru
               </span>
-              <h2 className="text-xl md:text-2xl font-bold text-black">Siaran Pers</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">Siaran Pers</h2>
             </div>
             <div className="relative w-full md:w-64">
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
@@ -125,7 +125,7 @@ export default function Press() {
                 placeholder="Cari siaran pers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-10 md:h-11 bg-white border-neutral-200 focus:border-black focus:ring-black rounded-xl"
+                className="pl-10 h-10 md:h-11 bg-card border-border focus:border-black focus:ring-black rounded-xl"
               />
             </div>
           </motion.div>
@@ -139,7 +139,7 @@ export default function Press() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05, duration: 0.5 }}
                 whileHover={{ y: -4 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 group cursor-pointer hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border group cursor-pointer hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-4">
                   <div className="flex-1">
@@ -152,13 +152,13 @@ export default function Press() {
                         {release.date}
                       </span>
                     </div>
-                    <h3 className="font-bold text-base md:text-lg mb-1 md:mb-2 text-black group-hover:text-neutral-600 transition-colors">
+                    <h3 className="font-bold text-base md:text-lg mb-1 md:mb-2 text-foreground group-hover:text-muted-foreground transition-colors">
                       {release.title}
                     </h3>
-                    <p className="text-xs md:text-sm text-neutral-600">{release.excerpt}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">{release.excerpt}</p>
                   </div>
                   <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.95 }}>
-                    <Button variant="ghost" className="h-9 md:h-10 gap-2 flex-shrink-0 text-black hover:text-neutral-600 rounded-lg">
+                    <Button variant="ghost" className="h-9 md:h-10 gap-2 flex-shrink-0 text-foreground hover:text-muted-foreground rounded-lg">
                       Baca Selengkapnya
                       <ArrowRight className="w-4 h-4" aria-hidden="true" weight="bold" />
                     </Button>
@@ -179,11 +179,11 @@ export default function Press() {
             viewport={{ once: true }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Sorotan
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">Liputan Media</h2>
-            <p className="text-sm md:text-base text-neutral-600">Cerita pilihan dari publikasi terkemuka</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">Liputan Media</h2>
+            <p className="text-sm md:text-base text-muted-foreground">Cerita pilihan dari publikasi terkemuka</p>
           </motion.div>
           
           <div className="grid sm:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
@@ -195,17 +195,17 @@ export default function Press() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 whileHover={{ y: -4 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-neutral-200 flex items-center gap-4 md:gap-4 group cursor-pointer hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-5 border border-border flex items-center gap-4 md:gap-4 group cursor-pointer hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
                 <motion.div 
                   whileHover={{ scale: 1.05, rotate: 5 }}
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-neutral-100 flex items-center justify-center flex-shrink-0 group-hover:bg-black transition-colors"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-black transition-colors"
                 >
-                  <Play className="w-6 h-6 md:w-7 md:h-7 text-neutral-600 group-hover:text-white transition-colors" aria-hidden="true" weight="fill" />
+                  <Play className="w-6 h-6 md:w-7 md:h-7 text-muted-foreground group-hover:text-white transition-colors" aria-hidden="true" weight="fill" />
                 </motion.div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs md:text-sm text-black font-semibold mb-0.5">{feature.outlet}</div>
-                  <h3 className="font-bold text-sm md:text-base text-black truncate">
+                  <div className="text-xs md:text-sm text-foreground font-semibold mb-0.5">{feature.outlet}</div>
+                  <h3 className="font-bold text-sm md:text-base text-foreground truncate">
                     {feature.title}
                   </h3>
                   <div className="text-xs text-muted-foreground">{feature.date}</div>
@@ -220,7 +220,7 @@ export default function Press() {
       </section>
       
       {/* Media Kit */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -228,11 +228,11 @@ export default function Press() {
             viewport={{ once: true }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Sumber Daya
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">Media Kit</h2>
-            <p className="text-sm md:text-base text-neutral-600">Unduh aset merek resmi Kahade</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">Media Kit</h2>
+            <p className="text-sm md:text-base text-muted-foreground">Unduh aset merek resmi Kahade</p>
           </motion.div>
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto">
@@ -244,17 +244,17 @@ export default function Press() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-neutral-200 text-center group cursor-pointer hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-5 border border-border text-center group cursor-pointer hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-11 h-11 md:w-14 md:h-14 rounded-xl bg-neutral-100 flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:bg-black transition-colors"
+                  className="w-11 h-11 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:bg-black transition-colors"
                 >
-                  <item.icon className="w-5 h-5 md:w-7 md:h-7 text-black group-hover:text-white transition-colors" weight="bold" />
+                  <item.icon className="w-5 h-5 md:w-7 md:h-7 text-foreground group-hover:text-white transition-colors" weight="bold" />
                 </motion.div>
-                <h3 className="font-bold text-sm md:text-base mb-1 text-black">{item.title}</h3>
-                <p className="text-xs text-neutral-600 mb-2 md:mb-3">{item.description}</p>
-                <span className="inline-flex items-center gap-1 text-xs text-black font-semibold">
+                <h3 className="font-bold text-sm md:text-base mb-1 text-foreground">{item.title}</h3>
+                <p className="text-xs text-muted-foreground mb-2 md:mb-3">{item.description}</p>
+                <span className="inline-flex items-center gap-1 text-xs text-foreground font-semibold">
                   <Download className="w-3 h-3" aria-hidden="true" weight="bold" />
                   {item.format}
                 </span>
@@ -287,7 +287,7 @@ export default function Press() {
             opacity: [0.1, 0.2, 0.1]
           }}
           transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-0 left-0 w-[400px] h-[400px] bg-white rounded-full blur-3xl" 
+          className="absolute top-0 left-0 w-[400px] h-[400px] bg-card rounded-full blur-3xl" 
         />
         <div className="container relative z-10">
           <motion.div
@@ -295,7 +295,7 @@ export default function Press() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto px-4"
+            className="text-center max-w-2xl mx-auto"
           >
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}

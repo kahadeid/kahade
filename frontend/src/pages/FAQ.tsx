@@ -135,20 +135,20 @@ export default function FAQ() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4"
+              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
             >
               FAQ
             </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               Pertanyaan yang Sering Diajukan
             </h1>
-            <p className="text-base md:text-lg text-neutral-600 mb-8">
+            <p className="text-base md:text-lg text-muted-foreground mb-8">
               Temukan jawaban cepat untuk pertanyaan umum tentang Kahade.
             </p>
             
@@ -159,12 +159,12 @@ export default function FAQ() {
               transition={{ delay: 0.3 }}
               className="relative max-w-xl mx-auto w-full"
             >
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
               <Input
                 placeholder="Cari pertanyaan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 h-12 md:h-14 text-base bg-white border-neutral-200 focus:border-black focus:ring-black rounded-xl shadow-sm"
+                className="w-full pl-12 h-12 md:h-14 text-base bg-card border-border focus:border-black focus:ring-black rounded-xl shadow-sm"
               />
             </motion.div>
           </motion.div>
@@ -172,7 +172,7 @@ export default function FAQ() {
       </section>
       
       {/* Category Tabs */}
-      <section className="py-4 md:py-6 border-b border-neutral-200 sticky top-0 bg-white/95 backdrop-blur z-10">
+      <section className="py-4 md:py-6 border-b border-border sticky top-0 bg-background/95 backdrop-blur z-10">
         <div className="container">
           <div className="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap md:justify-center gap-2 scrollbar-hide">
             {faqCategories.map((category) => (
@@ -184,7 +184,7 @@ export default function FAQ() {
                 className={`flex items-center gap-2 px-4 py-2 md:py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
                   selectedCategory === category.id
                     ? 'bg-black text-white'
-                    : 'bg-neutral-100 hover:bg-neutral-200 text-black'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 <category.icon className="w-4 h-4" weight={selectedCategory === category.id ? 'fill' : 'bold'} />
@@ -196,7 +196,7 @@ export default function FAQ() {
       </section>
       
       {/* FAQ Accordion */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <div className="max-w-3xl mx-auto space-y-3 md:space-y-4">
             {filteredFaqs.map((faq, index) => (
@@ -206,23 +206,23 @@ export default function FAQ() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.4 }}
                 whileHover={{ y: -4 }}
-                className="bg-white rounded-xl md:rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl border border-border overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full p-4 md:p-6 flex items-center justify-between text-left hover:bg-neutral-50 transition-colors"
+                  className="w-full p-4 md:p-6 flex items-center justify-between text-left hover:bg-muted transition-colors"
                 >
-                  <span className="font-semibold pr-4 text-black text-sm md:text-base">{faq.question}</span>
+                  <span className="font-semibold pr-4 text-foreground text-sm md:text-base">{faq.question}</span>
                   <motion.div 
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
                     className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 transition-all ${
-                      openIndex === index ? 'bg-black' : 'bg-neutral-100'
+                      openIndex === index ? 'bg-black' : 'bg-muted'
                     }`}
                   >
                     <CaretDown 
                       className={`w-4 h-4 md:w-5 md:h-5 ${
-                        openIndex === index ? 'text-white' : 'text-black'
+                        openIndex === index ? 'text-white' : 'text-foreground'
                       }`} 
                       weight="bold" 
                     />
@@ -237,7 +237,7 @@ export default function FAQ() {
                       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 md:px-6 pb-4 md:pb-6 text-neutral-600 text-sm md:text-base leading-relaxed">
+                      <div className="px-4 md:px-6 pb-4 md:pb-6 text-muted-foreground text-sm md:text-base leading-relaxed">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -255,12 +255,12 @@ export default function FAQ() {
               >
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4"
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4"
                 >
-                  <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" />
+                  <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" aria-hidden="true" weight="regular" />
                 </motion.div>
-                <h3 className="font-bold text-lg md:text-xl mb-2 text-black">Tidak ada pertanyaan ditemukan</h3>
-                <p className="text-sm md:text-base text-neutral-600">Coba sesuaikan kata kunci pencarian Anda.</p>
+                <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">Tidak ada pertanyaan ditemukan</h3>
+                <p className="text-sm md:text-base text-muted-foreground">Coba sesuaikan kata kunci pencarian Anda.</p>
               </motion.div>
             )}
           </div>
@@ -284,7 +284,7 @@ export default function FAQ() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto px-4"
+            className="text-center max-w-2xl mx-auto"
           >
             <motion.div 
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -301,7 +301,7 @@ export default function FAQ() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
               <Link href="/contact">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
+                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
                   Hubungi Dukungan
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

@@ -127,20 +127,20 @@ export default function Blog() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4"
+              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
             >
               Blog
             </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               Wawasan & Pembaruan
             </h1>
-            <p className="text-base md:text-lg text-neutral-600 mb-8">
+            <p className="text-base md:text-lg text-muted-foreground mb-8">
               Tetap terinformasi dengan berita, tips, dan pembaruan terbaru dari tim Kahade.
             </p>
             
@@ -151,12 +151,12 @@ export default function Blog() {
               transition={{ delay: 0.3 }}
               className="relative max-w-md mx-auto"
             >
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
               <Input
                 placeholder="Cari artikel..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-11 md:h-12 bg-white border-neutral-200 focus:border-black focus:ring-black rounded-xl shadow-sm"
+                className="pl-12 h-11 md:h-12 bg-card border-border focus:border-black focus:ring-black rounded-xl shadow-sm"
               />
             </motion.div>
           </motion.div>
@@ -164,7 +164,7 @@ export default function Blog() {
       </section>
       
       {/* Categories */}
-      <section className="py-4 md:py-6 border-b border-neutral-200 sticky top-0 bg-white/95 backdrop-blur z-10">
+      <section className="py-4 md:py-6 border-b border-border sticky top-0 bg-background/95 backdrop-blur z-10">
         <div className="container">
           <div className="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap md:justify-center gap-2 scrollbar-hide">
             {categories.map((category) => (
@@ -176,7 +176,7 @@ export default function Blog() {
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
                   selectedCategory === category.name
                     ? 'bg-black text-white'
-                    : 'bg-neutral-100 hover:bg-neutral-200 text-black'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 {category.name} ({category.count})
@@ -196,7 +196,7 @@ export default function Blog() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+              className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
             >
               <div className="grid lg:grid-cols-2 gap-0">
                 <div className="h-48 md:h-64 lg:h-auto bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] flex items-center justify-center relative overflow-hidden group">
@@ -205,8 +205,8 @@ export default function Blog() {
                     transition={{ duration: 0.3 }}
                     className="text-center"
                   >
-                    <TrendUp className="w-16 h-16 md:w-24 md:h-24 text-neutral-600 mx-auto mb-2" aria-hidden="true" weight="fill" />
-                    <span className="text-sm text-neutral-600">Artikel Unggulan</span>
+                    <TrendUp className="w-16 h-16 md:w-24 md:h-24 text-muted-foreground mx-auto mb-2" aria-hidden="true" weight="fill" />
+                    <span className="text-sm text-muted-foreground">Artikel Unggulan</span>
                   </motion.div>
                 </div>
                 <div className="p-6 md:p-8 lg:p-10 xl:p-12">
@@ -214,18 +214,18 @@ export default function Blog() {
                     <span className="px-3 py-1 rounded-lg bg-black text-white text-xs md:text-sm font-medium">
                       {featuredPost.category}
                     </span>
-                    <span className="flex items-center gap-1 text-xs md:text-sm text-neutral-600">
+                    <span className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground">
                       <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
                       Unggulan
                     </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-black">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-foreground">
                     {featuredPost.title}
                   </h2>
-                  <p className="text-sm md:text-base text-neutral-600 mb-4 md:mb-6 line-clamp-3">
+                  <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6 line-clamp-3">
                     {featuredPost.excerpt}
                   </p>
-                  <div className="flex flex-wrap items-center gap-4 md:gap-4 text-xs md:text-sm text-neutral-600 mb-6">
+                  <div className="flex flex-wrap items-center gap-4 md:gap-4 text-xs md:text-sm text-muted-foreground mb-6">
                     <span className="flex items-center gap-1">
                       <User className="w-4 h-4" aria-hidden="true" weight="regular" />
                       {featuredPost.author}
@@ -253,7 +253,7 @@ export default function Blog() {
       )}
       
       {/* Posts Grid */}
-      <section className="py-8 md:py-12 bg-neutral-50">
+      <section className="py-8 md:py-12 bg-muted">
         <div className="container">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {filteredPosts.map((post, index) => (
@@ -264,7 +264,7 @@ export default function Blog() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05, duration: 0.5 }}
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-xl md:rounded-2xl border border-neutral-200 overflow-hidden group cursor-pointer hover:shadow-clickup hover:border-neutral-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl border border-border overflow-hidden group cursor-pointer hover:shadow-clickup hover:border-neutral-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
                 <Link href={`/blog/${post.id}`}>
                   <div className="h-40 md:h-48 bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] flex items-center justify-center relative overflow-hidden">
@@ -272,19 +272,19 @@ export default function Blog() {
                       whileHover={{ scale: 1.2, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <Lightbulb className="w-10 h-10 md:w-12 md:h-12 text-neutral-600 group-hover:text-neutral-900 transition-colors duration-300" aria-hidden="true" weight="fill" />
+                      <Lightbulb className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground group-hover:text-neutral-900 transition-colors duration-300" aria-hidden="true" weight="fill" />
                     </motion.div>
                   </div>
                   <div className="p-4 md:p-6">
                     <div className="flex items-center gap-2 mb-2 md:mb-3">
-                      <span className="px-2.5 py-1 rounded-lg bg-neutral-100 text-black text-xs font-medium">
+                      <span className="px-2.5 py-1 rounded-lg bg-muted text-foreground text-xs font-medium">
                         {post.category}
                       </span>
                     </div>
-                    <h3 className="font-bold text-base md:text-lg mb-2 text-black group-hover:text-neutral-600 transition-colors line-clamp-2">
+                    <h3 className="font-bold text-base md:text-lg mb-2 text-foreground group-hover:text-muted-foreground transition-colors line-clamp-2">
                       {post.title}
                     </h3>
-                    <p className="text-xs md:text-sm text-neutral-600 mb-4 line-clamp-2">
+                    <p className="text-xs md:text-sm text-muted-foreground mb-4 line-clamp-2">
                       {post.excerpt}
                     </p>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -312,12 +312,12 @@ export default function Blog() {
             >
               <motion.div 
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4"
               >
-                <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-neutral-600" aria-hidden="true" weight="regular" />
+                <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" aria-hidden="true" weight="regular" />
               </motion.div>
-              <h3 className="font-bold text-lg md:text-xl mb-2 text-black">No articles found</h3>
-              <p className="text-sm md:text-base text-neutral-600">Coba sesuaikan pencarian atau filter Anda.</p>
+              <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">No articles found</h3>
+              <p className="text-sm md:text-base text-muted-foreground">Coba sesuaikan pencarian atau filter Anda.</p>
             </motion.div>
           )}
           
@@ -349,7 +349,7 @@ export default function Blog() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto px-4"
+            className="text-center max-w-2xl mx-auto"
           >
             <motion.div 
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -369,7 +369,7 @@ export default function Blog() {
                 placeholder="Masukkan email Anda"
                 className="h-11 md:h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white focus:ring-white rounded-xl flex-1"
               />
-              <Button className="h-11 md:h-12 px-6 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl shrink-0 btn-hover-lift">
+              <Button className="h-11 md:h-12 px-6 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl shrink-0 btn-hover-lift">
                 Berlangganan
               </Button>
             </div>

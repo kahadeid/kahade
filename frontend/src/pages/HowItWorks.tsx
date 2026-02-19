@@ -153,20 +153,20 @@ export default function HowItWorks() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4"
+              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
             >
               Cara Kerja
             </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               Proses Sederhana & Aman
             </h1>
-            <p className="text-base md:text-lg text-neutral-600 mb-8">
+            <p className="text-base md:text-lg text-muted-foreground mb-8">
               Ikuti 5 langkah mudah ini untuk melindungi setiap transaksi.
               Mulai hanya dalam hitungan menit.
             </p>
@@ -187,7 +187,7 @@ export default function HowItWorks() {
       </section>
       
       {/* Steps Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <div className="max-w-4xl mx-auto">
             {steps.map((step, index) => (
@@ -201,7 +201,7 @@ export default function HowItWorks() {
               >
                 {/* Connector */}
                 {index < steps.length - 1 && (
-                  <div className="absolute left-5 md:left-6 top-16 md:top-20 w-0.5 h-[calc(100%-2rem)] bg-neutral-200" aria-hidden="true" />
+                  <div className="absolute left-5 md:left-6 top-16 md:top-20 w-0.5 h-[calc(100%-2rem)] bg-muted" aria-hidden="true" />
                 )}
                 
                 <div className="flex gap-4 md:gap-6">
@@ -220,20 +220,20 @@ export default function HowItWorks() {
                   <motion.div 
                     whileHover={{ y: -4 }}
                     transition={{ duration: 0.2 }}
-                    className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 flex-1 border border-neutral-200 hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                    className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 flex-1 border border-border hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                   >
                     <div className="flex items-center gap-4 mb-3">
                       <motion.div 
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ duration: 0.2 }}
-                        className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-neutral-100 flex items-center justify-center"
+                        className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-muted flex items-center justify-center"
                       >
-                        <step.icon className="w-4 h-4 md:w-5 md:h-5 text-black" weight="bold" />
+                        <step.icon className="w-4 h-4 md:w-5 md:h-5 text-foreground" weight="bold" />
                       </motion.div>
-                      <span className="text-xs md:text-sm font-mono text-neutral-600">Langkah {index + 1}</span>
+                      <span className="text-xs md:text-sm font-mono text-muted-foreground">Langkah {index + 1}</span>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-black">{step.title}</h3>
-                    <p className="text-sm md:text-base text-neutral-600 mb-4">{step.description}</p>
+                    <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-foreground">{step.title}</h3>
+                    <p className="text-sm md:text-base text-muted-foreground mb-4">{step.description}</p>
                     <ul className="space-y-2">
                       {step.details.map((detail, i) => (
                         <motion.li 
@@ -245,7 +245,7 @@ export default function HowItWorks() {
                           className="flex items-start gap-2 text-xs md:text-sm"
                         >
                           <Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" aria-hidden="true" weight="bold" />
-                          <span className="text-neutral-600">{detail}</span>
+                          <span className="text-muted-foreground">{detail}</span>
                         </motion.li>
                       ))}
                     </ul>
@@ -267,13 +267,13 @@ export default function HowItWorks() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Keamanan
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Keamanan di Setiap Langkah
             </h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Setiap tahap transaksi dilindungi dengan teknologi keamanan mutakhir.
             </p>
           </motion.div>
@@ -287,17 +287,17 @@ export default function HowItWorks() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08, duration: 0.5 }}
                 whileHover={{ y: -8 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-neutral-200 text-center group hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center group hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
               >
                 <motion.div 
                   whileHover={{ scale: 1.15, rotate: 5 }}
                   transition={{ duration: 0.2 }}
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-neutral-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-black group-hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center mx-auto mb-4 group-hover:bg-black group-hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                 >
                   <feature.icon className="w-6 h-6 md:w-7 md:h-7" weight="bold" />
                 </motion.div>
-                <h3 className="text-base md:text-lg font-bold mb-2 text-black">{feature.title}</h3>
-                <p className="text-xs md:text-sm text-neutral-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-base md:text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -305,7 +305,7 @@ export default function HowItWorks() {
       </section>
       
       {/* FAQ Section */}
-      <section id="faq" className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section id="faq" className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -314,13 +314,13 @@ export default function HowItWorks() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               FAQ
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
               Pertanyaan Umum
             </h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Jawaban atas pertanyaan yang sering diajukan tentang prosesnya.
             </p>
           </motion.div>
@@ -338,12 +338,12 @@ export default function HowItWorks() {
                 >
                   <AccordionItem 
                     value={`item-${index}`}
-                    className="bg-white rounded-xl md:rounded-2xl px-4 md:px-6 border border-neutral-200 hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+                    className="bg-card rounded-xl md:rounded-2xl px-4 md:px-6 border border-border hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
                   >
                     <AccordionTrigger className="text-left hover:no-underline py-4 md:py-5">
-                      <span className="font-semibold text-black text-sm md:text-base pr-4">{faq.question}</span>
+                      <span className="font-semibold text-foreground text-sm md:text-base pr-4">{faq.question}</span>
                     </AccordionTrigger>
-                    <AccordionContent className="text-neutral-600 pb-4 md:pb-5 text-sm md:text-base leading-relaxed">
+                    <AccordionContent className="text-muted-foreground pb-4 md:pb-5 text-sm md:text-base leading-relaxed">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -380,7 +380,7 @@ export default function HowItWorks() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
             <motion.div 
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -398,7 +398,7 @@ export default function HowItWorks() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
               <Link href="/register">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
+                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
                   Daftar Gratis
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-neutral-100)_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
       
@@ -35,11 +35,11 @@ export default function NotFound() {
           </div>
         </div>
         
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black mb-3 md:mb-4">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-3 md:mb-4">
           Halaman Tidak Ditemukan
         </h2>
         
-        <p className="text-sm md:text-base text-neutral-600 mb-6 md:mb-8 max-w-sm mx-auto">
+        <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8 max-w-sm mx-auto">
           Maaf, halaman yang Anda cari tidak tersedia atau telah dipindahkan ke lokasi lain.
         </p>
         
@@ -52,7 +52,7 @@ export default function NotFound() {
           </Link>
           <Button 
             variant="outline"
-            className="h-10 md:h-11 px-5 md:px-6 border-neutral-200 font-semibold rounded-xl gap-2"
+            className="h-10 md:h-11 px-5 md:px-6 border-border font-semibold rounded-xl gap-2"
             onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-5 h-5" aria-hidden="true" weight="bold" />
@@ -61,19 +61,19 @@ export default function NotFound() {
         </div>
         
         {/* Quick Links */}
-        <div className="mt-10 md:mt-12 pt-6 md:pt-8 border-t border-neutral-200">
+        <div className="mt-10 md:mt-12 pt-6 md:pt-8 border-t border-border">
           <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">Atau kunjungi halaman populer berikut:</p>
           <div className="flex flex-wrap justify-center gap-4 md:gap-4">
-            <Link href="/how-it-works" className="text-xs md:text-sm text-black hover:underline font-semibold">
+            <Link href="/how-it-works" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
               Cara Kerja
             </Link>
-            <Link href="/about" className="text-xs md:text-sm text-black hover:underline font-semibold">
+            <Link href="/about" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
               Tentang Kami
             </Link>
-            <Link href="/contact" className="text-xs md:text-sm text-black hover:underline font-semibold">
+            <Link href="/contact" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
               Kontak
             </Link>
-            <Link href="/faq" className="text-xs md:text-sm text-black hover:underline font-semibold">
+            <Link href="/faq" className="text-xs md:text-sm text-foreground hover:underline font-semibold">
               FAQ
             </Link>
           </div>

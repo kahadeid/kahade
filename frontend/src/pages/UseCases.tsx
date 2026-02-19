@@ -219,7 +219,7 @@ export default function UseCases() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       
       {/* HERO */}
@@ -227,14 +227,14 @@ export default function UseCases() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         
         <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto text-center px-4">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="mb-6"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-foreground">
                 <Briefcase className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Solusi untuk Setiap Industri
               </span>
@@ -244,7 +244,7 @@ export default function UseCases() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-black"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground"
             >
               Kahade untuk bisnis Anda
             </motion.h1>
@@ -253,7 +253,7 @@ export default function UseCases() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-neutral-600 mb-8"
+              className="text-lg md:text-xl text-muted-foreground mb-8"
             >
               Dari freelancer hingga enterprise, temukan bagaimana Kahade membantu bisnis di berbagai industri melakukan transaksi lebih aman.
             </motion.p>
@@ -272,44 +272,44 @@ export default function UseCases() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white border-2 border-neutral-200 rounded-2xl p-8 hover:border-neutral-900 hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                className="bg-card border-2 border-border rounded-2xl p-8 hover:border-neutral-900 hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
               >
                 <div className="flex items-start gap-4 mb-6">
                   <div className={`w-16 h-16 rounded-xl ${getColorClasses(useCase.color)} border-2 flex items-center justify-center`}>
                     <useCase.icon className="w-8 h-8" weight="duotone" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-black mb-2">{useCase.title}</h3>
-                    <p className="text-neutral-600">{useCase.description}</p>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{useCase.title}</h3>
+                    <p className="text-muted-foreground">{useCase.description}</p>
                   </div>
                 </div>
 
                 {/* Benefits */}
                 <div className="mb-6">
-                  <h4 className="font-semibold text-black mb-3">Keuntungan:</h4>
+                  <h4 className="font-semibold text-foreground mb-3">Keuntungan:</h4>
                   <ul className="space-y-2">
                     {useCase.benefits.map((benefit, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-black shrink-0 mt-0.5" aria-hidden="true" weight="fill" />
-                        <span className="text-sm text-neutral-600">{benefit}</span>
+                        <CheckCircle className="w-5 h-5 text-foreground shrink-0 mt-0.5" aria-hidden="true" weight="fill" />
+                        <span className="text-sm text-muted-foreground">{benefit}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-neutral-50 rounded-xl">
+                <div className="flex gap-2 mb-6 p-3 bg-muted rounded-xl">
                   <div className="text-center">
-                    <div className="text-xl font-bold text-black">{useCase.stats.users}</div>
-                    <div className="text-xs text-neutral-600">Pengguna</div>
+                    <div className="text-xl font-bold text-foreground">{useCase.stats.users}</div>
+                    <div className="text-xs text-muted-foreground">Pengguna</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xl font-bold text-black">{useCase.stats.avgTransaction}</div>
-                    <div className="text-xs text-neutral-600">Avg. Transaksi</div>
+                    <div className="text-xl font-bold text-foreground">{useCase.stats.avgTransaction}</div>
+                    <div className="text-xs text-muted-foreground">Avg. Transaksi</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xl font-bold text-black">{useCase.stats.satisfaction}</div>
-                    <div className="text-xs text-neutral-600">Satisfaction</div>
+                    <div className="text-xl font-bold text-foreground">{useCase.stats.satisfaction}</div>
+                    <div className="text-xs text-muted-foreground">Satisfaction</div>
                   </div>
                 </div>
 
@@ -338,14 +338,14 @@ export default function UseCases() {
       </section>
 
       {/* SUCCESS STORIES */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="text-center mb-12 md:mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Success Stories
             </motion.h2>
@@ -354,7 +354,7 @@ export default function UseCases() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               Bagaimana bisnis menggunakan Kahade untuk scale dan meningkatkan trust
             </motion.p>
@@ -368,30 +368,30 @@ export default function UseCases() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white border-2 border-neutral-200 rounded-2xl p-8"
+                className="bg-card border-2 border-border rounded-2xl p-8"
               >
                 <div className="w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-4">
                   <story.icon className="w-7 h-7 text-white" weight="bold" />
                 </div>
-                <h3 className="text-xl font-bold text-black mb-2">{story.company}</h3>
-                <div className="text-sm text-neutral-600 mb-6">{story.industry}</div>
+                <h3 className="text-xl font-bold text-foreground mb-2">{story.company}</h3>
+                <div className="text-sm text-muted-foreground mb-6">{story.industry}</div>
 
                 <div className="space-y-4">
                   <div>
-                    <div className="text-xs font-semibold text-black uppercase mb-1">Challenge</div>
-                    <p className="text-sm text-neutral-600">{story.challenge}</p>
+                    <div className="text-xs font-semibold text-foreground uppercase mb-1">Challenge</div>
+                    <p className="text-sm text-muted-foreground">{story.challenge}</p>
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-black uppercase mb-1">Solution</div>
-                    <p className="text-sm text-neutral-600">{story.solution}</p>
+                    <div className="text-xs font-semibold text-foreground uppercase mb-1">Solution</div>
+                    <p className="text-sm text-muted-foreground">{story.solution}</p>
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-black uppercase mb-2">Results</div>
+                    <div className="text-xs font-semibold text-foreground uppercase mb-2">Results</div>
                     <ul className="space-y-2">
                       {story.results.map((result, i) => (
                         <li key={i} className="flex items-center gap-2">
                           <ChartLineUp className="w-4 h-4 text-green-600" aria-hidden="true" weight="bold" />
-                          <span className="text-sm font-semibold text-black">{result}</span>
+                          <span className="text-sm font-semibold text-foreground">{result}</span>
                         </li>
                       ))}
                     </ul>
@@ -434,7 +434,7 @@ export default function UseCases() {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link href="/register">
-                <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
+                <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Gratis
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

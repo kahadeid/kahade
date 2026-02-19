@@ -108,7 +108,7 @@ export default function ApiDocs() {
       <section className="section-padding-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         <div className="container relative z-10">
-          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto">
             <span className="badge badge-secondary mb-4 inline-block">Dokumentasi API</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               API Escrow P2P Kahade
@@ -136,7 +136,7 @@ export default function ApiDocs() {
 
       {/* Base Info */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
             {[
               { icon: Key, title: 'Autentikasi', desc: 'Bearer JWT token. Dapatkan token via endpoint /auth/login.' },
@@ -217,7 +217,7 @@ export default function ApiDocs() {
 
       {/* Webhooks */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-5xl mx-auto">
             <motion.div {...fadeInUp} className="mb-8">
               <div className="flex items-center gap-3 mb-2">
@@ -252,7 +252,7 @@ export default function ApiDocs() {
 
       {/* Auth Example */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-5xl mx-auto">
             <motion.div {...fadeInUp} className="card card-premium p-6 md:p-8">
               <div className="flex items-center gap-3 mb-6">
@@ -292,7 +292,7 @@ curl -X POST https://api.kahade.id/v1/transactions \\
 
       {/* Nav */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/docs/integration">
               <Button className="btn-primary w-full sm:w-auto">

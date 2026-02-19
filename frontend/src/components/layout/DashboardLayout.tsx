@@ -133,17 +133,17 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-card">
       {/* ========== DESKTOP SIDEBAR ========== */}
       <aside 
         className={cn(
-          "hidden lg:flex flex-col border-r border-neutral-200 bg-white transition-all duration-300 ease-out",
+          "hidden lg:flex flex-col border-r border-border bg-card transition-all duration-300 ease-out",
           isSidebarCollapsed ? "w-[72px]" : "w-[280px]"
         )}
       >
         {/* Logo Section */}
         <div className={cn(
-          "h-16 flex items-center justify-between border-b border-neutral-200",
+          "h-16 flex items-center justify-between border-b border-border",
           isSidebarCollapsed ? "px-3" : "px-5"
         )}>
           <Link href="/" className="flex items-center gap-3">
@@ -215,7 +215,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         
         {/* Expand Button (when collapsed) */}
         {isSidebarCollapsed && (
-          <div className="p-3 border-t border-neutral-200">
+          <div className="p-3 border-t border-border">
             <button
               onClick={() => setIsSidebarCollapsed(false)}
               className="w-full p-2 hover:bg-neutral-100 rounded-xl transition-colors flex items-center justify-center"
@@ -228,7 +228,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         
         {/* User Section (when expanded) */}
         {!isSidebarCollapsed && (
-          <div className="p-4 border-t border-neutral-200">
+          <div className="p-4 border-t border-border">
             {/* User Card */}
             <div className="flex items-center gap-4 p-2 rounded-xl bg-neutral-50 mb-3">
               <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white font-bold">
@@ -259,9 +259,9 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
       </aside>
       
       {/* ========== TABLET SIDEBAR (md breakpoint) ========== */}
-      <aside className="hidden md:flex lg:hidden flex-col w-[72px] border-r border-neutral-200 bg-white">
+      <aside className="hidden md:flex lg:hidden flex-col w-[72px] border-r border-border bg-card">
         {/* Logo */}
-        <div className="h-16 flex items-center justify-center border-b border-neutral-200">
+        <div className="h-16 flex items-center justify-center border-b border-border">
           <Link href="/">
             <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">K</span>
@@ -305,7 +305,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         </nav>
         
         {/* Bottom Items */}
-        <div className="p-2 border-t border-neutral-200 space-y-1">
+        <div className="p-2 border-t border-border space-y-1">
           {bottomNavItems.map((item) => {
             const isActive = location.startsWith(item.href);
             
@@ -342,7 +342,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
       <main ref={mainContentRef} className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Mobile Header - Only show on non-main pages with back button */}
         {!isMainPage && (
-          <header className="sticky top-0 z-30 h-14 border-b border-neutral-200 bg-white/95 backdrop-blur-xl md:hidden">
+          <header className="sticky top-0 z-30 h-14 border-b border-border bg-background/95 backdrop-blur-xl md:hidden">
             <div className="flex items-center h-full px-4">
               {/* Back Button */}
               <button
@@ -362,7 +362,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
         )}
 
         {/* Top Header Bar - Desktop/Tablet only */}
-        <header className="sticky top-0 z-30 h-16 border-b border-neutral-200 bg-white/95 backdrop-blur-xl hidden md:block">
+        <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/95 backdrop-blur-xl hidden md:block">
           <div className="flex items-center justify-between h-full px-4 md:px-6 lg:px-8">
             {/* Left Section */}
             <div className="flex items-center gap-4">
@@ -383,7 +383,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                   placeholder="Cari..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 w-48 lg:w-64 h-10 bg-neutral-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:bg-white transition-all"
+                  className="pl-11 w-48 lg:w-64 h-10 bg-neutral-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:bg-card transition-all"
                 />
               </div>
               
@@ -425,10 +425,10 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-neutral-200 shadow-2xl shadow-black/10 z-50 overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-64 bg-card rounded-2xl border border-border shadow-2xl shadow-black/10 z-50 overflow-hidden"
                       >
                         {/* User Info */}
-                        <div className="p-4 border-b border-neutral-200">
+                        <div className="p-4 border-b border-border">
                           <div className="font-semibold text-black">{user?.username || 'User'}</div>
                           <div className="text-sm text-neutral-600">{user?.email}</div>
                         </div>
@@ -454,7 +454,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                         </div>
                         
                         {/* Logout */}
-                        <div className="p-2 border-t border-neutral-200">
+                        <div className="p-2 border-t border-border">
                           <button
                             onClick={() => {
                               setIsProfileDropdownOpen(false);

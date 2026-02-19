@@ -27,7 +27,7 @@ export default function FinalCTA() {
       
       <div className="container relative z-10">
         <motion.div 
-          className="max-w-4xl mx-auto text-center px-4"
+          className="max-w-4xl mx-auto text-center"
           {...staggerContainer}
           viewport={{ once: true }}
         >

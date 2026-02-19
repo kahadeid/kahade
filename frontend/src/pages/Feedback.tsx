@@ -59,13 +59,13 @@ export default function Feedback() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="max-w-lg mx-auto text-center px-4"
+              className="max-w-lg mx-auto text-center"
             >
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-black flex items-center justify-center mx-auto mb-5 md:mb-6">
                 <CheckCircle className="w-8 h-8 md:w-10 md:h-10 text-white" aria-hidden="true" weight="fill" />
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-black">Terima Kasih!</h1>
-              <p className="text-sm md:text-base text-neutral-600 mb-6 md:mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-foreground">Terima Kasih!</h1>
+              <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
                 Feedback Anda berhasil dikirim. Terima kasih telah meluangkan waktu membantu kami meningkatkan Kahade.
               </p>
               <Button onClick={() => setIsSubmitted(false)} className="h-11 md:h-12 px-6 bg-black text-white hover:bg-black/90 font-semibold rounded-xl">
@@ -90,15 +90,15 @@ export default function Feedback() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-3xl mx-auto px-4"
+            className="text-center max-w-3xl mx-auto"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Masukan
             </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               Kami Menghargai Masukan Anda
             </h1>
-            <p className="text-base md:text-lg text-neutral-600">
+            <p className="text-base md:text-lg text-muted-foreground">
               Bantu kami meningkatkan Kahade dengan berbagi opini, ide, dan saran Anda.
             </p>
           </motion.div>
@@ -106,19 +106,19 @@ export default function Feedback() {
       </section>
       
       {/* Feedback Form */}
-      <section className="py-10 md:py-12 lg:py-16 bg-neutral-50">
+      <section className="py-10 md:py-12 lg:py-16 bg-muted">
         <div className="container">
-          <div className="max-w-2xl mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
             <motion.form
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               onSubmit={handleSubmit}
-              className="bg-white rounded-xl md:rounded-2xl border border-neutral-200 p-4 md:p-8 space-y-6 md:space-y-8"
+              className="bg-card rounded-xl md:rounded-2xl border border-border p-4 md:p-8 space-y-6 md:space-y-8"
             >
               {/* Feedback Type */}
               <div className="space-y-3 md:space-y-4">
-                <Label className="text-sm md:text-base font-bold text-black">Jenis masukan apa yang Anda miliki?</Label>
+                <Label className="text-sm md:text-base font-bold text-foreground">Jenis masukan apa yang Anda miliki?</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
                   {feedbackTypes.map((type) => (
                     <button
@@ -127,17 +127,17 @@ export default function Feedback() {
                       onClick={() => setFeedbackType(type.id)}
                       className={`p-3 md:p-4 rounded-xl border-2 transition-all text-center ${
                         feedbackType === type.id
-                          ? 'border-black bg-neutral-100'
-                          : 'border-neutral-200 hover:border-neutral-900'
+                          ? 'border-black bg-muted'
+                          : 'border-border hover:border-neutral-900'
                       }`}
                     >
                       <type.icon 
                         className={`w-6 h-6 md:w-8 md:h-8 mx-auto mb-1.5 md:mb-2 ${
-                          feedbackType === type.id ? 'text-black' : 'text-muted-foreground'
+                          feedbackType === type.id ? 'text-foreground' : 'text-muted-foreground'
                         }`} 
                         weight={feedbackType === type.id ? 'fill' : 'regular'} 
                       />
-                      <div className="font-semibold text-xs md:text-sm text-black">{type.label}</div>
+                      <div className="font-semibold text-xs md:text-sm text-foreground">{type.label}</div>
                     </button>
                   ))}
                 </div>
@@ -145,7 +145,7 @@ export default function Feedback() {
               
               {/* Rating */}
               <div className="space-y-3 md:space-y-4">
-                <Label className="text-sm md:text-base font-bold text-black">Bagaimana penilaian pengalaman Anda?</Label>
+                <Label className="text-sm md:text-base font-bold text-foreground">Bagaimana penilaian pengalaman Anda?</Label>
                 <div className="flex flex-wrap items-center gap-1 md:gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -159,7 +159,7 @@ export default function Feedback() {
                       <Star
                         className={`w-8 h-8 md:w-10 md:h-10 ${
                           star <= (hoverRating || rating)
-                            ? 'text-black'
+                            ? 'text-foreground'
                             : 'text-neutral-200'
                         }`}
                         weight={star <= (hoverRating || rating) ? 'fill' : 'regular'}
@@ -167,7 +167,7 @@ export default function Feedback() {
                     </button>
                   ))}
                   {rating > 0 && (
-                    <span className="ml-2 md:ml-4 text-xs md:text-sm text-neutral-600">
+                    <span className="ml-2 md:ml-4 text-xs md:text-sm text-muted-foreground">
                       {rating === 1 && 'Buruk'}
                       {rating === 2 && 'Cukup'}
                       {rating === 3 && 'Baik'}
@@ -180,14 +180,14 @@ export default function Feedback() {
               
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm md:text-base font-bold text-black">Email (opsional)</Label>
+                <Label htmlFor="email" className="text-sm md:text-base font-bold text-foreground">Email (opsional)</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="nama@email.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="bg-white border-neutral-200 focus:border-black focus:ring-black h-10 md:h-11 rounded-xl text-sm md:text-base"
+                  className="bg-card border-border focus:border-black focus:ring-black h-10 md:h-11 rounded-xl text-sm md:text-base"
                 />
                 <p className="text-[10px] md:text-xs text-muted-foreground">
                   Cantumkan email jika Anda ingin kami menindaklanjuti masukan Anda.
@@ -196,25 +196,25 @@ export default function Feedback() {
               
               {/* Subject */}
               <div className="space-y-2">
-                <Label htmlFor="subject" className="text-sm md:text-base font-bold text-black">Subjek</Label>
+                <Label htmlFor="subject" className="text-sm md:text-base font-bold text-foreground">Subjek</Label>
                 <Input
                   id="subject"
                   placeholder="Ringkasan singkat feedback Anda"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="bg-white border-neutral-200 focus:border-black focus:ring-black h-10 md:h-11 rounded-xl text-sm md:text-base"
+                  className="bg-card border-border focus:border-black focus:ring-black h-10 md:h-11 rounded-xl text-sm md:text-base"
                 />
               </div>
               
               {/* Message */}
               <div className="space-y-2">
-                <Label htmlFor="message" className="text-sm md:text-base font-bold text-black">Masukan Anda *</Label>
+                <Label htmlFor="message" className="text-sm md:text-base font-bold text-foreground">Masukan Anda *</Label>
                 <Textarea
                   id="message"
                   placeholder="Ceritakan lebih lanjut tentang pengalaman, ide, atau kendala Anda..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="bg-white border-neutral-200 focus:border-black focus:ring-black min-h-[120px] md:min-h-[150px] resize-none rounded-xl text-sm md:text-base"
+                  className="bg-card border-border focus:border-black focus:ring-black min-h-[120px] md:min-h-[150px] resize-none rounded-xl text-sm md:text-base"
                   required
                 />
               </div>

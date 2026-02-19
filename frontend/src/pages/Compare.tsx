@@ -173,7 +173,7 @@ export default function Compare() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       
       {/* HERO */}
@@ -181,14 +181,14 @@ export default function Compare() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         
         <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto text-center px-4">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="mb-6"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-foreground">
                 <Scales className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Bandingkan & Pilih yang Terbaik
               </span>
@@ -198,7 +198,7 @@ export default function Compare() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-black"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground"
             >
               Mengapa Kahade adalah pilihan terbaik?
             </motion.h1>
@@ -207,7 +207,7 @@ export default function Compare() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-neutral-600 mb-8"
+              className="text-lg md:text-xl text-muted-foreground mb-8"
             >
               Lihat perbandingan lengkap Kahade dengan metode traditional dan kompetitor.
             </motion.p>
@@ -216,14 +216,14 @@ export default function Compare() {
       </section>
 
       {/* TRADITIONAL VS KAHADE */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="text-center mb-12">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Tanpa Escrow vs Dengan Kahade
             </motion.h2>
@@ -232,7 +232,7 @@ export default function Compare() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600"
+              className="text-lg text-muted-foreground"
             >
               Perbedaan signifikan dalam keamanan dan trust
             </motion.p>
@@ -244,15 +244,15 @@ export default function Compare() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white border-2 border-red-100 rounded-2xl p-8"
+              className="bg-card border-2 border-red-100 rounded-2xl p-8"
             >
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-xl bg-red-50 border-2 border-red-100 flex items-center justify-center">
                   <Warning className="w-7 h-7 text-red-600" aria-hidden="true" weight="fill" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-black">Tanpa Escrow</h3>
-                  <p className="text-sm text-neutral-600">Metode Traditional</p>
+                  <h3 className="text-xl font-bold text-foreground">Tanpa Escrow</h3>
+                  <p className="text-sm text-muted-foreground">Metode Traditional</p>
                 </div>
               </div>
               <div className="space-y-4">
@@ -260,8 +260,8 @@ export default function Compare() {
                   <div key={index} className="flex items-start gap-4 p-2 bg-red-50/50 rounded-lg">
                     <item.icon className={`w-6 h-6 ${item.color} shrink-0 mt-0.5`} weight="bold" />
                     <div className="flex-1">
-                      <div className="font-semibold text-black text-sm">{item.feature}</div>
-                      <div className="text-sm text-neutral-600">{item.value}</div>
+                      <div className="font-semibold text-foreground text-sm">{item.feature}</div>
+                      <div className="text-sm text-muted-foreground">{item.value}</div>
                     </div>
                   </div>
                 ))}
@@ -273,7 +273,7 @@ export default function Compare() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white border-2 border-green-200 rounded-2xl p-8 relative overflow-hidden"
+              className="bg-card border-2 border-green-200 rounded-2xl p-8 relative overflow-hidden"
             >
               <div className="absolute top-4 right-4" aria-hidden="true">
                 <div className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1">
@@ -286,8 +286,8 @@ export default function Compare() {
                   <ShieldCheck className="w-7 h-7 text-green-600" aria-hidden="true" weight="fill" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-black">Dengan Kahade</h3>
-                  <p className="text-sm text-neutral-600">Protected & Secure</p>
+                  <h3 className="text-xl font-bold text-foreground">Dengan Kahade</h3>
+                  <p className="text-sm text-muted-foreground">Protected & Secure</p>
                 </div>
               </div>
               <div className="space-y-4">
@@ -295,8 +295,8 @@ export default function Compare() {
                   <div key={index} className="flex items-start gap-4 p-2 bg-green-50/50 rounded-lg">
                     <item.icon className={`w-6 h-6 ${item.color} shrink-0 mt-0.5`} weight="bold" />
                     <div className="flex-1">
-                      <div className="font-semibold text-black text-sm">{item.feature}</div>
-                      <div className="text-sm text-neutral-600">{item.value}</div>
+                      <div className="font-semibold text-foreground text-sm">{item.feature}</div>
+                      <div className="text-sm text-muted-foreground">{item.value}</div>
                     </div>
                   </div>
                 ))}
@@ -314,7 +314,7 @@ export default function Compare() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Perbandingan dengan Kompetitor
             </motion.h2>
@@ -323,7 +323,7 @@ export default function Compare() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600"
+              className="text-lg text-muted-foreground"
             >
               Feature-by-feature comparison
             </motion.p>
@@ -333,27 +333,27 @@ export default function Compare() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-6xl mx-auto overflow-x-auto"
+            className="max-w-6xl mx-auto overflow-x-auto -mx-4 px-4 pb-2"
           >
             <div className="min-w-[800px]">
               {competitorFeatures.map((category, catIndex) => (
                 <div key={category.category} className="mb-8">
-                  <h3 className="text-xl font-bold text-black mb-4 px-4">{category.category}</h3>
-                  <div className="bg-white border-2 border-neutral-200 rounded-2xl overflow-hidden">
+                  <h3 className="text-xl font-bold text-foreground mb-4 px-4">{category.category}</h3>
+                  <div className="bg-card border-2 border-border rounded-2xl overflow-hidden">
                     {/* Header */}
                     {catIndex === 0 && (
-                      <div className="grid grid-cols-4 bg-neutral-50 border-b-2 border-neutral-200">
-                        <div className="p-4 font-bold text-black">Feature</div>
-                        <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200 bg-green-50">
+                      <div className="grid grid-cols-4 bg-muted border-b-2 border-border">
+                        <div className="p-4 font-bold text-foreground">Feature</div>
+                        <div className="p-4 text-center font-bold text-foreground border-l-2 border-border bg-green-50">
                           <div className="flex items-center justify-center gap-2">
                             Kahade
                             <Crown className="w-5 h-5 text-green-600" aria-hidden="true" weight="fill" />
                           </div>
                         </div>
-                        <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">
+                        <div className="p-4 text-center font-bold text-foreground border-l-2 border-border">
                           Competitor A
                         </div>
-                        <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">
+                        <div className="p-4 text-center font-bold text-foreground border-l-2 border-border">
                           Competitor B
                         </div>
                       </div>
@@ -363,26 +363,26 @@ export default function Compare() {
                     {category.features.map((feature, index) => (
                       <div
                         key={index}
-                        className="grid grid-cols-4 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50 transition-colors"
+                        className="grid grid-cols-4 border-b border-border last:border-b-0 hover:bg-muted transition-colors"
                       >
-                        <div className="p-4 text-black font-medium">{feature.name}</div>
-                        <div className="p-4 text-center border-l-2 border-neutral-200 bg-green-50/30">
+                        <div className="p-4 text-foreground font-medium">{feature.name}</div>
+                        <div className="p-4 text-center border-l-2 border-border bg-green-50/30">
                           {feature.kahade ? (
                             <Check className="w-6 h-6 text-green-600 mx-auto" aria-hidden="true" weight="bold" />
                           ) : (
                             <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                           )}
                         </div>
-                        <div className="p-4 text-center border-l-2 border-neutral-200">
+                        <div className="p-4 text-center border-l-2 border-border">
                           {feature.competitor1 ? (
-                            <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" />
+                            <Check className="w-6 h-6 text-foreground mx-auto" aria-hidden="true" weight="bold" />
                           ) : (
                             <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                           )}
                         </div>
-                        <div className="p-4 text-center border-l-2 border-neutral-200">
+                        <div className="p-4 text-center border-l-2 border-border">
                           {feature.competitor2 ? (
-                            <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" />
+                            <Check className="w-6 h-6 text-foreground mx-auto" aria-hidden="true" weight="bold" />
                           ) : (
                             <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                           )}
@@ -398,14 +398,14 @@ export default function Compare() {
       </section>
 
       {/* PRICING COMPARISON */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="text-center mb-12">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Perbandingan Harga
             </motion.h2>
@@ -414,45 +414,45 @@ export default function Compare() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600"
+              className="text-lg text-muted-foreground"
             >
               Kahade menawarkan harga paling kompetitif di industri
             </motion.p>
           </div>
 
-          <div className="max-w-5xl mx-auto overflow-x-auto">
-            <div className="min-w-[600px] bg-white border-2 border-neutral-200 rounded-2xl overflow-hidden">
+          <div className="max-w-5xl mx-auto overflow-x-auto -mx-4 px-4 pb-2">
+            <div className="min-w-[600px] bg-card border-2 border-border rounded-2xl overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-5 bg-neutral-50 border-b-2 border-neutral-200">
-                <div className="p-4 font-bold text-black">Provider</div>
-                <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">Transaction Fee</div>
-                <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">Min Fee</div>
-                <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">Max Fee</div>
-                <div className="p-4 text-center font-bold text-black border-l-2 border-neutral-200">Monthly Fee</div>
+              <div className="grid grid-cols-5 bg-muted border-b-2 border-border">
+                <div className="p-4 font-bold text-foreground">Provider</div>
+                <div className="p-4 text-center font-bold text-foreground border-l-2 border-border">Transaction Fee</div>
+                <div className="p-4 text-center font-bold text-foreground border-l-2 border-border">Min Fee</div>
+                <div className="p-4 text-center font-bold text-foreground border-l-2 border-border">Max Fee</div>
+                <div className="p-4 text-center font-bold text-foreground border-l-2 border-border">Monthly Fee</div>
               </div>
 
               {/* Rows */}
               {pricingComparison.map((provider, index) => (
                 <div
                   key={provider.provider}
-                  className={`grid grid-cols-5 border-b border-neutral-200 last:border-b-0 ${
-                    provider.highlight ? 'bg-green-50/30' : 'hover:bg-neutral-50'
+                  className={`grid grid-cols-5 border-b border-border last:border-b-0 ${
+                    provider.highlight ? 'bg-green-50/30' : 'hover:bg-muted'
                   } transition-colors`}
                 >
-                  <div className="p-4 font-semibold text-black flex items-center gap-2">
+                  <div className="p-4 font-semibold text-foreground flex items-center gap-2">
                     {provider.provider}
                     {provider.highlight && <Crown className="w-5 h-5 text-green-600" aria-hidden="true" weight="fill" />}
                   </div>
-                  <div className="p-4 text-center border-l-2 border-neutral-200 font-medium text-neutral-600">
+                  <div className="p-4 text-center border-l-2 border-border font-medium text-muted-foreground">
                     {provider.transactionFee}
                   </div>
-                  <div className="p-4 text-center border-l-2 border-neutral-200 font-medium text-neutral-600">
+                  <div className="p-4 text-center border-l-2 border-border font-medium text-muted-foreground">
                     {provider.minFee}
                   </div>
-                  <div className="p-4 text-center border-l-2 border-neutral-200 font-medium text-neutral-600">
+                  <div className="p-4 text-center border-l-2 border-border font-medium text-muted-foreground">
                     {provider.maxFee}
                   </div>
-                  <div className="p-4 text-center border-l-2 border-neutral-200 font-medium text-neutral-600">
+                  <div className="p-4 text-center border-l-2 border-border font-medium text-muted-foreground">
                     {provider.monthlyFee}
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export default function Compare() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Mengapa Memilih Kahade?
             </motion.h2>
@@ -479,7 +479,7 @@ export default function Compare() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               6 alasan utama yang membuat Kahade unggul dari kompetitor
             </motion.p>
@@ -538,7 +538,7 @@ export default function Compare() {
               transition={{ delay: 0.2 }}
             >
               <Link href="/register">
-                <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
+                <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

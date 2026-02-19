@@ -108,7 +108,7 @@ export default function Docs() {
       <section className="section-padding-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         <div className="container relative z-10">
-          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto">
             <span className="badge badge-secondary mb-4 inline-block">Dokumentasi</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Pusat Dokumentasi Kahade
@@ -133,7 +133,7 @@ export default function Docs() {
 
       {/* Doc Categories */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <motion.div
             variants={staggerContainer}
             initial="initial"
@@ -170,7 +170,7 @@ export default function Docs() {
 
       {/* API Promo */}
       <section className="section-padding bg-muted/30">
-        <div className="container px-4">
+        <div className="container">
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <motion.div {...fadeInUp} className="card card-premium p-6">
               <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-4">
@@ -210,7 +210,7 @@ export default function Docs() {
 
       {/* Contact Support */}
       <section className="section-padding">
-        <div className="container px-4">
+        <div className="container">
           <motion.div {...fadeInUp} className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold mb-4">Tidak menemukan yang dicari?</h2>
             <p className="text-muted-foreground mb-6">

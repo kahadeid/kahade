@@ -94,18 +94,18 @@ export default function Cookies() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Legal
             </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               Kebijakan Cookie
             </h1>
-            <div className="flex flex-wrap items-center gap-4 md:gap-4 text-sm text-neutral-600">
+            <div className="flex flex-wrap items-center gap-4 md:gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" />
                 Terakhir diperbarui: 1 Januari 2026
               </span>
-              <Button variant="ghost" size="sm" className="gap-2 text-neutral-600 hover:text-neutral-900" onClick={() => window.print()}>
+              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-neutral-900" onClick={() => window.print()}>
                 <Printer className="w-4 h-4" aria-hidden="true" weight="regular" />
                 Cetak
               </Button>
@@ -115,7 +115,7 @@ export default function Cookies() {
       </section>
       
       {/* Cookie Types */}
-      <section className="py-10 md:py-12 bg-neutral-50">
+      <section className="py-10 md:py-12 bg-muted">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -123,11 +123,11 @@ export default function Cookies() {
             viewport={{ once: true }}
             className="text-center mb-8 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-black text-white rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
               Ringkasan
             </span>
-            <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-black">Jenis Cookie yang Kami Gunakan</h2>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
+            <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-foreground">Jenis Cookie yang Kami Gunakan</h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
               Kami menggunakan berbagai jenis cookie untuk beragam kebutuhan di platform kami.
             </p>
           </motion.div>
@@ -140,22 +140,22 @@ export default function Cookies() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-neutral-200"
+                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-5 border border-border"
               >
                 <div className="flex items-center justify-between mb-3 md:mb-4">
-                  <h3 className="font-bold text-sm md:text-base text-black">{cookie.name}</h3>
+                  <h3 className="font-bold text-sm md:text-base text-foreground">{cookie.name}</h3>
                   <span className={`text-[10px] md:text-xs px-2 py-1 rounded-lg ${
                     cookie.canDisable 
-                      ? 'bg-neutral-100 text-neutral-600' 
+                      ? 'bg-muted text-muted-foreground' 
                       : 'bg-black text-white'
                   }`}>
                     {cookie.canDisable ? 'Opsional' : 'Wajib'}
                   </span>
                 </div>
-                <p className="text-xs md:text-sm text-neutral-600 mb-3 md:mb-4">{cookie.description}</p>
+                <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">{cookie.description}</p>
                 <div className="flex flex-wrap gap-1.5 md:gap-2">
                   {cookie.examples.map((example) => (
-                    <span key={example} className="text-[10px] md:text-xs px-2 py-1 rounded-lg bg-neutral-100 text-neutral-600">
+                    <span key={example} className="text-[10px] md:text-xs px-2 py-1 rounded-lg bg-muted text-muted-foreground">
                       {example}
                     </span>
                   ))}
@@ -167,27 +167,27 @@ export default function Cookies() {
       </section>
       
       {/* Mobile TOC Toggle */}
-      <div className="lg:hidden sticky top-[65px] z-20 bg-white border-b border-neutral-200">
+      <div className="lg:hidden sticky top-[65px] z-20 bg-card border-b border-border">
         <div className="container py-3">
           <Button 
             variant="outline" 
-            className="w-full h-10 justify-between border-neutral-200 rounded-xl"
+            className="w-full h-10 justify-between border-border rounded-xl"
             onClick={() => setShowToc(!showToc)}
           >
             <span className="flex items-center gap-2">
               <List className="w-4 h-4" aria-hidden="true" weight="bold" />
               Daftar Isi
             </span>
-            <span className="text-xs text-neutral-600">{showToc ? 'Sembunyikan' : 'Tampilkan'}</span>
+            <span className="text-xs text-muted-foreground">{showToc ? 'Sembunyikan' : 'Tampilkan'}</span>
           </Button>
           {showToc && (
-            <nav className="mt-3 p-4 bg-neutral-100 rounded-xl space-y-2 max-h-60 overflow-y-auto">
+            <nav className="mt-3 p-4 bg-muted rounded-xl space-y-2 max-h-60 overflow-y-auto">
               {sections.map((section) => (
                 <a
                   key={section.id}
                   href={`#${section.id}`}
                   onClick={() => setShowToc(false)}
-                  className="block text-sm text-neutral-600 hover:text-neutral-900 transition-colors py-1"
+                  className="block text-sm text-muted-foreground hover:text-neutral-900 transition-colors py-1"
                 >
                   {section.title}
                 </a>
@@ -207,14 +207,14 @@ export default function Cookies() {
               animate={{ opacity: 1, x: 0 }}
               className="hidden lg:block lg:col-span-1"
             >
-              <div className="sticky top-24 bg-neutral-50 rounded-xl md:rounded-2xl border border-neutral-200 p-4 md:p-6">
-                <h3 className="font-bold mb-4 text-black">Daftar Isi</h3>
+              <div className="sticky top-24 bg-muted rounded-xl md:rounded-2xl border border-border p-4 md:p-6">
+                <h3 className="font-bold mb-4 text-foreground">Daftar Isi</h3>
                 <nav className="space-y-2">
                   {sections.map((section) => (
                     <a
                       key={section.id}
                       href={`#${section.id}`}
-                      className="block text-sm text-neutral-600 hover:text-neutral-900 transition-colors py-1"
+                      className="block text-sm text-muted-foreground hover:text-neutral-900 transition-colors py-1"
                     >
                       {section.title}
                     </a>
@@ -230,7 +230,7 @@ export default function Cookies() {
               transition={{ delay: 0.1 }}
               className="lg:col-span-3"
             >
-              <div className="bg-white rounded-xl md:rounded-2xl border border-neutral-200 p-4 md:p-8">
+              <div className="bg-card rounded-xl md:rounded-2xl border border-border p-4 md:p-8">
                 {sections.map((section, index) => (
                   <motion.div
                     key={section.id}
@@ -241,8 +241,8 @@ export default function Cookies() {
                     transition={{ delay: index * 0.03 }}
                     className="mb-8 md:mb-12 scroll-mt-32 lg:scroll-mt-24"
                   >
-                    <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-black">{section.title}</h2>
-                    <div className="text-sm md:text-base text-neutral-600 whitespace-pre-line leading-relaxed">
+                    <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-foreground">{section.title}</h2>
+                    <div className="text-sm md:text-base text-muted-foreground whitespace-pre-line leading-relaxed">
                       {section.content}
                     </div>
                   </motion.div>
@@ -258,7 +258,7 @@ export default function Cookies() {
                       Sesuaikan cookie mana yang ingin Anda izinkan di platform kami.
                     </p>
                   </div>
-                  <Button className="h-10 md:h-11 bg-white text-black hover:bg-gray-100 font-semibold rounded-xl gap-2">
+                  <Button className="h-10 md:h-11 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl gap-2">
                     <Gear className="w-5 h-5" aria-hidden="true" weight="bold" />
                     Pengaturan Cookie
                   </Button>

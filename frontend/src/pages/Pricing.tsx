@@ -169,7 +169,7 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       
       {/* ========== HERO SECTION ========== */}
@@ -177,14 +177,14 @@ export default function Pricing() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         
         <div className="container relative z-10">
-          <div className="text-center max-w-4xl mx-auto px-4">
+          <div className="text-center max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="mb-6"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium text-foreground">
                 <CreditCard className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Harga Transparan, Tanpa Biaya Tersembunyi
               </span>
@@ -194,7 +194,7 @@ export default function Pricing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-black"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground"
             >
               Pilih paket yang tepat untuk bisnis Anda
             </motion.h1>
@@ -203,7 +203,7 @@ export default function Pricing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-neutral-600 mb-8 max-w-2xl mx-auto"
+              className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
             >
               Mulai gratis, upgrade saat Anda berkembang. Semua paket termasuk perlindungan escrow dan keamanan tingkat enterprise.
             </motion.p>
@@ -215,22 +215,22 @@ export default function Pricing() {
               transition={{ delay: 0.4 }}
               className="flex items-center justify-center gap-4"
             >
-              <span className={`text-sm font-medium ${!isYearly ? 'text-black' : 'text-neutral-600'}`}>
+              <span className={`text-sm font-medium ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
                 Bulanan
               </span>
               <button
                 onClick={() => setIsYearly(!isYearly)}
                 className={`relative w-14 h-7 rounded-full transition-colors ${
-                  isYearly ? 'bg-black' : 'bg-neutral-200'
+                  isYearly ? 'bg-black' : 'bg-muted'
                 }`}
               >
                 <span
-                  className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${
+                  className={`absolute top-1 w-5 h-5 rounded-full bg-card shadow-md transition-transform ${
                     isYearly ? 'left-8' : 'left-1'
                   }`}
                 />
               </button>
-              <span className={`text-sm font-medium ${isYearly ? 'text-black' : 'text-neutral-600'}`}>
+              <span className={`text-sm font-medium ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
                 Tahunan
                 <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">
                   Hemat 20%
@@ -254,35 +254,35 @@ export default function Pricing() {
                 className={`relative rounded-2xl p-8 ${
                   plan.popular
                     ? 'bg-black text-white ring-4 ring-black/10 scale-105 lg:scale-110'
-                    : 'bg-white border-2 border-neutral-200'
+                    : 'bg-card border-2 border-border'
                 }`}
               >
                 {plan.badge && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2" aria-hidden="true">
-                    <span className="px-4 py-1.5 bg-white text-black text-xs font-bold rounded-full shadow-lg">
+                    <span className="px-4 py-1.5 bg-card text-foreground text-xs font-bold rounded-full shadow-lg">
                       {plan.badge}
                     </span>
                   </div>
                 )}
 
                 <div className="mb-8">
-                  <h3 className={`text-2xl font-bold mb-2 ${plan.popular ? 'text-white' : 'text-black'}`}>
+                  <h3 className={`text-2xl font-bold mb-2 ${plan.popular ? 'text-white' : 'text-foreground'}`}>
                     {plan.name}
                   </h3>
-                  <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-neutral-600'}`}>
+                  <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-muted-foreground'}`}>
                     {plan.description}
                   </p>
                 </div>
 
                 <div className="mb-8">
-                  <div className={`text-5xl font-bold mb-2 ${plan.popular ? 'text-white' : 'text-black'}`}>
+                  <div className={`text-5xl font-bold mb-2 ${plan.popular ? 'text-white' : 'text-foreground'}`}>
                     {formatPrice(isYearly ? plan.yearlyPrice : plan.monthlyPrice)}
                   </div>
-                  <div className={`text-sm ${plan.popular ? 'text-white/60' : 'text-neutral-600'}`}>
+                  <div className={`text-sm ${plan.popular ? 'text-white/60' : 'text-muted-foreground'}`}>
                     {plan.monthlyPrice === 0 ? 'selamanya' : isYearly ? '/tahun' : '/bulan'}
                   </div>
                   {isYearly && plan.monthlyPrice > 0 && (
-                    <div className={`text-xs mt-1 ${plan.popular ? 'text-white/50' : 'text-neutral-600'}`}>
+                    <div className={`text-xs mt-1 ${plan.popular ? 'text-white/50' : 'text-muted-foreground'}`}>
                       Setara {formatPrice((isYearly ? plan.yearlyPrice : plan.monthlyPrice) / 12)}/bulan
                     </div>
                   )}
@@ -294,7 +294,7 @@ export default function Pricing() {
                       {feature.included ? (
                         <Check
                           className={`w-5 h-5 shrink-0 mt-0.5 ${
-                            plan.popular ? 'text-white' : 'text-black'
+                            plan.popular ? 'text-white' : 'text-foreground'
                           }`}
                           weight="bold"
                         />
@@ -311,7 +311,7 @@ export default function Pricing() {
                           feature.included
                             ? plan.popular
                               ? 'text-white'
-                              : 'text-neutral-600'
+                              : 'text-muted-foreground'
                             : plan.popular
                             ? 'text-white/30 line-through'
                             : 'text-neutral-200 line-through'
@@ -327,7 +327,7 @@ export default function Pricing() {
                   <Button
                     className={`w-full h-12 font-semibold rounded-xl ${
                       plan.popular
-                        ? 'bg-white text-black hover:bg-gray-100'
+                        ? 'bg-card text-foreground hover:bg-gray-100'
                         : 'bg-black text-white hover:bg-black/90'
                     }`}
                   >
@@ -342,7 +342,7 @@ export default function Pricing() {
       </section>
 
       {/* ========== FEE CALCULATOR ========== */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -350,7 +350,7 @@ export default function Pricing() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
               >
                 Kalkulator Biaya Transaksi
               </motion.h2>
@@ -359,7 +359,7 @@ export default function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-lg text-neutral-600"
+                className="text-lg text-muted-foreground"
               >
                 Hitung biaya platform untuk transaksi Anda
               </motion.p>
@@ -369,33 +369,33 @@ export default function Pricing() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl border-2 border-black/10 p-8 md:p-10"
+              className="bg-card rounded-2xl border-2 border-black/10 p-8 md:p-10"
             >
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center">
                   <Calculator className="w-6 h-6 text-white" aria-hidden="true" weight="bold" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-black">Simulasi Biaya</h3>
-                  <p className="text-sm text-neutral-600">Masukkan nilai transaksi</p>
+                  <h3 className="text-xl font-bold text-foreground">Simulasi Biaya</h3>
+                  <p className="text-sm text-muted-foreground">Masukkan nilai transaksi</p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 {/* Amount Input */}
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Nilai Transaksi
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600 font-medium">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
                       Rp
                     </span>
                     <input
                       type="number"
                       value={transactionAmount}
                       onChange={(e) => setTransactionAmount(Number(e.target.value))}
-                      className="w-full h-14 pl-12 pr-4 bg-neutral-50 border-2 border-neutral-200 rounded-xl text-black font-semibold text-lg focus:outline-none focus:border-black transition-colors"
+                      className="w-full h-14 pl-12 pr-4 bg-muted border-2 border-border rounded-xl text-foreground font-semibold text-lg focus:outline-none focus:border-black transition-colors"
                       min="0"
                       step="100000"
                     />
@@ -409,26 +409,26 @@ export default function Pricing() {
                     max="50000000"
                     step="100000"
                   />
-                  <div className="flex justify-between text-xs text-neutral-600 mt-2">
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
                     <span>Rp 100K</span>
                     <span>Rp 50M</span>
                   </div>
                 </div>
 
                 {/* Calculation Breakdown */}
-                <div className="bg-neutral-50 rounded-xl p-6 space-y-4">
+                <div className="bg-muted rounded-xl p-6 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">Nilai Transaksi</span>
-                    <span className="font-semibold text-black">{formatPrice(transactionAmount)}</span>
+                    <span className="text-muted-foreground">Nilai Transaksi</span>
+                    <span className="font-semibold text-foreground">{formatPrice(transactionAmount)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">Biaya Platform ({feeStructure.percentage}%)</span>
-                    <span className="font-semibold text-black">{formatPrice(calculatedFee)}</span>
+                    <span className="text-muted-foreground">Biaya Platform ({feeStructure.percentage}%)</span>
+                    <span className="font-semibold text-foreground">{formatPrice(calculatedFee)}</span>
                   </div>
-                  <div className="pt-4 border-t-2 border-neutral-200">
+                  <div className="pt-4 border-t-2 border-border">
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold text-black">Total yang Diterima</span>
-                      <span className="text-2xl font-bold text-black">
+                      <span className="font-semibold text-foreground">Total yang Diterima</span>
+                      <span className="text-2xl font-bold text-foreground">
                         {formatPrice(transactionAmount - calculatedFee)}
                       </span>
                     </div>
@@ -438,16 +438,16 @@ export default function Pricing() {
                 {/* Fee Info */}
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div className="bg-blue-50 rounded-xl p-4 text-center">
-                    <div className="text-xs text-neutral-600 mb-1">Persentase</div>
-                    <div className="text-xl font-bold text-black">{feeStructure.percentage}%</div>
+                    <div className="text-xs text-muted-foreground mb-1">Persentase</div>
+                    <div className="text-xl font-bold text-foreground">{feeStructure.percentage}%</div>
                   </div>
                   <div className="bg-blue-50 rounded-xl p-4 text-center">
-                    <div className="text-xs text-neutral-600 mb-1">Min. Biaya</div>
-                    <div className="text-xl font-bold text-black">{formatPrice(feeStructure.minimum)}</div>
+                    <div className="text-xs text-muted-foreground mb-1">Min. Biaya</div>
+                    <div className="text-xl font-bold text-foreground">{formatPrice(feeStructure.minimum)}</div>
                   </div>
                   <div className="bg-blue-50 rounded-xl p-4 text-center">
-                    <div className="text-xs text-neutral-600 mb-1">Max. Biaya</div>
-                    <div className="text-xl font-bold text-black">{formatPrice(feeStructure.maximum)}</div>
+                    <div className="text-xs text-muted-foreground mb-1">Max. Biaya</div>
+                    <div className="text-xl font-bold text-foreground">{formatPrice(feeStructure.maximum)}</div>
                   </div>
                 </div>
 
@@ -470,7 +470,7 @@ export default function Pricing() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Perbandingan Fitur Detail
             </motion.h2>
@@ -479,7 +479,7 @@ export default function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600"
+              className="text-lg text-muted-foreground"
             >
               Lihat semua fitur yang tersedia di setiap paket
             </motion.p>
@@ -489,19 +489,19 @@ export default function Pricing() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-6xl mx-auto overflow-x-auto"
+            className="max-w-6xl mx-auto overflow-x-auto -mx-4 px-4 pb-2"
           >
-            <div className="min-w-[800px] bg-white rounded-2xl border-2 border-neutral-200 overflow-hidden">
+            <div className="min-w-[800px] bg-card rounded-2xl border-2 border-border overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-4 bg-neutral-50 border-b-2 border-neutral-200">
-                <div className="p-6 font-bold text-black">Fitur</div>
-                <div className="p-6 text-center font-bold text-black border-l-2 border-neutral-200">
+              <div className="grid grid-cols-4 bg-muted border-b-2 border-border">
+                <div className="p-6 font-bold text-foreground">Fitur</div>
+                <div className="p-6 text-center font-bold text-foreground border-l-2 border-border">
                   Pemula
                 </div>
-                <div className="p-6 text-center font-bold text-black border-l-2 border-neutral-200 bg-black/5">
+                <div className="p-6 text-center font-bold text-foreground border-l-2 border-border bg-black/5">
                   Profesional
                 </div>
-                <div className="p-6 text-center font-bold text-black border-l-2 border-neutral-200">
+                <div className="p-6 text-center font-bold text-foreground border-l-2 border-border">
                   Enterprise
                 </div>
               </div>
@@ -522,24 +522,24 @@ export default function Pricing() {
               ].map((row, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-4 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50 transition-colors"
+                  className="grid grid-cols-4 border-b border-border last:border-b-0 hover:bg-muted transition-colors"
                 >
-                  <div className="p-6 text-black font-medium">{row.feature}</div>
+                  <div className="p-6 text-foreground font-medium">{row.feature}</div>
                   {row.values.map((value, i) => (
                     <div
                       key={i}
-                      className={`p-6 text-center border-l-2 border-neutral-200 ${
+                      className={`p-6 text-center border-l-2 border-border ${
                         i === 1 ? 'bg-black/5' : ''
                       }`}
                     >
                       {typeof value === 'boolean' ? (
                         value ? (
-                          <Check className="w-6 h-6 text-black mx-auto" aria-hidden="true" weight="bold" />
+                          <Check className="w-6 h-6 text-foreground mx-auto" aria-hidden="true" weight="bold" />
                         ) : (
                           <X className="w-6 h-6 text-neutral-200 mx-auto" weight="bold" aria-hidden="true" />
                         )
                       ) : (
-                        <span className="text-neutral-600 font-medium">{value}</span>
+                        <span className="text-muted-foreground font-medium">{value}</span>
                       )}
                     </div>
                   ))}
@@ -551,7 +551,7 @@ export default function Pricing() {
       </section>
 
       {/* ========== PRICING FAQ ========== */}
-      <section className="py-12 md:py-16 lg:py-20 bg-neutral-50">
+      <section className="py-12 md:py-16 lg:py-20 bg-muted">
         <div className="container">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
@@ -559,7 +559,7 @@ export default function Pricing() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
               >
                 Pertanyaan Seputar Harga
               </motion.h2>
@@ -568,7 +568,7 @@ export default function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-lg text-neutral-600"
+                className="text-lg text-muted-foreground"
               >
                 Jawaban untuk pertanyaan umum tentang pricing
               </motion.p>
@@ -578,15 +578,15 @@ export default function Pricing() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl border-2 border-neutral-200 p-6 md:p-8"
+              className="bg-card rounded-2xl border-2 border-border p-6 md:p-8"
             >
               <Accordion type="single" collapsible className="w-full">
                 {pricingFAQs.map((faq, index) => (
                   <AccordionItem key={index} value={`item-${index}`}>
-                    <AccordionTrigger className="text-left font-semibold text-black hover:text-neutral-900/80">
+                    <AccordionTrigger className="text-left font-semibold text-foreground hover:text-neutral-900/80">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-neutral-600">{faq.answer}</AccordionContent>
+                    <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
@@ -598,7 +598,7 @@ export default function Pricing() {
               viewport={{ once: true }}
               className="mt-8 text-center"
             >
-              <p className="text-neutral-600 mb-4">Masih ada pertanyaan?</p>
+              <p className="text-muted-foreground mb-4">Masih ada pertanyaan?</p>
               <Link href="/contact">
                 <Button className="h-12 px-6 bg-black text-white hover:bg-black/90 rounded-xl font-semibold">
                   Hubungi Tim Sales
@@ -640,7 +640,7 @@ export default function Pricing() {
               transition={{ delay: 0.2 }}
             >
               <Link href="/register">
-                <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold text-base">
+                <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold text-base">
                   Mulai Gratis Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

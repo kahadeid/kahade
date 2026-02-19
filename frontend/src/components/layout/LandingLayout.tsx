@@ -19,7 +19,7 @@ export default function LandingLayout({
   showFooter = true 
 }: LandingLayoutProps) {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-card flex flex-col">
       {showNavbar && <Navbar />}
       <main className="flex-1">
         {children}

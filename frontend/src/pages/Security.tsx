@@ -186,7 +186,7 @@ export default function Security() {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       
       {/* ========== HERO SECTION ========== */}
@@ -195,7 +195,7 @@ export default function Security() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-radial from-blue-100 to-transparent rounded-full blur-3xl opacity-40" aria-hidden="true" />
         
         <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto text-center px-4">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -212,7 +212,7 @@ export default function Security() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-black"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground"
             >
               Keamanan tingkat enterprise untuk melindungi transaksi Anda
             </motion.h1>
@@ -221,7 +221,7 @@ export default function Security() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-neutral-600 mb-8 max-w-2xl mx-auto"
+              className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
             >
               Kami menggunakan teknologi keamanan terdepan dan compliant dengan regulasi untuk menjaga data dan dana Anda tetap aman.
             </motion.p>
@@ -243,7 +243,7 @@ export default function Security() {
       </section>
 
       {/* ========== SECURITY STATS ========== */}
-      <section className="py-12 md:py-16 border-y border-neutral-200 bg-neutral-50">
+      <section className="py-12 md:py-16 border-y border-border bg-muted">
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
             {securityStats.map((stat, index) => (
@@ -255,10 +255,10 @@ export default function Security() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-2">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm md:text-base text-neutral-600">{stat.label}</div>
+                <div className="text-sm md:text-base text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -273,7 +273,7 @@ export default function Security() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Infrastruktur Keamanan Berlapis
             </motion.h2>
@@ -282,7 +282,7 @@ export default function Security() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               Multiple layers of security untuk memastikan dana dan data Anda terlindungi
             </motion.p>
@@ -298,12 +298,12 @@ export default function Security() {
                 transition={{ delay: index * 0.1 }}
                 className="group"
               >
-                <div className="h-full bg-white border-2 border-neutral-200 rounded-2xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300">
+                <div className="h-full bg-card border-2 border-border rounded-2xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300">
                   <div className="w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <feature.icon className="w-7 h-7 text-white" weight="bold" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-2">{feature.title}</h3>
-                  <p className="text-neutral-600 mb-3 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground mb-3 leading-relaxed">{feature.description}</p>
                   <p className="text-sm text-black/60 italic">{feature.details}</p>
                 </div>
               </motion.div>
@@ -313,14 +313,14 @@ export default function Security() {
       </section>
 
       {/* ========== COMPLIANCE SECTION ========== */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="text-center mb-12 md:mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Compliance & Regulasi
             </motion.h2>
@@ -329,7 +329,7 @@ export default function Security() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               Kami beroperasi dengan lisensi resmi dan compliant dengan regulasi Indonesia
             </motion.p>
@@ -370,14 +370,14 @@ export default function Security() {
             viewport={{ once: true }}
             className="mt-12 max-w-4xl mx-auto"
           >
-            <div className="bg-white border-2 border-neutral-200 rounded-2xl p-6 md:p-8">
+            <div className="bg-card border-2 border-border rounded-2xl p-6 md:p-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
                   <Certificate className="w-6 h-6 text-blue-600" aria-hidden="true" weight="duotone" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-black mb-2">Komitmen Kepatuhan</h3>
-                  <p className="text-neutral-600 leading-relaxed">
+                  <h3 className="text-xl font-bold text-foreground mb-2">Komitmen Kepatuhan</h3>
+                  <p className="text-muted-foreground leading-relaxed">
                     Kahade beroperasi sesuai dengan UU ITE, peraturan Bank Indonesia tentang layanan keuangan digital, 
                     dan regulasi PPATK untuk pencegahan pencucian uang. Kami secara berkala menjalani audit eksternal 
                     dan update sistem untuk memastikan compliance berkelanjutan.
@@ -397,7 +397,7 @@ export default function Security() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Perlindungan Data & Privacy
             </motion.h2>
@@ -406,7 +406,7 @@ export default function Security() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               Protokol keamanan komprehensif untuk melindungi informasi pribadi Anda
             </motion.p>
@@ -420,14 +420,14 @@ export default function Security() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-neutral-50 border-2 border-neutral-200 rounded-2xl p-6"
+                className="bg-muted border-2 border-border rounded-2xl p-6"
               >
-                <h3 className="text-lg font-bold text-black mb-4">{category.title}</h3>
+                <h3 className="text-lg font-bold text-foreground mb-4">{category.title}</h3>
                 <ul className="space-y-3">
                   {category.items.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-black shrink-0 mt-0.5" aria-hidden="true" weight="bold" />
-                      <span className="text-sm text-neutral-600">{item}</span>
+                      <Check className="w-5 h-5 text-foreground shrink-0 mt-0.5" aria-hidden="true" weight="bold" />
+                      <span className="text-sm text-muted-foreground">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -438,14 +438,14 @@ export default function Security() {
       </section>
 
       {/* ========== INCIDENT RESPONSE ========== */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="text-center mb-12 md:mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Security Incident Response
             </motion.h2>
@@ -454,7 +454,7 @@ export default function Security() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               Protokol response cepat jika terjadi insiden keamanan
             </motion.p>
@@ -474,15 +474,15 @@ export default function Security() {
                     className="relative text-center"
                   >
                     {index < incidentResponse.length - 1 && (
-                      <div className="absolute top-8 left-1/2 w-full h-0.5 bg-neutral-200" aria-hidden="true" />
+                      <div className="absolute top-8 left-1/2 w-full h-0.5 bg-muted" aria-hidden="true" />
                     )}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 rounded-xl bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                      <div className="w-16 h-16 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                         {step.step}
                       </div>
-                      <h3 className="font-bold text-black mb-2">{step.title}</h3>
-                      <p className="text-sm text-neutral-600 mb-2">{step.description}</p>
-                      <div className="inline-block px-3 py-1 bg-black/5 rounded-full text-xs font-semibold text-black">
+                      <h3 className="font-bold text-foreground mb-2">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-2">{step.description}</p>
+                      <div className="inline-block px-3 py-1 bg-muted rounded-full text-xs font-semibold text-muted-foreground">
                         {step.time}
                       </div>
                     </div>
@@ -503,17 +503,17 @@ export default function Security() {
                   className="flex gap-4"
                 >
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center font-bold">
+                    <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold">
                       {step.step}
                     </div>
                     {index < incidentResponse.length - 1 && (
-                      <div className="w-0.5 h-full bg-neutral-200 mt-2 min-h-[60px]" />
+                      <div className="w-0.5 h-full bg-muted mt-2 min-h-[60px]" />
                     )}
                   </div>
                   <div className="flex-1 pt-2 pb-4">
-                    <h3 className="font-bold text-black mb-1">{step.title}</h3>
-                    <p className="text-sm text-neutral-600 mb-2">{step.description}</p>
-                    <div className="inline-block px-3 py-1 bg-black/5 rounded-full text-xs font-semibold text-black">
+                    <h3 className="font-bold text-foreground mb-1">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-2">{step.description}</p>
+                    <div className="inline-block px-3 py-1 bg-muted rounded-full text-xs font-semibold text-muted-foreground">
                       {step.time}
                     </div>
                   </div>
@@ -533,7 +533,7 @@ export default function Security() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
               >
                 Tips Keamanan untuk Pengguna
               </motion.h2>
@@ -542,7 +542,7 @@ export default function Security() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-lg text-neutral-600"
+                className="text-lg text-muted-foreground"
               >
                 Best practices untuk menjaga keamanan akun Anda
               </motion.p>
@@ -588,15 +588,15 @@ export default function Security() {
               ].map((tip, index) => (
                 <div
                   key={tip.title}
-                  className="bg-neutral-50 border-2 border-neutral-200 rounded-xl p-6 hover:border-neutral-900 transition-colors"
+                  className="bg-muted border-2 border-border rounded-xl p-6 hover:border-neutral-900 transition-colors"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-black flex items-center justify-center shrink-0">
                       <tip.icon className="w-6 h-6 text-white" weight="bold" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-black mb-1">{tip.title}</h3>
-                      <p className="text-sm text-neutral-600">{tip.tips}</p>
+                      <h3 className="font-bold text-foreground mb-1">{tip.title}</h3>
+                      <p className="text-sm text-muted-foreground">{tip.tips}</p>
                     </div>
                   </div>
                 </div>
@@ -645,7 +645,7 @@ export default function Security() {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link href="/register">
-                <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
+                <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>

@@ -101,7 +101,7 @@ export default function Partners() {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       
       {/* HERO */}
@@ -109,14 +109,14 @@ export default function Partners() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
         
         <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto text-center px-4">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="mb-6"
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-black">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-foreground">
                 <Handshake className="w-4 h-4" aria-hidden="true" weight="fill" />
                 Partners & Integrations
               </span>
@@ -126,7 +126,7 @@ export default function Partners() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-black"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground"
             >
               Terintegrasi dengan ekosistem yang Anda gunakan
             </motion.h1>
@@ -135,7 +135,7 @@ export default function Partners() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-neutral-600 mb-8"
+              className="text-lg md:text-xl text-muted-foreground mb-8"
             >
               Kahade bekerja seamless dengan payment gateway, bank, dan tools favorit Anda. Plus API yang powerful untuk custom integration.
             </motion.p>
@@ -169,7 +169,7 @@ export default function Partners() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Payment Gateway Partners
             </motion.h2>
@@ -178,7 +178,7 @@ export default function Partners() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600"
+              className="text-lg text-muted-foreground"
             >
               Mendukung semua metode pembayaran populer di Indonesia
             </motion.p>
@@ -192,13 +192,13 @@ export default function Partners() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-neutral-50 border-2 border-neutral-200 rounded-xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 flex flex-col items-center justify-center text-center"
+                className="bg-muted border-2 border-border rounded-xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 flex flex-col items-center justify-center text-center"
               >
-                <div className="w-16 h-16 rounded-lg bg-white border border-neutral-200 flex items-center justify-center mb-3">
-                  <CreditCard className="w-8 h-8 text-black" aria-hidden="true" weight="duotone" />
+                <div className="w-16 h-16 rounded-lg bg-card border border-border flex items-center justify-center mb-3">
+                  <CreditCard className="w-8 h-8 text-foreground" aria-hidden="true" weight="duotone" />
                 </div>
-                <div className="font-bold text-black mb-1">{partner.name}</div>
-                <div className="text-xs text-neutral-600">{partner.type}</div>
+                <div className="font-bold text-foreground mb-1">{partner.name}</div>
+                <div className="text-xs text-muted-foreground">{partner.type}</div>
               </motion.div>
             ))}
           </div>
@@ -206,14 +206,14 @@ export default function Partners() {
       </section>
 
       {/* BANK PARTNERS */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="text-center mb-12">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Bank Partners
             </motion.h2>
@@ -222,7 +222,7 @@ export default function Partners() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600"
+              className="text-lg text-muted-foreground"
             >
               Transfer bank dari dan ke semua bank besar di Indonesia
             </motion.p>
@@ -236,12 +236,12 @@ export default function Partners() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white border-2 border-neutral-200 rounded-xl p-6 hover:border-neutral-900 transition-colors flex flex-col items-center justify-center text-center"
+                className="bg-card border-2 border-border rounded-xl p-6 hover:border-neutral-900 transition-colors flex flex-col items-center justify-center text-center"
               >
                 <div className="w-14 h-14 rounded-lg bg-blue-50 border-2 border-blue-100 flex items-center justify-center mb-3">
                   <Bank className="w-7 h-7 text-blue-600" aria-hidden="true" weight="duotone" />
                 </div>
-                <div className="font-bold text-black text-sm">{bank.name}</div>
+                <div className="font-bold text-foreground text-sm">{bank.name}</div>
               </motion.div>
             ))}
           </div>
@@ -256,7 +256,7 @@ export default function Partners() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
             >
               Developer-Friendly Integration
             </motion.h2>
@@ -265,7 +265,7 @@ export default function Partners() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-neutral-600 max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
             >
               API yang powerful dan mudah digunakan untuk integrasi custom
             </motion.p>
@@ -281,12 +281,12 @@ export default function Partners() {
                 transition={{ delay: index * 0.1 }}
                 className="group"
               >
-                <div className="h-full bg-white border-2 border-neutral-200 rounded-2xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
+                <div className="h-full bg-card border-2 border-border rounded-2xl p-6 hover:border-neutral-900 hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
                   <div className="w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <feature.icon className="w-7 h-7 text-white" weight="bold" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-2">{feature.title}</h3>
-                  <p className="text-neutral-600 mb-3">{feature.description}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground mb-3">{feature.description}</p>
                   <p className="text-sm text-black/60 italic">{feature.details}</p>
                 </div>
               </motion.div>
@@ -324,7 +324,7 @@ const transaction = await kahade.transactions.create({
       </section>
 
       {/* PARTNER PROGRAM */}
-      <section className="py-16 md:py-20 lg:py-28 bg-neutral-50">
+      <section className="py-16 md:py-20 lg:py-28 bg-muted">
         <div className="container">
           <div className="max-w-5xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -333,17 +333,17 @@ const transaction = await kahade.transactions.create({
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-6">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
                   Jadi Partner Kahade
                 </h2>
-                <p className="text-lg text-neutral-600 mb-8">
+                <p className="text-lg text-muted-foreground mb-8">
                   Gabung dengan partner program kami dan dapatkan revenue sharing serta dukungan penuh untuk grow bersama.
                 </p>
                 <ul className="space-y-4 mb-8">
                   {partnerBenefits.map((benefit, index) => (
                     <li key={index} className="flex items-center gap-3">
-                      <Check className="w-6 h-6 text-black" aria-hidden="true" weight="bold" />
-                      <span className="text-black font-medium">{benefit}</span>
+                      <Check className="w-6 h-6 text-foreground" aria-hidden="true" weight="bold" />
+                      <span className="text-foreground font-medium">{benefit}</span>
                     </li>
                   ))}
                 </ul>
@@ -369,13 +369,13 @@ const transaction = await kahade.transactions.create({
                 ].map((stat, index) => (
                   <div
                     key={stat.label}
-                    className="bg-white border-2 border-neutral-200 rounded-2xl p-6 text-center"
+                    className="bg-card border-2 border-border rounded-2xl p-6 text-center"
                   >
                     <div className="w-12 h-12 rounded-lg bg-black flex items-center justify-center mx-auto mb-3">
                       <stat.icon className="w-6 h-6 text-white" weight="bold" />
                     </div>
-                    <div className="text-3xl font-bold text-black mb-1">{stat.value}</div>
-                    <div className="text-sm text-neutral-600">{stat.label}</div>
+                    <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
                   </div>
                 ))}
               </motion.div>
@@ -415,7 +415,7 @@ const transaction = await kahade.transactions.create({
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link href="/register">
-                <Button className="h-14 px-8 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold">
+                <Button className="h-14 px-8 bg-card text-foreground hover:bg-gray-100 rounded-xl font-semibold">
                   Get API Keys
                   <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
                 </Button>
