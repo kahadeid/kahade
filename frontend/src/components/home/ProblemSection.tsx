@@ -6,8 +6,7 @@ import { staggerContainer, staggerItem } from '@/lib/animations';
 import { buyerRisks, sellerRisks } from './HomeData';
 import { cn, ariaProps } from '@/lib/ui-utils';
 
-export default function ProblemSection() {
-  return (
+export default function ProblemSection() {\n  return (
     <section className="section-padding-lg" aria-labelledby="problem-heading">
       <div className="container">
         <div className="section-header">
@@ -116,7 +115,7 @@ export default function ProblemSection() {
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-6 shadow-xl">
                 <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-primary-foreground" aria-hidden="true" weight="duotone" />
               </div>
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-foreground mb-4 text-balance">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
                 Kahade menghilangkan risiko ini
               </h3>
               <p className="text-primary-foreground/80 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
