@@ -117,9 +117,9 @@ export default function Register() {
   const updateData = (key: string, val: any) => setData(prev => ({ ...prev, [key]: val }));
 
   return (
-    <div className="min-h-screen grid md:grid-cols-[0.45fr_0.55fr]">
+    <div className="min-h-screen grid md:grid-cols-[0.45fr_0.55fr] overflow-x-hidden">
       {/* LEFT — Form */}
-      <div className="bg-background px-8 md:px-14 py-12 flex flex-col justify-center">
+      <div className="bg-background px-5 md:px-14 py-12 flex flex-col justify-center overflow-x-hidden">
         <div className="max-w-sm mx-auto w-full">
           <Link href="/">
             <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-10 transition-colors">
@@ -153,7 +153,7 @@ export default function Register() {
           </div>
 
           <AnimatePresence mode="wait">
-            <motion.div key={currentStep} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
+            <motion.div key={currentStep} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }}>
               <StepContent step={currentStep} data={data} onChange={updateData} />
             </motion.div>
           </AnimatePresence>

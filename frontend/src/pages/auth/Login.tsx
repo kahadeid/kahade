@@ -26,9 +26,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen grid md:grid-cols-[0.45fr_0.55fr]">
+    <div className="min-h-screen grid md:grid-cols-[0.45fr_0.55fr] overflow-x-hidden">
       {/* LEFT — Form */}
-      <div className="bg-background px-8 md:px-14 py-12 flex flex-col justify-center">
+      <div className="bg-background px-5 md:px-14 py-12 flex flex-col justify-center overflow-x-hidden">
         <div className="max-w-sm mx-auto w-full">
           <Link href="/">
             <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-10 transition-colors">

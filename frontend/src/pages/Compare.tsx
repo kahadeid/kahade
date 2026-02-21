@@ -57,7 +57,8 @@ export default function Compare() {
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <div className="border border-border rounded-2xl overflow-hidden shadow-E2">
               {/* Header */}
-              <div className="grid grid-cols-4">
+              <div className="overflow-x-auto">
+              <div className="grid grid-cols-4 min-w-[480px]">
                 <div className="p-5 bg-muted/50" />
                 <div className="p-5 bg-primary/5 border-x border-primary/20 text-center">
                   <div className="flex items-center justify-center gap-1.5 mb-1">

@@ -236,7 +236,8 @@ export default function Pricing() {
         <div className="container max-w-4xl mx-auto">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <h2 className="text-3xl font-bold text-center mb-10">Perbandingan Fitur</h2>
-            <div className="border border-border rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto rounded-2xl">
+            <div className="border border-border rounded-2xl overflow-hidden min-w-[480px]">
               <div className="grid grid-cols-4 bg-muted/50">
                 <div className="p-4 font-medium text-sm">Fitur</div>
                 {['Pemula', 'Profesional', 'Enterprise'].map(p => (
@@ -257,13 +258,14 @@ export default function Pricing() {
                 </div>
               ))}
             </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* PRICING FAQ */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container max-w-3xl mx-auto">
+        <div className="container">
           <h2 className="text-3xl font-bold text-center mb-10">Pertanyaan Harga</h2>
           <div className="space-y-2">
             {pricingFaqs.map((faq, i) => (

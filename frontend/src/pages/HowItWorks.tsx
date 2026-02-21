@@ -118,15 +118,15 @@ export default function HowItWorks() {
               return (
                 <motion.div key={i} variants={staggerItem} className={`grid md:grid-cols-2 gap-8 items-center ${i % 2 === 1 ? 'md:grid-flow-dense' : ''}`}>
                   <div className={i % 2 === 1 ? 'md:col-start-2' : ''}>
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-4 mb-4 w-full">
                       <span className="text-5xl font-black text-primary/20">{step.number}</span>
                       <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                         <Icon size={24} className="text-primary" weight="duotone" />
                       </div>
                     </div>
                     <h2 className="text-2xl font-bold mb-3">{step.title}</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-4">{step.description}</p>
-                    <p className="text-sm text-muted-foreground leading-relaxed border-l-2 border-primary/30 pl-4">{step.detail}</p>
+                    <p className="text-muted-foreground leading-relaxed mb-4 w-full">{step.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed border-l-2 border-primary/30 pl-4 w-full">{step.detail}</p>
                   </div>
                   <div className={`bg-gradient-to-br from-primary/10 to-muted rounded-3xl aspect-video border border-border flex items-center justify-center ${i % 2 === 1 ? 'md:col-start-1 md:row-start-1' : ''}`}>
                     <Icon size={64} className="text-primary/30" weight="thin" />

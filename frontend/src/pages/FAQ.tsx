@@ -67,13 +67,13 @@ export default function FAQ() {
         <div className="container max-w-2xl mx-auto text-center">
           <motion.div variants={fadeInUp} initial="initial" animate="animate">
             <span className="badge badge-secondary mb-4">FAQ</span>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Pertanyaan yang Sering Ditanyakan</h1>
+            <h1 className="text-2xl md:text-4xl font-bold mb-6 leading-tight">Pertanyaan yang Sering Ditanyakan</h1>
             <div className="relative">
               <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text" value={search} onChange={e => handleSearch(e.target.value)}
                 placeholder="Cari pertanyaan..."
-                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm"
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm box-border"
               />
             </div>
           </motion.div>
