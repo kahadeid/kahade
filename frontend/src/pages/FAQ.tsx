@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CaretDown, MagnifyingGlass, ArrowRight } from '@phosphor-icons/react';
 import { Link } from 'wouter';
@@ -42,12 +42,11 @@ export default function FAQ() {
   const [openItem, setOpenItem] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-
-  let searchTimer: ReturnType<typeof setTimeout>;
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleSearch = (val: string) => {
     setSearch(val);
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => setDebouncedSearch(val), 300);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => setDebouncedSearch(val), 300);
   };
 
   const filteredItems = useMemo(() => {

@@ -56,9 +56,9 @@ export default function Compare() {
         <div className="container max-w-5xl mx-auto">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <div className="border border-border rounded-2xl overflow-hidden shadow-E2">
-              {/* Header */}
               <div className="overflow-x-auto">
-              <div className="grid grid-cols-4 min-w-[480px]">
+                {/* Header */}
+                <div className="grid grid-cols-4 min-w-[480px]">
                 <div className="p-5 bg-muted/50" />
                 <div className="p-5 bg-primary/5 border-x border-primary/20 text-center">
                   <div className="flex items-center justify-center gap-1.5 mb-1">
@@ -92,8 +92,9 @@ export default function Compare() {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground text-center mt-4">*Transfer biasa tidak memiliki perlindungan. Risiko penipuan ditanggung pengguna sendiri.</p>
-          </motion.div>
+          </div>{/* end border card */}
+          <p className="text-xs text-muted-foreground text-center mt-4 px-2">*Transfer biasa tidak memiliki perlindungan. Risiko penipuan ditanggung pengguna sendiri.</p>
+        </motion.div>
         </div>
       </section>
 

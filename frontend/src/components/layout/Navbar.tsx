@@ -268,7 +268,7 @@ export default function Navbar() {
               </Button>
             ) : (
               <>
-                <Link href="/login" className="block block">
+                <Link href="/login" className="block">
                   <Button 
                     variant="ghost" 
                     className="btn-ghost"
@@ -277,7 +277,7 @@ export default function Navbar() {
                     Masuk
                   </Button>
                 </Link>
-                <Link href="/register" className="block block">
+                <Link href="/register" className="block">
                   <Button 
                     className="btn-primary"
                     {...ariaProps('Buat akun baru')}
@@ -292,7 +292,7 @@ export default function Navbar() {
           {/* Mobile: CTA + Hamburger */}
           <div className="flex lg:hidden items-center gap-3">
             {!isAuthenticated && (
-              <Link href="/register" className="block block">
+              <Link href="/register" className="block">
                 <Button className="btn-primary btn-xs">
                   Mulai
                 </Button>
@@ -415,9 +415,9 @@ function MegaMenuProduct({ data, onClose, onMouseEnter, onMouseLeave }: MegaMenu
       <div className="grid grid-cols-2 gap-8">
         {data.sections.map((section) => (
           <div key={section.title}>
-            <h4 className="section-label text-xs mb-4">
+            <p className="section-label text-xs mb-4">
               {section.title}
-            </h4>
+            </p>
             <div className="space-y-1">
               {section.links.map((link) => (
                 <Link
@@ -492,9 +492,9 @@ function MegaMenuResources({ data, onClose, onMouseEnter, onMouseLeave }: MegaMe
       <div className="grid grid-cols-2 gap-8">
         {data.sections.map((section) => (
           <div key={section.title}>
-            <h4 className="section-label text-xs mb-4">
+            <p className="section-label text-xs mb-4">
               {section.title}
-            </h4>
+            </p>
             <div className="space-y-1">
               {section.links.map((link) => (
                 <Link

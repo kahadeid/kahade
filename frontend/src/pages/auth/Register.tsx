@@ -166,7 +166,7 @@ export default function Register() {
             )}
             <button
               onClick={() => currentStep < steps.length - 1 ? setCurrentStep(s => s + 1) : null}
-              className="btn-primary flex-1"
+              className="btn-primary flex-1 w-full"
             >
               {currentStep === steps.length - 1 ? 'Selesai Daftar' : 'Lanjut'}
               <ArrowRight size={16} />

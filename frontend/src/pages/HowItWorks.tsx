@@ -72,7 +72,7 @@ export default function HowItWorks() {
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
         <div className="container text-center max-w-3xl mx-auto">
-          <motion.div variants={staggerContainer} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Cara Kerja
             </motion.span>
