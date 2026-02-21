@@ -81,10 +81,10 @@ export default function HeroSection() {
               className="font-display font-black leading-[1.0] tracking-[-0.05em] mb-8"
               style={{ fontSize: 'clamp(2.75rem, 5.5vw + 1rem, 6.5rem)' }}
             >
-              <span className="block text-foreground">Mengurangi</span>
+              <span className="block text-foreground">-</span>
               <span className="block text-foreground">Penipuan.</span>
               <span className="block mt-2 md:mt-3 relative">
-                <span className="relative z-10 text-foreground">Meningkatkan</span>
+                <span className="relative z-10 text-foreground">+</span>
                 {' '}
                 <span className="relative z-10 text-foreground">Kepercayaan.</span>
                 <motion.div
