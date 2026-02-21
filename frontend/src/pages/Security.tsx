@@ -40,7 +40,7 @@ export default function Security() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
+        <div className="container text-center max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.h1 variants={staggerItem} className="text-4xl md:text-6xl font-bold mb-6">
               Keamanan setara bank.<br />
@@ -60,7 +60,7 @@ export default function Security() {
 
       {/* SECURITY FEATURES BENTO */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-14">
               <span className="badge badge-secondary mb-3">Teknologi Keamanan</span>
@@ -87,7 +87,7 @@ export default function Security() {
 
       {/* COMPLIANCE */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container max-w-5xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-12">
               <span className="badge badge-secondary mb-3">Regulasi & Kepatuhan</span>
@@ -111,7 +111,7 @@ export default function Security() {
 
       {/* SECURITY REPORT */}
       <section className="section-padding-md">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
+        <div className="container max-w-2xl mx-auto text-center">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <h2 className="text-2xl font-bold mb-3">Transparansi Total</h2>
             <p className="text-muted-foreground mb-6">Unduh laporan keamanan dan audit kami yang tersedia untuk publik.</p>

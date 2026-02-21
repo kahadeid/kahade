@@ -37,7 +37,7 @@ export default function Help() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-3xl text-center">
+        <div className="container max-w-3xl mx-auto text-center">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.h1 variants={staggerItem} className="text-4xl md:text-5xl font-bold mb-6">
               Pusat Bantuan Kahade
@@ -66,7 +66,7 @@ export default function Help() {
 
       {/* CATEGORY GRID */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-12">
               <h2 className="text-3xl font-bold">Jelajahi Kategori</h2>
@@ -94,7 +94,7 @@ export default function Help() {
 
       {/* POPULAR ARTICLES */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="mb-8">
               <h2 className="text-2xl font-bold">Artikel Terpopuler</h2>
@@ -122,7 +122,7 @@ export default function Help() {
 
       {/* CONTACT SUPPORT CTA */}
       <section className="section-padding-md">
-        <div className="container mx-auto px-4 max-w-3xl text-center">
+        <div className="container max-w-3xl mx-auto text-center">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <h2 className="text-2xl font-bold mb-3">Tidak menemukan jawaban?</h2>
             <p className="text-muted-foreground mb-8">Tim dukungan kami siap membantu Anda.</p>

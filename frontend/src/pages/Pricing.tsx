@@ -95,7 +95,7 @@ export default function Pricing() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container text-center">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.h1 variants={staggerItem} className="text-4xl md:text-6xl font-bold mb-4">
               Harga yang Jelas.<br />
@@ -125,7 +125,7 @@ export default function Pricing() {
 
       {/* PRICING CARDS */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {plans.map((plan) => {
               const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
@@ -182,7 +182,7 @@ export default function Pricing() {
 
       {/* CALCULATOR */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <div className="bg-background rounded-3xl p-8 md:p-12 border border-border shadow-E2">
               <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -233,7 +233,7 @@ export default function Pricing() {
 
       {/* COMPARISON TABLE */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <h2 className="text-3xl font-bold text-center mb-10">Perbandingan Fitur</h2>
             <div className="border border-border rounded-2xl overflow-hidden">
@@ -263,7 +263,7 @@ export default function Pricing() {
 
       {/* PRICING FAQ */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-10">Pertanyaan Harga</h2>
           <div className="space-y-2">
             {pricingFaqs.map((faq, i) => (
@@ -287,7 +287,7 @@ export default function Pricing() {
 
       {/* ENTERPRISE CTA */}
       <section className="section-padding-md bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center max-w-2xl">
+        <div className="container text-center max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Butuh solusi enterprise?</h2>
           <p className="text-primary-foreground/70 mb-8">Volume besar, kebutuhan kustom, SLA ketat? Kami punya solusinya. Hubungi tim sales kami sekarang.</p>
           <Link href="/contact">

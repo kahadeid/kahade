@@ -46,9 +46,9 @@ export default function About() {
       <Navbar />
 
       {/* SECTION 1: HERO — EDITORIAL */}
-      <section className="bg-primary text-primary-foreground pt-24 pb-24 md:pb-32">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-[0.6fr_0.4fr] gap-16 items-center">
+      <section className="bg-primary text-primary-foreground pt-24 pb-16 md:pb-24">
+        <div className="container">
+          <div className="grid lg:grid-cols-[0.6fr_0.4fr] gap-8 lg:gap-12 items-center">
             <motion.div variants={staggerContainer} initial="initial" animate="animate">
               <motion.div variants={staggerItem}>
                 <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
@@ -87,7 +87,7 @@ export default function About() {
 
       {/* SECTION 2: STATS BAR */}
       <section className="border-y bg-background">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border">
             {stats.map((stat) => (
               <div key={stat.label} className="py-8 px-6 text-center">
@@ -121,7 +121,7 @@ export default function About() {
 
       {/* SECTION 4: VALUES */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-16">
               <span className="badge badge-secondary mb-4">Nilai Kami</span>
@@ -147,7 +147,7 @@ export default function About() {
 
       {/* SECTION 5: TIMELINE */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-16">
               <span className="badge badge-secondary mb-4">Perjalanan Kami</span>
@@ -180,7 +180,7 @@ export default function About() {
 
       {/* SECTION 6: TEAM */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-16">
               <span className="badge badge-secondary mb-4">Tim Kami</span>
@@ -211,7 +211,7 @@ export default function About() {
 
       {/* SECTION 7: LEGAL INFO */}
       <section className="section-padding-md bg-muted/40">
-        <div className="container mx-auto px-4 max-w-2xl">
+        <div className="container max-w-2xl mx-auto">
           <div className="border border-border rounded-2xl p-8">
             <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Informasi Hukum</p>
             <h3 className="font-bold text-lg mb-4">PT Kawal Hak Dengan Aman</h3>

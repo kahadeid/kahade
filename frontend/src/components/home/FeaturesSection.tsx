@@ -19,13 +19,13 @@ export default function FeaturesSection() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewport}
-          className="section-header mb-12"
+          className="section-header mb-12 w-full"
         >
           <SectionLabel>Platform</SectionLabel>
           <h2 className="section-title mb-4">
             Semua yang Anda butuhkan, dalam satu platform
           </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-xl mx-auto w-full">
             Dari keamanan setara bank hingga resolusi sengketa — Kahade melindungi setiap transaksi Anda.
           </p>
         </motion.div>

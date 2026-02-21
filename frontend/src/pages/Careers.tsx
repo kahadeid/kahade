@@ -46,7 +46,7 @@ export default function Careers() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-24">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="grid lg:grid-cols-[1fr_auto] gap-16 items-center">
             <motion.div variants={staggerContainer} initial="initial" animate="animate">
               <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
@@ -84,7 +84,7 @@ export default function Careers() {
 
       {/* BENEFITS BENTO */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-14">
               <span className="badge badge-secondary mb-4">Kenapa Kahade?</span>
@@ -110,7 +110,7 @@ export default function Careers() {
 
       {/* JOB LISTINGS */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
               <div>
@@ -177,7 +177,7 @@ export default function Careers() {
 
       {/* CULTURE SECTION */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-3xl text-center">
+        <div className="container max-w-3xl mx-auto text-center">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <span className="badge badge-secondary mb-6">Budaya Kerja</span>
             <blockquote className="text-3xl md:text-4xl font-bold leading-relaxed mb-8">

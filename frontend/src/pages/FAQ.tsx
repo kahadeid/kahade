@@ -64,7 +64,7 @@ export default function FAQ() {
 
       {/* HERO */}
       <section className="bg-muted/50 pt-24 pb-12 border-b">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
+        <div className="container max-w-2xl mx-auto text-center">
           <motion.div variants={fadeInUp} initial="initial" animate="animate">
             <span className="badge badge-secondary mb-4">FAQ</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Pertanyaan yang Sering Ditanyakan</h1>
@@ -82,7 +82,7 @@ export default function FAQ() {
 
       {/* TWO-PANEL */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container max-w-6xl mx-auto">
           {/* Mobile: Horizontal scroll pills */}
           <div className="flex gap-2 overflow-x-auto pb-4 mb-8 md:hidden no-scrollbar">
             {categories.map(cat => (

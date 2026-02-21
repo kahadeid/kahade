@@ -71,8 +71,8 @@ export default function HowItWorks() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <motion.div variants={staggerContainer} initial="initial" animate="animate">
+        <div className="container text-center max-w-3xl mx-auto">
+          <motion.div variants={staggerContainer} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Cara Kerja
             </motion.span>
@@ -95,7 +95,7 @@ export default function HowItWorks() {
 
       {/* FLOW VISUAL */}
       <section className="py-12 border-b overflow-hidden bg-muted/30">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="flex items-center justify-center gap-0 overflow-x-auto no-scrollbar">
             {['Pembeli', 'Buat Transaksi', 'Deposit', 'Kahade Escrow', 'Konfirmasi', 'Pencairan', 'Penjual'].map((step, i, arr) => (
               <div key={step} className="flex items-center shrink-0">
@@ -111,7 +111,7 @@ export default function HowItWorks() {
 
       {/* DETAILED STEPS */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container max-w-5xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport} className="space-y-12">
             {steps.map((step, i) => {
               const Icon = step.icon;
@@ -140,7 +140,7 @@ export default function HowItWorks() {
 
       {/* USE CASES */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-12">
               <span className="badge badge-secondary mb-3">Cocok Untuk</span>
@@ -166,7 +166,7 @@ export default function HowItWorks() {
 
       {/* MINI FAQ */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-10">
               <span className="badge badge-secondary mb-3">FAQ</span>
@@ -202,7 +202,7 @@ export default function HowItWorks() {
 
       {/* FINAL CTA */}
       <section className="section-padding-md bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center max-w-2xl">
+        <div className="container text-center max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Siap bertransaksi dengan aman?</h2>
           <p className="text-primary-foreground/70 mb-8">Daftar gratis dan buat transaksi pertama Anda dalam 5 menit.</p>
           <Link href="/register">

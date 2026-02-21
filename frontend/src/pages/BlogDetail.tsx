@@ -53,7 +53,7 @@ export default function BlogDetail() {
 
       {/* HERO */}
       <section className="pt-24 pb-12 border-b">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Link href="/blog">
               <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-8">
@@ -77,7 +77,7 @@ export default function BlogDetail() {
       <div className="w-full aspect-[21/9] bg-gradient-to-r from-primary/20 to-primary/5 max-h-96" />
 
       {/* CONTENT LAYOUT */}
-      <div ref={articleRef} className="container mx-auto px-4 max-w-[1200px] py-12">
+      <div ref={articleRef} className="container max-w- mx-auto[1200px] py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr_140px] gap-12">
           {/* TOC Sticky */}
           <aside className="hidden lg:block">
@@ -166,7 +166,7 @@ Pembeli konfirmasi → Dana dicairkan ✓`}</code>
 
       {/* Author Bio */}
       <section className="border-t py-12">
-        <div className="container mx-auto px-4 max-w-2xl">
+        <div className="container max-w-2xl mx-auto">
           <div className="flex items-center gap-4 p-6 bg-muted/30 rounded-2xl">
             <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <span className="text-primary font-bold text-xl">T</span>
@@ -181,7 +181,7 @@ Pembeli konfirmasi → Dana dicairkan ✓`}</code>
 
       {/* Related Posts */}
       <section className="section-padding-md bg-muted/30">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold mb-8">Artikel Terkait</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {relatedPosts.map((post) => (
@@ -198,7 +198,7 @@ Pembeli konfirmasi → Dana dicairkan ✓`}</code>
 
       {/* CTA */}
       <section className="section-padding-md">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
+        <div className="container max-w-2xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-4">Mulai transaksi aman bersama Kahade</h2>
           <p className="text-muted-foreground mb-6">Bergabung dengan 10.000+ pengguna yang sudah mempercayakan transaksinya kepada kami.</p>
           <Link href="/register">

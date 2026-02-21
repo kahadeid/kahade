@@ -40,7 +40,7 @@ export default function Compare() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20 text-center">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Perbandingan
@@ -53,7 +53,7 @@ export default function Compare() {
 
       {/* COMPARISON TABLE */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container max-w-5xl mx-auto">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <div className="border border-border rounded-2xl overflow-hidden shadow-E2">
               {/* Header */}
@@ -98,7 +98,7 @@ export default function Compare() {
 
       {/* ADVANTAGES */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.h2 variants={staggerItem} className="text-3xl font-bold text-center mb-10">Keunggulan Kahade</motion.h2>
             <div className="grid md:grid-cols-3 gap-6">
@@ -115,7 +115,7 @@ export default function Compare() {
 
       {/* CTA */}
       <section className="section-padding-md">
-        <div className="container mx-auto px-4 text-center max-w-2xl">
+        <div className="container text-center max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Siap beralih ke Kahade?</h2>
           <p className="text-muted-foreground mb-8">Bergabung gratis, tanpa kartu kredit. Coba sendiri perbedaannya.</p>
           <Link href="/register">

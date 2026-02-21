@@ -19,7 +19,7 @@ export default function Press() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
+        <div className="container text-center max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Media & Pers
@@ -47,7 +47,7 @@ export default function Press() {
 
       {/* PRESS RELEASES */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="mb-10">
               <span className="badge badge-secondary mb-3">Siaran Pers</span>
@@ -73,7 +73,7 @@ export default function Press() {
 
       {/* MEDIA KIT + CONTACT */}
       <section className="section-padding-md bg-muted/40">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="card p-8">
               <h3 className="font-bold text-xl mb-3">Media Kit</h3>

@@ -40,7 +40,7 @@ export default function Blog() {
 
       {/* HERO */}
       <section className="pt-24 pb-12 border-b bg-muted/30">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container text-center">
           <motion.div variants={fadeInUp} initial="initial" animate="animate">
             <span className="badge badge-secondary mb-4">Blog</span>
             <h1 className="text-4xl md:text-5xl font-bold mb-3">Blog Kahade</h1>
@@ -51,7 +51,7 @@ export default function Blog() {
 
       {/* FEATURED POST */}
       <section className="section-padding-md">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <div className="grid md:grid-cols-[0.55fr_0.45fr] gap-8 bg-muted/30 rounded-3xl overflow-hidden border border-border">
               <div className="aspect-[4/3] md:aspect-auto bg-gradient-to-br from-primary/20 to-primary/5 min-h-[280px]" />
@@ -73,7 +73,7 @@ export default function Blog() {
 
       {/* FILTER + GRID */}
       <section className="section-padding-md">
-        <div className="container mx-auto px-4">
+        <div className="container">
           {/* Filter Bar */}
           <div className="flex gap-2 flex-wrap mb-10">
             {filters.map(f => (

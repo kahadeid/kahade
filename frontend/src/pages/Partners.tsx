@@ -30,7 +30,7 @@ export default function Partners() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
+        <div className="container text-center max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Kemitraan
@@ -45,7 +45,7 @@ export default function Partners() {
 
       {/* PARTNER TIERS */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
             <motion.div variants={staggerItem} className="text-center mb-14">
               <span className="badge badge-secondary mb-3">Program Kemitraan</span>
@@ -80,7 +80,7 @@ export default function Partners() {
 
       {/* INQUIRY FORM */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-2xl">
+        <div className="container max-w-2xl mx-auto">
           <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
             <div className="text-center mb-10">
               <span className="badge badge-secondary mb-3">Daftar</span>

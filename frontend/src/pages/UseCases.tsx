@@ -77,7 +77,7 @@ export default function UseCases() {
 
       {/* HERO */}
       <section className="bg-primary text-primary-foreground pt-24 pb-20 text-center">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container max-w-3xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" animate="animate">
             <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Kasus Penggunaan
@@ -94,7 +94,7 @@ export default function UseCases() {
 
       {/* USE CASE CARDS 2x2 */}
       <section className="section-padding-lg">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {useCases.map((uc, i) => {
               const Icon = uc.icon;
@@ -164,7 +164,7 @@ export default function UseCases() {
 
       {/* STATS */}
       <section className="section-padding-lg bg-muted/40">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl mx-auto">
           <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport} className="grid md:grid-cols-3 gap-8 text-center">
             {[
               { icon: TrendUp, value: 'Rp 50M+', label: 'Dana Diamankan' },
