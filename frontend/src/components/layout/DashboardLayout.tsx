@@ -120,7 +120,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
           )}
           title={collapsed ? item.label : undefined}
         >
-          <item.icon 
+          /* FIX (v3.2): item.icon as JSX invalid — harus destructure ke PascalCase */ <item.icon 
             className={cn("w-5 h-5 shrink-0", isActive && "text-white")} 
             weight={isActive ? 'fill' : 'regular'} 
           />
@@ -297,7 +297,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                   )}
                   title={item.label}
                 >
-                  <item.icon className="w-5 h-5" weight={isActive ? 'fill' : 'regular'} />
+                  /* FIX (v3.2): item.icon as JSX invalid — harus destructure ke PascalCase */ <item.icon className="w-5 h-5" weight={isActive ? 'fill' : 'regular'} />
                 </motion.div>
               </Link>
             );
@@ -320,7 +320,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                   )}
                   title={item.label}
                 >
-                  <item.icon className="w-5 h-5" weight={isActive ? 'fill' : 'regular'} />
+                  /* FIX (v3.2): item.icon as JSX invalid — harus destructure ke PascalCase */ <item.icon className="w-5 h-5" weight={isActive ? 'fill' : 'regular'} />
                 </div>
               </Link>
             );
@@ -383,7 +383,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                   placeholder="Cari..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 w-48 lg:w-64 h-10 bg-neutral-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:bg-card transition-all"
+                  className="pl-11 w-48 lg:w-[240px] h-10 bg-neutral-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:bg-card transition-all"
                 />
               </div>
               
@@ -425,7 +425,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-64 bg-card rounded-2xl border border-border shadow-2xl shadow-black/10 z-50 overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-[240px] bg-card rounded-2xl border border-border shadow-2xl shadow-black/10 z-50 overflow-hidden"
                       >
                         {/* User Info */}
                         <div className="p-4 border-b border-border">

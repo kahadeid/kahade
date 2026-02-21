@@ -1,557 +1,154 @@
-/**
- * KAHADE KYC VERIFICATION PAGE - Professional Responsive Design
- * 
- * Design Philosophy:
- * - Mobile: Full-width step wizard with large touch targets
- * - Tablet/Desktop: Centered card with progress indicator
- * - Consistent visual hierarchy across all breakpoints
- */
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  IdentificationCard, Upload, CheckCircle, Warning,
-  Spinner, ShieldCheck, X, ArrowLeft, ArrowRight, Check, User
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from 'sonner';
+import { UploadSimple, Check, ArrowRight, ArrowLeft, CheckCircle, X } from '@phosphor-icons/react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { useAuth } from '@/contexts/AuthContext';
-import { userApi } from '@/lib/api';
 
-type KYCStatus = 'NONE' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+const steps = ['Tipe ID', 'Upload Dokumen', 'Selfie', 'Info Tambahan', 'Review'];
+const idTypes = [{ value: 'ktp', label: 'KTP', desc: 'Kartu Tanda Penduduk' }, { value: 'passport', label: 'Paspor', desc: 'Paspor Indonesia / Internasional' }, { value: 'sim', label: 'SIM', desc: 'Surat Izin Mengemudi' }];
 
-interface KYCData {
-  status: KYCStatus;
-  idType?: string;
-  idNumber?: string;
-  submittedAt?: string;
-  verifiedAt?: string;
-  rejectionReason?: string;
-}
-
-const idTypes = [
-  { value: 'KTP', label: 'KTP (Indonesian ID)' },
-  { value: 'SIM', label: 'SIM (Driver License)' },
-  { value: 'PASSPORT', label: 'Passport' },
-];
-
-const steps = [
-  { id: 1, title: 'Personal Info', icon: User },
-  { id: 2, title: 'ID Document', icon: IdentificationCard },
-];
-
-export default function KYCVerification() {
-  const { refreshUser } = useAuth();
-  const [kycData, setKycData] = useState<KYCData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [step, setStep] = useState(1);
-  
-  const [formData, setFormData] = useState({
-    idType: '',
-    idNumber: '',
-    fullName: '',
-    dateOfBirth: '',
-    address: '',
-  });
-  
-  const [idFront, setIdFront] = useState<File | null>(null);
-  
-  const [idFrontPreview, setIdFrontPreview] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchKYCStatus();
-  }, []);
-
-  const fetchKYCStatus = async () => {
-    try {
-      const response = await userApi.getKYCStatus();
-      setKycData(response.data);
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFile: (file: File | null) => void,
-    setPreview: (preview: string | null) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const isImage = file.type.startsWith('image/');
-    const isPdf = file.type === 'application/pdf';
-
-    if (!isImage && !isPdf) {
-      toast.error('Please upload an image or PDF file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    setFile(file);
-    if (!isImage) {
-      setPreview(null);
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const validateStep = (currentStep: number): boolean => {
-    switch (currentStep) {
-      case 1:
-        if (!formData.idType || !formData.idNumber || !formData.fullName) {
-          toast.error('Please fill all required fields');
-          return false;
-        }
-        return true;
-      case 2:
-        if (!idFront) {
-          toast.error('Please upload your ID document');
-          return false;
-        }
-        return true;
-      default:
-        return true;
-    }
-  };
-
-  const handleNext = () => {
-    if (validateStep(step) && step < 2) {
-      setStep(step + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!validateStep(2)) return;
-
-    setIsSubmitting(true);
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('documentType', formData.idType);
-      formDataToSend.append('idNumber', formData.idNumber);
-      formDataToSend.append('fullName', formData.fullName);
-      formDataToSend.append('dateOfBirth', formData.dateOfBirth);
-      formDataToSend.append('address', formData.address);
-      formDataToSend.append('document', idFront!);
-
-      await userApi.uploadKYC(formDataToSend);
-      toast.success('KYC submitted successfully!');
-      fetchKYCStatus();
-      refreshUser();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to submit KYC');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <DashboardLayout title="KYC Verification" subtitle="Loading...">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
-            <p className="text-neutral-600">Loading verification status...</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  // Already verified
-  if (kycData?.status === 'VERIFIED') {
-    return (
-      <DashboardLayout title="KYC Verification" subtitle="Your identity has been verified">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-lg mx-auto"
-        >
-          <div className="bg-white rounded-2xl border border-neutral-200 p-8 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-emerald-600" aria-hidden="true" weight="fill" />
-            </div>
-            <h2 className="text-2xl font-bold text-black mb-2">Identity Verified</h2>
-            <p className="text-neutral-600 mb-6">
-              Your identity has been successfully verified. You now have access to higher transaction limits.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-neutral-50">
-                <p className="text-sm text-neutral-600">Transaction Limit</p>
-                <p className="text-xl font-bold text-black">Rp 100M</p>
-              </div>
-              <div className="p-4 rounded-xl bg-neutral-50">
-                <p className="text-sm text-neutral-600">Verified Since</p>
-                <p className="text-xl font-bold text-black">
-                  {kycData?.verifiedAt ? new Date(kycData.verifiedAt).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }) : '-'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </DashboardLayout>
-    );
-  }
-
-  // Pending review
-  if (kycData?.status === 'PENDING') {
-    return (
-      <DashboardLayout title="KYC Verification" subtitle="Your documents are under review">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-lg mx-auto"
-        >
-          <div className="bg-white rounded-2xl border border-neutral-200 p-8 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto mb-6">
-              <Spinner className="w-10 h-10 text-amber-600 animate-spin" aria-hidden="true" weight="bold" />
-            </div>
-            <h2 className="text-2xl font-bold text-black mb-2">Under Review</h2>
-            <p className="text-neutral-600 mb-6">
-              Your documents are being reviewed. This usually takes 1-3 business days.
-            </p>
-            <div className="p-4 rounded-xl bg-neutral-50">
-              <p className="text-sm text-neutral-600">Submitted On</p>
-              <p className="text-lg font-semibold text-black">
-                {kycData?.submittedAt ? new Date(kycData.submittedAt).toLocaleDateString('id-ID', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                }) : '-'}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      </DashboardLayout>
-    );
-  }
-
-  // Rejected
-  if (kycData?.status === 'REJECTED') {
-    return (
-      <DashboardLayout title="KYC Verification" subtitle="Your verification was rejected">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-lg mx-auto space-y-6"
-        >
-          <div className="bg-red-50 rounded-2xl border border-red-200 p-5">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                <Warning className="w-5 h-5 text-red-600" aria-hidden="true" weight="fill" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-red-800 mb-1">Verification Rejected</h3>
-                <p className="text-sm text-red-700">{kycData?.rejectionReason || 'Please resubmit with valid documents.'}</p>
-              </div>
-            </div>
-          </div>
-          <Button 
-            className="bg-black text-white hover:bg-black/90 rounded-xl h-11 w-full" 
-            onClick={() => setKycData({ status: 'NONE' })}
-          >
-            Resubmit Documents
-          </Button>
-        </motion.div>
-      </DashboardLayout>
-    );
-  }
-
-  // Not submitted - show form
+function UploadZone({ label, tips }: { label: string; tips: string[] }) {
+  const [file, setFile] = useState<string | null>(null);
+  const [drag, setDrag] = useState(false);
   return (
-    <DashboardLayout title="KYC Verification" subtitle="Verify your identity">
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Benefits */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-neutral-50 rounded-2xl p-4 md:p-6 border border-neutral-200"
+    <div>
+      <p className="text-sm font-medium mb-2">{label}</p>
+      {file ? (
+        <div className="border-2 border-green-500 bg-green-50 dark:bg-green-900/20 rounded-2xl p-6 flex items-center gap-4">
+          <CheckCircle size={32} className="text-green-600" weight="fill" />
+          <div><p className="font-semibold text-green-700 dark:text-green-400">{file}</p><p className="text-xs text-muted-foreground">File diterima</p></div>
+          <button onClick={() => setFile(null)} className="ml-auto text-muted-foreground hover:text-destructive"><X size={18} /></button>
+        </div>
+      ) : (
+        <div
+          onDrop={e => { e.preventDefault(); setDrag(false); setFile(e.dataTransfer.files[0]?.name || null); }}
+          onDragOver={e => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${drag ? 'border-primary bg-primary/5' : 'border-border hover:border-primary hover:bg-primary/5'}`}
         >
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-black flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" weight="duotone" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-black mb-2">Why Verify?</h3>
-              <div className="space-y-2 text-sm text-neutral-600">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" />
-                  <span>Increase transaction limit to Rp 100.000.000</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" />
-                  <span>Get verified badge on your profile</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-500" aria-hidden="true" weight="fill" />
-                  <span>Faster dispute resolution</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Progress Steps */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-neutral-200 p-4 md:p-5"
-        >
-          <div className="flex items-center justify-between">
-            {steps.map((s, index) => (
-              <div key={s.id} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                    step > s.id 
-                      ? 'bg-emerald-500 text-white' 
-                      : step === s.id 
-                        ? 'bg-black text-white' 
-                        : 'bg-neutral-100 text-neutral-500'
-                  }`}>
-                    {step > s.id ? (
-                      <Check className="w-5 h-5" aria-hidden="true" weight="bold" />
-                    ) : (
-                      <s.icon className="w-5 h-5" weight={step === s.id ? 'bold' : 'regular'} />
-                    )}
-                  </div>
-                  <span className={`text-xs mt-2 hidden sm:block ${step >= s.id ? 'text-black font-medium' : 'text-neutral-500'}`}>
-                    {s.title}
-                  </span>
-                </div>
-                {index < steps.length - 1 && (
-                  <div className={`w-12 md:w-20 h-0.5 mx-2 md:mx-4 ${step > s.id ? 'bg-emerald-500' : 'bg-neutral-200'}`} />
-                )}
-              </div>
+          <UploadSimple size={36} className="mx-auto mb-3 text-muted-foreground" weight="thin" />
+          <p className="font-semibold text-sm mb-1">Drag & drop atau klik untuk pilih</p>
+          <p className="text-xs text-muted-foreground mb-4">JPG, PNG, PDF · Maks 5MB</p>
+          <div className="text-xs text-left bg-muted rounded-xl p-3 space-y-1">
+            {tips.map((t, i) => (
+              <p key={i} className={`flex items-center gap-2 ${t.startsWith('✗') ? 'text-red-500' : 'text-muted-foreground'}`}>{t}</p>
             ))}
           </div>
-        </motion.div>
+        </div>
+      )}
+    </div>
+  );
+}
 
-        {/* Form Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl border border-neutral-200 overflow-hidden"
-        >
-          <AnimatePresence mode="wait">
-            {/* Step 1: Personal Info */}
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 md:p-6 space-y-5"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Personal Information</h2>
-                  <p className="text-sm text-neutral-600">Enter your details as shown on your ID</p>
-                </div>
+export default function KYCVerification() {
+  const [step, setStep] = useState(0);
+  const [idType, setIdType] = useState('ktp');
+  const [address, setAddress] = useState('');
+  const [purpose, setPurpose] = useState('');
 
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">ID Type</Label>
-                    <Select value={formData.idType} onValueChange={(v) => setFormData({ ...formData, idType: v })}>
-                      <SelectTrigger className="h-11 rounded-xl border-neutral-200">
-                        <SelectValue placeholder="Select ID type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {idTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+  return (
+    <DashboardLayout>
+    <div className="p-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-2">Verifikasi Identitas</h1>
+      <p className="text-muted-foreground text-sm mb-8">Verifikasi diperlukan untuk transaksi tanpa batas</p>
 
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">ID Number</Label>
-                    <Input
-                      type="text"
-                      placeholder="Enter your ID number"
-                      value={formData.idNumber}
-                      onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
-                      className="h-11 rounded-xl border-neutral-200"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Full Name</Label>
-                    <Input
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className="h-11 rounded-xl border-neutral-200"
-                    />
-                    <p className="text-xs text-neutral-500">Must match the name on your ID</p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Date of Birth</Label>
-                      <Input
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                        className="h-11 rounded-xl border-neutral-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Address (Optional)</Label>
-                      <Input
-                        type="text"
-                        placeholder="City"
-                        value={formData.address}
-                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                        className="h-11 rounded-xl border-neutral-200"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 2: ID Document */}
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 md:p-6 space-y-5"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Upload ID Document</h2>
-                  <p className="text-sm text-neutral-600">Take a clear photo of your {formData.idType || 'ID'}</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Document *</Label>
-                  <label className={`block aspect-[3/2] rounded-xl border-2 border-dashed cursor-pointer transition-all overflow-hidden ${
-                    idFrontPreview || idFront ? 'border-emerald-500 bg-emerald-50' : 'border-neutral-200 hover:border-neutral-900 bg-neutral-50'
-                  }`}>
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      className="hidden"
-                      onChange={(e) => handleFileChange(e, setIdFront, setIdFrontPreview)}
-                    />
-                    {idFrontPreview ? (
-                      <div className="relative w-full h-full">
-                        <img src={idFrontPreview} alt="ID Document" className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setIdFront(null);
-                            setIdFrontPreview(null);
-                          }}
-                          className="absolute top-2 right-2 w-8 h-8 rounded-lg bg-black/50 text-white flex items-center justify-center hover:bg-black/70"
-                        >
-                          <X className="w-4 h-4" weight="bold" aria-hidden="true" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center">
-                        <Upload className="w-8 h-8 text-neutral-500 mb-2" aria-hidden="true" weight="duotone" />
-                        {idFront ? (
-                          <span className="text-sm text-neutral-600">{idFront.name}</span>
-                        ) : (
-                          <span className="text-sm text-neutral-600">Upload document</span>
-                        )}
-                      </div>
-                    )}
-                  </label>
-                </div>
-
-                <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                  <div className="flex items-start gap-3">
-                    <Warning className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" weight="fill" />
-                    <div className="text-sm text-amber-800">
-                      <p className="font-medium mb-1">Photo Requirements</p>
-                      <ul className="list-disc list-inside text-amber-700 space-y-0.5">
-                        <li>All corners must be visible</li>
-                        <li>No glare or blur</li>
-                        <li>Maximum file size: 5MB</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-          </AnimatePresence>
-
-          {/* Navigation Buttons */}
-          <div className="flex items-center justify-between p-4 md:p-6 border-t border-neutral-200 bg-neutral-50">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              disabled={step === 1}
-              className="rounded-xl border-neutral-200 h-11"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-              Back
-            </Button>
-            
-            {step < 2 ? (
-              <Button
-                onClick={handleNext}
-                className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
-              >
-                Continue
-                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-                    Submit for Verification
-                  </>
-                )}
-              </Button>
-            )}
+      {/* Step indicator */}
+      <div className="flex items-center gap-1 mb-8 overflow-x-auto no-scrollbar">
+        {steps.map((s, i) => (
+          <div key={s} className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1.5">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs transition-all ${i < step ? 'bg-green-600 text-white' : i === step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                {i < step ? <Check size={12} weight="bold" /> : i + 1}
+              </div>
+              <span className={`text-xs font-medium hidden sm:block ${i <= step ? 'text-foreground' : 'text-muted-foreground'}`}>{s}</span>
+            </div>
+            {i < steps.length - 1 && <div className={`w-6 h-[2px] rounded-full mx-1 ${i < step ? 'bg-green-600' : 'bg-muted'}`} />}
           </div>
-        </motion.div>
+        ))}
       </div>
-    </DashboardLayout>
+
+      <div className="card p-8">
+        <AnimatePresence mode="wait">
+          <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
+            {step === 0 && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold mb-4">Pilih Tipe Identitas</h2>
+                {idTypes.map(t => (
+                  <button key={t.value} type="button" onClick={() => setIdType(t.value)} className={`w-full text-left p-4 rounded-xl border-2 transition-all ${idType === t.value ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${idType === t.value ? 'border-primary' : 'border-border'}`}>
+                        {idType === t.value && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm">{t.label}</p>
+                        <p className="text-xs text-muted-foreground">{t.desc}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            {step === 1 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-4">Upload Dokumen</h2>
+                <UploadZone label="Foto KTP (Depan)" tips={['✓ Pastikan semua teks terbaca jelas', '✓ Pencahayaan cukup', '✓ Tidak ada pantulan atau bayangan', '✗ Foto tidak buram atau terpotong']} />
+                {idType === 'ktp' && (
+                  <UploadZone label="Foto KTP (Belakang)" tips={['✓ Semua teks terbaca', '✓ Tidak ada pantulan', '✗ Tidak terpotong']} />
+                )}
+              </div>
+            )}
+            {step === 2 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-4">Foto Selfie</h2>
+                <p className="text-sm text-muted-foreground">Foto selfie memegang KTP Anda agar kami bisa memverifikasi identitas.</p>
+                <UploadZone label="Selfie dengan ID" tips={['✓ Wajah terlihat jelas', '✓ KTP terbaca', '✓ Pencahayaan cukup', '✗ Tidak menggunakan kacamata hitam atau masker']} />
+              </div>
+            )}
+            {step === 3 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-4">Informasi Tambahan</h2>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Alamat sesuai KTP</label>
+                  <textarea rows={3} value={address} onChange={e => setAddress(e.target.value)} placeholder="Jl. Contoh No. 1, Kota, Provinsi" className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm resize-none" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Tujuan Penggunaan</label>
+                  <select value={purpose} onChange={e => setPurpose(e.target.value)} className="w-full h-12 px-4 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm appearance-none">
+                    <option value="">Pilih tujuan...</option>
+                    <option>Transaksi personal</option>
+                    <option>Bisnis UMKM</option>
+                    <option>Freelance</option>
+                    <option>Investasi</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            {step === 4 && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold mb-4">Review & Submit</h2>
+                <div className="bg-muted/50 rounded-2xl p-5 space-y-3 text-sm">
+                  {[['Tipe ID', idTypes.find(t => t.value === idType)?.label || '—'], ['Dokumen', 'Diupload ✓'], ['Selfie', 'Diupload ✓'], ['Alamat', address || '—'], ['Tujuan', purpose || '—']].map(([label, val]) => (
+                    <div key={label} className="flex justify-between">
+                      <span className="text-muted-foreground">{label}</span>
+                      <span className="font-medium">{val}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-sm text-blue-800 dark:text-blue-300">
+                  ℹ Proses verifikasi memakan waktu 24–48 jam. Kami akan mengirimkan notifikasi ke email Anda.
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className={`flex gap-3 mt-8 ${step > 0 ? '' : 'justify-end'}`}>
+          {step > 0 && <button onClick={() => setStep(s => s - 1)} className="btn-secondary flex-1"><ArrowLeft size={16} /> Kembali</button>}
+          <button onClick={() => step < steps.length - 1 ? setStep(s => s + 1) : null} className="btn-primary flex-1">
+            {step === steps.length - 1 ? 'Kirim Verifikasi' : 'Lanjut'} {step < steps.length - 1 && <ArrowRight size={16} />}
+          </button>
+        </div>
+      </div>
+    </div>
+  </DashboardLayout>
   );
 }

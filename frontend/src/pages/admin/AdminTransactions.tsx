@@ -1,499 +1,70 @@
-/*
- * KAHADE ADMIN TRANSACTIONS PAGE
- * Icons: Phosphor Icons only
- */
-
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  MagnifyingGlass, DotsThreeVertical, Eye, Clock, CheckCircle,
-  Warning, XCircle, ArrowUpRight, ArrowDownRight, Spinner
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { MagnifyingGlass, FunnelSimple, Download, Eye } from '@phosphor-icons/react';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { adminApi } from '@/lib/api';
 
-interface Transaction {
-  id: string;
-  orderNumber: string;
-  title: string;
-  description?: string;
-  amount: number;
-  status: string;
-  initiator: { id: string; username: string; email: string };
-  counterparty?: { id: string; username: string; email: string };
-  createdAt: string;
-  paidAt?: string;
-  completedAt?: string;
-  deliveryProof?: { id: string }; // Used to determine DELIVERED virtual status
-}
+const transactions = [
+  { id: 'KHD-2451', title: 'Laptop ASUS ROG', buyer: 'ahmad@email.com', seller: 'seller_081', amount: 'Rp 5.200.000', fee: 'Rp 130.000', status: 'active', label: 'Aktif', date: '18 Feb 2026' },
+  { id: 'KHD-2450', title: 'iPhone 15 Pro', buyer: 'budi@email.com', seller: 'iphone_store', amount: 'Rp 14.500.000', fee: 'Rp 362.500', status: 'completed', label: 'Selesai', date: '17 Feb 2026' },
+  { id: 'KHD-2449', title: 'Jasa Logo Design', buyer: 'sari@email.com', seller: 'jasa_design', amount: 'Rp 800.000', fee: 'Rp 20.000', status: 'completed', label: 'Selesai', date: '16 Feb 2026' },
+  { id: 'KHD-2448', title: 'Kamera Sony A7', buyer: 'rizki@email.com', seller: 'camera_store', amount: 'Rp 18.000.000', fee: 'Rp 450.000', status: 'dispute', label: 'Sengketa', date: '15 Feb 2026' },
+  { id: 'KHD-2447', title: 'MacBook Air M2', buyer: 'maya@email.com', seller: 'mac_seller', amount: 'Rp 15.000.000', fee: 'Rp 375.000', status: 'pending', label: 'Menunggu', date: '14 Feb 2026' },
+  { id: 'KHD-2446', title: 'Jasa Web Dev', buyer: 'dito@email.com', seller: 'webdev_pro', amount: 'Rp 8.000.000', fee: 'Rp 200.000', status: 'cancelled', label: 'Dibatalkan', date: '13 Feb 2026' },
+];
 
-const statusConfig: Record<string, { label: string; color: string; icon: typeof Clock }> = {
-  PENDING_ACCEPT: { label: 'Pending', color: 'text-amber-500 bg-amber-500/10', icon: Clock },
-  ACCEPTED: { label: 'Accepted', color: 'text-blue-500 bg-blue-500/10', icon: CheckCircle },
-  PAID: { label: 'Paid', color: 'text-emerald-500 bg-emerald-500/10', icon: CheckCircle },
-  DELIVERED: { label: 'Delivered', color: 'text-blue-500 bg-blue-500/10', icon: CheckCircle },
-  COMPLETED: { label: 'Completed', color: 'text-emerald-500 bg-emerald-500/10', icon: CheckCircle },
-  DISPUTED: { label: 'Dispute', color: 'text-red-500 bg-red-500/10', icon: Warning },
-  CANCELLED: { label: 'Cancelled', color: 'text-gray-500 bg-gray-500/10', icon: XCircle },
-  REJECTED: { label: 'Rejected', color: 'text-gray-500 bg-gray-500/10', icon: XCircle },
-};
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+const statusCls: Record<string,string> = {
+  active: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  completed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  dispute: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  cancelled: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400',
 };
 
 export default function AdminTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  
-  // Force action dialogs
-  const [forceCompleteOpen, setForceCompleteOpen] = useState(false);
-  const [forceCancelOpen, setForceCancelOpen] = useState(false);
-  const [actionTxId, setActionTxId] = useState<string | null>(null);
-  const [actionReason, setActionReason] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [page, statusFilter]);
-
-  const fetchTransactions = async () => {
-    setIsLoading(true);
-    try {
-      const params: Record<string, unknown> = { page, limit: 20 };
-      if (statusFilter !== 'all') params.status = statusFilter;
-      
-      const response = await adminApi.getTransactions(params);
-      const data = response?.data;
-      
-      // Safely extract transactions array
-      let txData: Transaction[] = [];
-      if (data) {
-        if (Array.isArray(data.data)) {
-          txData = data.data;
-        } else if (Array.isArray(data.transactions)) {
-          txData = data.transactions;
-        } else if (Array.isArray(data)) {
-          txData = data;
-        }
-      }
-      
-      setTransactions(txData);
-      setTotalPages(data?.totalPages || Math.ceil((data?.total || txData.length) / 20) || 1);
-      setTotal(data?.total || txData.length || 0);
-    } catch (error: unknown) {
-      if (error?.response?.status !== 401) {
-        toast.error('Failed to load transactions');
-      }
-      setTransactions([]);
-      setTotalPages(1);
-      setTotal(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Ensure transactions is always an array
-  const txList = Array.isArray(transactions) ? transactions : [];
-  const filteredTransactions = txList.filter(tx => {
-    const matchesSearch = tx.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.initiator?.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.counterparty?.username?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
-
-  const handleForceComplete = async () => {
-    if (!actionTxId || !actionReason.trim()) {
-      toast.error('Reason is required');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    try {
-      await adminApi.forceCompleteTransaction(actionTxId, actionReason);
-      toast.success('Transaction completed successfully');
-      setForceCompleteOpen(false);
-      setActionTxId(null);
-      setActionReason('');
-      fetchTransactions();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to complete transaction');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleForceCancel = async () => {
-    if (!actionTxId || !actionReason.trim()) {
-      toast.error('Reason is required');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    try {
-      await adminApi.forceCancelTransaction(actionTxId, actionReason);
-      toast.success('Transaction cancelled successfully');
-      setForceCancelOpen(false);
-      setActionTxId(null);
-      setActionReason('');
-      fetchTransactions();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to cancel transaction');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (isLoading && transactions.length === 0) {
-    return (
-      <AdminLayout title="Transaction Management" subtitle="Manage all platform transactions">
-        <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-accent" aria-hidden="true" weight="bold" />
-        </div>
-      </AdminLayout>
-    );
-  }
+  const [search, setSearch] = useState('');
+  const [tab, setTab] = useState('Semua');
+  const tabs = ['Semua', 'Aktif', 'Selesai', 'Sengketa', 'Pending', 'Dibatalkan'];
+  const labelMap: Record<string,string> = { Aktif: 'active', Selesai: 'completed', Sengketa: 'dispute', Pending: 'pending', Dibatalkan: 'cancelled' };
+  const filtered = transactions.filter(t => (tab === 'Semua' || t.status === labelMap[tab]) && (!search || t.id.toLowerCase().includes(search.toLowerCase()) || t.title.toLowerCase().includes(search.toLowerCase())));
 
   return (
-    <AdminLayout title="Transaction Management" subtitle="Manage all platform transactions">
-      <div className="space-y-6">
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="glass-card p-4">
-            <div className="text-2xl font-bold">{total}</div>
-            <div className="text-sm text-muted-foreground">Total Transactions</div>
-          </div>
-          <div className="glass-card p-4">
-            <div className="text-2xl font-bold text-emerald-500">
-              {txList.filter(t => t.status === 'COMPLETED').length}
-            </div>
-            <div className="text-sm text-muted-foreground">Completed</div>
-          </div>
-          <div className="glass-card p-4">
-            <div className="text-2xl font-bold text-amber-500">
-              {txList.filter(t => ['PENDING_ACCEPT', 'ACCEPTED', 'PAID', 'DELIVERED'].includes(t.status)).length}
-            </div>
-            <div className="text-sm text-muted-foreground">Active</div>
-          </div>
-          <div className="glass-card p-4">
-            <div className="text-2xl font-bold text-red-500">
-              {txList.filter(t => t.status === 'DISPUTED').length}
-            </div>
-            <div className="text-sm text-muted-foreground">Disputes</div>
-          </div>
+    <AdminLayout title="Manajemen Transaksi" subtitle="Monitor semua transaksi platform">
+      <div className="space-y-4">
+        <div className="flex gap-1 bg-muted/50 p-1 rounded-xl w-fit overflow-x-auto">
+          {tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${tab === t ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>{t}</button>)}
         </div>
-        
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
-            <Input
-              placeholder="Search order, title, buyer, seller..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white border-border"
-            />
+        <div className="card overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30">
+            <div className="relative">
+              <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari transaksi..." className="pl-9 pr-4 py-2 rounded-xl border border-border text-sm bg-background focus:outline-none w-64" />
+            </div>
+            <div className="flex gap-2">
+              <button className="btn-secondary gap-2 text-sm px-3 py-2"><FunnelSimple size={15} /> Filter</button>
+              <button className="btn-secondary gap-2 text-sm px-3 py-2"><Download size={15} /> Export</button>
+            </div>
           </div>
-          <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-40 bg-white border-border" aria-hidden="true">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="PENDING_ACCEPT">Pending</SelectItem>
-              <SelectItem value="PAID">Paid</SelectItem>
-              <SelectItem value="COMPLETED">Completed</SelectItem>
-              <SelectItem value="DISPUTED">Dispute</SelectItem>
-              <SelectItem value="CANCELLED">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        {/* Transactions Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card overflow-hidden"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-4 font-medium text-muted-foreground">Order</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Title</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Parties</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Amount</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Date</th>
-                  <th className="text-right p-4 font-medium text-muted-foreground">Actions</th>
+          <table className="w-full text-sm">
+            <thead className="border-b border-border bg-muted/20">
+              <tr>{['ID','Transaksi','Pembeli','Penjual','Nilai','Biaya','Status','Tanggal',''].map(h => <th key={h} className="px-4 py-3 text-left text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.map(tx => (
+                <tr key={tx.id} className="hover:bg-muted/30 transition-colors group">
+                  <td className="px-4 py-3 font-mono text-xs">{tx.id}</td>
+                  <td className="px-4 py-3 font-semibold max-w-[140px] truncate">{tx.title}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{tx.buyer}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{tx.seller}</td>
+                  <td className="px-4 py-3 font-semibold">{tx.amount}</td>
+                  <td className="px-4 py-3 text-green-600 font-semibold">{tx.fee}</td>
+                  <td className="px-4 py-3"><span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${statusCls[tx.status]}`}>{tx.label}</span></td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{tx.date}</td>
+                  <td className="px-4 py-3"><button className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-muted transition-all"><Eye size={14} /></button></td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredTransactions.map((tx) => {
-                  // Determine effective status - DELIVERED is virtual when PAID + has deliveryProof
-                  const effectiveStatus = tx.status === 'PAID' && tx.deliveryProof ? 'DELIVERED' : tx.status;
-                  const status = statusConfig[effectiveStatus] || statusConfig.PENDING_ACCEPT;
-                  
-                  return (
-                    <tr key={tx.id} className="border-b border-border/50 hover:bg-secondary/30">
-                      <td className="p-4">
-                        <div className="font-mono text-sm">{tx.orderNumber}</div>
-                      </td>
-                      <td className="p-4">
-                        <div className="font-medium max-w-[200px] truncate">{tx.title}</div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1 text-sm">
-                          <ArrowUpRight className="w-3 h-3 text-red-500" aria-hidden="true" weight="bold" />
-                          <span>{tx.initiator?.username || '-'}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <ArrowDownRight className="w-3 h-3 text-emerald-500" aria-hidden="true" weight="bold" />
-                          <span>{tx.counterparty?.username || '-'}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 font-semibold">{formatCurrency(tx.amount)}</td>
-                      <td className="p-4">
-                        <span className={`text-xs px-2 py-1 rounded-full ${status.color}`}>
-                          {status.label}
-                        </span>
-                      </td>
-                      <td className="p-4 text-sm text-muted-foreground">{formatDate(tx.createdAt)}</td>
-                      <td className="p-4 text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <DotsThreeVertical className="w-4 h-4" aria-hidden="true" weight="bold" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setSelectedTx(tx)}>
-                              <Eye className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
-                              View Details
-                            </DropdownMenuItem>
-                            {!['COMPLETED', 'CANCELLED', 'REJECTED'].includes(tx.status) && (
-                              <>
-                                <DropdownMenuItem onClick={() => { setActionTxId(tx.id); setForceCompleteOpen(true); }}>
-                                  <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
-                                  Force Complete
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => { setActionTxId(tx.id); setForceCancelOpen(true); }}
-                                  className="text-red-500"
-                                >
-                                  <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
-                                  Force Cancel
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between p-4 border-t border-border">
-              <div className="text-sm text-muted-foreground">
-                Page {page} of {totalPages}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          )}
-        </motion.div>
-        
-        {/* Transaction Detail Dialog */}
-        <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Transaction Details</DialogTitle>
-            </DialogHeader>
-            {selectedTx && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-secondary/50">
-                  <div className="font-mono text-sm text-muted-foreground mb-1">{selectedTx.orderNumber}</div>
-                  <div className="text-xl font-semibold">{selectedTx.title}</div>
-                  {selectedTx.description && (
-                    <div className="text-sm text-muted-foreground mt-2">{selectedTx.description}</div>
-                  )}
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 rounded-lg bg-secondary/50">
-                    <div className="text-sm text-muted-foreground mb-1">Initiator</div>
-                    <div className="font-medium">{selectedTx.initiator?.username}</div>
-                    <div className="text-xs text-muted-foreground">{selectedTx.initiator?.email}</div>
-                  </div>
-                  <div className="p-3 rounded-lg bg-secondary/50">
-                    <div className="text-sm text-muted-foreground mb-1">Counterparty</div>
-                    <div className="font-medium">{selectedTx.counterparty?.username || '-'}</div>
-                    <div className="text-xs text-muted-foreground">{selectedTx.counterparty?.email || '-'}</div>
-                  </div>
-                </div>
-                
-                <div className="p-4 rounded-lg bg-accent/10">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Amount</span>
-                    <span className="text-2xl font-bold gradient-text">
-                      {formatCurrency(selectedTx.amount)}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
-                  <span className="text-muted-foreground">Status</span>
-                  <span className={`text-sm px-3 py-1 rounded-full ${(statusConfig[selectedTx.status] || statusConfig.PENDING_ACCEPT).color}`}>
-                    {(statusConfig[selectedTx.status] || statusConfig.PENDING_ACCEPT).label}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Created:</span>
-                    <span className="ml-2">{formatDate(selectedTx.createdAt)}</span>
-                  </div>
-                  {selectedTx.paidAt && (
-                    <div>
-                      <span className="text-muted-foreground">Paid:</span>
-                      <span className="ml-2">{formatDate(selectedTx.paidAt)}</span>
-                    </div>
-                  )}
-                  {selectedTx.completedAt && (
-                    <div>
-                      <span className="text-muted-foreground">Completed:</span>
-                      <span className="ml-2">{formatDate(selectedTx.completedAt)}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-        
-        {/* Force Complete Dialog */}
-        <Dialog open={forceCompleteOpen} onOpenChange={setForceCompleteOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Force Complete Transaction</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Reason</Label>
-                <Textarea
-                  value={actionReason}
-                  onChange={(e) => setActionReason(e.target.value)}
-                  placeholder="Enter reason for force complete..."
-                  rows={3}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setForceCompleteOpen(false)} disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button className="btn-accent" onClick={handleForceComplete} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
-                Force Complete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-        
-        {/* Force Cancel Dialog */}
-        <Dialog open={forceCancelOpen} onOpenChange={setForceCancelOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Force Cancel Transaction</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Reason</Label>
-                <Textarea
-                  value={actionReason}
-                  onChange={(e) => setActionReason(e.target.value)}
-                  placeholder="Enter reason for force cancel..."
-                  rows={3}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setForceCancelOpen(false)} disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleForceCancel} disabled={isSubmitting}>
-                {isSubmitting ? <Spinner className="w-4 h-4 animate-spin mr-2" aria-hidden="true" weight="bold" /> : null}
-                Force Cancel
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              ))}
+            </tbody>
+          </table>
+          <div className="px-5 py-3 border-t border-border text-xs text-muted-foreground">Menampilkan {filtered.length} dari {transactions.length} transaksi</div>
+        </div>
       </div>
     </AdminLayout>
   );

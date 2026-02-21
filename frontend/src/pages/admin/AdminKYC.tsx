@@ -1,451 +1,83 @@
-/*
- * KAHADE ADMIN KYC PAGE
- * Review and manage KYC submissions
- * Icons: Phosphor Icons only
- */
-
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  IdentificationCard, CheckCircle, XCircle, Clock, Spinner,
-  Eye, User, Calendar, MagnifyingGlass, Funnel
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { MagnifyingGlass, CheckCircle, X, Eye, Clock, IdentificationCard } from '@phosphor-icons/react';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { adminApi } from '@/lib/api';
 
-interface KYCSubmission {
-  id: string;
-  userId: string;
-  user: {
-    username: string;
-    email: string;
-  };
-  idType: string;
-  idNumber: string;
-  fullName: string;
-  dateOfBirth: string;
-  address: string;
-  idFrontUrl: string;
-  idBackUrl?: string;
-  selfieUrl: string;
-  status: 'PENDING' | 'VERIFIED' | 'REJECTED';
-  rejectionReason?: string;
-  submittedAt: string;
-  reviewedAt?: string;
-}
+const submissions = [
+  { id: 'KYC-001', user: 'Ahmad Rizki', email: 'ahmad@email.com', type: 'KTP', submitted: '20 Feb 2026 09:15', status: 'pending', avatar: 'A' },
+  { id: 'KYC-002', user: 'Sari Dewi', email: 'sari@email.com', type: 'Paspor', submitted: '20 Feb 2026 08:30', status: 'pending', avatar: 'S' },
+  { id: 'KYC-003', user: 'Budi Santoso', email: 'budi@email.com', type: 'KTP', submitted: '19 Feb 2026 17:45', status: 'approved', avatar: 'B' },
+  { id: 'KYC-004', user: 'Maya Putri', email: 'maya@email.com', type: 'SIM', submitted: '19 Feb 2026 14:20', status: 'rejected', avatar: 'M' },
+  { id: 'KYC-005', user: 'Rizki F.', email: 'rizki@email.com', type: 'KTP', submitted: '18 Feb 2026 11:00', status: 'pending', avatar: 'R' },
+];
 
-const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-  PENDING: { label: 'Pending Review', color: 'text-amber-600', bgColor: 'bg-amber-50' },
-  VERIFIED: { label: 'Verified', color: 'text-emerald-600', bgColor: 'bg-emerald-50' },
-  REJECTED: { label: 'Rejected', color: 'text-red-600', bgColor: 'bg-red-50' },
+const statusCls: Record<string,string> = {
+  pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  approved: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 };
+const statusLabel: Record<string,string> = { pending: 'Pending', approved: 'Disetujui', rejected: 'Ditolak' };
 
 export default function AdminKYC() {
-  const [submissions, setSubmissions] = useState<KYCSubmission[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('PENDING');
+  const [tab, setTab] = useState('Semua');
   const [search, setSearch] = useState('');
-  const [selectedKYC, setSelectedKYC] = useState<KYCSubmission | null>(null);
-  const [isReviewOpen, setIsReviewOpen] = useState(false);
-  const [isRejectOpen, setIsRejectOpen] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    fetchSubmissions();
-  }, [filter]);
-
-  const fetchSubmissions = async () => {
-    setIsLoading(true);
-    try {
-      const params: Record<string, unknown> = { limit: 50 };
-      if (filter !== 'all') params.status = filter;
-      
-      const response = await adminApi.getKYCRequests(params);
-      setSubmissions(response.data.submissions || response.data.data || []);
-    } catch (error) {
-      toast.error('Failed to load KYC submissions');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleApprove = async () => {
-    if (!selectedKYC) return;
-    
-    setIsSubmitting(true);
-    try {
-      await adminApi.approveKYC(selectedKYC.userId);
-      toast.success('KYC approved successfully');
-      setIsReviewOpen(false);
-      setSelectedKYC(null);
-      fetchSubmissions();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to approve KYC');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selectedKYC || !rejectionReason.trim()) {
-      toast.error('Please provide a rejection reason');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    try {
-      await adminApi.rejectKYC(selectedKYC.userId, rejectionReason);
-      toast.success('KYC rejected');
-      setIsRejectOpen(false);
-      setIsReviewOpen(false);
-      setSelectedKYC(null);
-      setRejectionReason('');
-      fetchSubmissions();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to reject KYC');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const filteredSubmissions = submissions.filter(s => 
-    s.user.username.toLowerCase().includes(search.toLowerCase()) ||
-    s.user.email.toLowerCase().includes(search.toLowerCase()) ||
-    s.fullName.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const stats = {
-    pending: submissions.filter(s => s.status === 'PENDING').length,
-    verified: submissions.filter(s => s.status === 'VERIFIED').length,
-    rejected: submissions.filter(s => s.status === 'REJECTED').length,
-  };
-
-  if (isLoading) {
-    return (
-      <AdminLayout title="KYC Management" subtitle="Loading...">
-        <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" />
-        </div>
-      </AdminLayout>
-    );
-  }
+  const tabs = ['Semua', 'Pending', 'Disetujui', 'Ditolak'];
+  const tabMap: Record<string,string> = { Pending: 'pending', Disetujui: 'approved', Ditolak: 'rejected' };
+  const filtered = submissions.filter(s => (tab === 'Semua' || s.status === tabMap[tab]) && (!search || s.user.toLowerCase().includes(search.toLowerCase())));
+  const pending = submissions.filter(s => s.status === 'pending').length;
 
   return (
-    <AdminLayout title="KYC Management" subtitle="Review and manage identity verification submissions">
-      <div className="space-y-6">
-        {/* Stats */}
+    <AdminLayout title="Verifikasi KYC" subtitle="Review dan proses pengajuan identitas">
+      <div className="space-y-5">
         <div className="grid grid-cols-3 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-amber-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <Clock className="w-8 h-8 text-amber-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-2xl font-bold text-amber-700">{stats.pending}</div>
-                <div className="text-sm text-amber-600">Pending Review</div>
-              </div>
+          {[['Pending', pending, 'yellow'], ['Disetujui Hari Ini', 12, 'green'], ['Ditolak Hari Ini', 3, 'red']].map(([label, val, c]) => (
+            <div key={String(label)} className="card p-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${c === 'green' ? 'bg-green-100 text-green-600 dark:bg-green-900/30' : c === 'yellow' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30' : 'bg-red-100 text-red-600 dark:bg-red-900/30'}`}><IdentificationCard size={20} weight="duotone" /></div>
+              <p className="text-2xl font-black">{val}</p>
+              <p className="text-xs text-muted-foreground">{label}</p>
             </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-emerald-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-2xl font-bold text-emerald-700">{stats.verified}</div>
-                <div className="text-sm text-emerald-600">Verified</div>
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-red-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <XCircle className="w-8 h-8 text-red-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-2xl font-bold text-red-700">{stats.rejected}</div>
-                <div className="text-sm text-red-600">Rejected</div>
-              </div>
-            </div>
-          </motion.div>
+          ))}
         </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name or email..."
-              className="pl-10"
-            />
+        <div className="flex gap-1 bg-muted/50 p-1 rounded-xl w-fit">
+          {tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${tab === t ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>{t}</button>)}
+        </div>
+        <div className="card overflow-hidden">
+          <div className="flex items-center px-5 py-4 border-b border-border bg-muted/30">
+            <div className="relative">
+              <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari pengguna..." className="pl-9 pr-4 py-2 rounded-xl border border-border text-sm bg-background focus:outline-none w-64" />
+            </div>
           </div>
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-48" aria-hidden="true">
-              <Funnel className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="VERIFIED">Verified</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+          <table className="w-full text-sm">
+            <thead className="border-b border-border bg-muted/20">
+              <tr>{['ID','Pengguna','Tipe ID','Diajukan','Status','Aksi'].map(h => <th key={h} className="px-4 py-3 text-left text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.map(s => (
+                <tr key={s.id} className="hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 font-mono text-xs">{s.id}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">{s.avatar}</div>
+                      <div><p className="font-semibold leading-none">{s.user}</p><p className="text-xs text-muted-foreground">{s.email}</p></div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3"><span className="text-xs bg-muted px-2 py-0.5 rounded-full font-medium">{s.type}</span></td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{s.submitted}</td>
+                  <td className="px-4 py-3"><span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${statusCls[s.status]}`}>{statusLabel[s.status]}</span></td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1">
+                      <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"><Eye size={14} /></button>
+                      {s.status === 'pending' && <>
+                        <button className="p-1.5 rounded-lg hover:bg-green-100 text-green-600 transition-colors"><CheckCircle size={14} weight="fill" /></button>
+                        <button className="p-1.5 rounded-lg hover:bg-red-100 text-red-600 transition-colors"><X size={14} weight="bold" /></button>
+                      </>}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-
-        {/* Submissions Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-lg border border-neutral-200 overflow-hidden"
-        >
-          {filteredSubmissions.length === 0 ? (
-            <div className="text-center py-12">
-              <IdentificationCard className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" />
-              <h4 className="text-lg font-semibold text-black mb-2">No Submissions</h4>
-              <p className="text-neutral-600">No KYC submissions found</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-neutral-100">
-                  <tr>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">User</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">ID Type</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Full Name</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Submitted</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Status</th>
-                    <th className="text-right px-4 py-3 text-sm font-semibold text-black">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200">
-                  {filteredSubmissions.map((submission) => {
-                    const status = statusConfig[submission.status];
-                    return (
-                      <tr key={submission.id} className="hover:bg-neutral-50">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">
-                              <User className="w-4 h-4 text-black" aria-hidden="true" weight="regular" />
-                            </div>
-                            <div>
-                              <div className="font-medium text-black">{submission.user.username}</div>
-                              <div className="text-sm text-neutral-600">{submission.user.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-neutral-600">{submission.idType}</td>
-                        <td className="px-4 py-3 text-black">{submission.fullName}</td>
-                        <td className="px-4 py-3 text-neutral-600">
-                          {new Date(submission.submittedAt).toLocaleDateString('id-ID')}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full ${status.bgColor} ${status.color}`}>
-                            {status.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedKYC(submission);
-                              setIsReviewOpen(true);
-                            }}
-                          >
-                            <Eye className="w-4 h-4 mr-1" aria-hidden="true" weight="regular" />
-                            Review
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </motion.div>
-
-        {/* Review Dialog */}
-        <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
-          <DialogContent className="max-w-3 xl max-h-[90vh] overflow-y-auto" aria-hidden="true">
-            <DialogHeader>
-              <DialogTitle>Review KYC Submission</DialogTitle>
-              <DialogDescription>
-                Review the submitted documents and verify the user's identity
-              </DialogDescription>
-            </DialogHeader>
-            
-            {selectedKYC && (
-              <div className="space-y-6 py-4">
-                {/* User Info */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">Username</label>
-                    <p className="text-black">{selectedKYC.user.username}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">Email</label>
-                    <p className="text-black">{selectedKYC.user.email}</p>
-                  </div>
-                </div>
-
-                {/* ID Info */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">ID Type</label>
-                    <p className="text-black">{selectedKYC.idType}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">ID Number</label>
-                    <p className="text-black font-mono">{selectedKYC.idNumber}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">Full Name</label>
-                    <p className="text-black">{selectedKYC.fullName}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">Date of Birth</label>
-                    <p className="text-black">{selectedKYC.dateOfBirth}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-neutral-600">Address</label>
-                  <p className="text-black">{selectedKYC.address}</p>
-                </div>
-
-                {/* Documents */}
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-black">Submitted Documents</h4>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-neutral-600 mb-2 block">ID Front</label>
-                      <img 
-                        src={selectedKYC.idFrontUrl} 
-                        alt="ID Front" 
-                        className="w-full rounded-lg border border-neutral-200"
-                      />
-                    </div>
-                    {selectedKYC.idBackUrl && (
-                      <div>
-                        <label className="text-sm font-medium text-neutral-600 mb-2 block">ID Back</label>
-                        <img 
-                          src={selectedKYC.idBackUrl} 
-                          alt="ID Back" 
-                          className="w-full rounded-lg border border-neutral-200"
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <label className="text-sm font-medium text-neutral-600 mb-2 block">Selfie with ID</label>
-                      <img 
-                        src={selectedKYC.selfieUrl} 
-                        alt="Selfie" 
-                        className="w-full rounded-lg border border-neutral-200"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <DialogFooter>
-              {selectedKYC?.status === 'PENDING' && (
-                <>
-                  <Button
-                    variant="outline"
-                    className="text-red-600 hover:text-red-700 hover:border-red-600"
-                    onClick={() => setIsRejectOpen(true)}
-                  >
-                    <XCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-                    Reject
-                  </Button>
-                  <Button
-                    className="btn-primary"
-                    onClick={handleApprove}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
-                    ) : (
-                      <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-                    )}
-                    Approve
-                  </Button>
-                </>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Reject Dialog */}
-        <Dialog open={isRejectOpen} onOpenChange={setIsRejectOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Reject KYC Submission</DialogTitle>
-              <DialogDescription>
-                Please provide a reason for rejection. This will be shown to the user.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-4">
-              <Textarea
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Enter rejection reason..."
-                rows={4}
-              />
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsRejectOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                className="bg-red-500 hover:bg-red-600"
-                onClick={handleReject}
-                disabled={isSubmitting || !rejectionReason.trim()}
-              >
-                {isSubmitting ? 'Rejecting...' : 'Reject KYC'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </AdminLayout>
   );

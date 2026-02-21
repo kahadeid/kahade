@@ -1,236 +1,165 @@
-/*
- * KAHADE MOBILE APP PAGE - PROFESSIONAL REDESIGN
- * 
- * Design Philosophy:
- * - Clean, modern, and professional aesthetic
- * - Fully responsive for Mobile, Tablet, and Desktop
- * - Brand color: var(--color-black)
- */
-
 import { motion } from 'framer-motion';
-import { Link } from 'wouter';
 import {
-  DeviceMobile, AppleLogo, GooglePlayLogo, QrCode,
-  ShieldCheck, Lightning, Bell, Fingerprint, ArrowRight, Sparkle
+  DeviceMobile, BellRinging, ShieldCheck, Lightning,
+  Star, ArrowRight, GooglePlayLogo, AppStoreLogo
 } from '@phosphor-icons/react';
+import { Link } from 'wouter';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
+import { staggerContainer, staggerItem, fadeInUp, viewport } from '@/lib/animations';
 
-const features = [
-  { icon: ShieldCheck, title: 'Secure Transactions', description: 'Bank-level encryption and biometric authentication keep your funds safe.' },
-  { icon: Lightning, title: 'Instant Notifications', description: 'Real-time push notifications for every transaction update.' },
-  { icon: Bell, title: 'Smart Alerts', description: 'Customizable alerts for payment deadlines and important milestones.' },
-  { icon: Fingerprint, title: 'Biometric Login', description: 'Quick and secure access with Face ID or fingerprint authentication.' }
+const appFeatures = [
+  { icon: BellRinging, title: 'Notifikasi Real-time', desc: 'Dapat notifikasi instan setiap ada update transaksi.' },
+  { icon: ShieldCheck, title: 'Biometrik & 2FA', desc: 'Login dengan Face ID atau fingerprint untuk keamanan ekstra.' },
+  { icon: Lightning, title: 'Pembayaran QRIS', desc: 'Bayar dan konfirmasi transaksi langsung dari kamera.' },
+  { icon: DeviceMobile, title: 'Offline-ready', desc: 'Cek status transaksi bahkan saat koneksi lemah.' },
 ];
 
-const screenshots = [
-  { title: 'Dashboard', description: 'Track all your transactions at a glance' },
-  { title: 'Transaction Details', description: 'Full visibility into every escrow' },
-  { title: 'Wallet', description: 'Manage your balance with ease' },
-  { title: 'Notifications', description: 'Stay updated on every step' }
+const screens = [
+  { label: 'Dashboard', bg: 'from-primary/20 to-primary/5' },
+  { label: 'Buat Transaksi', bg: 'from-purple-500/20 to-purple-500/5' },
+  { label: 'Status', bg: 'from-green-500/20 to-green-500/5' },
+  { label: 'Wallet', bg: 'from-orange-500/20 to-orange-500/5' },
+];
+
+const reviews = [
+  { name: 'Budi S.', rating: 5, text: 'Akhirnya ada rekber yang beneran aman dan cepet. Udah 20+ transaksi, ga ada masalah.' },
+  { name: 'Dewi P.', rating: 5, text: 'Sebagai freelancer, ini solusi terbaik. Klien juga senang karena transparan.' },
+  { name: 'Ahmad R.', rating: 4, text: 'Aplikasinya smooth, UX-nya bagus. Pencairan cepat sesuai janji.' },
 ];
 
 export default function MobileApp() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-32 lg:pt-40 pb-12 md:pb-16 lg:pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
-        <div className="container relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center lg:text-left"
-            >
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-                <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
-                Coming Soon
-              </span>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-foreground leading-tight">
-                Kahade in Your Pocket
-              </h1>
-              <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-                Experience the full power of Kahade escrow on your mobile device. 
-                Secure transactions, instant notifications, and complete control wherever you go.
-              </p>
-              
-              {/* App Store Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 md:gap-4 mb-8 justify-center lg:justify-start">
-                <Button className="bg-black hover:bg-black/90 text-white px-5 md:px-6 py-3 md:py-4 h-auto rounded-xl gap-3">
-                  <AppleLogo className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" weight="fill" />
-                  <div className="text-left">
-                    <div className="text-[10px] md:text-xs opacity-80">Download on the</div>
-                    <div className="font-semibold text-sm md:text-base">App Store</div>
-                  </div>
-                </Button>
-                <Button className="border-2 border-border bg-card text-foreground hover:bg-muted px-5 md:px-6 py-3 md:py-4 h-auto rounded-xl gap-3">
-                  <GooglePlayLogo className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" weight="fill" />
-                  <div className="text-left">
-                    <div className="text-[10px] md:text-xs opacity-80">Get it on</div>
-                    <div className="font-semibold text-sm md:text-base">Google Play</div>
-                  </div>
-                </Button>
-              </div>
-              
-              {/* QR Code */}
-              <div className="hidden md:flex items-center gap-4 p-4 rounded-xl bg-muted max-w-sm mx-auto lg:mx-0">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-card flex items-center justify-center border border-border">
-                  <QrCode className="w-10 h-10 md:w-12 md:h-12 text-foreground" aria-hidden="true" weight="regular" />
-                </div>
-                <div>
-                  <div className="font-semibold text-sm md:text-base text-foreground">Scan to Download</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">Point your camera at the QR code</div>
-                </div>
-              </div>
+
+      {/* HERO */}
+      <section className="bg-primary text-primary-foreground pt-24 pb-20">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div variants={staggerContainer} initial="initial" animate="animate">
+              <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
+                Kahade Mobile
+              </motion.span>
+              <motion.h1 variants={staggerItem} className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                Kahade di<br />genggaman Anda
+              </motion.h1>
+              <motion.p variants={staggerItem} className="text-primary-foreground/70 text-lg mb-10">
+                Kelola semua transaksi escrow Anda dari smartphone. Kapan saja, di mana saja, dengan keamanan penuh.
+              </motion.p>
+              <motion.div variants={staggerItem} className="flex flex-wrap gap-4">
+                <button className="flex items-center gap-3 bg-white text-primary px-5 py-3 rounded-xl font-semibold hover:bg-white/90 transition-colors">
+                  <AppStoreLogo size={24} /> App Store
+                </button>
+                <button className="flex items-center gap-3 bg-white text-primary px-5 py-3 rounded-xl font-semibold hover:bg-white/90 transition-colors">
+                  <GooglePlayLogo size={24} /> Play Store
+                </button>
+              </motion.div>
+              <motion.p variants={staggerItem} className="text-primary-foreground/50 text-sm mt-4">
+                iOS 14+ · Android 8.0+
+              </motion.p>
             </motion.div>
-            
+
             {/* Phone Mockup */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative order-first lg:order-last"
-            >
-              <div className="relative mx-auto w-56 h-[460px] md:w-72 md:h-[580px] bg-black rounded-[2.5rem] md:rounded-[3rem] p-2.5 md:p-3 shadow-2xl">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 md:w-32 h-5 md:h-6 bg-black rounded-b-xl md:rounded-b-2xl" aria-hidden="true" />
-                <div className="w-full h-full bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-black flex items-center justify-center mx-auto mb-3 md:mb-4">
-                      <DeviceMobile className="w-7 h-7 md:w-10 md:h-10 text-white" aria-hidden="true" weight="fill" />
-                    </div>
-                    <div className="font-bold text-base md:text-lg text-foreground">Kahade Mobile</div>
-                    <div className="text-xs md:text-sm text-muted-foreground">Coming Soon</div>
-                  </div>
+            <motion.div variants={fadeInUp} initial="initial" animate="animate" className="flex justify-center">
+              <div className="w-64 h-[500px] bg-white/10 rounded-[3rem] border-4 border-white/20 flex items-center justify-center shadow-E6 relative">
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-1.5 bg-white/20 rounded-full" />
+                <div className="text-center">
+                  <DeviceMobile size={64} className="text-white/30 mx-auto mb-4" />
+                  <p className="text-white/40 text-sm">Mockup App</p>
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
-      
-      {/* Features Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-muted">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 md:mb-16"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Features
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Powerful Features on the Go
-            </h2>
-            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to manage your escrow transactions from your mobile device.
-            </p>
-          </motion.div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center group hover:shadow-lg transition-shadow"
-              >
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center mx-auto mb-4 group-hover:bg-black group-hover:text-white transition-colors">
-                  <feature.icon className="w-6 h-6 md:w-7 md:h-7" weight="bold" />
-                </div>
-                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">{feature.title}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Screenshots Section */}
-      <section className="py-12 md:py-16 lg:py-20">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 md:mb-16"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Preview
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Beautiful & Intuitive Design
-            </h2>
-            <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto">
-              A seamless experience designed for simplicity and efficiency.
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 max-w-5xl mx-auto">
-            {screenshots.map((screen, index) => (
-              <motion.div
-                key={screen.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="w-full aspect-[9/16] max-w-[180px] md:max-w-[200px] mx-auto bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] rounded-2xl md:rounded-3xl mb-3 md:mb-4 flex items-center justify-center border border-border">
-                  <span className="text-xs md:text-sm text-muted-foreground">Preview</span>
-                </div>
-                <h3 className="font-bold text-sm md:text-base mb-1 text-foreground">{screen.title}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">{screen.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* CTA Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-20" aria-hidden="true" />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6">
-              <DeviceMobile className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Get Notified When We Launch
-            </h2>
-            <p className="text-white/70 text-sm md:text-base lg:text-lg mb-8 max-w-lg mx-auto">
-              Be the first to know when Kahade Mobile is available for download.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/register" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl">
-                  Create Account
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-                </Button>
-              </Link>
-              <Link href="/contact" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl bg-transparent">
-                  Contact Us
-                </Button>
-              </Link>
+
+      {/* FEATURES */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-12">
+              <span className="badge badge-secondary mb-3">Fitur Unggulan</span>
+              <h2 className="text-3xl font-bold">Semua yang Anda Butuhkan</h2>
+            </motion.div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {appFeatures.map((f) => {
+                const Icon = f.icon;
+                return (
+                  <motion.div key={f.title} variants={staggerItem} className="card p-6 text-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Icon size={24} className="text-primary" weight="duotone" />
+                    </div>
+                    <h3 className="font-bold mb-2">{f.title}</h3>
+                    <p className="text-sm text-muted-foreground">{f.desc}</p>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
       </section>
-      
+
+      {/* SCREENS SHOWCASE */}
+      <section className="section-padding-lg bg-muted/40 overflow-hidden">
+        <div className="container mx-auto px-4">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport} className="text-center mb-10">
+            <h2 className="text-3xl font-bold">Tampilan Aplikasi</h2>
+          </motion.div>
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 justify-center">
+            {screens.map((s) => (
+              <div key={s.label} className="shrink-0 w-44">
+                <div className={`bg-gradient-to-b ${s.bg} rounded-3xl border border-border h-80 flex items-end p-4`}>
+                  <span className="text-xs font-semibold bg-background/80 px-2 py-1 rounded-full">{s.label}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* REVIEWS */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-10">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                {[...Array(5)].map((_, i) => <Star key={i} size={24} className="text-yellow-500" weight="fill" />)}
+              </div>
+              <div className="text-4xl font-bold mb-1">4.8<span className="text-2xl text-muted-foreground">/5</span></div>
+              <p className="text-muted-foreground text-sm">Dari 500+ ulasan di App Store & Play Store</p>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-5">
+              {reviews.map((r) => (
+                <motion.div key={r.name} variants={staggerItem} className="card p-6">
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(r.rating)].map((_, i) => <Star key={i} size={14} className="text-yellow-500" weight="fill" />)}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">"{r.text}"</p>
+                  <p className="text-sm font-semibold">{r.name}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* DOWNLOAD CTA */}
+      <section className="section-padding-md bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center max-w-2xl">
+          <h2 className="text-3xl font-bold mb-4">Download sekarang, gratis!</h2>
+          <p className="text-primary-foreground/70 mb-8">Tersedia di iOS dan Android. Tidak perlu kartu kredit untuk mulai.</p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button className="flex items-center gap-3 bg-white text-primary px-6 py-3 rounded-xl font-semibold hover:bg-white/90 transition-colors">
+              <AppStoreLogo size={24} /> App Store
+            </button>
+            <button className="flex items-center gap-3 bg-white text-primary px-6 py-3 rounded-xl font-semibold hover:bg-white/90 transition-colors">
+              <GooglePlayLogo size={24} /> Play Store
+            </button>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

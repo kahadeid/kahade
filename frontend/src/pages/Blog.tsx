@@ -1,382 +1,126 @@
-/*
- * KAHADE BLOG PAGE - CLICKUP-INSPIRED REDESIGN
- * 
- * Design Philosophy:
- * - ClickUp-style smooth animations and micro-interactions
- * - Enhanced card grid with staggered animations
- * - Improved search and category filtering
- * - Brand color: var(--color-black)
- */
-
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'wouter';
-import {
-  MagnifyingGlass, Calendar, Clock, User, Tag,
-  ArrowRight, BookOpen, TrendUp, Lightbulb, Sparkle
-} from '@phosphor-icons/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Clock } from '@phosphor-icons/react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { staggerContainer, staggerItem, fadeInUp, viewport } from '@/lib/animations';
 
-const categories = [
-  { name: 'Semua', count: 24 },
-  { name: 'Update Produk', count: 8 },
-  { name: 'Keamanan', count: 6 },
-  { name: 'Tips & Panduan', count: 5 },
-  { name: 'Berita Industri', count: 5 },
-];
-
-const featuredPost = {
-  id: 1,
-  title: 'Memperkenalkan Kahade 2.0: Era Baru Transaksi Aman',
-  excerpt: 'Kami dengan antusias mengumumkan peluncuran Kahade 2.0, menghadirkan antarmuka yang sepenuhnya didesain ulang, peningkatan keamanan, dan fitur baru yang membuat escrow P2P semakin mudah.',
-  category: 'Update Produk',
-  author: 'Tim Kahade',
-  date: '25 Jan 2026',
-  readTime: '5 menit baca',
-  image: '/images/blog/featured.jpg'
-};
+const filters = ['Semua', 'Keamanan', 'Tips Transaksi', 'Update', 'Bisnis'];
 
 const posts = [
-  {
-    id: 2,
-    title: '5 Tips Transaksi Online Aman di 2026',
-    excerpt: 'Pelajari praktik penting untuk melindungi diri saat membeli atau menjual secara online.',
-    category: 'Tips & Panduan',
-    author: 'Sarah Chen',
-    date: '22 Jan 2026',
-    readTime: '4 menit baca'
-  },
-  {
-    id: 3,
-    title: 'Memahami Escrow: Panduan Lengkap',
-    excerpt: 'Semua yang perlu Anda ketahui tentang cara kerja escrow dan mengapa ini penting.',
-    category: 'Tips & Panduan',
-    author: 'Michael Park',
-    date: '20 Jan 2026',
-    readTime: '7 menit baca'
-  },
-  {
-    id: 4,
-    title: 'Cara Kami Melindungi Dana Anda: Kupasan Keamanan',
-    excerpt: 'Melihat lebih dekat langkah keamanan yang kami gunakan untuk menjaga dana Anda.',
-    category: 'Keamanan',
-    author: 'David Kim',
-    date: '18 Jan 2026',
-    readTime: '6 menit baca'
-  },
-  {
-    id: 5,
-    title: 'Meningkatnya Perdagangan P2P di Asia Tenggara',
-    excerpt: 'Menelusuri tren transaksi peer-to-peer yang terus bertumbuh di kawasan ini.',
-    category: 'Berita Industri',
-    author: 'Lisa Wong',
-    date: '15 Jan 2026',
-    readTime: '5 menit baca'
-  },
-  {
-    id: 6,
-    title: 'Fitur Baru: Penyelesaian Sengketa Instan',
-    excerpt: 'Memperkenalkan sistem penyelesaian sengketa berbasis AI untuk hasil lebih cepat.',
-    category: 'Update Produk',
-    author: 'Tim Kahade',
-    date: '12 Jan 2026',
-    readTime: '3 menit baca'
-  },
-  {
-    id: 7,
-    title: 'Membangun Kepercayaan di Marketplace Digital',
-    excerpt: 'Bagaimana layanan escrow mentransformasi perdagangan online dan membangun kepercayaan.',
-    category: 'Berita Industri',
-    author: 'James Lee',
-    date: '10 Jan 2026',
-    readTime: '5 menit baca'
-  }
+  { id: 1, category: 'Keamanan', title: '7 Tips Transaksi Online yang Aman di Era Digital', excerpt: 'Bertransaksi online kini semakin mudah, tapi risiko penipuan juga meningkat. Pelajari 7 langkah konkret melindungi diri Anda.', author: 'Tim Kahade', date: '15 Jan 2025', readTime: 5 },
+  { id: 2, category: 'Tips Transaksi', title: 'Panduan Lengkap Menggunakan Escrow untuk Freelancer', excerpt: 'Sebagai freelancer, escrow adalah cara terbaik memastikan pembayaran. Begini cara menggunakannya secara efektif.', author: 'Sari Dewi', date: '10 Jan 2025', readTime: 8 },
+  { id: 3, category: 'Update', title: 'Kahade v2.0: Fitur Resolusi Sengketa AI Hadir!', excerpt: 'Update terbesar dalam sejarah Kahade. AI kami kini bisa membantu menyelesaikan sengketa dalam waktu kurang dari 24 jam.', author: 'Tim Product', date: '5 Jan 2025', readTime: 4 },
+  { id: 4, category: 'Bisnis', title: 'Mengapa UMKM Perlu Menggunakan Escrow', excerpt: 'UMKM sering kehilangan pelanggan karena masalah kepercayaan. Escrow adalah solusi yang affordable untuk semua skala bisnis.', author: 'Ahmad Rizki', date: '28 Des 2024', readTime: 6 },
+  { id: 5, category: 'Keamanan', title: 'Kenali Modus Penipuan Online yang Paling Umum', excerpt: 'Dari fake rekber hingga manipulation invoice — kenali modusnya sebelum jadi korban. Panduan lengkap dari tim keamanan kami.', author: 'Tim Keamanan', date: '20 Des 2024', readTime: 7 },
+  { id: 6, category: 'Tips Transaksi', title: 'Cara Menulis Deskripsi Transaksi yang Baik', excerpt: 'Deskripsi transaksi yang jelas mencegah kesalahpahaman dan mempercepat proses. Ini template yang bisa Anda gunakan.', author: 'Maya Putri', date: '15 Des 2024', readTime: 3 },
+  { id: 7, category: 'Bisnis', title: 'Integrasi Kahade API untuk Platform Marketplace', excerpt: 'Panduan teknis untuk developer yang ingin mengintegrasikan sistem escrow Kahade ke dalam platform mereka sendiri.', author: 'Tim Engineering', date: '10 Des 2024', readTime: 12 },
 ];
 
-export default function Blog() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Semua');
+const featured = posts[0];
+const regularPosts = posts.slice(1);
 
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'Semua' || post.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+const categoryColor: Record<string, string> = {
+  Keamanan: 'badge-error',
+  'Tips Transaksi': 'badge-success',
+  Update: 'badge-primary',
+  Bisnis: 'badge-secondary',
+};
+
+export default function Blog() {
+  const [activeFilter, setActiveFilter] = useState('Semua');
+
+  const filtered = activeFilter === 'Semua'
+    ? regularPosts
+    : regularPosts.filter(p => p.category === activeFilter);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-32 lg:pt-40 pb-8 md:pb-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-gray-100 rounded-full blur-3xl" 
-        />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
-            >
-              Blog
-            </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
-              Wawasan & Pembaruan
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-8">
-              Tetap terinformasi dengan berita, tips, dan pembaruan terbaru dari tim Kahade.
-            </p>
-            
-            {/* Search */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="relative max-w-md mx-auto"
-            >
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
-              <Input
-                placeholder="Cari artikel..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-11 md:h-12 bg-card border-border focus:border-black focus:ring-black rounded-xl shadow-sm"
-              />
-            </motion.div>
+
+      {/* HERO */}
+      <section className="pt-24 pb-12 border-b bg-muted/30">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div variants={fadeInUp} initial="initial" animate="animate">
+            <span className="badge badge-secondary mb-4">Blog</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-3">Blog Kahade</h1>
+            <p className="text-muted-foreground text-lg">Tips, update, dan insight untuk transaksi online yang aman.</p>
           </motion.div>
         </div>
       </section>
-      
-      {/* Categories */}
-      <section className="py-4 md:py-6 border-b border-border sticky top-0 bg-background/95 backdrop-blur z-10">
-        <div className="container">
-          <div className="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap md:justify-center gap-2 scrollbar-hide">
-            {categories.map((category) => (
-              <motion.button
-                key={category.name}
-                onClick={() => setSelectedCategory(category.name)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
-                  selectedCategory === category.name
-                    ? 'bg-black text-white'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
-                {category.name} ({category.count})
-              </motion.button>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Featured Post */}
-      {selectedCategory === 'Semua' && !searchQuery && (
-        <section className="py-8 md:py-12">
-          <div className="container">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              whileHover={{ y: -8 }}
-              className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-            >
-              <div className="grid lg:grid-cols-2 gap-0">
-                <div className="h-48 md:h-64 lg:h-auto bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] flex items-center justify-center relative overflow-hidden group">
-                  <motion.div 
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-center"
-                  >
-                    <TrendUp className="w-16 h-16 md:w-24 md:h-24 text-muted-foreground mx-auto mb-2" aria-hidden="true" weight="fill" />
-                    <span className="text-sm text-muted-foreground">Artikel Unggulan</span>
-                  </motion.div>
+
+      {/* FEATURED POST */}
+      <section className="section-padding-md">
+        <div className="container mx-auto px-4">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
+            <div className="grid md:grid-cols-[0.55fr_0.45fr] gap-8 bg-muted/30 rounded-3xl overflow-hidden border border-border">
+              <div className="aspect-[4/3] md:aspect-auto bg-gradient-to-br from-primary/20 to-primary/5 min-h-[280px]" />
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <span className={`badge ${categoryColor[featured.category] || 'badge-secondary'} mb-4 self-start`}>{featured.category}</span>
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">{featured.title}</h2>
+                <p className="text-muted-foreground mb-6 leading-relaxed">{featured.excerpt}</p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
+                  <span>{featured.author}</span><span>·</span>
+                  <span>{featured.date}</span><span>·</span>
+                  <span className="flex items-center gap-1"><Clock size={14} />{featured.readTime} menit</span>
                 </div>
-                <div className="p-6 md:p-8 lg:p-10 xl:p-12">
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
-                    <span className="px-3 py-1 rounded-lg bg-black text-white text-xs md:text-sm font-medium">
-                      {featuredPost.category}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground">
-                      <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
-                      Unggulan
-                    </span>
-                  </div>
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-foreground">
-                    {featuredPost.title}
-                  </h2>
-                  <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6 line-clamp-3">
-                    {featuredPost.excerpt}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-4 md:gap-4 text-xs md:text-sm text-muted-foreground mb-6">
-                    <span className="flex items-center gap-1">
-                      <User className="w-4 h-4" aria-hidden="true" weight="regular" />
-                      {featuredPost.author}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" aria-hidden="true" weight="regular" />
-                      {featuredPost.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" aria-hidden="true" weight="regular" />
-                      {featuredPost.readTime}
-                    </span>
-                  </div>
-                  <Link href={`/blog/${featuredPost.id}`}>
-                    <Button className="h-11 md:h-12 px-6 bg-black text-white hover:bg-black/90 font-semibold rounded-xl btn-hover-lift">
-                      Baca Artikel
-                      <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" />
-                    </Button>
-                  </Link>
-                </div>
+                <button className="btn-primary self-start">Baca Selengkapnya <ArrowRight size={16} /></button>
               </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-      
-      {/* Posts Grid */}
-      <section className="py-8 md:py-12 bg-muted">
-        <div className="container">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {filteredPosts.map((post, index) => (
-              <motion.article
-                key={post.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05, duration: 0.5 }}
-                whileHover={{ y: -6 }}
-                className="bg-card rounded-xl md:rounded-2xl border border-border overflow-hidden group cursor-pointer hover:shadow-clickup hover:border-neutral-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-              >
-                <Link href={`/blog/${post.id}`}>
-                  <div className="h-40 md:h-48 bg-gradient-to-br from-[#F5F5F5] to-[#E8E8E8] flex items-center justify-center relative overflow-hidden">
-                    <motion.div
-                      whileHover={{ scale: 1.2, rotate: 5 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Lightbulb className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground group-hover:text-neutral-900 transition-colors duration-300" aria-hidden="true" weight="fill" />
-                    </motion.div>
-                  </div>
-                  <div className="p-4 md:p-6">
-                    <div className="flex items-center gap-2 mb-2 md:mb-3">
-                      <span className="px-2.5 py-1 rounded-lg bg-muted text-foreground text-xs font-medium">
-                        {post.category}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-base md:text-lg mb-2 text-foreground group-hover:text-muted-foreground transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" aria-hidden="true" weight="regular" />
-                        {post.date}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" aria-hidden="true" weight="regular" />
-                        {post.readTime}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.article>
-            ))}
-          </div>
-          
-          {filteredPosts.length === 0 && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-              className="text-center py-12 md:py-16"
-            >
-              <motion.div 
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4"
-              >
-                <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" aria-hidden="true" weight="regular" />
-              </motion.div>
-              <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">No articles found</h3>
-              <p className="text-sm md:text-base text-muted-foreground">Coba sesuaikan pencarian atau filter Anda.</p>
-            </motion.div>
-          )}
-          
-          {/* Load More */}
-          {filteredPosts.length > 0 && (
-            <div className="text-center mt-8 md:mt-12">
-              <Button variant="outline" className="h-11 md:h-12 px-6 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 font-semibold rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
-                Muat Lebih Banyak Artikel
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-      
-      {/* Newsletter CTA */}
-      <section className="py-12 md:py-16 lg:py-20 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-20" aria-hidden="true" />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-white/5 rounded-full blur-3xl" 
-        />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <motion.div 
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.2 }}
-              className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
-            >
-              <BookOpen className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="fill" />
-            </motion.div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Berlangganan Newsletter Kami
-            </h2>
-            <p className="text-white/70 text-sm md:text-base mb-8 max-w-lg mx-auto">
-              Dapatkan artikel, tips, dan pembaruan terbaru langsung ke inbox Anda.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input
-                placeholder="Masukkan email Anda"
-                className="h-11 md:h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white focus:ring-white rounded-xl flex-1"
-              />
-              <Button className="h-11 md:h-12 px-6 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl shrink-0 btn-hover-lift">
-                Berlangganan
-              </Button>
             </div>
           </motion.div>
         </div>
       </section>
-      
+
+      {/* FILTER + GRID */}
+      <section className="section-padding-md">
+        <div className="container mx-auto px-4">
+          {/* Filter Bar */}
+          <div className="flex gap-2 flex-wrap mb-10">
+            {filters.map(f => (
+              <button
+                key={f} onClick={() => setActiveFilter(f)}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${activeFilter === f ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'}`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeFilter}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {filtered.map((post) => (
+                <motion.article key={post.id} variants={staggerItem} className="group cursor-pointer">
+                  <div className="rounded-2xl overflow-hidden mb-4 aspect-video bg-gradient-to-br from-primary/10 to-muted border border-border group-hover:border-primary transition-colors" />
+                  <span className={`badge ${categoryColor[post.category] || 'badge-secondary'} mb-3`}>{post.category}</span>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">{post.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4 leading-relaxed">{post.excerpt}</p>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span>{post.author}</span><span>·</span>
+                    <span>{post.date}</span><span>·</span>
+                    <span className="flex items-center gap-1"><Clock size={12} />{post.readTime} mnt</span>
+                  </div>
+                </motion.article>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-16 text-muted-foreground">
+              Belum ada artikel dalam kategori ini.
+            </div>
+          )}
+
+          <div className="text-center mt-12">
+            <button className="btn-secondary">Muat Lebih Banyak</button>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

@@ -1,260 +1,150 @@
-/*
- * KAHADE HELP CENTER PAGE - PROFESSIONAL REDESIGN
- * 
- * Design Philosophy:
- * - Clean, modern, and professional aesthetic
- * - Fully responsive for Mobile, Tablet, and Desktop
- * - Brand color: var(--color-black)
- */
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'wouter';
 import {
-  MagnifyingGlass, Question, Book, Wallet, ShieldCheck,
-  User, Gear, ChatCircle, ArrowRight, CaretRight,
-  Headset, Envelope, Clock
+  Rocket, CreditCard, ShieldCheck, Briefcase, User, Code,
+  MagnifyingGlass, ArrowRight, ChatCircle, Ticket, Envelope, Eye
 } from '@phosphor-icons/react';
+import { Link } from 'wouter';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { staggerContainer, staggerItem, fadeInUp, viewport } from '@/lib/animations';
 
 const categories = [
-  { icon: Book, title: 'Memulai', description: 'Pelajari dasar menggunakan Kahade', articles: 12, href: '/help/getting-started' },
-  { icon: Wallet, title: 'Pembayaran & Dompet', description: 'Setoran, penarikan, dan saldo', articles: 15, href: '/help/payments' },
-  { icon: ShieldCheck, title: 'Keamanan & Privasi', description: 'Jaga akun tetap aman', articles: 8, href: '/help/security' },
-  { icon: User, title: 'Akun & Profil', description: 'Kelola pengaturan akun', articles: 10, href: '/help/account' },
-  { icon: Question, title: 'Transaksi & Escrow', description: 'Cara kerja transaksi escrow', articles: 18, href: '/help/transactions' },
-  { icon: Gear, title: 'Pemecahan Masalah', description: 'Masalah umum dan solusinya', articles: 14, href: '/help/troubleshooting' }
+  { icon: Rocket, title: 'Memulai', count: 8, description: 'Panduan dasar untuk pengguna baru.' },
+  { icon: CreditCard, title: 'Pembayaran', count: 12, description: 'Metode pembayaran, deposit, dan pencairan.' },
+  { icon: ShieldCheck, title: 'Keamanan', count: 6, description: 'KYC, 2FA, dan perlindungan akun.' },
+  { icon: Briefcase, title: 'Transaksi', count: 15, description: 'Cara membuat dan mengelola transaksi.' },
+  { icon: User, title: 'Akun', count: 9, description: 'Profil, pengaturan, dan preferensi.' },
+  { icon: Code, title: 'API & Dev', count: 20, description: 'Dokumentasi teknis untuk developer.' },
 ];
 
 const popularArticles = [
-  { title: 'Cara membuat transaksi escrow pertama Anda', category: 'Memulai' },
-  { title: 'Memahami biaya escrow dan harga', category: 'Pembayaran & Dompet' },
-  { title: 'Cara memverifikasi identitas (KYC)', category: 'Akun & Profil' },
-  { title: 'Apa yang dilakukan jika transaksi bermasalah', category: 'Transaksi & Escrow' },
-  { title: 'Cara menarik dana ke bank Anda', category: 'Pembayaran & Dompet' },
-  { title: 'Mengatur autentikasi dua faktor', category: 'Keamanan & Privasi' }
+  { title: 'Cara membuat transaksi pertama Anda', views: '12.4K', category: 'Memulai' },
+  { title: 'Mengapa verifikasi KYC dibutuhkan?', views: '8.9K', category: 'Keamanan' },
+  { title: 'Metode pembayaran yang tersedia', views: '7.2K', category: 'Pembayaran' },
+  { title: 'Cara mengajukan sengketa transaksi', views: '5.6K', category: 'Transaksi' },
+  { title: 'Mengaktifkan autentikasi dua faktor', views: '4.3K', category: 'Keamanan' },
 ];
 
-const contactOptions = [
-  { icon: ChatCircle, title: 'Live Chat', description: 'Chat dengan tim dukungan kami', availability: 'Tersedia 24/7', action: 'Mulai Chat' },
-  { icon: Envelope, title: 'Dukungan Email', description: 'Kirim pesan detail kepada kami', availability: 'Respon dalam 24 jam', action: 'Kirim Email' },
-  { icon: Headset, title: 'Dukungan Telepon', description: 'Bicara dengan agen dukungan', availability: 'Sen-Jum, 09.00-18.00', action: 'Telepon Sekarang' }
-];
+const quickLinks = ['Cara Memulai', 'Transaksi', 'Pembayaran', 'Keamanan'];
 
 export default function Help() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState('');
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-32 lg:pt-40 pb-12 md:pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Pusat Bantuan
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
-              Bagaimana Kami Bisa Membantu?
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-8">
-              Cari di basis pengetahuan kami atau jelajahi kategori untuk menemukan jawaban.
-            </p>
-            
-            {/* Search */}
-            <div className="relative max-w-xl mx-auto">
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
-              <Input
-                placeholder="Cari artikel bantuan..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-12 md:h-14 text-base md:text-lg bg-card border-border focus:border-black focus:ring-black shadow-sm rounded-xl"
+
+      {/* HERO */}
+      <section className="bg-primary text-primary-foreground pt-24 pb-20">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <motion.div variants={staggerContainer} initial="initial" animate="animate">
+            <motion.h1 variants={staggerItem} className="text-4xl md:text-5xl font-bold mb-6">
+              Pusat Bantuan Kahade
+            </motion.h1>
+            <motion.p variants={staggerItem} className="text-primary-foreground/70 mb-8">
+              Temukan jawaban, panduan, dan dukungan yang Anda butuhkan.
+            </motion.p>
+            <motion.div variants={staggerItem} className="relative mb-8">
+              <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text" value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="Cari artikel, panduan, atau FAQ..."
+                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-white/30 shadow-E3"
               />
+            </motion.div>
+            <motion.div variants={staggerItem} className="flex flex-wrap gap-2 justify-center">
+              {quickLinks.map(ql => (
+                <button key={ql} className="px-4 py-1.5 rounded-full border border-white/20 text-sm hover:bg-white/10 transition-colors">
+                  {ql}
+                </button>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CATEGORY GRID */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-12">
+              <h2 className="text-3xl font-bold">Jelajahi Kategori</h2>
+            </motion.div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {categories.map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <motion.div key={cat.title} variants={staggerItem} className="card p-6 group hover:border-primary cursor-pointer transition-all hover:-translate-y-1">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Icon size={24} className="text-primary" weight="duotone" />
+                      </div>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{cat.count} artikel</span>
+                    </div>
+                    <h3 className="font-bold mb-1 group-hover:text-primary transition-colors">{cat.title}</h3>
+                    <p className="text-sm text-muted-foreground">{cat.description}</p>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
       </section>
-      
-      {/* Categories Grid */}
-      <section className="py-12 md:py-16 lg:py-20 bg-muted">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 md:mb-12"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Kategori
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">Jelajahi Berdasarkan Topik</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Temukan jawaban berdasarkan kategori</p>
-          </motion.div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Link href={category.href}>
-                  <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border h-full group cursor-pointer hover:shadow-lg hover:border-neutral-900/20 transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
-                    <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-muted flex items-center justify-center mb-4 group-hover:bg-black group-hover:text-white transition-colors">
-                      <category.icon className="w-5 h-5 md:w-6 md:h-6" weight="bold" />
-                    </div>
-                    <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">
-                      {category.title}
-                    </h3>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-4">
-                      {category.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs md:text-sm text-muted-foreground">
-                        {category.articles} artikel
-                      </span>
-                      <CaretRight className="w-5 h-5 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" weight="bold" />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Popular Articles */}
-      <section className="py-12 md:py-16 lg:py-20">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 md:mb-12"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Populer
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">Artikel Populer</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Artikel bantuan yang paling sering dilihat</p>
-          </motion.div>
-          
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-card rounded-xl md:rounded-2xl border border-border divide-y divide-neutral-200 overflow-hidden">
-              {popularArticles.map((article, index) => (
-                <motion.div
-                  key={article.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="p-4 md:p-5 flex items-center justify-between group cursor-pointer hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-center gap-4 md:gap-4">
-                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                      <Book className="w-4 h-4 md:w-5 md:h-5 text-foreground" aria-hidden="true" weight="regular" />
-                    </div>
+
+      {/* POPULAR ARTICLES */}
+      <section className="section-padding-lg bg-muted/40">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="mb-8">
+              <h2 className="text-2xl font-bold">Artikel Terpopuler</h2>
+            </motion.div>
+            <div className="space-y-3">
+              {popularArticles.map((article, i) => (
+                <motion.div key={i} variants={staggerItem} className="card p-4 flex items-center justify-between group hover:border-primary cursor-pointer transition-colors">
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl font-bold text-muted-foreground/30 w-8 text-center">{i + 1}</span>
                     <div>
-                      <div className="font-semibold text-sm md:text-base text-foreground group-hover:text-muted-foreground transition-colors">
-                        {article.title}
-                      </div>
-                      <div className="text-xs md:text-sm text-muted-foreground">
-                        {article.category}
-                      </div>
+                      <p className="font-medium text-sm group-hover:text-primary transition-colors">{article.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{article.category}</p>
                     </div>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-neutral-900 transition-colors shrink-0" aria-hidden="true" weight="bold" />
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground flex items-center gap-1"><Eye size={12} /> {article.views}</span>
+                    <ArrowRight size={16} className="text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
                 </motion.div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Contact Options */}
-      <section className="py-12 md:py-16 lg:py-20 bg-muted">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 md:mb-12"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Dukungan
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">Masih Butuh Bantuan?</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Tim dukungan kami siap membantu Anda</p>
           </motion.div>
-          
-          <div className="grid sm:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
-            {contactOptions.map((option, index) => (
-              <motion.div
-                key={option.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center hover:shadow-lg transition-shadow"
-              >
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center mx-auto mb-4">
-                  <option.icon className="w-6 h-6 md:w-7 md:h-7 text-foreground" weight="bold" />
-                </div>
-                <h3 className="font-bold text-base md:text-lg mb-2 text-foreground">{option.title}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground mb-2">{option.description}</p>
-                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-4">
-                  <Clock className="w-3 h-3" aria-hidden="true" weight="regular" />
-                  {option.availability}
-                </div>
-                <Button className="w-full h-10 md:h-11 bg-black text-white hover:bg-black/90 font-semibold rounded-xl">
-                  {option.action}
-                </Button>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
-      
-      {/* FAQ Link */}
-      <section className="py-12 md:py-16 lg:py-20 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-20" aria-hidden="true" />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6">
-              <Question className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" />
+
+      {/* CONTACT SUPPORT CTA */}
+      <section className="section-padding-md">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={viewport}>
+            <h2 className="text-2xl font-bold mb-3">Tidak menemukan jawaban?</h2>
+            <p className="text-muted-foreground mb-8">Tim dukungan kami siap membantu Anda.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="btn-primary">
+                <ChatCircle size={18} /> Chat Live
+              </button>
+              <Link href="/support">
+                <button className="btn-secondary">
+                  <Ticket size={18} /> Kirim Tiket
+                </button>
+              </Link>
+              <a href="mailto:halo@kahade.id">
+                <button className="btn-secondary">
+                  <Envelope size={18} /> Email
+                </button>
+              </a>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Butuh Jawaban Cepat?
-            </h2>
-            <p className="text-white/70 text-sm md:text-base mb-8">
-              Lihat pertanyaan yang sering diajukan untuk jawaban instan.
-            </p>
-            <Link href="/faq" className="block block">
-              <Button className="h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl">
-                Lihat FAQ
-                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-              </Button>
-            </Link>
           </motion.div>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );

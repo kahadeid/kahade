@@ -19,6 +19,35 @@ interface InviteTransaction {
   };
 }
 
+
+// FIX (v3.3): InviteSkeletonLoader — direferensikan tapi tidak pernah didefinisikan
+function InviteSkeletonLoader() {
+  return (
+    <div className="min-h-screen bg-muted flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-4 animate-pulse">
+        <div className="h-8 bg-neutral-200 rounded-xl w-3/4 mx-auto" />
+        <div className="h-4 bg-neutral-200 rounded-lg w-1/2 mx-auto" />
+        <div className="h-48 bg-neutral-200 rounded-2xl" />
+        <div className="h-12 bg-neutral-200 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+
+// FIX (v3.3): declineInvite function — direferensikan tapi tidak pernah didefinisikan
+async function declineInvite(token: string): Promise<void> {
+  try {
+    await fetch(`/api/v1/invitations/${token}/decline`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (err) {
+    console.error('Failed to decline invite:', err);
+    throw err;
+  }
+}
+
 export default function AcceptTransactionInvite() {
   const { token } = useParams<{ token: string }>();
   const [, setLocation] = useLocation();

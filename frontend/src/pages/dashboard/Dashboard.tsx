@@ -1,458 +1,177 @@
-/*
- * KAHADE USER DASHBOARD - Clean Professional Design
- * 
- * Layout Structure (Mobile-First):
- * 1. Header: Logo (left), Support/Notification/Message icons (right)
- * 2. Greeting: "Hai, User! Selamat Sore!" with large friendly text
- * 3. Balance Card: Total Saldo with eye toggle (NO Topup/Withdraw buttons here)
- * 4. Statistics: Transaction stats in clean cards
- * 5. Promo Banner: Promotional content
- * 6. Recent Transactions: Latest orders
- * 
- * Design Notes:
- * - Background: var(--color-white) (white)
- * - No Create/New Order on home (already in navigation)
- * - No Topup/Withdraw on home (moved to Wallet page)
- * - No Notifications section (has dedicated page)
- * - Clean, minimal, professional design
- */
-
-import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'wouter';
 import { motion } from 'framer-motion';
 import {
-  Wallet, Clock, CheckCircle, Warning, ArrowRight, Spinner,
-  Receipt, Eye, EyeSlash, Star, CaretRight, Package, 
-  ArrowDownRight, ArrowUpRight, ChartLineUp, TrendUp,
-  Headset, Bell, ChatCircle
+  Wallet, ArrowsClockwise, CheckCircle, Star,
+  Plus, ArrowDown, ArrowUp, FileText, ArrowRight,
+  TrendUp, TrendDown, Clock, ShieldCheck
 } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
-import { walletApi, transactionApi, userApi } from '@/lib/api';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { Link } from 'wouter';
+import { staggerContainer, staggerItem, viewport } from '@/lib/animations';
 
-interface WalletBalance {
-  available: number;
-  locked: number;
-  total: number;
-  currency: string;
-}
+const metrics = [
+  { icon: Wallet, label: 'Saldo Dompet', value: 'Rp 2.500.000', delta: '+Rp 500K', positive: true },
+  { icon: ArrowsClockwise, label: 'Transaksi Aktif', value: '3', delta: 'Dalam proses', positive: null },
+  { icon: CheckCircle, label: 'Selesai', value: '47', delta: '+5 bulan ini', positive: true },
+  { icon: Star, label: 'Reward Poin', value: '1.250', delta: 'Level: Gold', positive: null },
+];
 
-interface Transaction {
-  id: string;
-  orderNumber: string;
-  title: string;
-  amount: number;
-  status: string;
-  initiatorRole: string;
-  counterparty?: { username: string };
-  createdAt: string;
-  category?: string;
-  deliveryProof?: { id: string }; // Used to determine DELIVERED virtual status
-}
+const recentTransactions = [
+  { id: 'KHD-2451', title: 'Laptop ASUS ROG', amount: 'Rp 5.200.000', status: 'active', label: 'Aktif', party: '@seller_081' },
+  { id: 'KHD-2449', title: 'Jasa Logo Design', amount: 'Rp 800.000', status: 'completed', label: 'Selesai', party: '@jasa_design' },
+  { id: 'KHD-2447', title: 'iPhone 15 Pro', amount: 'Rp 12.000.000', status: 'pending', label: 'Menunggu', party: '@iphone_store' },
+];
 
-interface UserStats {
-  totalTransactions: number;
-  completedTransactions: number;
-  totalVolume: number;
-  rating: number;
-  ratingCount: number;
-  kycStatus: string;
-  memberSince: string;
-}
+const activities = [
+  { text: 'Dana masuk Rp 2.5M dari #KHD-2449', time: '2 jam lalu', icon: TrendUp, color: 'text-green-600' },
+  { text: 'Transaksi #KHD-2451 dikonfirmasi', time: '5 jam lalu', icon: CheckCircle, color: 'text-blue-600' },
+  { text: 'KYC Anda telah disetujui', time: 'Kemarin', icon: ShieldCheck, color: 'text-primary' },
+  { text: 'Reward 50 pts dari transaksi selesai', time: 'Kemarin', icon: Star, color: 'text-yellow-500' },
+];
 
-const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  WAITING_COUNTERPARTY: { label: 'Menunggu', color: 'text-amber-600', bgColor: 'bg-amber-50', icon: Clock },
-  PENDING_ACCEPT: { label: 'Pending', color: 'text-amber-600', bgColor: 'bg-amber-50', icon: Clock },
-  ACCEPTED: { label: 'Diterima', color: 'text-blue-600', bgColor: 'bg-blue-50', icon: CheckCircle },
-  PAID: { label: 'Dibayar', color: 'text-emerald-600', bgColor: 'bg-emerald-50', icon: CheckCircle },
-  DELIVERED: { label: 'Dikirim', color: 'text-indigo-600', bgColor: 'bg-indigo-50', icon: Package },
-  COMPLETED: { label: 'Selesai', color: 'text-emerald-600', bgColor: 'bg-emerald-50', icon: CheckCircle },
-  DISPUTED: { label: 'Sengketa', color: 'text-red-600', bgColor: 'bg-red-50', icon: Warning },
-  CANCELLED: { label: 'Dibatalkan', color: 'text-gray-600', bgColor: 'bg-gray-50', icon: Warning },
-  REFUNDED: { label: 'Dikembalikan', color: 'text-orange-600', bgColor: 'bg-orange-50', icon: ArrowDownRight },
+const quickActions = [
+  { label: 'Transaksi Baru', icon: Plus, href: '/transactions/new', primary: true },
+  { label: 'Deposit', icon: ArrowDown, href: '/deposit', primary: false },
+  { label: 'Tarik Dana', icon: ArrowUp, href: '/wallet', primary: false },
+  { label: 'Laporan', icon: FileText, href: '/activity', primary: false },
+];
+
+const statusStyles: Record<string, string> = {
+  active: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  completed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  dispute: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 };
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function formatTimeAgo(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return 'Baru saja';
-  if (diffMins < 60) return `${diffMins} menit lalu`;
-  if (diffHours < 24) return `${diffHours} jam lalu`;
-  if (diffDays < 7) return `${diffDays} hari lalu`;
-  return date.toLocaleDateString('id-ID');
-}
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Selamat Pagi';
-  if (hour < 15) return 'Selamat Siang';
-  if (hour < 18) return 'Selamat Sore';
-  return 'Selamat Malam';
-}
+const now = new Date();
+const hour = now.getHours();
+const greeting = hour < 12 ? 'pagi' : hour < 17 ? 'siang' : 'malam';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [balance, setBalance] = useState<WalletBalance | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showBalance, setShowBalance] = useState(true);
-
-  // Calculate stats from transactions
-  const stats = useMemo(() => {
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const txList = Array.isArray(transactions) ? transactions : [];
-    
-    const thisMonthTx = txList.filter(t => new Date(t.createdAt) >= monthStart);
-    const inProgress = txList.filter(t => 
-      ['PENDING_ACCEPT', 'ACCEPTED', 'PAID', 'DELIVERED', 'WAITING_COUNTERPARTY'].includes(t.status)
-    ).length;
-    const completedThisMonth = thisMonthTx.filter(t => t.status === 'COMPLETED').length;
-    const volumeThisMonth = thisMonthTx.reduce((sum, t) => sum + (t.amount || 0), 0);
-
-    return {
-      total: txList.length,
-      inProgress,
-      completedThisMonth,
-      volumeThisMonth,
-    };
-  }, [transactions]);
-
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const [balanceRes, transactionsRes, statsRes] = await Promise.all([
-          walletApi.getBalance().catch(() => ({ data: null })),
-          transactionApi.list({ limit: 10 }).catch(() => ({ data: { data: [] } })),
-          userApi.getStats().catch(() => ({ data: null })),
-        ]);
-
-        setBalance(balanceRes.data);
-        
-        const txData = transactionsRes.data.data || transactionsRes.data.transactions || transactionsRes.data;
-        setTransactions(Array.isArray(txData) ? txData : []);
-
-        if (statsRes.data) {
-          setUserStats(statsRes.data);
-        }
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
-            <p className="text-neutral-600">Memuat dashboard...</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
+  const userName = user?.name || user?.fullName || 'Pengguna';
   return (
     <DashboardLayout>
-      <div className="bg-white min-h-screen">
-        {/* ========== MOBILE HEADER ========== */}
-        <div className="md:hidden sticky top-0 z-40 bg-white border-b border-neutral-100">
-          <div className="flex items-center justify-between px-4 h-14">
-            {/* Logo */}
-            <Link href="/">
-              <img 
-                src="/images/logo.svg" 
-                alt="Kahade" 
-                className="h-7 w-auto"
-              />
-            </Link>
-            
-            {/* Right Icons */}
-            <div className="flex items-center gap-1">
-              <Link href="/help">
-                <button className="p-2.5 rounded-xl hover:bg-neutral-100 transition-colors">
-                  <Headset className="w-6 h-6 text-black" aria-hidden="true" weight="regular" />
-                </button>
-              </Link>
-              <Link href="/notifications">
-                <button className="relative p-2.5 rounded-xl hover:bg-neutral-100 transition-colors">
-                  <Bell className="w-6 h-6 text-black" aria-hidden="true" weight="regular" />
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
-                </button>
-              </Link>
-              <Link href="/messages">
-                <button className="p-2.5 rounded-xl hover:bg-neutral-100 transition-colors">
-                  <ChatCircle className="w-6 h-6 text-black" aria-hidden="true" weight="regular" />
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="px-4 md:px-6 lg:px-8 py-4 md:py-6 space-y-5">
-          {/* ========== GREETING SECTION ========== */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="pt-2"
-          >
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-              Hai, {user?.username || 'User'}!
-            </h1>
-            <p className="text-lg md:text-xl text-foreground mt-1">
-              {getGreeting()} 👋
+    <div className="p-6 max-w-6xl mx-auto">
+      <motion.div variants={staggerContainer} initial="initial" animate="animate">
+        {/* Header */}
+        <motion.div variants={staggerItem} className="flex items-start justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold">Selamat {greeting}, {userName}! 👋</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              {now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
-          </motion.div>
+          </div>
+          <Link href="/transactions/new">
+            <button className="btn-primary">
+              <Plus size={18} /> Transaksi Baru
+            </button>
+          </Link>
+        </motion.div>
 
-          {/* ========== BALANCE CARD ========== */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="bg-white rounded-2xl p-4 border border-neutral-200"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                <span className="text-sm font-medium text-neutral-600">Total Saldo</span>
+        {/* Metric Cards */}
+        <motion.div variants={staggerItem} className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {metrics.map((m) => {
+            const Icon = m.icon;
+            return (
+              <div key={m.label} className="card p-5 hover:shadow-E3 transition-shadow duration-200">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Icon size={20} className="text-primary" weight="duotone" />
+                  </div>
+                  {m.positive !== null && (
+                    <span className={`text-xs font-semibold flex items-center gap-0.5 ${m.positive ? 'text-green-600' : 'text-red-600'}`}>
+                      {m.positive ? <TrendUp size={12} /> : <TrendDown size={12} />}
+                      {m.delta}
+                    </span>
+                  )}
+                </div>
+                <p className="text-2xl font-black tracking-tight">{m.value}</p>
+                <p className="text-sm text-muted-foreground mt-1">{m.label}</p>
+                {m.positive === null && <p className="text-xs text-muted-foreground">{m.delta}</p>}
               </div>
-              <button 
-                onClick={() => setShowBalance(!showBalance)}
-                className="p-1.5 hover:bg-neutral-200 rounded-lg transition-colors"
-              >
-                {showBalance ? (
-                  <Eye className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                ) : (
-                  <EyeSlash className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                )}
-              </button>
-            </div>
-            
-            <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-              {showBalance ? formatCurrency(balance?.available || 0) : 'Rp ••••••••'}
-            </div>
-            
-            {balance?.locked && balance.locked > 0 && (
-              <div className="flex items-center gap-2 mt-2 text-sm text-neutral-600">
-                <Clock className="w-4 h-4" aria-hidden="true" weight="regular" />
-                <span>{formatCurrency(balance.locked)} dalam escrow</span>
-              </div>
-            )}
+            );
+          })}
+        </motion.div>
 
-            {/* Quick link to wallet */}
-            <Link href="/wallet">
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-200 hover:bg-neutral-100 -mx-5 px-5 py-2 transition-colors cursor-pointer">
-                <span className="text-sm font-medium text-foreground">Kelola Saldo</span>
-                <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" />
-              </div>
-            </Link>
-          </motion.div>
-
-          {/* ========== STATISTICS CARDS ========== */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-base font-semibold text-foreground">Statistik</h2>
-              <Link href="/activity">
-                <span className="text-sm text-neutral-600 hover:text-foreground transition-colors">
-                  Lihat Semua
-                </span>
+        {/* Main Grid */}
+        <motion.div variants={staggerItem} className="grid lg:grid-cols-[1fr_380px] gap-6 mb-6">
+          {/* Recent Transactions */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-bold">Transaksi Terbaru</h2>
+              <Link href="/transactions" className="text-sm text-primary hover:underline flex items-center gap-1">
+                Lihat semua <ArrowRight size={14} />
               </Link>
             </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {/* Total Transaksi */}
-              <div className="bg-white rounded-xl p-4 border border-neutral-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Receipt className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                </div>
-                <div className="text-2xl font-bold text-foreground">{stats.total}</div>
-                <div className="text-xs text-neutral-600 mt-1">Total Transaksi</div>
-              </div>
-
-              {/* Sedang Berjalan */}
-              <div className="bg-white rounded-xl p-4 border border-neutral-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                </div>
-                <div className="text-2xl font-bold text-foreground">{stats.inProgress}</div>
-                <div className="text-xs text-neutral-600 mt-1">Sedang Berjalan</div>
-              </div>
-
-              {/* Selesai Bulan Ini */}
-              <div className="bg-white rounded-xl p-4 border border-neutral-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                </div>
-                <div className="text-2xl font-bold text-foreground">{stats.completedThisMonth}</div>
-                <div className="text-xs text-neutral-600 mt-1">Selesai Bulan Ini</div>
-              </div>
-
-              {/* Rating */}
-              <div className="bg-white rounded-xl p-4 border border-neutral-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Star className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-                </div>
-                <div className="text-2xl font-bold text-foreground flex items-center gap-1">
-                  {userStats?.rating?.toFixed(1) || '5.0'}
-                  <span className="text-sm font-normal text-neutral-600">
-                    ({userStats?.ratingCount || 0})
-                  </span>
-                </div>
-                <div className="text-xs text-neutral-600 mt-1">Rating</div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* ========== PROMO BANNER ========== */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
-            <Link href="/referrals">
-              <div className="bg-gradient-to-r from-[#0A0A0A] to-[#333333] rounded-2xl p-4 text-white relative overflow-hidden cursor-pointer hover:opacity-95 transition-opacity">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-5" aria-hidden="true">
-                  <div className="absolute inset-0" aria-hidden="true" style={{
-                    backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-                    backgroundSize: '20px 20px'
-                  }} />
-                </div>
-                
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-lg font-bold mb-1">Undang Teman, Dapat Bonus!</h3>
-                      <p className="text-sm text-white/70 mb-3">
-                        Dapatkan Rp 10.000 + 25% komisi untuk setiap teman yang bergabung
-                      </p>
-                      <div className="inline-flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5 text-sm font-medium">
-                        <TrendUp className="w-4 h-4" aria-hidden="true" weight="bold" />
-                        Mulai Undang
+            <div className="space-y-3">
+              {recentTransactions.map((tx) => (
+                <Link key={tx.id} href={`/transactions/${tx.id}`}>
+                  <div className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                        {tx.id.slice(-3)}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm group-hover:text-primary transition-colors">{tx.title}</p>
+                        <p className="text-xs text-muted-foreground">#{tx.id} · {tx.party}</p>
                       </div>
                     </div>
-                    <CaretRight className="w-6 h-6 text-white/50" aria-hidden="true" weight="bold" />
+                    <div className="text-right">
+                      <p className="font-semibold text-sm">{tx.amount}</p>
+                      <span className={`text-[0.625rem] font-semibold px-2 py-0.5 rounded-full ${statusStyles[tx.status]}`}>{tx.label}</span>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Link>
-          </motion.div>
-
-          {/* ========== RECENT TRANSACTIONS ========== */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-base font-semibold text-foreground">Transaksi Terbaru</h2>
-              <Link href="/transactions">
-                <span className="text-sm text-neutral-600 hover:text-foreground transition-colors flex items-center gap-1">
-                  Lihat Semua
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" weight="regular" />
-                </span>
-              </Link>
+                </Link>
+              ))}
             </div>
-            
-            <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-              {transactions.length === 0 ? (
-                <div className="text-center py-10 px-4">
-                  <div className="w-14 h-14 rounded-2xl bg-neutral-200 flex items-center justify-center mx-auto mb-4">
-                    <Receipt className="w-7 h-7 text-neutral-500" aria-hidden="true" weight="regular" />
+          </div>
+
+          {/* Activity Feed */}
+          <div className="card p-6">
+            <h2 className="font-bold mb-5">Aktivitas Terkini</h2>
+            <div className="space-y-4">
+              {activities.map((act, i) => {
+                const Icon = act.icon;
+                return (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                      <Icon size={16} className={act.color} />
+                    </div>
+                    <div>
+                      <p className="text-sm leading-snug">{act.text}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                        <Clock size={10} />{act.time}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-1">Belum ada transaksi</h3>
-                  <p className="text-sm text-neutral-600 mb-4">
-                    Mulai transaksi pertama Anda dengan aman
-                  </p>
-                  <Link href="/transactions/new">
-                    <Button className="bg-black text-white hover:bg-black/90 rounded-xl">
-                      Buat Transaksi
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <div>
-                  {transactions.slice(0, 5).map((tx, index) => {
-                    // Determine effective status - DELIVERED is virtual when PAID + has deliveryProof
-                    const effectiveStatus = tx.status === 'PAID' && tx.deliveryProof ? 'DELIVERED' : tx.status;
-                    const status = statusConfig[effectiveStatus] || statusConfig.PENDING_ACCEPT;
-                    const isBuyer = tx.initiatorRole === 'BUYER';
-                    const isLast = index === Math.min(transactions.length - 1, 4);
-                    
-                    return (
-                      <Link key={tx.id} href={`/transactions/${tx.id}`}>
-                        <motion.div 
-                          whileTap={{ scale: 0.99 }}
-                          className={`flex items-center gap-4 p-4 bg-white hover:bg-neutral-50 transition-colors cursor-pointer ${!isLast ? 'border-b border-neutral-200' : ''}`}
-                        >
-                          {/* Status Icon */}
-                          <div className={`w-10 h-10 rounded-xl ${status.bgColor} flex items-center justify-center shrink-0`}>
-                            <status.icon className={`w-5 h-5 ${status.color}`} weight="fill" />
-                          </div>
-                          
-                          {/* Details */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-foreground text-sm truncate">{tx.title}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-neutral-600 mt-0.5">
-                              <span>{isBuyer ? 'Beli dari' : 'Jual ke'} {tx.counterparty?.username || 'Unknown'}</span>
-                              <span>•</span>
-                              <span>{formatTimeAgo(tx.createdAt)}</span>
-                            </div>
-                          </div>
-                          
-                          {/* Amount & Status */}
-                          <div className="text-right shrink-0">
-                            <div className={`font-semibold text-sm ${isBuyer ? 'text-red-600' : 'text-emerald-600'}`}>
-                              {isBuyer ? '-' : '+'}{formatCurrency(tx.amount)}
-                            </div>
-                            <Badge className={`${status.bgColor} ${status.color} border-0 text-[10px] mt-1`}>
-                              {status.label}
-                            </Badge>
-                          </div>
-                          
-                          {/* Arrow */}
-                          <CaretRight className="w-4 h-4 text-neutral-300 shrink-0" aria-hidden="true" weight="regular" />
-                        </motion.div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
+                );
+              })}
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
-          {/* Bottom spacing for mobile navigation */}
-          <div className="h-20 md:hidden" />
-        </div>
-      </div>
+        {/* Quick Actions */}
+        <motion.div variants={staggerItem}>
+          <h2 className="font-bold mb-4">Aksi Cepat</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {quickActions.map((qa) => {
+              const Icon = qa.icon;
+              return (
+                <Link key={qa.label} href={qa.href}>
+                  <div className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all hover:-translate-y-0.5 ${qa.primary ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' : 'bg-background border-border hover:border-primary hover:shadow-E2'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${qa.primary ? 'bg-white/20' : 'bg-muted'}`}>
+                      <Icon size={20} className={qa.primary ? 'text-white' : 'text-primary'} weight="duotone" />
+                    </div>
+                    <span className="text-sm font-semibold">{qa.label}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
     </DashboardLayout>
   );
 }

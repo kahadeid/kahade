@@ -1,321 +1,173 @@
-/*
- * KAHADE FAQ PAGE - CLICKUP-INSPIRED REDESIGN
- * 
- * Design Philosophy:
- * - ClickUp-style smooth animations and micro-interactions
- * - Enhanced accordion with hover effects
- * - Improved search and category filtering
- * - Brand color: var(--color-black)
- */
-
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { CaretDown, MagnifyingGlass, ArrowRight } from '@phosphor-icons/react';
 import { Link } from 'wouter';
-import {
-  Question, CaretDown, MagnifyingGlass, ChatCircle,
-  ArrowRight, Lightbulb, ShieldCheck, CreditCard, 
-  UserCircle, Wallet, Gear
-} from '@phosphor-icons/react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { fadeInUp, viewport } from '@/lib/animations';
 
-const faqCategories = [
-  { id: 'general', name: 'Umum', icon: Question },
-  { id: 'transactions', name: 'Transaksi', icon: Wallet },
-  { id: 'payments', name: 'Pembayaran', icon: CreditCard },
-  { id: 'security', name: 'Keamanan', icon: ShieldCheck },
-  { id: 'account', name: 'Akun', icon: UserCircle },
-];
+const faqData: Record<string, { q: string; a: string }[]> = {
+  Umum: [
+    { q: 'Apa itu Kahade?', a: 'Kahade adalah platform escrow digital yang mengamankan transaksi online antara pembeli dan penjual. Dana pembeli ditahan oleh Kahade hingga kedua pihak puas dengan transaksi, baru kemudian dana dicairkan ke penjual.' },
+    { q: 'Siapa yang bisa menggunakan Kahade?', a: 'Siapapun yang ingin bertransaksi online dengan aman. Baik individual, UMKM, maupun perusahaan besar. Daftar gratis hanya butuh beberapa menit.' },
+    { q: 'Apakah Kahade terdaftar secara resmi?', a: 'Ya. Kahade beroperasi di bawah PT Kawal Hak Dengan Aman yang terdaftar resmi di Indonesia. Kami mematuhi regulasi OJK dan Bank Indonesia.' },
+  ],
+  Transaksi: [
+    { q: 'Bagaimana cara membuat transaksi?', a: 'Masuk ke dashboard, klik "Transaksi Baru", masukkan detail transaksi dan undang pihak lain melalui email atau link. Pihak lain akan menerima undangan dan bisa bergabung.' },
+    { q: 'Berapa lama proses pencairan dana?', a: 'Setelah pembeli mengkonfirmasi penerimaan barang/jasa, dana akan dicairkan ke penjual dalam waktu kurang dari 12 jam pada hari kerja.' },
+    { q: 'Apa yang terjadi jika ada sengketa?', a: 'Jika ada perselisihan, Anda bisa membuka sengketa dari halaman detail transaksi. Tim mediasi Kahade akan meninjau bukti dari kedua pihak dan memberikan keputusan dalam 3-5 hari kerja.' },
+    { q: 'Bisakah transaksi dibatalkan?', a: 'Transaksi bisa dibatalkan jika belum ada pembayaran atau jika kedua pihak setuju untuk membatalkan. Dana akan dikembalikan ke pembeli dalam 1-3 hari kerja.' },
+  ],
+  Pembayaran: [
+    { q: 'Metode pembayaran apa yang tersedia?', a: 'Kami mendukung transfer bank (semua bank di Indonesia melalui virtual account), QRIS, dan beberapa e-wallet. Metode pembayaran terus kami tambah.' },
+    { q: 'Berapa biaya platform Kahade?', a: 'Biaya platform adalah 2.5% dari nilai transaksi, ditanggung oleh penjual. Tidak ada biaya tersembunyi. Gunakan kalkulator di halaman Harga untuk estimasi.' },
+    { q: 'Apakah dana saya aman di Kahade?', a: 'Dana pengguna disimpan di rekening terpisah (escrow) yang tidak bercampur dengan dana operasional perusahaan. Rekening ini diaudit secara berkala.' },
+  ],
+  Keamanan: [
+    { q: 'Bagaimana Kahade melindungi data saya?', a: 'Kami menggunakan enkripsi SSL 256-bit untuk semua data yang ditransmisikan, dan AES-256 untuk data yang disimpan. Infrastruktur kami di-audit secara berkala oleh pihak ketiga independen.' },
+    { q: 'Apa itu verifikasi KYC?', a: 'KYC (Know Your Customer) adalah proses verifikasi identitas untuk memastikan keamanan semua pengguna. Caranya mudah: upload foto KTP dan selfie, proses otomatis dalam beberapa menit.' },
+    { q: 'Apakah ada autentikasi dua faktor?', a: 'Ya, kami sangat menyarankan mengaktifkan 2FA melalui aplikasi authenticator (Google Authenticator, Authy). Aktifkan di Pengaturan → Keamanan.' },
+  ],
+  Akun: [
+    { q: 'Bagaimana cara mendaftar?', a: 'Klik "Daftar Gratis" di halaman utama, masukkan email dan password, verifikasi email, lalu lengkapi profil Anda. Seluruh proses hanya 5 menit.' },
+    { q: 'Lupa password, apa yang harus dilakukan?', a: 'Klik "Lupa Password" di halaman login, masukkan email Anda, dan kami akan mengirimkan link reset password. Link berlaku selama 1 jam.' },
+    { q: 'Bisakah saya memiliki beberapa akun?', a: 'Satu akun per identitas (KTP). Jika Anda memiliki kebutuhan bisnis yang berbeda, hubungi tim kami untuk solusi enterprise.' },
+  ],
+};
 
-const faqs = [
-  {
-    category: 'general',
-    question: 'Apa itu Kahade?',
-    answer: 'Kahade adalah platform escrow peer-to-peer yang aman untuk melindungi pembeli dan penjual dalam transaksi online. Kami menahan dana dengan aman hingga kedua pihak memenuhi kewajibannya, sehingga transaksi berlangsung tepercaya.'
-  },
-  {
-    category: 'general',
-    question: 'Bagaimana cara kerja escrow?',
-    answer: 'Escrow bekerja dalam tiga langkah sederhana: 1) Pembeli menyetor dana ke Kahade, 2) Penjual mengirim barang atau layanan, 3) Setelah pembeli mengonfirmasi kepuasan, kami melepaskan dana ke penjual. Ini melindungi kedua pihak dari penipuan.'
-  },
-  {
-    category: 'general',
-    question: 'Apakah Kahade aman digunakan?',
-    answer: 'Ya, Kahade menerapkan keamanan setara bank termasuk enkripsi SSL 256-bit, autentikasi dua faktor, dan penyimpanan dana yang aman. Uang Anda terlindungi sepanjang proses transaksi.'
-  },
-  {
-    category: 'transactions',
-    question: 'Bagaimana cara membuat transaksi?',
-    answer: 'Untuk membuat transaksi, masuk ke dashboard, klik "Transaksi Baru", masukkan detail (nominal, deskripsi, pihak lawan), lalu kirim. Anda dapat membagikan tautan transaksi ke pihak lain.'
-  },
-  {
-    category: 'transactions',
-    question: 'Apa yang terjadi jika ada sengketa?',
-    answer: 'Jika terjadi sengketa, salah satu pihak dapat membuka kasus sengketa. Tim kami akan meninjau bukti dari kedua pihak dan mengambil keputusan yang adil. Kami menargetkan penyelesaian dalam 3-5 hari kerja.'
-  },
-  {
-    category: 'transactions',
-    question: 'Berapa lama transaksi berlangsung?',
-    answer: 'Durasi transaksi bergantung pada kesepakatan kedua pihak. Biasanya, setelah pembeli mengonfirmasi penerimaan, dana dilepas ke penjual dalam 24 jam. Periode escrow dapat disesuaikan 1-30 hari.'
-  },
-  {
-    category: 'payments',
-    question: 'Metode pembayaran apa yang diterima?',
-    answer: 'Kami menerima transfer bank, kartu kredit/debit, serta metode pembayaran digital termasuk e-wallet dan QRIS. Pilihan dapat berbeda di setiap wilayah. Semua pembayaran diproses secara aman melalui platform kami.'
-  },
-  {
-    category: 'payments',
-    question: 'Berapa biaya layanan Kahade?',
-    answer: 'Kahade mengenakan biaya platform sebesar 2.5% dari nilai transaksi, dengan biaya minimum Rp 2.500 dan maksimum Rp 250.000 per transaksi. Biaya ini untuk memastikan keamanan dan kelancaran transaksi Anda.'
-  },
-  {
-    category: 'payments',
-    question: 'Bagaimana cara menarik dana?',
-    answer: 'Masuk ke Dompet, klik "Tarik Dana", masukkan nominal dan detail bank, lalu konfirmasi. Penarikan biasanya diproses dalam 1-3 hari kerja tergantung bank Anda.'
-  },
-  {
-    category: 'security',
-    question: 'Bagaimana Anda melindungi data saya?',
-    answer: 'Kami menggunakan enkripsi standar industri, server aman, dan kontrol akses yang ketat. Data pribadi dan finansial Anda tidak pernah dibagikan tanpa persetujuan. Kami mematuhi regulasi perlindungan data internasional.'
-  },
-  {
-    category: 'security',
-    question: 'Apa itu autentikasi dua faktor?',
-    answer: 'Autentikasi dua faktor (2FA) menambahkan lapisan keamanan ekstra dengan meminta kode verifikasi dari ponsel selain kata sandi. Kami sangat menyarankan mengaktifkan 2FA di pengaturan akun.'
-  },
-  {
-    category: 'account',
-    question: 'Bagaimana cara memverifikasi akun?',
-    answer: 'Verifikasi akun (KYC) memerlukan pengiriman identitas resmi dan bukti alamat. Ini membantu mencegah penipuan dan memenuhi regulasi. Verifikasi biasanya selesai dalam 24-48 jam.'
-  },
-  {
-    category: 'account',
-    question: 'Bisakah saya memiliki beberapa akun?',
-    answer: 'Tidak, setiap pengguna hanya diperbolehkan satu akun. Beberapa akun dapat menyebabkan penangguhan. Jika Anda memerlukan akun terpisah untuk bisnis, hubungi tim dukungan kami.'
-  },
-  {
-    category: 'account',
-    question: 'Bagaimana cara menghapus akun?',
-    answer: 'Untuk menghapus akun, pastikan semua transaksi selesai dan saldo nol. Lalu buka Pengaturan > Akun > Hapus Akun. Tindakan ini tidak dapat dibatalkan dan semua data akan dihapus permanen.'
-  }
-];
+const categories = Object.keys(faqData);
 
 export default function FAQ() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('general');
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [activeCategory, setActiveCategory] = useState('Umum');
+  const [openItem, setOpenItem] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  const filteredFaqs = faqs.filter(faq => {
-    const matchesSearch = searchQuery === '' ||
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  let searchTimer: ReturnType<typeof setTimeout>;
+  const handleSearch = (val: string) => {
+    setSearch(val);
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => setDebouncedSearch(val), 300);
+  };
+
+  const filteredItems = useMemo(() => {
+    if (!debouncedSearch) return faqData[activeCategory] || [];
+    const q = debouncedSearch.toLowerCase();
+    return Object.values(faqData).flat().filter(
+      item => item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q)
+    );
+  }, [activeCategory, debouncedSearch]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-32 lg:pt-40 pb-12 md:pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-gray-100 rounded-full blur-3xl" 
-        />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
-            >
-              FAQ
-            </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
-              Pertanyaan yang Sering Diajukan
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-8">
-              Temukan jawaban cepat untuk pertanyaan umum tentang Kahade.
-            </p>
-            
-            {/* Search */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="relative max-w-xl mx-auto w-full"
-            >
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
-              <Input
+
+      {/* HERO */}
+      <section className="bg-muted/50 pt-24 pb-12 border-b">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <motion.div variants={fadeInUp} initial="initial" animate="animate">
+            <span className="badge badge-secondary mb-4">FAQ</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">Pertanyaan yang Sering Ditanyakan</h1>
+            <div className="relative">
+              <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text" value={search} onChange={e => handleSearch(e.target.value)}
                 placeholder="Cari pertanyaan..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 h-12 md:h-14 text-base bg-card border-border focus:border-black focus:ring-black rounded-xl shadow-sm"
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm"
               />
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-      
-      {/* Category Tabs */}
-      <section className="py-4 md:py-6 border-b border-border sticky top-0 bg-background/95 backdrop-blur z-10">
-        <div className="container">
-          <div className="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap md:justify-center gap-2 scrollbar-hide">
-            {faqCategories.map((category) => (
-              <motion.button
-                key={category.id}
-                onClick={() => { setSelectedCategory(category.id); setOpenIndex(null); }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-2 px-4 py-2 md:py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
-                  selectedCategory === category.id
-                    ? 'bg-black text-white'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
-                <category.icon className="w-4 h-4" weight={selectedCategory === category.id ? 'fill' : 'bold'} />
-                {category.name}
-              </motion.button>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* FAQ Accordion */}
-      <section className="py-12 md:py-16 lg:py-20 bg-muted">
-        <div className="container">
-          <div className="max-w-3xl mx-auto space-y-3 md:space-y-4">
-            {filteredFaqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, duration: 0.4 }}
-                whileHover={{ y: -4 }}
-                className="bg-card rounded-xl md:rounded-2xl border border-border overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-              >
-                <button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full p-4 md:p-6 flex items-center justify-between text-left hover:bg-muted transition-colors"
-                >
-                  <span className="font-semibold pr-4 text-foreground text-sm md:text-base">{faq.question}</span>
-                  <motion.div 
-                    animate={{ rotate: openIndex === index ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 transition-all ${
-                      openIndex === index ? 'bg-black' : 'bg-muted'
-                    }`}
-                  >
-                    <CaretDown 
-                      className={`w-4 h-4 md:w-5 md:h-5 ${
-                        openIndex === index ? 'text-white' : 'text-foreground'
-                      }`} 
-                      weight="bold" 
-                    />
-                  </motion.div>
-                </button>
-                <AnimatePresence>
-                  {openIndex === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-4 md:px-6 pb-4 md:pb-6 text-muted-foreground text-sm md:text-base leading-relaxed">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-            
-            {filteredFaqs.length === 0 && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-                className="text-center py-12 md:py-16"
-              >
-                <motion.div 
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4"
-                >
-                  <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" aria-hidden="true" weight="regular" />
-                </motion.div>
-                <h3 className="font-bold text-lg md:text-xl mb-2 text-foreground">Tidak ada pertanyaan ditemukan</h3>
-                <p className="text-sm md:text-base text-muted-foreground">Coba sesuaikan kata kunci pencarian Anda.</p>
-              </motion.div>
-            )}
-          </div>
-        </div>
-      </section>
-      
-      {/* Contact CTA */}
-      <section className="py-12 md:py-16 lg:py-20 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-20" aria-hidden="true" />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-white/5 rounded-full blur-3xl" 
-        />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <motion.div 
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.2 }}
-              className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
-            >
-              <ChatCircle className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="fill" />
-            </motion.div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Masih Punya Pertanyaan?
-            </h2>
-            <p className="text-white/70 text-sm md:text-base mb-8 max-w-lg mx-auto">
-              Tidak menemukan yang Anda cari? Tim dukungan kami siap membantu Anda 24/7.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/contact" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
-                  Hubungi Dukungan
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-                </Button>
-              </Link>
-              <Link href="/help" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl bg-transparent transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
-                  Kunjungi Pusat Bantuan
-                </Button>
-              </Link>
             </div>
           </motion.div>
         </div>
       </section>
-      
+
+      {/* TWO-PANEL */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* Mobile: Horizontal scroll pills */}
+          <div className="flex gap-2 overflow-x-auto pb-4 mb-8 md:hidden no-scrollbar">
+            {categories.map(cat => (
+              <button
+                key={cat} onClick={() => { setActiveCategory(cat); setSearch(''); setDebouncedSearch(''); }}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-[220px_1fr] gap-12">
+            {/* Desktop Sticky Sidebar */}
+            <div className="hidden md:block">
+              <div className="sticky top-24 space-y-1">
+                {categories.map(cat => (
+                  <button
+                    key={cat} onClick={() => { setActiveCategory(cat); setSearch(''); setDebouncedSearch(''); }}
+                    className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${activeCategory === cat ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'}`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div>
+              {debouncedSearch && (
+                <p className="text-sm text-muted-foreground mb-6">
+                  {filteredItems.length} hasil untuk "<strong>{debouncedSearch}</strong>"
+                </p>
+              )}
+              {!debouncedSearch && (
+                <h2 className="text-2xl font-bold mb-6">{activeCategory}</h2>
+              )}
+              <div className="space-y-2">
+                {filteredItems.map((item, i) => (
+                  <div key={i} className="border border-border rounded-xl overflow-hidden group">
+                    <button
+                      onClick={() => setOpenItem(openItem === `${activeCategory}-${i}` ? null : `${activeCategory}-${i}`)}
+                      className="w-full text-left flex items-center justify-between gap-4 p-5 hover:text-primary transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
+                          <CaretDown
+                            size={14}
+                            className={`transition-transform duration-300 ${openItem === `${activeCategory}-${i}` ? 'rotate-180' : ''}`}
+                          />
+                        </div>
+                        <span className="font-semibold text-sm md:text-base">{item.q}</span>
+                      </div>
+                    </button>
+                    {openItem === `${activeCategory}-${i}` && (
+                      <div className="px-5 pb-5 pl-14 text-muted-foreground text-sm leading-relaxed">
+                        {item.a}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {filteredItems.length === 0 && (
+                  <div className="text-center py-16">
+                    <p className="text-muted-foreground mb-4">Tidak ada hasil untuk "{debouncedSearch}".</p>
+                    <p className="text-sm text-muted-foreground">Coba kata lain atau</p>
+                    <Link href="/contact" className="text-primary font-medium text-sm inline-flex items-center gap-1 mt-1">
+                      hubungi kami <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {!debouncedSearch && (
+                <div className="mt-12 bg-muted/40 rounded-2xl p-8 text-center">
+                  <p className="text-muted-foreground mb-3">Tidak menemukan jawaban yang dicari?</p>
+                  <Link href="/contact">
+                    <button className="btn-primary">Hubungi Support <ArrowRight size={16} /></button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

@@ -1,140 +1,143 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
-import { Warning, UserCircle, Package, ShieldCheck, ArrowRight } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { staggerContainer, staggerItem } from '@/lib/animations';
+import { Warning, XCircle, ArrowRight } from '@phosphor-icons/react';
+import { cn } from '@/lib/ui-utils';
+import { fadeInUp, staggerContainer, staggerItem, viewport } from '@/lib/animations';
 import { buyerRisks, sellerRisks } from './HomeData';
-import { cn, ariaProps } from '@/lib/ui-utils';
 
 export default function ProblemSection() {
   return (
-    <section className="section-padding-lg" aria-labelledby="problem-heading">
+    <section className="section-padding-lg bg-background">
       <div className="container">
-        <div className="section-header">
-          <motion.h2 
-            id="problem-heading"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            className="section-title"
+        <div className="grid lg:grid-cols-[0.4fr_0.6fr] gap-12 lg:gap-20">
+          {/* ── KIRI — Sticky heading ── */}
+          <motion.div
+            {...fadeInUp}
+            className="lg:sticky lg:top-28 lg:self-start"
           >
-            Risiko ada di kedua sisi
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="section-description"
-          >
-            Tanpa perlindungan yang tepat, pembeli dan penjual sama-sama menghadapi risiko besar dalam transaksi online.
-          </motion.p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 max-w-6xl mx-auto">
-          {/* Buyer Risks */}
-          <motion.article
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="group"
-          >
-            <div className="card card-hover h-full p-6 md:p-8 border-2 border-destructive/20">
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <UserCircle className="w-7 h-7 md:w-8 md:h-8 text-destructive" aria-hidden="true" weight="duotone" />
+            <span className="badge badge-error mb-6">
+              ⚠ Masalah Nyata
+            </span>
+            <h2
+              className="font-black tracking-tight leading-[1.05] mb-6 text-foreground"
+              style={{ fontSize: 'clamp(2rem, 4vw + 0.5rem, 3.5rem)' }}
+            >
+              Risiko ada di kedua sisi.
+            </h2>
+            <p className="text-muted-foreground leading-relaxed text-lg mb-8">
+              Tanpa perlindungan yang tepat, setiap transaksi online adalah pertaruhan.
+            </p>
+            <Link href="#how-it-works">
+              <button className="btn-secondary">
+                Lihat Solusi
+                <ArrowRight className="w-4 h-4" weight="bold" />
+              </button>
+            </Link>
+          </motion.div>
+
+          {/* ── KANAN — Risk cards ── */}
+          <div className="space-y-6">
+            {/* Buyer risks */}
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="animate"
+              viewport={viewport}
+              className="rounded-2xl bg-muted border-l-4 border-destructive p-6 md:p-8"
+            >
+              <motion.div variants={staggerItem} className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+                  <XCircle className="w-5 h-5 text-destructive" weight="fill" />
                 </div>
                 <div>
-                  <div className="badge badge-error mb-2">
-                    RISIKO PEMBELI
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-bold mb-1">Tanpa Perlindungan</h3>
-                  <p className="text-sm text-muted-foreground">Risiko tinggi kehilangan uang</p>
+                  <p className="text-xs font-bold tracking-widest uppercase text-destructive">Risiko Pembeli</p>
+                  <p className="text-lg font-bold">Uang pergi, barang tak datang</p>
                 </div>
-              </div>
-              <ul className="space-y-4" role="list">
-                {buyerRisks.map((risk, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Warning className="w-4 h-4 text-destructive" aria-hidden="true" weight="fill" />
-                    </div>
-                    <span className="text-sm md:text-base text-muted-foreground leading-relaxed">{risk}</span>
-                  </li>
+              </motion.div>
+              <ul className="space-y-3">
+                {buyerRisks.map((risk, i) => (
+                  <motion.li
+                    key={i}
+                    variants={staggerItem}
+                    className="flex items-start gap-3 text-sm text-muted-foreground"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
+                    {risk}
+                  </motion.li>
                 ))}
               </ul>
-            </div>
-          </motion.article>
-          
-          {/* Seller Risks */}
-          <motion.article
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="group"
-          >
-            <div className="card card-hover h-full p-6 md:p-8 border-2 border-warning/20">
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-warning/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <Package className="w-7 h-7 md:w-8 md:h-8 text-warning" aria-hidden="true" weight="duotone" />
+            </motion.div>
+
+            {/* Seller risks */}
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="animate"
+              viewport={viewport}
+              className="rounded-2xl bg-muted border-l-4 border-warning p-6 md:p-8"
+            >
+              <motion.div variants={staggerItem} className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+                  <Warning className="w-5 h-5 text-warning" weight="fill" />
                 </div>
                 <div>
-                  <div className="badge badge-warning mb-2">
-                    RISIKO PENJUAL
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-bold mb-1">Tanpa Perlindungan</h3>
-                  <p className="text-sm text-muted-foreground">Risiko tinggi penipuan</p>
+                  <p className="text-xs font-bold tracking-widest uppercase text-warning">Risiko Penjual</p>
+                  <p className="text-lg font-bold">Barang terkirim, uang tak cair</p>
                 </div>
-              </div>
-              <ul className="space-y-4" role="list">
-                {sellerRisks.map((risk, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-warning/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Warning className="w-4 h-4 text-warning" aria-hidden="true" weight="fill" />
-                    </div>
-                    <span className="text-sm md:text-base text-muted-foreground leading-relaxed">{risk}</span>
-                  </li>
+              </motion.div>
+              <ul className="space-y-3">
+                {sellerRisks.map((risk, i) => (
+                  <motion.li
+                    key={i}
+                    variants={staggerItem}
+                    className="flex items-start gap-3 text-sm text-muted-foreground"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-warning mt-2 shrink-0" />
+                    {risk}
+                  </motion.li>
                 ))}
               </ul>
-            </div>
-          </motion.article>
-        </div>
-        
-        {/* Solution Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-12 md:mt-16 max-w-4xl mx-auto"
-        >
-          <div className="bg-primary rounded-2xl md:rounded-3xl p-8 md:p-12 lg:p-14 text-center relative overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-20" aria-hidden="true" />
-            <div className="relative z-10">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-6 shadow-xl">
-                <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-primary-foreground" aria-hidden="true" weight="duotone" />
+            </motion.div>
+
+            {/* Solution banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewport}
+              className="rounded-2xl bg-primary text-primary-foreground overflow-hidden"
+            >
+              <div className="grid md:grid-cols-[1fr_auto] gap-0 items-center">
+                <div className="p-6 md:p-8">
+                  <p className="text-xs font-bold tracking-widest uppercase opacity-60 mb-3">Solusi Kahade</p>
+                  <h3 className="text-2xl font-black mb-3">Kahade menghilangkan semua risiko ini.</h3>
+                  <p className="text-primary-foreground/70 text-sm leading-relaxed mb-6">
+                    Dana ditahan aman hingga kedua pihak puas. Tidak ada lagi risiko, hanya kepercayaan.
+                  </p>
+                  <Link href="/register">
+                    <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+                                       bg-white text-black text-sm font-semibold
+                                       hover:bg-neutral-100 transition-colors">
+                      Mulai Transaksi Aman
+                      <ArrowRight className="w-4 h-4" weight="bold" />
+                    </button>
+                  </Link>
+                </div>
+
+                {/* Flow animation */}
+                <div className="hidden md:flex items-center justify-center w-48 h-full bg-white/5 p-6">
+                  <div className="flex flex-col items-center gap-2 text-xs text-center">
+                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-lg">💰</div>
+                    <div className="w-px h-6 bg-white/20" />
+                    <div className="w-12 h-12 rounded-full bg-success/20 border border-success/40 flex items-center justify-center text-lg">🔒</div>
+                    <p className="text-white/60 font-medium">Kahade</p>
+                    <div className="w-px h-6 bg-white/20" />
+                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-lg">📦</div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-                Kahade menghilangkan risiko ini
-              </h3>
-              <p className="text-primary-foreground/80 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-                Sistem escrow kami menahan dana dengan aman sampai kedua pihak puas,
-                memastikan transaksi yang adil dan terlindungi untuk semua.
-              </p>
-              <Link href="/register" className="block block">
-                <Button 
-                  className="btn-lg bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-lg"
-                  {...ariaProps('Mulai transaksi aman dengan Kahade')}
-                >
-                  Mulai Transaksi Aman
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-                </Button>
-              </Link>
-            </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

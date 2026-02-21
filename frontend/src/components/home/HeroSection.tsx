@@ -1,159 +1,228 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
-import { 
-  Sparkle, ArrowRight, Play, ShieldCheck,
-  IdentificationBadge, Clock, Scales, ChartLineUp
+import {
+  ArrowRight, Play, ShieldCheck, IdentificationBadge,
+  Clock, Scales, Wallet, ChartLineUp, Lock, CheckCircle
 } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/ui-utils';
-import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
+import { fadeInUp, staggerContainer, staggerItem, viewport } from '@/lib/animations';
 import { compliancePartners } from './HomeData';
 
+const liveActivities = [
+  '🟢 Transaksi #KHD-2483 selesai · Rp 5.200.000 diamankan',
+  '🟢 Dana cair ke penjual dalam 8 jam',
+  '🔵 Pengguna baru bergabung dari Surabaya',
+  '🟢 Sengketa diselesaikan dalam 2 hari',
+  '🟢 Transaksi #KHD-2491 dikonfirmasi · Rp 12.000.000',
+];
+
+const heroStats = [
+  { value: '98%', label: 'Kepuasan', icon: CheckCircle },
+  { value: '<12j', label: 'Pencairan', icon: Clock },
+  { value: '0.8%', label: 'Sengketa', icon: Scales },
+  { value: '50M+', label: 'Diamankan', icon: Wallet },
+];
+
+const trustBadges = [
+  { label: 'OJK Compliant', icon: IdentificationBadge },
+  { label: 'Bank Indonesia', icon: ShieldCheck },
+  { label: 'ISO 27001', icon: Lock },
+  { label: 'KYC Verified', icon: CheckCircle },
+];
+
 export default function HeroSection() {
+  const [activityIndex, setActivityIndex] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setActivityIndex(i => (i + 1) % liveActivities.length), 3000);
+    return () => clearInterval(t);
+  }, []);
+
   return (
-    <section className="section-padding-lg relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
-      <div className="absolute -top-20 right-0 w-[320px] md:w-[520px] lg:w-[720px] h-[320px] md:h-[520px] lg:h-[720px] bg-gradient-radial from-muted to-transparent rounded-full blur-3xl opacity-70" aria-hidden="true" />
-      <div className="absolute -bottom-24 left-0 w-[240px] md:w-[360px] lg:w-[520px] h-[240px] md:h-[360px] lg:h-[520px] bg-gradient-radial from-muted to-transparent rounded-full blur-3xl opacity-40" aria-hidden="true" />
-      
+    <section className="section-padding-hero relative overflow-hidden">
+      {/* Background grid — LEBIH SUBTLE (opacity 30%) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+        style={{
+          backgroundImage: 'radial-gradient(var(--neutral-200, #e8e8e8) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+          opacity: 0.3,
+        }}
+      />
+      {/* Gradient blobs */}
+      <div className="absolute -top-20 right-0 w-[520px] h-[520px] bg-gradient-radial from-muted to-transparent rounded-full blur-3xl opacity-70 pointer-events-none" aria-hidden="true" />
+      <div className="absolute -bottom-24 left-0 w-[360px] h-[360px] bg-gradient-radial from-muted to-transparent rounded-full blur-3xl opacity-40 pointer-events-none" aria-hidden="true" />
+
       <div className="container relative z-10">
         <motion.div
-          className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center"
-          {...staggerContainer}
+          className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16 items-center"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
         >
+          {/* ── KIRI ── */}
           <div className="text-center lg:text-left">
             {/* Badge */}
-            <motion.div {...fadeInUp} className="mb-6 flex justify-center lg:justify-start">
-              <span className="badge badge-secondary inline-flex items-center gap-2">
-                <Sparkle className="w-4 h-4" aria-hidden="true" weight="fill" />
-                Dipercaya 10.000+ pengguna
-              </span>
+            <motion.div variants={staggerItem} className="mb-8 flex justify-center lg:justify-start">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full
+                              border border-neutral-200 bg-background shadow-sm
+                              text-xs font-semibold tracking-wide text-neutral-600
+                              hover:border-neutral-400 transition-colors cursor-default">
+                <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                10.000+ Pengguna Aktif
+              </div>
             </motion.div>
 
-            {/* Headline */}
+            {/* Headline — clamp(2.75rem, 5.5vw + 1rem, 6.5rem) */}
             <motion.h1
-              {...fadeInUp}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-[3.75rem] font-bold leading-[1.08] mb-6 tracking-tight"
+              variants={staggerItem}
+              className="font-display font-black leading-[1.0] tracking-[-0.05em] mb-8"
+              style={{ fontSize: 'clamp(2.75rem, 5.5vw + 1rem, 6.5rem)' }}
             >
-              <span className="block">Mengurangi Penipuan.</span>
-              <span className="block mt-1 md:mt-2 relative w-fit mx-auto lg:mx-0">
-                <span className="relative z-10">Meningkatkan Kepercayaan.</span>
-                <motion.span
-                  initial={{ scaleX: 0 }}
+              <span className="block text-foreground">Mengurangi</span>
+              <span className="block text-foreground">Penipuan.</span>
+              <span className="block mt-2 md:mt-3 relative">
+                <span className="relative z-10 text-foreground">Meningkatkan</span>
+                {' '}
+                <span className="relative z-10 text-foreground">Kepercayaan.</span>
+                <motion.div
+                  initial={{ scaleX: 0, originX: 0 }}
                   animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.8, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-                  className="absolute bottom-1 md:bottom-2 left-0 right-0 h-3 md:h-4 bg-black/10 -z-0 origin-left"
+                  transition={{ delay: 0.7, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                  className="absolute -bottom-1 left-0 right-0 h-[10px] bg-primary/10 rounded-full"
+                  style={{ transformOrigin: 'left center' }}
                 />
               </span>
             </motion.h1>
 
-            {/* Subheadline */}
+            {/* Lead text */}
             <motion.p
-              {...fadeInUp}
-              className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 md:mb-10 max-w-xl leading-relaxed mx-auto lg:mx-0"
+              variants={staggerItem}
+              className="text-muted-foreground mb-8 leading-relaxed"
+              style={{ fontSize: 'clamp(1.0625rem, 1.5vw, 1.25rem)' }}
             >
-              <span className="hidden md:inline">
-                Kahade menahan dana sementara, memastikan barang/jasa sesuai, lalu melepas pembayaran saat kedua pihak setuju. Aman, transparan, dan cepat.
-              </span>
-              <span className="hidden sm:inline md:hidden">
-                Kahade menahan dana hingga barang/jasa sesuai, lalu melepas pembayaran saat kedua pihak setuju. Aman dan transparan.
-              </span>
-              <span className="inline sm:hidden">
-                Dana ditahan hingga transaksi selesai. Aman, transparan, cepat.
-              </span>
+              Kahade menahan dana Anda hingga transaksi selesai dengan sempurna.
+              Aman, transparan, dan terpercaya.
             </motion.p>
 
-            {/* CTAs */}
-            <motion.div {...fadeInUp} className="flex flex-col sm:flex-row gap-4 sm:gap-4 items-center justify-center lg:justify-start w-full">
-              <Link href="/register" className="block w-full sm:w-auto">
-                <Button className="btn-primary btn-lg w-full sm:w-auto">
+            {/* CTA Buttons */}
+            <motion.div
+              variants={staggerItem}
+              className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-10"
+            >
+              <Link href="/register">
+                <button className="btn-primary btn-lg w-full sm:w-auto">
                   Mulai Transaksi
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-                </Button>
+                  <ArrowRight className="w-5 h-5" weight="bold" />
+                </button>
               </Link>
-              <Link href="/how-it-works" className="block w-full sm:w-auto">
-                <Button variant="outline" className="btn-lg w-full sm:w-auto">
-                  <Play className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" />
-                  Cara Kerjanya
-                </Button>
-              </Link>
+              <button
+                className="btn-secondary btn-lg w-full sm:w-auto"
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Play className="w-4 h-4" weight="fill" />
+                Lihat Demo
+              </button>
             </motion.div>
 
-            {/* Trust Line */}
-            <motion.div {...fadeInUp} className="mt-8">
-              <p className="text-sm text-muted-foreground mb-4 text-center lg:text-left">
-                Kepatuhan & keamanan adalah prioritas.
-              </p>
-              
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 md:gap-4">
-                {compliancePartners.map((partner) => (
-                  <div
-                    key={partner.abbr}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-background border border-border hover:border-foreground/20 transition-colors"
-                    title={partner.name}
-                  >
-                    <partner.fallbackIcon className="w-4 h-4 text-muted-foreground" weight="duotone" aria-hidden="true" />
-                    <span className="text-xs font-medium">{partner.abbr}</span>
-                  </div>
-                ))}
-              </div>
+            {/* Trust badges */}
+            <motion.div
+              variants={staggerItem}
+              className="flex flex-wrap gap-2 justify-center lg:justify-start"
+            >
+              {trustBadges.map(({ label, icon: BadgeIcon }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg
+                             border border-border bg-background text-xs font-medium"
+                >
+                  <BadgeIcon className="w-4 h-4 text-muted-foreground" weight="duotone" />
+                  <span>{label}</span>
+                </div>
+              ))}
             </motion.div>
           </div>
 
-          {/* Hero Preview Card */}
+          {/* ── KANAN — Hero Card ── */}
           <motion.div
-            {...fadeInUp}
+            variants={staggerItem}
             className="relative"
           >
-            <div className="absolute -top-6 -left-6 h-24 w-24 rounded-3xl bg-muted blur-2xl" aria-hidden="true" />
-            <div className="absolute -bottom-8 -right-8 h-28 w-28 rounded-full bg-muted blur-2xl" aria-hidden="true" />
-            <div className="card card-premium relative p-6 md:p-8">
-              <div className="flex items-center justify-between">
-                <div className="badge badge-primary inline-flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" />
-                  Escrow Terlindungi
-                </div>
-                <span className="text-xs text-muted-foreground">Pratinjau Langsung</span>
+            <div className="card shadow-E6 border-2 border-border rounded-[20px] p-6 md:p-8 bg-background">
+              {/* Live activity pulse */}
+              <div className="mb-6 p-3 bg-muted rounded-xl">
+                <motion.p
+                  key={activityIndex}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-xs text-muted-foreground"
+                >
+                  {liveActivities[activityIndex]}
+                </motion.p>
               </div>
 
-              <div className="mt-6 space-y-4">
-                <div className="card p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold">Transaksi #KHD-2451</p>
-                      <p className="text-xs text-muted-foreground">Verifikasi pembeli ↔ penjual</p>
-                    </div>
-                    <span className="badge badge-success">
-                      Aktif
-                    </span>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Jumlah</span>
-                    <span className="font-semibold">Rp 12.500.000</span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Penahanan</span>
-                    <span className="font-semibold">Brankas Escrow</span>
-                  </div>
+              {/* Transaction header */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Escrow Terlindungi</p>
+                  <p className="text-sm font-bold mt-0.5">Transaksi #KHD-2451</p>
                 </div>
+                <span className="badge badge-success">● Aktif</span>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { label: 'Pengguna Terverifikasi', value: '98%', icon: IdentificationBadge },
-                    { label: 'Rata-rata Pencairan', value: '< 12 jam', icon: Clock },
-                    { label: 'Rasio Sengketa', value: '0,8%', icon: Scales },
-                    { label: 'Dana Diamankan', value: 'Rp 50M+', icon: ChartLineUp },
-                  ].map((stat) => (
-                    <div key={stat.label} className="card p-4">
-                      <stat.icon className="w-5 h-5 mb-3" weight="duotone" aria-hidden="true" />
-                      <p className="text-lg font-semibold">{stat.value}</p>
-                      <p className="text-xs text-muted-foreground">{stat.label}</p>
+              {/* Amount */}
+              <p className="text-3xl font-black tracking-tight mb-6">Rp 12.500.000</p>
+
+              {/* Stats grid 2x2 */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {heroStats.map(({ value, label, icon: StatIcon }) => (
+                  <div key={label} className="bg-muted rounded-xl p-3">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <StatIcon className="w-3.5 h-3.5 text-muted-foreground" weight="duotone" />
+                      <span className="text-[0.625rem] font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
                     </div>
-                  ))}
+                    <p className="text-lg font-black tracking-tight">{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Progress bar */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-muted-foreground">Dana Aman</span>
+                  <span className="text-xs font-bold">Rp 50M+</span>
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 0.82 }}
+                    transition={{ delay: 0.5, duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
+                    className="h-full bg-success rounded-full origin-left"
+                    style={{ transformOrigin: 'left center', willChange: 'transform' }}
+                  />
                 </div>
               </div>
             </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.5 }}
+          className="flex flex-col items-center mt-16 text-muted-foreground"
+        >
+          <span className="text-xs font-medium mb-2">Scroll untuk jelajahi</span>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+          >
+            <ArrowRight className="w-4 h-4 rotate-90" weight="bold" />
           </motion.div>
         </motion.div>
       </div>

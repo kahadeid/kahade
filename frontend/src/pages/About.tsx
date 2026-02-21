@@ -1,66 +1,43 @@
-/*
- * KAHADE ABOUT PAGE — AUDIT FIX v3.0
- *
- * Perbaikan:
- * - Tambah entitas hukum resmi: PT Kawal Hak Dengan Aman
- * - Konsisten dengan design system (bg-background, section-padding, badge)
- * - Hapus hardcoded bg-card
- * - Informasi kontak yang benar
- */
-
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShieldCheck, Target, Eye, Heart, Globe, Lightning, ArrowRight,
-  Users, Trophy, Rocket, Handshake, Buildings, MapPin, Envelope
+  Users, Buildings, MapPin, Envelope, LinkedinLogo, CheckCircle,
+  Clock, Medal, Handshake
 } from '@phosphor-icons/react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
-
-const values = [
-  {
-    icon: ShieldCheck,
-    title: 'Keamanan Utama',
-    description: 'Keamanan adalah prioritas tertinggi kami. Kami menerapkan enkripsi setara bank dan autentikasi multi-faktor untuk melindungi setiap transaksi.'
-  },
-  {
-    icon: Eye,
-    title: 'Transparansi Penuh',
-    description: 'Kami percaya pada keterbukaan penuh. Setiap transaksi dilacak dan terlihat oleh semua pihak terkait tanpa penyembunyian biaya.'
-  },
-  {
-    icon: Heart,
-    title: 'Membangun Kepercayaan',
-    description: 'Kepercayaan adalah fondasi setiap hubungan transaksi. Kami memfasilitasi kepercayaan antara pihak yang belum saling mengenal.'
-  },
-  {
-    icon: Lightning,
-    title: 'Inovasi Berkelanjutan',
-    description: 'Kami terus berinovasi untuk menghadirkan solusi terbaik dan selalu selangkah di depan ancaman baru dalam ekosistem digital.'
-  }
-];
-
-const milestones = [
-  { year: '2023', title: 'Perusahaan Didirikan', description: 'PT Kawal Hak Dengan Aman (Kahade) didirikan dengan visi menjadi platform escrow paling tepercaya di Indonesia.' },
-  { year: '2024 Q1', title: 'Peluncuran Platform', description: 'Meluncurkan platform escrow dengan fitur keamanan lengkap dan dukungan multi-pembayaran Indonesia.' },
-  { year: '2024 Q3', title: '10.000 Pengguna', description: 'Mencapai tonggak 10.000 pengguna aktif dan Rp 50M+ transaksi yang diamankan.' },
-  { year: '2025', title: 'Ekspansi & Inovasi', description: 'Meluncurkan aplikasi mobile, fitur resolusi sengketa AI, dan sistem reward pengguna.' }
-];
+import { fadeInUp, staggerContainer, staggerItem, viewport } from '@/lib/animations';
 
 const stats = [
-  { value: '10K+', label: 'Pengguna Aktif', icon: Users },
-  { value: 'Rp 50M+', label: 'Total Diamankan', icon: ShieldCheck },
-  { value: '99.9%', label: 'Ketersediaan Sistem', icon: Rocket },
-  { value: '4.9/5', label: 'Penilaian Pengguna', icon: Trophy },
+  { label: 'Pengguna Aktif', value: '10.000+' },
+  { label: 'Dana Diamankan', value: 'Rp 50M+' },
+  { label: 'Uptime', value: '99.9%' },
+  { label: 'Rating', value: '4.9/5' },
+];
+
+const values = [
+  { icon: ShieldCheck, title: 'Keamanan Utama', description: 'Enkripsi setara bank dan autentikasi multi-faktor melindungi setiap transaksi Anda dari ancaman digital.' },
+  { icon: Eye, title: 'Transparansi Penuh', description: 'Semua biaya, proses, dan status transaksi ditampilkan secara jelas tanpa biaya tersembunyi.' },
+  { icon: Handshake, title: 'Kepercayaan Bersama', description: 'Membangun ekosistem di mana pembeli dan penjual merasa aman dalam setiap interaksi.' },
+  { icon: Lightning, title: 'Inovasi Tanpa Henti', description: 'Terus berkembang menghadirkan teknologi terbaru untuk pengalaman transaksi yang semakin baik.' },
+];
+
+const timeline = [
+  { year: '2023', title: 'Kahade Didirikan', description: 'PT Kawal Hak Dengan Aman resmi berdiri dengan visi membangun kepercayaan digital Indonesia.' },
+  { year: '2023 Q3', title: 'Peluncuran Beta', description: 'Versi beta diluncurkan dengan 500 pengguna awal. Feedback positif dari transaksi perdana.' },
+  { year: '2024 Q1', title: '1.000 Pengguna', description: 'Melampaui 1.000 pengguna terdaftar dan Rp 5 Miliar dana yang diamankan.' },
+  { year: '2024 Q3', title: 'Fitur Sengketa', description: 'Peluncuran sistem resolusi sengketa otomatis dengan tingkat penyelesaian 98%.' },
+  { year: '2025', title: '10.000+ Pengguna', description: 'Melampaui 10.000 pengguna aktif dengan dana yang diamankan melebihi Rp 50 Miliar.' },
 ];
 
 const team = [
-  { name: 'Ahmad Rizki', role: 'CEO & Pendiri Bersama', avatar: 'AR' },
-  { name: 'Sarah Wijaya', role: 'CTO & Pendiri Bersama', avatar: 'SW' },
-  { name: 'Michael Chen', role: 'Kepala Keamanan', avatar: 'MC' },
-  { name: 'Emily Rodriguez', role: 'Kepala Produk', avatar: 'ER' },
+  { name: 'Ahmad Rizki', role: 'CEO & Co-Founder', quote: 'Kepercayaan adalah fondasi dari setiap transaksi yang sukses.' },
+  { name: 'Sari Dewi', role: 'CTO & Co-Founder', quote: 'Teknologi yang kuat adalah kunci membangun kepercayaan di era digital.' },
+  { name: 'Budi Santoso', role: 'COO', quote: 'Operasional yang solid memastikan setiap pengguna mendapat pengalaman terbaik.' },
+  { name: 'Maya Putri', role: 'Head of Product', quote: 'Produk yang baik dimulai dari memahami masalah nyata pengguna.' },
 ];
 
 export default function About() {
@@ -68,213 +45,191 @@ export default function About() {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero */}
-      <section className="section-padding-lg relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-60" aria-hidden="true" />
-        <div className="container relative z-10">
-          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto">
-            <span className="badge badge-secondary mb-4 inline-block">Tentang Kami</span>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Membangun Kepercayaan<br />
-              <span className="relative inline-block">
-                di Setiap Transaksi
-                <motion.span
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
-                  className="absolute bottom-1 left-0 right-0 h-3 bg-black/10 -z-0 origin-left"
-                />
-              </span>
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Kahade (PT Kawal Hak Dengan Aman) adalah platform escrow peer-to-peer yang hadir
-              untuk menghilangkan risiko penipuan dan membangun ekosistem transaksi digital
-              yang aman, transparan, dan dapat dipercaya di Indonesia.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="section-padding bg-muted/30">
-        <div className="container">
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto"
-          >
-            {stats.map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} className="card p-6 text-center">
-                <stat.icon className="w-8 h-8 mx-auto mb-3 text-foreground" weight="duotone" aria-hidden="true" />
-                <p className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
+      {/* SECTION 1: HERO — EDITORIAL */}
+      <section className="bg-primary text-primary-foreground pt-24 pb-24 md:pb-32">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-[0.6fr_0.4fr] gap-16 items-center">
+            <motion.div variants={staggerContainer} initial="initial" animate="animate">
+              <motion.div variants={staggerItem}>
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
+                  Tentang Kami
+                </span>
               </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Mission */}
-      <section className="section-padding">
-        <div className="container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-            <motion.div {...fadeInUp}>
-              <span className="badge badge-secondary mb-4 inline-block">Misi Kami</span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
-                Setiap Orang Berhak atas Transaksi yang Aman
-              </h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Di era belanja dan jual-beli online yang berkembang pesat, penipuan menjadi ancaman nyata.
-                Kami hadir untuk memastikan dana pembeli terlindungi hingga barang atau jasa benar-benar
-                diterima sesuai perjanjian.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Dengan teknologi escrow yang transparan dan sistem resolusi sengketa yang adil,
-                kami membangun ekosistem transaksi digital di mana kepercayaan bukan lagi kemewahan,
-                melainkan standar.
-              </p>
+              <motion.h1 variants={staggerItem} className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none mb-6">
+                Membangun<br />Kepercayaan<br />di Setiap<br />
+                <span className="text-white/70">Transaksi.</span>
+              </motion.h1>
+              <motion.p variants={staggerItem} className="text-primary-foreground/60 text-sm uppercase tracking-widest">
+                PT Kawal Hak Dengan Aman
+              </motion.p>
             </motion.div>
-            <motion.div
-              {...fadeInUp}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-            >
-              {values.map((val) => (
-                <div key={val.title} className="card p-5 hover:border-foreground/20 transition-colors">
-                  <val.icon className="w-6 h-6 mb-3" weight="duotone" aria-hidden="true" />
-                  <h3 className="font-semibold mb-2 text-sm">{val.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{val.description}</p>
-                </div>
-              ))}
+
+            <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-6">
+              <motion.div variants={staggerItem} className="grid grid-cols-1 gap-3">
+                {[
+                  { label: 'Tahun Berdiri', value: '2023' },
+                  { label: 'Lokasi', value: 'Jakarta, Indonesia' },
+                  { label: 'Status', value: 'Aktif & Berkembang' },
+                ].map((item) => (
+                  <div key={item.label} className="flex justify-between py-3 border-b border-white/10">
+                    <span className="text-primary-foreground/60 text-sm">{item.label}</span>
+                    <span className="font-semibold text-sm">{item.value}</span>
+                  </div>
+                ))}
+              </motion.div>
+              <motion.p variants={staggerItem} className="text-primary-foreground/80 leading-relaxed">
+                Kami adalah tim dengan visi membangun ekosistem transaksi online yang jujur dan aman untuk semua orang Indonesia.
+              </motion.p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="section-padding bg-muted/30">
-        <div className="container">
-          <motion.div {...fadeInUp} className="text-center mb-12 max-w-2xl mx-auto">
-            <span className="badge badge-secondary mb-4 inline-block">Perjalanan Kami</span>
-            <h2 className="text-3xl md:text-4xl font-bold">Tonggak Sejarah Kahade</h2>
-          </motion.div>
-          <div className="max-w-3xl mx-auto">
-            <div className="relative">
-              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2" aria-hidden="true" />
-              <div className="space-y-8">
-                {milestones.map((m, i) => (
-                  <motion.div
-                    key={m.year}
-                    initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                    className={`relative flex items-start gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-                  >
-                    <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-foreground border-4 border-background -translate-x-1/2 mt-1" aria-hidden="true" />
-                    <div className={`pl-16 md:pl-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                      <span className="badge badge-primary mb-2 inline-block">{m.year}</span>
-                      <h3 className="font-bold text-lg mb-2">{m.title}</h3>
-                      <p className="text-sm text-muted-foreground">{m.description}</p>
+      {/* SECTION 2: STATS BAR */}
+      <section className="border-y bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border">
+            {stats.map((stat) => (
+              <div key={stat.label} className="py-8 px-6 text-center">
+                <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: MISI & VISI — SPLIT PANEL */}
+      <section>
+        <div className="grid md:grid-cols-2">
+          <div className="bg-muted px-8 md:px-16 py-16 md:py-24">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Misi</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Mendorong kepercayaan digital Indonesia</h2>
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Mendorong kepercayaan digital di Indonesia dengan menyediakan platform escrow yang aman, transparan, dan mudah digunakan — memungkinkan jutaan orang bertransaksi online dengan tenang.
+            </p>
+          </div>
+          <div className="bg-primary text-primary-foreground px-8 md:px-16 py-16 md:py-24">
+            <p className="text-xs uppercase tracking-widest text-primary-foreground/60 mb-4">Visi</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Platform escrow paling tepercaya di Asia Tenggara</h2>
+            <p className="text-primary-foreground/80 leading-relaxed text-lg">
+              Menjadi platform escrow paling tepercaya di Asia Tenggara, di mana setiap orang — dari penjual kecil hingga perusahaan besar — bisa bertransaksi dengan penuh keyakinan.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: VALUES */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-16">
+              <span className="badge badge-secondary mb-4">Nilai Kami</span>
+              <h2 className="text-3xl md:text-4xl font-bold">Yang Kami Pegang Teguh</h2>
+            </motion.div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+              {values.map((value) => {
+                const Icon = value.icon;
+                return (
+                  <motion.div key={value.title} variants={staggerItem} className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center">
+                      <Icon size={32} className="text-primary" weight="duotone" />
                     </div>
-                    <div className="hidden md:block md:w-1/2" aria-hidden="true" />
+                    <h3 className="font-bold text-lg mb-3">{value.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* SECTION 5: TIMELINE */}
+      <section className="section-padding-lg bg-muted/40">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-16">
+              <span className="badge badge-secondary mb-4">Perjalanan Kami</span>
+              <h2 className="text-3xl md:text-4xl font-bold">Dari Ide ke Kenyataan</h2>
+            </motion.div>
+            <div className="relative">
+              <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
+              <div className="space-y-8">
+                {timeline.map((item, i) => (
+                  <motion.div key={i} variants={staggerItem} className={`relative flex gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                    <div className={`hidden md:block md:w-1/2 ${i % 2 === 0 ? 'pr-12 text-right' : 'pl-12 text-left'}`}>
+                      <span className="text-xs font-bold uppercase tracking-widest text-primary">{item.year}</span>
+                      <h3 className="font-bold text-lg mt-1 mb-2">{item.title}</h3>
+                      <p className="text-muted-foreground text-sm">{item.description}</p>
+                    </div>
+                    <div className="absolute left-[14px] md:left-1/2 top-1 w-3 h-3 rounded-full bg-primary border-2 border-background md:-translate-x-1.5" />
+                    <div className="pl-10 md:hidden">
+                      <span className="text-xs font-bold uppercase tracking-widest text-primary">{item.year}</span>
+                      <h3 className="font-bold text-lg mt-1 mb-2">{item.title}</h3>
+                      <p className="text-muted-foreground text-sm">{item.description}</p>
+                    </div>
+                    <div className="hidden md:block md:w-1/2" />
                   </motion.div>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="section-padding">
-        <div className="container">
-          <motion.div {...fadeInUp} className="text-center mb-12 max-w-2xl mx-auto">
-            <span className="badge badge-secondary mb-4 inline-block">Tim Kami</span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Orang-Orang di Balik Kahade</h2>
-            <p className="text-muted-foreground">
-              Tim kami terdiri dari para profesional berpengalaman di bidang fintech, keamanan, dan produk digital.
-            </p>
-          </motion.div>
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto"
-          >
-            {team.map((member) => (
-              <motion.div key={member.name} variants={staggerItem} className="card p-6 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
-                  <span className="text-lg font-bold">{member.avatar}</span>
-                </div>
-                <h3 className="font-semibold mb-1">{member.name}</h3>
-                <p className="text-xs text-muted-foreground">{member.role}</p>
-              </motion.div>
-            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Legal Info */}
-      <section className="section-padding bg-muted/30">
-        <div className="container">
-          <div className="max-w-3xl mx-auto">
-            <motion.div {...fadeInUp} className="card card-premium p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-                  <Buildings className="w-5 h-5" weight="duotone" aria-hidden="true" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-3">Informasi Perusahaan</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex flex-wrap gap-x-3">
-                      <span className="text-muted-foreground">Nama Badan Hukum:</span>
-                      <span className="font-semibold">PT Kawal Hak Dengan Aman</span>
-                    </div>
-                    <div className="flex flex-wrap gap-x-3 items-start">
-                      <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" weight="duotone" aria-hidden="true" />
-                      <span className="text-muted-foreground">
-                        Gg. Abot, Cihideung Udik, Kec. Ciampea, Kabupaten Bogor, Jawa Barat 16620
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-x-3 items-center">
-                      <Envelope className="w-4 h-4 text-muted-foreground flex-shrink-0" weight="duotone" aria-hidden="true" />
-                      <a href="mailto:halo@kahade.id" className="hover:text-foreground transition-colors">halo@kahade.id</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      {/* SECTION 6: TEAM */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-16">
+              <span className="badge badge-secondary mb-4">Tim Kami</span>
+              <h2 className="text-3xl md:text-4xl font-bold">Orang-orang di Balik Kahade</h2>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="section-padding">
-        <div className="container">
-          <motion.div {...fadeInUp} className="card card-premium p-8 md:p-12 text-center max-w-3xl mx-auto">
-            <Handshake className="w-12 h-12 mx-auto mb-6" weight="duotone" aria-hidden="true" />
-            <h2 className="text-3xl font-bold mb-4">Bergabung dengan Komunitas Kahade</h2>
-            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Mulai bertransaksi dengan aman hari ini bersama ribuan pengguna yang telah mempercayakan
-              transaksi mereka kepada Kahade.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register" className="block block">
-                <Button className="btn-primary btn-lg">
-                  Mulai Sekarang
-                  <ArrowRight className="ml-2 w-5 h-5" weight="bold" aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link href="/contact" className="block block">
-                <Button variant="outline" className="btn-lg">
-                  Hubungi Kami
-                </Button>
-              </Link>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {team.map((member) => (
+                <motion.div key={member.name} variants={staggerItem} className="card p-6 text-center group hover:shadow-E3 transition-all duration-300">
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl font-bold text-primary">{member.name.charAt(0)}</span>
+                  </div>
+                  <div className="border-t border-border pt-4 mb-3">
+                    <h3 className="font-bold">{member.name}</h3>
+                    <p className="text-sm text-muted-foreground">{member.role}</p>
+                  </div>
+                  <div className="border-t border-border pt-3">
+                    <p className="text-sm text-muted-foreground italic">"{member.quote}"</p>
+                  </div>
+                  <button className="mt-4 flex items-center gap-1 text-sm text-primary mx-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <LinkedinLogo size={16} /> LinkedIn
+                  </button>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* SECTION 7: LEGAL INFO */}
+      <section className="section-padding-md bg-muted/40">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="border border-border rounded-2xl p-8">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Informasi Hukum</p>
+            <h3 className="font-bold text-lg mb-4">PT Kawal Hak Dengan Aman</h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex items-start gap-3">
+                <MapPin size={16} className="mt-0.5 shrink-0 text-primary" />
+                <span>Gg. Abot, Cihideung Udik, Kec. Ciampea, Kabupaten Bogor, Jawa Barat 16620</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Envelope size={16} className="shrink-0 text-primary" />
+                <span>halo@kahade.id</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Buildings size={16} className="shrink-0 text-primary" />
+                <span>NPWP: —  &nbsp;|&nbsp;  NIB: —</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

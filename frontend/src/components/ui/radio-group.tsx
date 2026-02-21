@@ -1,43 +1,88 @@
 import * as React from "react";
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-import { CircleIcon } from "lucide-react";
+import { cn } from "@/lib/ui-utils";
 
-import { cn } from "@/lib/utils";
+// FIX (v3.3): Radio Button — peer-checked:scale-100 pada GRANDCHILD peer tidak bekerja.
+// Sama dengan checkbox — inner dot di dalam outer ring div tidak terjangkau.
+// Solusi: Gunakan absolute-positioned siblings dengan inset-[5px] untuk inner dot.
 
-function RadioGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
-  return (
-    <RadioGroupPrimitive.Root
-      data-slot="radio-group"
-      className={cn("grid gap-3", className)}
-      {...props}
-    />
-  );
+export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  label?: string;
 }
 
-function RadioGroupItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
+const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
+  ({ className, label, id, ...props }, ref) => {
+    const internalId = id || React.useId();
+
+    return (
+      <label
+        htmlFor={internalId}
+        className={cn(
+          "flex items-center gap-3 cursor-pointer group select-none",
+          props.disabled && "cursor-not-allowed opacity-60",
+          className
+        )}
+      >
+        <div className="relative flex items-center justify-center shrink-0 w-5 h-5">
+          {/* Hidden input */}
+          <input
+            ref={ref}
+            id={internalId}
+            type="radio"
+            className="peer sr-only"
+            {...props}
+          />
+          {/* FIX: outer ring — sibling langsung dari <input peer> */}
+          <div
+            className={cn(
+              "w-5 h-5 rounded-full border-2 border-border",
+              "peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2",
+              "peer-checked:border-primary",
+              "peer-disabled:opacity-50",
+              "transition-all duration-150"
+            )}
+          />
+          {/* FIX: inner dot — absolute sibling dengan inset-[5px] (tidak grandchild) */}
+          <div
+            className={cn(
+              "absolute rounded-full bg-primary",
+              "scale-0 peer-checked:scale-100",
+              "transition-transform duration-150",
+              "pointer-events-none"
+            )}
+            style={{ inset: '5px' }}
+          />
+        </div>
+        {label && (
+          <span className="text-sm font-medium leading-none">
+            {label}
+          </span>
+        )}
+      </label>
+    );
+  }
+);
+
+Radio.displayName = "Radio";
+
+// RadioGroup container
+export interface RadioGroupProps {
+  children: React.ReactNode;
+  className?: string;
+  orientation?: 'vertical' | 'horizontal';
+}
+
+function RadioGroup({ children, className, orientation = 'vertical' }: RadioGroupProps) {
   return (
-    <RadioGroupPrimitive.Item
-      data-slot="radio-group-item"
+    <div
+      role="radiogroup"
       className={cn(
-        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        orientation === 'vertical' ? 'flex flex-col gap-3' : 'flex flex-row flex-wrap gap-4',
         className
       )}
-      {...props}
     >
-      <RadioGroupPrimitive.Indicator
-        data-slot="radio-group-indicator"
-        className="relative flex items-center justify-center"
-      >
-        <CircleIcon className="fill-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
+      {children}
+    </div>
   );
 }
 
-export { RadioGroup, RadioGroupItem };
+export { Radio, RadioGroup };

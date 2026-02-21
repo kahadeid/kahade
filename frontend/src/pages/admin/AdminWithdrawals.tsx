@@ -1,398 +1,78 @@
-/*
- * KAHADE ADMIN WITHDRAWALS PAGE
- * Manage and approve/reject withdrawal requests
- * Icons: Phosphor Icons only
- */
-
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  ArrowDown, CheckCircle, XCircle, Clock, Spinner,
-  User, Bank, MagnifyingGlass, Funnel, CurrencyDollar
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { Download, Eye, CheckCircle, X, ArrowDown } from '@phosphor-icons/react';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { adminApi } from '@/lib/api';
 
-interface Withdrawal {
-  id: string;
-  userId: string;
-  user: {
-    username: string;
-    email: string;
-  };
-  amount: number;
-  fee: number;
-  netAmount: number;
-  bankAccount: {
-    bankName: string;
-    accountNumberLast4: string;
-  };
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'REJECTED';
-  rejectionReason?: string;
-  createdAt: string;
-  processedAt?: string;
-}
-
-const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-  PENDING: { label: 'Pending', color: 'text-amber-600', bgColor: 'bg-amber-50' },
-  PROCESSING: { label: 'Processing', color: 'text-blue-600', bgColor: 'bg-blue-50' },
-  COMPLETED: { label: 'Completed', color: 'text-emerald-600', bgColor: 'bg-emerald-50' },
-  REJECTED: { label: 'Rejected', color: 'text-red-600', bgColor: 'bg-red-50' },
+const withdrawals = [
+  { id: 'WD-201', user: 'Ahmad Rizki', email: 'ahmad@email.com', bank: 'BCA *1234', amount: 'Rp 2.000.000', status: 'pending', requested: '20 Feb 2026 14:00' },
+  { id: 'WD-200', user: 'Sari Dewi', email: 'sari@email.com', bank: 'Mandiri *5678', amount: 'Rp 5.500.000', status: 'processing', requested: '20 Feb 2026 11:30' },
+  { id: 'WD-199', user: 'Budi Santoso', email: 'budi@email.com', bank: 'BRI *9012', amount: 'Rp 850.000', status: 'completed', requested: '19 Feb 2026 16:45' },
+  { id: 'WD-198', user: 'Rizki F.', email: 'rizki@email.com', bank: 'BCA *3456', amount: 'Rp 12.000.000', status: 'completed', requested: '19 Feb 2026 09:00' },
+  { id: 'WD-197', user: 'Maya Putri', email: 'maya@email.com', bank: 'BNI *7890', amount: 'Rp 3.200.000', status: 'rejected', requested: '18 Feb 2026 15:20' },
+];
+const statusCls: Record<string,string> = {
+  pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  processing: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  completed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 };
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
-};
+const statusLabel: Record<string,string> = { pending: 'Pending', processing: 'Diproses', completed: 'Selesai', rejected: 'Ditolak' };
 
 export default function AdminWithdrawals() {
-  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('PENDING');
-  const [search, setSearch] = useState('');
-  const [selectedWithdrawal, setSelectedWithdrawal] = useState<Withdrawal | null>(null);
-  const [isRejectOpen, setIsRejectOpen] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    fetchWithdrawals();
-  }, [filter]);
-
-  const fetchWithdrawals = async () => {
-    setIsLoading(true);
-    try {
-      const params: Record<string, unknown> = { limit: 50 };
-      if (filter !== 'all') params.status = filter;
-      
-      const response = await adminApi.getWithdrawals(params);
-      setWithdrawals(response.data.withdrawals || response.data.data || []);
-    } catch (error) {
-      toast.error('Failed to load withdrawals');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleApprove = async (withdrawal: Withdrawal) => {
-    setIsSubmitting(true);
-    try {
-      await adminApi.approveWithdrawal(withdrawal.id);
-      toast.success('Withdrawal approved successfully');
-      fetchWithdrawals();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to approve withdrawal');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selectedWithdrawal || !rejectionReason.trim()) {
-      toast.error('Please provide a rejection reason');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    try {
-      await adminApi.rejectWithdrawal(selectedWithdrawal.id, rejectionReason);
-      toast.success('Withdrawal rejected');
-      setIsRejectOpen(false);
-      setSelectedWithdrawal(null);
-      setRejectionReason('');
-      fetchWithdrawals();
-    } catch (error: unknown) {
-      toast.error(error.response?.data?.message || 'Failed to reject withdrawal');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const filteredWithdrawals = withdrawals.filter(w => 
-    w.user.username.toLowerCase().includes(search.toLowerCase()) ||
-    w.user.email.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const stats = {
-    pending: withdrawals.filter(w => w.status === 'PENDING').length,
-    pendingAmount: withdrawals.filter(w => w.status === 'PENDING').reduce((sum, w) => sum + w.amount, 0),
-    completed: withdrawals.filter(w => w.status === 'COMPLETED').length,
-    rejected: withdrawals.filter(w => w.status === 'REJECTED').length,
-  };
-
-  if (isLoading) {
-    return (
-      <AdminLayout title="Withdrawals" subtitle="Loading...">
-        <div className="flex items-center justify-center h-64">
-          <Spinner className="w-8 h-8 animate-spin text-black" aria-hidden="true" weight="bold" />
-        </div>
-      </AdminLayout>
-    );
-  }
+  const [tab, setTab] = useState('Semua');
+  const tabs = ['Semua', 'Pending', 'Diproses', 'Selesai', 'Ditolak'];
+  const tabMap: Record<string,string> = { Pending: 'pending', Diproses: 'processing', Selesai: 'completed', Ditolak: 'rejected' };
+  const filtered = withdrawals.filter(w => tab === 'Semua' || w.status === tabMap[tab]);
 
   return (
-    <AdminLayout title="Withdrawals" subtitle="Manage withdrawal requests">
-      <div className="space-y-6">
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-amber-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <Clock className="w-8 h-8 text-amber-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-2xl font-bold text-amber-700">{stats.pending}</div>
-                <div className="text-sm text-amber-600">Pending</div>
-              </div>
+    <AdminLayout title="Manajemen Penarikan" subtitle="Proses permintaan penarikan dana pengguna">
+      <div className="space-y-5">
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { label: 'Pending', value: withdrawals.filter(w => w.status === 'pending').length, cls: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30' },
+            { label: 'Diproses', value: withdrawals.filter(w => w.status === 'processing').length, cls: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30' },
+            { label: 'Selesai Hari Ini', value: 8, cls: 'bg-green-100 text-green-600 dark:bg-green-900/30' },
+          ].map(({ label, value, cls }) => (
+            <div key={label} className="card p-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${cls}`}><ArrowDown size={20} weight="duotone" /></div>
+              <p className="text-2xl font-black">{value}</p>
+              <p className="text-xs text-muted-foreground">{label}</p>
             </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-blue-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <CurrencyDollar className="w-8 h-8 text-blue-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-lg font-bold text-blue-700">{formatCurrency(stats.pendingAmount)}</div>
-                <div className="text-sm text-blue-600">Pending Amount</div>
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-emerald-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-8 h-8 text-emerald-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-2xl font-bold text-emerald-700">{stats.completed}</div>
-                <div className="text-sm text-emerald-600">Completed</div>
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-red-50 rounded-lg p-4"
-          >
-            <div className="flex items-center gap-3">
-              <XCircle className="w-8 h-8 text-red-600" aria-hidden="true" weight="duotone" />
-              <div>
-                <div className="text-2xl font-bold text-red-700">{stats.rejected}</div>
-                <div className="text-sm text-red-600">Rejected</div>
-              </div>
-            </div>
-          </motion.div>
+          ))}
         </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" aria-hidden="true" weight="regular" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by username or email..."
-              className="pl-10"
-            />
+        <div className="flex gap-1 bg-muted/50 p-1 rounded-xl w-fit">
+          {tabs.map(t => <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${tab === t ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>{t}</button>)}
+        </div>
+        <div className="card overflow-hidden">
+          <div className="flex justify-end px-5 py-4 border-b border-border bg-muted/30">
+            <button className="btn-secondary gap-2 text-sm px-3 py-2"><Download size={15} /> Export</button>
           </div>
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-48" aria-hidden="true">
-              <Funnel className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="PROCESSING">Processing</SelectItem>
-              <SelectItem value="COMPLETED">Completed</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+          <table className="w-full text-sm">
+            <thead className="border-b border-border bg-muted/20">
+              <tr>{['ID','Pengguna','Bank','Jumlah','Status','Diminta','Aksi'].map(h => <th key={h} className="px-4 py-3 text-left text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.map(w => (
+                <tr key={w.id} className="hover:bg-muted/30 group">
+                  <td className="px-4 py-3 font-mono text-xs">{w.id}</td>
+                  <td className="px-4 py-3"><p className="font-semibold">{w.user}</p><p className="text-xs text-muted-foreground">{w.email}</p></td>
+                  <td className="px-4 py-3 text-xs">{w.bank}</td>
+                  <td className="px-4 py-3 font-bold">{w.amount}</td>
+                  <td className="px-4 py-3"><span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${statusCls[w.status]}`}>{statusLabel[w.status]}</span></td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{w.requested}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-1.5 rounded-lg hover:bg-muted"><Eye size={14} /></button>
+                      {w.status === 'pending' && <>
+                        <button className="p-1.5 rounded-lg hover:bg-green-100 text-green-600"><CheckCircle size={14} weight="fill" /></button>
+                        <button className="p-1.5 rounded-lg hover:bg-red-100 text-red-600"><X size={14} weight="bold" /></button>
+                      </>}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-
-        {/* Withdrawals Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-lg border border-neutral-200 overflow-hidden"
-        >
-          {filteredWithdrawals.length === 0 ? (
-            <div className="text-center py-12">
-              <ArrowDown className="w-16 h-16 mx-auto mb-4 text-neutral-500" aria-hidden="true" weight="duotone" />
-              <h4 className="text-lg font-semibold text-black mb-2">No Withdrawals</h4>
-              <p className="text-neutral-600">No withdrawal requests found</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-neutral-100">
-                  <tr>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">User</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Amount</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Bank</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Requested</th>
-                    <th className="text-left px-4 py-3 text-sm font-semibold text-black">Status</th>
-                    <th className="text-right px-4 py-3 text-sm font-semibold text-black">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200">
-                  {filteredWithdrawals.map((withdrawal) => {
-                    const status = statusConfig[withdrawal.status];
-                    return (
-                      <tr key={withdrawal.id} className="hover:bg-neutral-50">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">
-                              <User className="w-4 h-4 text-black" aria-hidden="true" weight="regular" />
-                            </div>
-                            <div>
-                              <div className="font-medium text-black">{withdrawal.user.username}</div>
-                              <div className="text-sm text-neutral-600">{withdrawal.user.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="font-semibold text-black">{formatCurrency(withdrawal.amount)}</div>
-                          <div className="text-sm text-neutral-600">Fee: {formatCurrency(withdrawal.fee)}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Bank className="w-4 h-4 text-neutral-600" aria-hidden="true" weight="regular" />
-                            <div>
-                              <div className="text-black">{withdrawal.bankAccount.bankName}</div>
-                              <div className="text-sm text-neutral-600">****{withdrawal.bankAccount.accountNumberLast4}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-neutral-600">
-                          {new Date(withdrawal.createdAt).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full ${status.bgColor} ${status.color}`}>
-                            {status.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          {withdrawal.status === 'PENDING' && (
-                            <div className="flex items-center justify-end gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-red-600 hover:text-red-700 hover:border-red-600"
-                                onClick={() => {
-                                  setSelectedWithdrawal(withdrawal);
-                                  setIsRejectOpen(true);
-                                }}
-                              >
-                                <XCircle className="w-4 h-4" aria-hidden="true" weight="bold" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                className="btn-primary"
-                                onClick={() => handleApprove(withdrawal)}
-                                disabled={isSubmitting}
-                              >
-                                <CheckCircle className="w-4 h-4 mr-1" aria-hidden="true" weight="bold" />
-                                Approve
-                              </Button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </motion.div>
-
-        {/* Reject Dialog */}
-        <Dialog open={isRejectOpen} onOpenChange={setIsRejectOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Reject Withdrawal</DialogTitle>
-              <DialogDescription>
-                Please provide a reason for rejection. The funds will be returned to the user's wallet.
-              </DialogDescription>
-            </DialogHeader>
-            {selectedWithdrawal && (
-              <div className="py-4 space-y-4">
-                <div className="p-4 rounded-lg bg-neutral-100">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-neutral-600">User:</span>
-                      <span className="ml-2 font-medium text-black">{selectedWithdrawal.user.username}</span>
-                    </div>
-                    <div>
-                      <span className="text-neutral-600">Amount:</span>
-                      <span className="ml-2 font-medium text-black">{formatCurrency(selectedWithdrawal.amount)}</span>
-                    </div>
-                  </div>
-                </div>
-                <Textarea
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  placeholder="Enter rejection reason..."
-                  rows={4}
-                />
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsRejectOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                className="bg-red-500 hover:bg-red-600"
-                onClick={handleReject}
-                disabled={isSubmitting || !rejectionReason.trim()}
-              >
-                {isSubmitting ? 'Rejecting...' : 'Reject Withdrawal'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </AdminLayout>
   );

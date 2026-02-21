@@ -1,269 +1,124 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'wouter';
-import { motion } from 'framer-motion';
-import {
-  User, CaretRight, SignOut, Spinner, ShieldCheck,
-  UserCircle, IdentificationCard, Receipt, Bank, ClockCounterClockwise,
-  Star, Trophy, UserPlus, Target,
-  Question, Headset, ChatCircle,
-  Bell, LockKey, Globe, MoonStars,
-  Wallet, TrendUp
-} from '@phosphor-icons/react';
+import { useState } from 'react';
+import { Link } from 'wouter';
+import { ShieldCheck, Warning, PencilSimple, CalendarBlank, Star } from '@phosphor-icons/react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { useAuth } from '@/contexts/AuthContext';
-import { referralApi, userApi } from '@/lib/api';
 
-interface UserStats {
-  totalTransactions: number;
-  completedTransactions: number;
-  successRate: number;
-  avgResponseTime: string;
-  totalVolume: number;
-}
+const tabs = ['Info Pribadi', 'Keamanan', 'Notifikasi', 'Privasi'];
 
-interface ReferralStats {
-  referralCode: string | null;
-  totalReferrals: number;
-  totalEarnings: number;
-}
-
-interface MenuItemProps {
-  icon: React.ReactNode;
-  label: string;
-  subtitle?: string;
-  href?: string;
-  onClick?: () => void;
-  badge?: string;
-  badgeColor?: string;
-  external?: boolean;
-}
-
-function MenuItem({ icon, label, subtitle, href, onClick, badge, badgeColor = 'bg-gray-100 text-gray-600', external }: MenuItemProps) {
-  const content = (
-    <div className="flex items-center gap-4 px-4 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer">
-      <div className="flex-shrink-0">{icon}</div>
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-foreground text-[15px]">{label}</div>
-        {subtitle && <div className="text-xs text-neutral-600 mt-0.5">{subtitle}</div>}
-      </div>
-      {badge && <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${badgeColor}`}>{badge}</span>}
-      <CaretRight className="w-5 h-5 text-neutral-500" aria-hidden="true" weight="regular" />
-    </div>
-  );
-
-  if (onClick) return <button onClick={onClick} className="w-full text-left">{content}</button>;
-  if (external && href) return <a href={href} target="_blank" rel="noopener noreferrer">{content}</a>;
-  if (href) return <Link href={href}>{content}</Link>;
-  return content;
-}
-
-function SectionHeader({ title }: { title: string }) {
-  return (
-    <div className="px-4 py-2.5 bg-neutral-50">
-      <span className="text-xs font-semibold text-neutral-600 uppercase tracking-wider">{title}</span>
-    </div>
-  );
-}
-
-function Divider() {
-  return <div className="h-px bg-neutral-200 mx-4" />;
-}
-
-function getRankInfo(points: number) {
-  if (points >= 10000) return { name: 'Diamond', color: 'text-cyan-500', bg: 'bg-cyan-50' };
-  if (points >= 5000) return { name: 'Platinum', color: 'text-purple-500', bg: 'bg-purple-50' };
-  if (points >= 2000) return { name: 'Gold', color: 'text-amber-500', bg: 'bg-amber-50' };
-  if (points >= 500) return { name: 'Silver', color: 'text-gray-500', bg: 'bg-gray-100' };
-  return { name: 'Bronze', color: 'text-orange-600', bg: 'bg-orange-50' };
-}
+const kycStatus = 'verified'; // or 'pending'
 
 export default function Profile() {
-  const { user, logout } = useAuth();
-  const [, setLocation] = useLocation();
-  const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState<UserStats>({
-    totalTransactions: 0,
-    completedTransactions: 0,
-    successRate: 100,
-    avgResponseTime: '< 1h',
-    totalVolume: 0,
-  });
-  const [referralStats, setReferralStats] = useState<ReferralStats | null>(null);
-
-  useEffect(() => {
-    if (user) fetchData();
-    setIsLoading(false);
-  }, [user]);
-
-  const userPoints = useMemo(
-    () => stats.completedTransactions * 10 + (referralStats?.totalReferrals || 0) * 50,
-    [stats.completedTransactions, referralStats?.totalReferrals]
-  );
-  const rankInfo = getRankInfo(userPoints);
-
-  const fetchData = async () => {
-    try {
-      const [statsRes, referralRes] = await Promise.all([
-        userApi.getStats(),
-        referralApi.getStats().catch(() => ({ data: null })),
-      ]);
-      if (statsRes.data) setStats(statsRes.data);
-      if (referralRes.data) setReferralStats(referralRes.data);
-    } catch (error) {
-    }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    setLocation('/');
-  };
-
-  const getKycStatusBadge = () => {
-    const status = user?.kycStatus || 'NOT_SUBMITTED';
-    const configs: Record<string, { label: string; color: string }> = {
-      VERIFIED: { label: 'Terverifikasi', color: 'bg-emerald-100 text-emerald-700' },
-      PENDING: { label: 'Menunggu', color: 'bg-amber-100 text-amber-700' },
-      REJECTED: { label: 'Ditolak', color: 'bg-red-100 text-red-700' },
-      NOT_SUBMITTED: { label: 'Belum', color: 'bg-gray-100 text-gray-600' },
-    };
-    return configs[status] || configs.NOT_SUBMITTED;
-  };
-
-  if (isLoading) {
-    return (
-      <DashboardLayout title="Profil" subtitle="Loading...">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <Spinner className="w-10 h-10 animate-spin text-black mx-auto mb-4" aria-hidden="true" weight="bold" />
-            <p className="text-neutral-600">Memuat profil...</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  const kycBadge = getKycStatusBadge();
+  const [activeTab, setActiveTab] = useState('Info Pribadi');
 
   return (
     <DashboardLayout>
-      <div className="max-w-lg mx-auto pb-8 space-y-3">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl overflow-hidden bg-gradient-to-br from-black via-[#111827] to-[#1F2937] text-white">
-          <Link href="/profile/edit">
-            <div className="p-5 cursor-pointer">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                  {user?.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="Avatar" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    <User className="w-8 h-8 text-white" aria-hidden="true" weight="regular" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-bold truncate">{user?.username || 'User'}</h2>
-                    {user?.kycStatus === 'VERIFIED' && <ShieldCheck className="w-5 h-5 text-emerald-300" aria-hidden="true" weight="fill" />}
-                  </div>
-                  <p className="text-sm text-white/75 truncate">{user?.email || ''}</p>
-                  <p className="text-xs text-white/55 mt-0.5">ID: {user?.id?.slice(0, 8) || '---'}</p>
-                </div>
-                <CaretRight className="w-5 h-5 text-white/70" aria-hidden="true" weight="regular" />
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 mt-4">
-                <div className="rounded-xl bg-white/10 p-3">
-                  <div className="text-xs text-white/70">Transaksi</div>
-                  <div className="text-lg font-semibold">{stats.totalTransactions}</div>
-                </div>
-                <div className="rounded-xl bg-white/10 p-3">
-                  <div className="text-xs text-white/70">Success</div>
-                  <div className="text-lg font-semibold">{stats.successRate}%</div>
-                </div>
-                <div className="rounded-xl bg-white/10 p-3">
-                  <div className="text-xs text-white/70">Poin</div>
-                  <div className="text-lg font-semibold">{userPoints}</div>
-                </div>
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Profile Header */}
+      <div className="card p-6 mb-6">
+        <div className="flex items-start justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-black text-primary">A</div>
+            <div>
+              <h1 className="text-xl font-bold">Ahmad Rizki</h1>
+              <p className="text-muted-foreground text-sm">ahmad@email.com</p>
+              <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><CalendarBlank size={12} /> Bergabung Jan 2024</span>
+                <span className="flex items-center gap-1"><Star size={12} className="text-yellow-500" weight="fill" /> Level: Gold</span>
               </div>
             </div>
-          </Link>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
-          <SectionHeader title="Quick Access" />
-          <div className="grid grid-cols-3 gap-2 px-4 py-3">
-            <Link href="/wallet" className="rounded-xl border border-neutral-200 p-2 hover:bg-neutral-50">
-              <Wallet className="w-5 h-5 text-neutral-900 mb-2" aria-hidden="true" weight="regular" />
-              <p className="text-xs font-medium">Wallet</p>
-            </Link>
-            <Link href="/transactions" className="rounded-xl border border-neutral-200 p-2 hover:bg-neutral-50">
-              <Receipt className="w-5 h-5 text-neutral-900 mb-2" aria-hidden="true" weight="regular" />
-              <p className="text-xs font-medium">Pesanan</p>
-            </Link>
-            <Link href="/activity" className="rounded-xl border border-neutral-200 p-2 hover:bg-neutral-50">
-              <TrendUp className="w-5 h-5 text-neutral-900 mb-2" aria-hidden="true" weight="regular" />
-              <p className="text-xs font-medium">Aktivitas</p>
-            </Link>
           </div>
-        </motion.div>
+          <button className="btn-secondary gap-2 text-sm"><PencilSimple size={16} /> Edit Profil</button>
+        </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
-          <SectionHeader title="Detail Akun" />
-          <MenuItem icon={<UserCircle className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Informasi Akun" subtitle="Nama, email, nomor telepon" href="/profile/edit" />
-          <Divider />
-          <MenuItem icon={<IdentificationCard className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Verifikasi Identitas" subtitle="KYC untuk limit lebih tinggi" href="/kyc" badge={kycBadge.label} badgeColor={kycBadge.color} />
-          <Divider />
-          <MenuItem icon={<Receipt className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Riwayat Transaksi" subtitle={`${stats.totalTransactions} transaksi`} href="/transactions" />
-          <Divider />
-          <MenuItem icon={<Bank className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Rekening Bank" subtitle="Kelola rekening penarikan" href="/bank-accounts" />
-          <Divider />
-          <MenuItem icon={<ClockCounterClockwise className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Laporan / Activity Log" subtitle="Riwayat aktivitas akun" href="/activity" />
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
-          <SectionHeader title="Rewards" />
-          <MenuItem icon={<Star className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Points" subtitle="Kumpulkan poin dari transaksi" href="/rewards/points" badge={`${userPoints} pts`} badgeColor="bg-amber-100 text-amber-700" />
-          <Divider />
-          <MenuItem icon={<Trophy className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Rank" subtitle="Level keanggotaan Anda" href="/rewards/rank" badge={rankInfo.name} badgeColor={`${rankInfo.bg} ${rankInfo.color}`} />
-          <Divider />
-          <MenuItem icon={<UserPlus className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Undang Teman" subtitle={`${referralStats?.totalReferrals || 0} referral berhasil`} href="/referrals" />
-          <Divider />
-          <MenuItem icon={<Target className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Misi" subtitle="Selesaikan misi, dapatkan hadiah" href="/rewards/missions" />
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
-          <SectionHeader title="Support" />
-          <MenuItem icon={<Question className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Pusat Bantuan" subtitle="FAQ dan panduan penggunaan" href="/support" />
-          <Divider />
-          <MenuItem icon={<Headset className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Hubungi Kami" subtitle="Chat dengan tim support" href="https://wa.me/6281234567890" external />
-          <Divider />
-          <MenuItem icon={<ChatCircle className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Kirim Masukan" subtitle="Saran dan kritik untuk kami" href="mailto:bantuan@kahade.id" external />
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
-          <SectionHeader title="Pengaturan" />
-          <MenuItem icon={<Bell className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Notifikasi" subtitle="Atur preferensi notifikasi" href="/settings?tab=notifications" />
-          <Divider />
-          <MenuItem icon={<LockKey className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Keamanan" subtitle="Password, 2FA, dan sesi aktif" href="/settings?tab=security" />
-          <Divider />
-          <MenuItem icon={<Globe className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Bahasa" subtitle="Bahasa Indonesia" href="/settings?tab=profile" />
-          <Divider />
-          <MenuItem icon={<MoonStars className="w-6 h-6 text-foreground" aria-hidden="true" weight="regular" />} label="Tampilan" subtitle="Mode terang / gelap" href="/settings?tab=profile" />
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="pt-2 pb-4">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <Link href="/terms" className="text-sm text-neutral-600 hover:text-foreground transition-colors">Syarat & Ketentuan</Link>
-            <span className="text-neutral-200">|</span>
-            <Link href="/privacy" className="text-sm text-neutral-600 hover:text-foreground transition-colors">Kebijakan Privasi</Link>
+        {/* KYC Status */}
+        <div className={`mt-5 rounded-xl p-4 border-2 flex items-center gap-4 ${kycStatus === 'verified' ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' : 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'}`}>
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${kycStatus === 'verified' ? 'bg-green-600' : 'bg-yellow-500'} text-white`}>
+            {kycStatus === 'verified' ? <ShieldCheck size={24} weight="fill" /> : <Warning size={24} weight="fill" />}
           </div>
-
-          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-3.5 mx-auto max-w-xs bg-white border border-neutral-200 rounded-xl text-red-600 font-medium hover:bg-red-50 hover:border-red-200 transition-colors">
-            <SignOut className="w-5 h-5" aria-hidden="true" weight="regular" />
-            <span>Keluar</span>
-          </button>
-
-          <div className="text-center text-xs text-neutral-500 mt-6">Kahade v1.0.0</div>
-        </motion.div>
+          <div className="flex-1">
+            <p className="font-bold">{kycStatus === 'verified' ? 'Identitas Terverifikasi' : 'Verifikasi Diperlukan'}</p>
+            <p className="text-sm text-muted-foreground">{kycStatus === 'verified' ? 'Akun Anda telah terverifikasi penuh.' : 'Verifikasi KYC untuk transaksi tanpa batas.'}</p>
+          </div>
+          {kycStatus !== 'verified' && (
+            <Link href="/kyc"><button className="btn-primary btn-sm text-sm">Verifikasi →</button></Link>
+          )}
+        </div>
       </div>
-    </DashboardLayout>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-muted/50 p-1 rounded-xl mb-5 overflow-x-auto no-scrollbar">
+        {tabs.map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex-1 ${activeTab === tab ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>{tab}</button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <div className="card p-6">
+        {activeTab === 'Info Pribadi' && (
+          <div className="space-y-5">
+            <h2 className="font-bold">Informasi Pribadi</h2>
+            {[['Nama Lengkap', 'Ahmad Rizki', false], ['Email', 'ahmad@email.com', true], ['No. HP', '+62 812-XXXX-XXXX', true], ['Kota', 'Jakarta Selatan', false], ['Bio', '—', false]].map(([label, val, verified]) => (
+              <div key={String(label)} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
+                  <p className="font-medium">{val}</p>
+                </div>
+                {verified && <span className="text-xs font-semibold text-green-600 flex items-center gap-1"><ShieldCheck size={12} /> Terverifikasi</span>}
+              </div>
+            ))}
+          </div>
+        )}
+        {activeTab === 'Keamanan' && (
+          <div className="space-y-5">
+            <h2 className="font-bold">Keamanan Akun</h2>
+            <div className="flex items-center justify-between py-3 border-b border-border">
+              <div>
+                <p className="font-medium">Password</p>
+                <p className="text-xs text-muted-foreground">Terakhir diubah: 3 bulan lalu</p>
+              </div>
+              <button className="btn-secondary text-sm">Ubah</button>
+            </div>
+            <div className="flex items-center justify-between py-3 border-b border-border">
+              <div>
+                <p className="font-medium">Autentikasi 2 Faktor</p>
+                <p className="text-xs text-muted-foreground">Aktif via Google Authenticator</p>
+              </div>
+              <button className="btn-secondary text-sm">Kelola</button>
+            </div>
+            <Link href="/security"><button className="btn-ghost text-sm text-primary">Kelola keamanan lanjutan →</button></Link>
+          </div>
+        )}
+        {activeTab === 'Notifikasi' && (
+          <div className="space-y-4">
+            <h2 className="font-bold mb-4">Preferensi Notifikasi</h2>
+            {[['Transaksi baru', true, true, false], ['Dana masuk', true, true, false], ['Sengketa', true, true, true], ['Newsletter', false, false, false]].map(([label, email, push, sms]) => (
+              <div key={String(label)} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                <span className="text-sm">{label}</span>
+                <div className="flex items-center gap-6 text-xs text-muted-foreground">
+                  <span>Email <span className={email ? 'text-green-600 font-bold' : ''}>●</span></span>
+                  <span>Push <span className={push ? 'text-green-600 font-bold' : ''}>●</span></span>
+                  <span>SMS <span className={sms ? 'text-green-600 font-bold' : ''}>●</span></span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {activeTab === 'Privasi' && (
+          <div className="space-y-4">
+            <h2 className="font-bold">Pengaturan Privasi</h2>
+            <p className="text-sm text-muted-foreground">Kelola bagaimana data Anda digunakan di platform Kahade.</p>
+            {[['Tampilkan profil publik', true], ['Izinkan pencarian berdasarkan email', false], ['Bagikan data anonim untuk peningkatan layanan', true]].map(([label, val]) => (
+              <div key={String(label)} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                <span className="text-sm">{label}</span>
+                <div className={`w-11 h-6 rounded-full transition-colors cursor-pointer ${val ? 'bg-primary' : 'bg-muted'}`}>
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform m-0.5 ${val ? 'translate-x-5' : ''}`} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </DashboardLayout>
   );
 }

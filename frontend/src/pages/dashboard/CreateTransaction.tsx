@@ -1,849 +1,152 @@
-/**
- * KAHADE CREATE TRANSACTION/ORDER PAGE - Professional Responsive Design
- * 
- * Design Philosophy:
- * - Mobile: Full-screen step wizard WITHOUT bottom navigation
- * - Arrow back header for navigation
- * - Consistent input styling with login/register
- * - Category icons from Phosphor Icons
- */
-
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'wouter';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft, ArrowRight, User, FileText, CurrencyDollar, 
-  CheckCircle, Spinner, Package, Truck, Clock,
-  ShieldCheck, Warning, Copy, EnvelopeSimple, Check,
-  CaretRight, Info, Scales, UserCircle,
-  DeviceMobile, TShirt, Wrench, GameController, Cube,
-  Car, House, Briefcase, DotsThree
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { toast } from 'sonner';
-import { transactionApi } from '@/lib/api';
-import { useDebounce } from '@/hooks/useDebounce';
+import { Check, ArrowLeft, ArrowRight, UploadSimple, X } from '@phosphor-icons/react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
-// Categories with Phosphor Icons
-const categories = [
-  { value: 'ELECTRONICS', label: 'Electronics', icon: DeviceMobile },
-  { value: 'FASHION', label: 'Fashion & Apparel', icon: TShirt },
-  { value: 'SERVICES', label: 'Services', icon: Wrench },
-  { value: 'DIGITAL_GOODS', label: 'Digital Goods', icon: GameController },
-  { value: 'PHYSICAL_GOODS', label: 'Physical Goods', icon: Cube },
-  { value: 'AUTOMOTIVE', label: 'Automotive', icon: Car },
-  { value: 'PROPERTY', label: 'Property', icon: House },
-  { value: 'FREELANCE', label: 'Freelance Work', icon: Briefcase },
-  { value: 'OTHER', label: 'Other', icon: DotsThree },
-];
+const steps = ['Detail', 'Pihak Lawan', 'Lampiran', 'Konfirmasi'];
 
-// Delivery methods
-const deliveryMethods = [
-  { value: 'SHIPPING', label: 'Shipping/Courier', description: 'Physical delivery via courier', icon: Truck },
-  { value: 'DIGITAL', label: 'Digital Delivery', description: 'Files, codes, or digital access', icon: FileText },
-  { value: 'MEETUP', label: 'In-Person Meetup', description: 'Face-to-face handover', icon: UserCircle },
-  { value: 'SERVICE', label: 'Service Completion', description: 'Work/service to be completed', icon: Package },
-];
-
-// Holding periods
-const holdingPeriods = [
-  { value: 3, label: '3 Days', description: 'Quick transactions' },
-  { value: 7, label: '7 Days', description: 'Standard (Recommended)' },
-  { value: 14, label: '14 Days', description: 'Complex transactions' },
-  { value: 30, label: '30 Days', description: 'Large/custom orders' },
-];
-
-const steps = [
-  { id: 1, title: 'Role', icon: User },
-  { id: 2, title: 'Details', icon: FileText },
-  { id: 3, title: 'Delivery', icon: Truck },
-  { id: 4, title: 'Price', icon: CurrencyDollar },
-  { id: 5, title: 'Review', icon: CheckCircle },
-];
-
-interface CounterpartyInfo {
-  id: string;
-  username: string;
-  email: string;
-  reputationScore?: number;
-  verified?: boolean;
-}
+function fee(val: number) { return Math.round(val * 0.025); }
+function fmt(n: number) { return new Intl.NumberFormat('id-ID').format(n); }
 
 export default function CreateTransaction() {
-  const [, setLocation] = useLocation();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidatingEmail, setIsValidatingEmail] = useState(false);
-  const [counterpartyInfo, setCounterpartyInfo] = useState<CounterpartyInfo | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  
-  const [formData, setFormData] = useState({
-    role: 'buyer' as 'buyer' | 'seller',
-    counterpartyEmail: '',
-    title: '',
-    description: '',
-    category: '',
-    deliveryMethod: 'SHIPPING',
-    estimatedDeliveryDays: 7,
-    shippingNotes: '',
-    amount: '',
-    feePaidBy: 'buyer' as 'buyer' | 'seller' | 'split',
-    holdingPeriodDays: 7,
-    terms: '',
-    agreeToTerms: false,
-  });
+  const [step, setStep] = useState(0);
+  const [drag, setDrag] = useState(false);
+  const [files, setFiles] = useState<string[]>([]);
+  const [data, setData] = useState({ title: '', desc: '', amount: 5000000, days: 7, feeSplit: 'seller', counterEmail: '', note: '' });
 
-  const debouncedEmail = useDebounce(formData.counterpartyEmail, 500);
-
-  useEffect(() => {
-    const validateEmail = async () => {
-      if (!debouncedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(debouncedEmail)) {
-        setCounterpartyInfo(null);
-        setEmailError(null);
-        return;
-      }
-
-      setIsValidatingEmail(true);
-      setEmailError(null);
-
-      try {
-        const response = await transactionApi.validateCounterparty(debouncedEmail);
-        const payload = response?.data?.data || response?.data;
-        if (payload?.found && payload?.user) {
-          setCounterpartyInfo(payload.user);
-          setEmailError(null);
-        } else {
-          setCounterpartyInfo(null);
-        }
-      } catch (error: unknown) {
-        const message = error?.response?.data?.message || error?.response?.data?.error || '';
-        if (typeof message === 'string' && message.includes('yourself')) {
-          setEmailError('Cannot create transaction with yourself');
-        }
-        setCounterpartyInfo(null);
-      } finally {
-        setIsValidatingEmail(false);
-      }
-    };
-
-    validateEmail();
-  }, [debouncedEmail]);
-
-  // Calculate fees
-  const amount = parseFloat(formData.amount) || 0;
-  const platformFeePercent = 2.5;
-  const platformFee = Math.round(amount * platformFeePercent / 100);
-  
-  const buyerPays = formData.feePaidBy === 'buyer' 
-    ? amount + platformFee 
-    : formData.feePaidBy === 'split' 
-      ? amount + Math.round(platformFee / 2)
-      : amount;
-      
-  const sellerReceives = formData.feePaidBy === 'seller'
-    ? amount - platformFee
-    : formData.feePaidBy === 'split'
-      ? amount - Math.round(platformFee / 2)
-      : amount;
-
-  const validateStep = (step: number): boolean => {
-    switch (step) {
-      case 1:
-        if (!formData.counterpartyEmail) {
-          toast.error('Counterparty email is required');
-          return false;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.counterpartyEmail)) {
-          toast.error('Please enter a valid email address');
-          return false;
-        }
-        if (emailError) {
-          toast.error(emailError);
-          return false;
-        }
-        return true;
-        
-      case 2:
-        if (!formData.title || formData.title.trim().length < 3) {
-          toast.error('Title must be at least 3 characters');
-          return false;
-        }
-        if (!formData.category) {
-          toast.error('Please select a category');
-          return false;
-        }
-        if (!formData.description || formData.description.trim().length < 10) {
-          toast.error('Description must be at least 10 characters');
-          return false;
-        }
-        return true;
-        
-      case 3:
-        if (!formData.deliveryMethod) {
-          toast.error('Please select a delivery method');
-          return false;
-        }
-        return true;
-        
-      case 4:
-        if (!formData.amount || parseFloat(formData.amount) < 10000) {
-          toast.error('Minimum transaction amount is Rp 10,000');
-          return false;
-        }
-        return true;
-        
-      case 5:
-        if (!formData.agreeToTerms) {
-          toast.error('Please agree to the terms and conditions');
-          return false;
-        }
-        return true;
-        
-      default:
-        return true;
-    }
-  };
-
-  const handleNext = () => {
-    if (validateStep(currentStep) && currentStep < 5) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!validateStep(5)) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const response = await transactionApi.create({
-        counterpartyEmail: formData.counterpartyEmail,
-        role: formData.role,
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        category: formData.category,
-        amount: parseFloat(formData.amount),
-        feePaidBy: formData.feePaidBy,
-        terms: formData.terms || undefined,
-      });
-
-      // Handle various response formats from API
-      const responseData = response?.data;
-      let transactionId: string | null = null;
-      
-      // Try to extract transaction ID from different response structures
-      if (responseData) {
-        // Direct response: { id: "..." }
-        if (responseData.id) {
-          transactionId = responseData.id;
-        }
-        // Wrapped in data: { data: { id: "..." } }
-        else if (responseData.data?.id) {
-          transactionId = responseData.data.id;
-        }
-        // Wrapped in transaction: { transaction: { id: "..." } }
-        else if (responseData.transaction?.id) {
-          transactionId = responseData.transaction.id;
-        }
-        // Wrapped in data.transaction: { data: { transaction: { id: "..." } } }
-        else if (responseData.data?.transaction?.id) {
-          transactionId = responseData.data.transaction.id;
-        }
-      }
-
-      toast.success('Order created successfully!');
-      
-      if (transactionId) {
-        setLocation(`/transactions/${transactionId}`);
-      } else {
-        // Fallback to transactions list with refresh
-        setLocation('/transactions?refresh=true');
-      }
-    } catch (error: unknown) {
-      const errorMessage = error.response?.data?.message 
-        || error.response?.data?.error 
-        || error.message 
-        || 'Failed to create order';
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, '');
-    setFormData({ ...formData, amount: value });
-  };
+  const update = (k: string, v: any) => setData(p => ({ ...p, [k]: v }));
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* ========== HEADER WITH BACK BUTTON ========== */}
-      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-        <div className="flex items-center h-14 px-4">
-          <button
-            onClick={() => currentStep === 1 ? setLocation('/transactions') : handleBack()}
-            className="p-2 -ml-2 hover:bg-neutral-100 rounded-xl transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6 text-black" aria-hidden="true" weight="bold" />
-          </button>
-          <h1 className="flex-1 text-center font-semibold text-base text-black sm:text-lg">
-            Create Order
-          </h1>
-          <div className="w-10" /> {/* Spacer for centering */}
-        </div>
-      </header>
+    <DashboardLayout>
+    <div className="p-6 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-2">Buat Transaksi Baru</h1>
+      <p className="text-muted-foreground text-sm mb-8">Lengkapi detail transaksi escrow Anda</p>
 
-      <div className="max-w-lg mx-auto p-4 pb-8">
-        {/* ========== PROGRESS STEPS ========== */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          {/* Mobile Progress */}
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-black">Step {currentStep} of {steps.length}</span>
-              <span className="text-sm text-neutral-600">{steps[currentStep - 1].title}</span>
+      {/* Step indicator */}
+      <div className="flex items-center gap-1 mb-8">
+        {steps.map((s, i) => (
+          <div key={s} className="flex items-center gap-1 flex-1">
+            <div className={`flex items-center gap-1.5 text-xs font-medium ${i <= step ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs transition-all ${i < step ? 'bg-green-600 text-white' : i === step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                {i < step ? <Check size={13} weight="bold" /> : i + 1}
+              </div>
+              <span className="hidden sm:block">{s}</span>
             </div>
-            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-black rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-                style={{ width: `${(currentStep / steps.length) * 100}%` }}
-              />
-            </div>
+            {i < steps.length - 1 && <div className={`flex-1 h-[2px] rounded-full mx-1 ${i < step ? 'bg-green-600' : 'bg-muted'}`} />}
           </div>
+        ))}
+      </div>
 
-          {/* Desktop Progress */}
-          <div className="hidden md:flex items-center justify-between">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div className={`flex items-center gap-2 ${
-                  currentStep >= step.id ? 'text-black' : 'text-neutral-500'
-                }`}>
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                    currentStep > step.id 
-                      ? 'bg-emerald-500 text-white' 
-                      : currentStep === step.id 
-                        ? 'bg-black text-white' 
-                        : 'bg-neutral-100 text-neutral-500'
-                  }`}>
-                    {currentStep > step.id ? (
-                      <Check className="w-5 h-5" aria-hidden="true" weight="bold" />
-                    ) : (
-                      <step.icon className="w-5 h-5" weight={currentStep === step.id ? 'bold' : 'regular'} />
-                    )}
-                  </div>
-                  <span className="font-medium text-sm">{step.title}</span>
+      <div className="card p-8">
+        <AnimatePresence mode="wait">
+          <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
+
+            {step === 0 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-6">Detail Transaksi</h2>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Nama Produk / Jasa</label>
+                  <input type="text" placeholder="cth: Laptop ASUS ROG" value={data.title} onChange={e => update('title', e.target.value)} className="w-full h-12 px-4 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm" />
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={`w-12 lg:w-20 h-0.5 mx-3 ${
-                    currentStep > step.id ? 'bg-emerald-500' : 'bg-neutral-200'
-                  }`} />
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Deskripsi</label>
+                  <textarea rows={3} placeholder="Deskripsi detail produk/jasa..." value={data.desc} onChange={e => update('desc', e.target.value)} className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm resize-none" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Nilai Transaksi</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">Rp</span>
+                    <input type="number" value={data.amount} onChange={e => update('amount', Number(e.target.value))} className="w-full h-12 pl-10 pr-4 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm" />
+                  </div>
+                  {data.amount > 0 && <p className="text-xs text-muted-foreground mt-1">Biaya platform: Rp {fmt(fee(data.amount))}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-3 block">Durasi Escrow: <span className="text-primary font-bold">{data.days} hari</span></label>
+                  <input type="range" min={1} max={30} value={data.days} onChange={e => update('days', Number(e.target.value))} className="w-full accent-primary" />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1"><span>1 hari</span><span>30 hari</span></div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-3 block">Siapa yang menanggung biaya?</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[['seller', 'Penjual'], ['buyer', 'Pembeli'], ['split', 'Dibagi']].map(([val, label]) => (
+                      <button key={val} type="button" onClick={() => update('feeSplit', val)} className={`py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${data.feeSplit === val ? 'border-primary bg-primary/10 text-primary' : 'border-border hover:border-primary/50'}`}>{label}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 1 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-6">Pihak Lawan Transaksi</h2>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Email atau Username</label>
+                  <input type="email" placeholder="penjual@email.com" value={data.counterEmail} onChange={e => update('counterEmail', e.target.value)} className="w-full h-12 px-4 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm" />
+                  <p className="text-xs text-muted-foreground mt-1">Mereka akan menerima undangan via email</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Catatan (opsional)</label>
+                  <textarea rows={4} placeholder="Pesan untuk pihak lawan..." value={data.note} onChange={e => update('note', e.target.value)} className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm resize-none" />
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-6">Lampiran (Opsional)</h2>
+                <div
+                  onDrop={e => { e.preventDefault(); setDrag(false); const f = Array.from(e.dataTransfer.files).map(f => f.name); setFiles(p => [...p, ...f]); }}
+                  onDragOver={e => { e.preventDefault(); setDrag(true); }}
+                  onDragLeave={() => setDrag(false)}
+                  className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer ${drag ? 'border-primary bg-primary/5' : 'border-border hover:border-primary hover:bg-primary/5'}`}
+                >
+                  <UploadSimple size={40} className="mx-auto mb-4 text-muted-foreground" weight="thin" />
+                  <p className="font-semibold mb-1">Drag & drop file di sini</p>
+                  <p className="text-sm text-muted-foreground mb-4">PNG, JPG, PDF hingga 10MB</p>
+                  <button type="button" className="btn-secondary text-sm px-4 py-2">Pilih dari perangkat</button>
+                </div>
+                {files.length > 0 && (
+                  <div className="space-y-2">
+                    {files.map((f, i) => (
+                      <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-xl text-sm">
+                        <span>{f}</span>
+                        <button onClick={() => setFiles(p => p.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-destructive transition-colors"><X size={16} /></button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ========== FORM CONTENT ========== */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl border border-neutral-200 overflow-hidden"
-        >
-          <AnimatePresence mode="wait">
-            {/* Step 1: Role & Party */}
-            {currentStep === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 space-y-6"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Select Your Role</h2>
-                  <p className="text-sm text-neutral-600">Are you buying or selling?</p>
-                </div>
-
-                <RadioGroup
-                  value={formData.role}
-                  onValueChange={(v) => setFormData({ ...formData, role: v as 'buyer' | 'seller' })}
-                  className="grid grid-cols-2 gap-3"
-                >
-                  <Label
-                    htmlFor="buyer"
-                    className={`flex flex-col items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                      formData.role === 'buyer' 
-                        ? 'border-black bg-neutral-50' 
-                        : 'border-neutral-200 hover:border-neutral-300'
-                    }`}
-                  >
-                    <RadioGroupItem value="buyer" id="buyer" className="sr-only" />
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-                      formData.role === 'buyer' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'
-                    }`}>
-                      <Package className="w-6 h-6" aria-hidden="true" weight="duotone" />
-                    </div>
-                    <span className="font-semibold text-black">I'm Buying</span>
-                    <span className="text-xs text-neutral-600 text-center mt-1">I want to purchase something</span>
-                  </Label>
-                  
-                  <Label
-                    htmlFor="seller"
-                    className={`flex flex-col items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                      formData.role === 'seller' 
-                        ? 'border-black bg-neutral-50' 
-                        : 'border-neutral-200 hover:border-neutral-300'
-                    }`}
-                  >
-                    <RadioGroupItem value="seller" id="seller" className="sr-only" />
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-                      formData.role === 'seller' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'
-                    }`}>
-                      <CurrencyDollar className="w-6 h-6" aria-hidden="true" weight="duotone" />
-                    </div>
-                    <span className="font-semibold text-black">I'm Selling</span>
-                    <span className="text-xs text-neutral-600 text-center mt-1">I want to sell something</span>
-                  </Label>
-                </RadioGroup>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">
-                    {formData.role === 'buyer' ? 'Seller' : 'Buyer'}'s Email
-                  </Label>
-                  <div className="relative">
-                    <EnvelopeSimple className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" weight="regular" />
-                    <Input
-                      type="email"
-                      placeholder="Enter email address"
-                      value={formData.counterpartyEmail}
-                      onChange={(e) => setFormData({ ...formData, counterpartyEmail: e.target.value })}
-                      className="pl-12 h-12"
-                    />
-                    {isValidatingEmail && (
-                      <Spinner className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-neutral-500" aria-hidden="true" />
-                    )}
-                  </div>
-                  
-                  {emailError && (
-                    <div className="flex items-center gap-2 text-red-600 text-sm">
-                      <Warning className="w-4 h-4" aria-hidden="true" weight="fill" />
-                      {emailError}
-                    </div>
-                  )}
-                  
-                  {counterpartyInfo && (
-                    <div className="flex items-center gap-4 p-2 bg-emerald-50 rounded-xl border border-emerald-200">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                        <User className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="duotone" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-black text-sm">{counterpartyInfo.username}</div>
-                        <div className="text-xs text-emerald-600">Verified user found</div>
-                      </div>
-                      <CheckCircle className="w-5 h-5 text-emerald-600" aria-hidden="true" weight="fill" />
-                    </div>
-                  )}
-                  
-                  {!counterpartyInfo && formData.counterpartyEmail && !isValidatingEmail && !emailError && (
-                    <div className="flex items-center gap-2 text-neutral-600 text-sm">
-                      <Info className="w-4 h-4" aria-hidden="true" weight="fill" />
-                      User not found. An invitation will be sent.
-                    </div>
-                  )}
-                </div>
-              </motion.div>
             )}
 
-            {/* Step 2: Item Details */}
-            {currentStep === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 space-y-5"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Item Details</h2>
-                  <p className="text-sm text-neutral-600">Describe what you're {formData.role === 'buyer' ? 'buying' : 'selling'}</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Title</Label>
-                  <Input
-                    placeholder="e.g., iPhone 15 Pro Max 256GB"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="h-12"
-                    maxLength={100}
-                  />
-                  <div className="text-xs text-neutral-500 text-right">{formData.title.length}/100</div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Category</Label>
-                  <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v })}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => {
-                        const IconComponent = cat.icon;
-                        return (
-                          <SelectItem key={cat.value} value={cat.value}>
-                            <span className="flex items-center gap-3">
-                              <IconComponent className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="duotone" />
-                              <span>{cat.label}</span>
-                            </span>
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Description</Label>
-                  <Textarea
-                    placeholder="Provide detailed description including condition, specifications, etc."
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="min-h-[120px] resize-none"
-                    maxLength={2000}
-                  />
-                  <div className="text-xs text-neutral-500 text-right">{formData.description.length}/2000</div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 3: Delivery */}
-            {currentStep === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 space-y-5"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Delivery Method</h2>
-                  <p className="text-sm text-neutral-600">How will the item be delivered?</p>
-                </div>
-
-                <RadioGroup
-                  value={formData.deliveryMethod}
-                  onValueChange={(v) => setFormData({ ...formData, deliveryMethod: v })}
-                  className="space-y-3"
-                >
-                  {deliveryMethods.map((method) => (
-                    <Label
-                      key={method.value}
-                      htmlFor={method.value}
-                      className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                        formData.deliveryMethod === method.value 
-                          ? 'border-black bg-neutral-50' 
-                          : 'border-neutral-200 hover:border-neutral-300'
-                      }`}
-                    >
-                      <RadioGroupItem value={method.value} id={method.value} className="sr-only" />
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                        formData.deliveryMethod === method.value ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'
-                      }`}>
-                        <method.icon className="w-5 h-5" weight="duotone" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-black">{method.label}</div>
-                        <div className="text-sm text-neutral-600">{method.description}</div>
-                      </div>
-                      {formData.deliveryMethod === method.value && (
-                        <CheckCircle className="w-5 h-5 text-black shrink-0" aria-hidden="true" weight="fill" />
-                      )}
-                    </Label>
+            {step === 3 && (
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold mb-6">Review & Konfirmasi</h2>
+                <div className="bg-muted/50 rounded-2xl p-5 space-y-3 text-sm">
+                  {[['Produk/Jasa', data.title || '—'], ['Nilai Transaksi', `Rp ${fmt(data.amount)}`], ['Biaya Platform (2.5%)', `Rp ${fmt(fee(data.amount))}`], ['Durasi', `${data.days} hari`], ['Pihak Lawan', data.counterEmail || '—']].map(([label, val]) => (
+                    <div key={label} className="flex justify-between">
+                      <span className="text-muted-foreground">{label}</span>
+                      <span className="font-semibold">{val}</span>
+                    </div>
                   ))}
-                </RadioGroup>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Estimated Delivery Time</Label>
-                  <Select 
-                    value={formData.estimatedDeliveryDays.toString()} 
-                    onValueChange={(v) => setFormData({ ...formData, estimatedDeliveryDays: parseInt(v) })}
-                  >
-                    <SelectTrigger className="h-12">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 Day</SelectItem>
-                      <SelectItem value="3">3 Days</SelectItem>
-                      <SelectItem value="7">7 Days</SelectItem>
-                      <SelectItem value="14">14 Days</SelectItem>
-                      <SelectItem value="30">30 Days</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="border-t border-border pt-3 flex justify-between font-bold text-base">
+                    <span>Total Pembayaran</span>
+                    <span className="text-primary">Rp {fmt(data.amount + fee(data.amount))}</span>
+                  </div>
                 </div>
-              </motion.div>
+                <p className="text-xs text-muted-foreground">Dengan membuat transaksi, Anda menyetujui Syarat & Ketentuan Kahade.</p>
+              </div>
             )}
+          </motion.div>
+        </AnimatePresence>
 
-            {/* Step 4: Price & Terms */}
-            {currentStep === 4 && (
-              <motion.div
-                key="step4"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 space-y-5"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Price & Terms</h2>
-                  <p className="text-sm text-neutral-600">Set the transaction amount and fee arrangement</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Amount (IDR)</Label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600 font-medium">Rp</span>
-                    <Input
-                      type="text"
-                      placeholder="0"
-                      value={formData.amount ? parseInt(formData.amount).toLocaleString('id-ID') : ''}
-                      onChange={handleAmountChange}
-                      className="pl-12 h-12 text-lg font-semibold"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">Who Pays the Fee?</Label>
-                  <p className="text-xs text-neutral-600">Platform fee: 2.5% ({formatCurrency(platformFee)})</p>
-                  
-                  <RadioGroup
-                    value={formData.feePaidBy}
-                    onValueChange={(v) => setFormData({ ...formData, feePaidBy: v as 'buyer' | 'seller' | 'split' })}
-                    className="grid grid-cols-3 gap-2"
-                  >
-                    {[
-                      { value: 'buyer', label: 'Buyer' },
-                      { value: 'seller', label: 'Seller' },
-                      { value: 'split', label: 'Split 50/50' },
-                    ].map((option) => (
-                      <Label
-                        key={option.value}
-                        htmlFor={`fee-${option.value}`}
-                        className={`flex items-center justify-center p-2 rounded-xl border-2 cursor-pointer transition-all text-sm font-medium ${
-                          formData.feePaidBy === option.value 
-                            ? 'border-black bg-black text-white' 
-                            : 'border-neutral-200 hover:border-neutral-300 text-black'
-                        }`}
-                      >
-                        <RadioGroupItem value={option.value} id={`fee-${option.value}`} className="sr-only" />
-                        {option.label}
-                      </Label>
-                    ))}
-                  </RadioGroup>
-                </div>
-
-                {/* Fee Summary */}
-                {amount > 0 && (
-                  <div className="bg-neutral-50 rounded-xl p-4 space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-neutral-600">Item Price</span>
-                      <span className="font-medium text-black">{formatCurrency(amount)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-neutral-600">Platform Fee (2.5%)</span>
-                      <span className="font-medium text-black">{formatCurrency(platformFee)}</span>
-                    </div>
-                    <div className="border-t border-neutral-200 pt-3 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Buyer Pays</span>
-                        <span className="font-semibold text-black">{formatCurrency(buyerPays)}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Seller Receives</span>
-                        <span className="font-semibold text-emerald-600">{formatCurrency(sellerReceives)}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {/* Step 5: Review */}
-            {currentStep === 5 && (
-              <motion.div
-                key="step5"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-5 space-y-5"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-black mb-1">Review Order</h2>
-                  <p className="text-sm text-neutral-600">Please review all details before creating</p>
-                </div>
-
-                <div className="space-y-4">
-                  {/* Role & Party */}
-                  <div className="bg-neutral-50 rounded-xl p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-black">Transaction Parties</span>
-                      <Badge className="bg-black text-white border-0">
-                        {formData.role === 'buyer' ? 'Buying' : 'Selling'}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200 flex items-center justify-center">
-                        <User className="w-5 h-5 text-neutral-600" aria-hidden="true" weight="duotone" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-black text-sm">
-                          {counterpartyInfo?.username || formData.counterpartyEmail}
-                        </div>
-                        <div className="text-xs text-neutral-600">
-                          {formData.role === 'buyer' ? 'Seller' : 'Buyer'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Item Details */}
-                  <div className="bg-neutral-50 rounded-xl p-4">
-                    <span className="text-sm font-medium text-black">Item Details</span>
-                    <div className="mt-3 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Title</span>
-                        <span className="text-sm font-medium text-black">{formData.title}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Category</span>
-                        <span className="text-sm font-medium text-black">
-                          {categories.find(c => c.value === formData.category)?.label}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Delivery</span>
-                        <span className="text-sm font-medium text-black">
-                          {deliveryMethods.find(d => d.value === formData.deliveryMethod)?.label}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Price Summary */}
-                  <div className="bg-black rounded-xl p-4 text-white">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-white/70 text-sm">Total Amount</span>
-                      <span className="text-2xl font-bold">{formatCurrency(amount)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/70">Buyer Pays</span>
-                      <span className="font-medium">{formatCurrency(buyerPays)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/70">Seller Receives</span>
-                      <span className="font-medium text-emerald-400">{formatCurrency(sellerReceives)}</span>
-                    </div>
-                  </div>
-
-                  {/* Terms Agreement */}
-                  <div className="flex items-start gap-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                    <Checkbox
-                      id="terms"
-                      checked={formData.agreeToTerms}
-                      onCheckedChange={(checked) => setFormData({ ...formData, agreeToTerms: checked as boolean })}
-                      className="mt-0.5"
-                    />
-                    <Label htmlFor="terms" className="text-sm text-amber-900 cursor-pointer">
-                      I agree to the <Link href="/terms" className="underline font-medium">Terms of Service</Link> and understand that funds will be held in escrow until the transaction is completed.
-                    </Label>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* ========== NAVIGATION BUTTONS ========== */}
-          <div className="flex items-center justify-between p-4 border-t border-neutral-200 bg-neutral-50">
-            <Button
-              variant="outline"
-              onClick={currentStep === 1 ? () => setLocation('/transactions') : handleBack}
-              className="rounded-xl border-neutral-200 h-11"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-              {currentStep === 1 ? 'Cancel' : 'Back'}
-            </Button>
-            
-            {currentStep < 5 ? (
-              <Button
-                onClick={handleNext}
-                className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
-              >
-                Continue
-                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting || !formData.agreeToTerms}
-                className="bg-black text-white hover:bg-black/90 rounded-xl h-11"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Spinner className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" weight="bold" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-                    Create Order
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Security Notice */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-6 flex items-center justify-center gap-2 text-sm text-neutral-600"
-        >
-          <ShieldCheck className="w-4 h-4" aria-hidden="true" weight="fill" />
-          <span>Your funds are protected by our secure escrow system</span>
-        </motion.div>
+        <div className={`flex gap-3 mt-8 ${step > 0 ? '' : 'justify-end'}`}>
+          {step > 0 && <button onClick={() => setStep(s => s - 1)} className="btn-secondary flex-1"><ArrowLeft size={16} /> Kembali</button>}
+          <button onClick={() => step < steps.length - 1 ? setStep(s => s + 1) : null} className="btn-primary flex-1">
+            {step === steps.length - 1 ? 'Buat Transaksi' : 'Lanjut'} {step < steps.length - 1 && <ArrowRight size={16} />}
+          </button>
+        </div>
       </div>
     </div>
+  </DashboardLayout>
   );
 }

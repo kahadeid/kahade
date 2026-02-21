@@ -1,418 +1,218 @@
-/*
- * KAHADE HOW IT WORKS PAGE - CLICKUP-INSPIRED REDESIGN
- * 
- * Design Philosophy:
- * - ClickUp-style smooth animations and step progression
- * - Enhanced step cards with micro-interactions
- * - Improved visual flow and hierarchy
- * - Brand color: var(--color-black)
- */
-
-import { Link } from 'wouter';
-import { motion } from 'framer-motion';
-import { 
-  UserPlus, FileText, Wallet, PaperPlaneTilt, CheckCircle,
-  ArrowRight, ShieldCheck, Clock, Question, Check, Scales,
-  Play, Lightning
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  UserPlus, CurrencyDollar, Package, CheckCircle, Wallet,
+  ShoppingCart, Laptop, House, Car, ArrowRight, Question
+} from '@phosphor-icons/react';
+import { Link } from 'wouter';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { staggerContainer, staggerItem, fadeInUp, viewport } from '@/lib/animations';
 
 const steps = [
   {
+    number: '01',
     icon: UserPlus,
-    title: 'Buat Akun',
-    description: 'Buat akun gratis di Kahade. Pendaftaran cepat dan mudah, cukup email dan kata sandi.',
-    details: [
-      'Verifikasi email untuk keamanan akun',
-      'Lengkapi profil untuk meningkatkan kepercayaan',
-      'Opsional: Verifikasi KYC untuk batas transaksi lebih tinggi'
-    ]
-  },
-  {
-    icon: FileText,
     title: 'Buat Transaksi',
-    description: 'Pembeli atau penjual dapat membuat transaksi baru dengan detail lengkap barang/jasa.',
-    details: [
-      'Tentukan judul dan deskripsi transaksi',
-      'Masukkan nominal dan mata uang',
-      'Pilih kategori dan syarat khusus jika ada',
-      'Undang pihak lawan melalui tautan atau email'
-    ]
+    description: 'Pembeli atau penjual membuat transaksi di Kahade. Tentukan nilai, deskripsi barang/jasa, dan undang pihak lainnya via email atau link. Seluruh proses kurang dari 5 menit.',
+    detail: 'Anda mengisi formulir sederhana: nama barang/jasa, nilai transaksi, dan syarat-syarat yang harus dipenuhi. Pihak lain akan menerima email undangan untuk bergabung.',
   },
   {
-    icon: Wallet,
-    title: 'Pembeli Menyetor Dana',
-    description: 'Pembeli menyetor dana ke escrow Kahade. Dana aman dan tidak dapat diakses siapa pun.',
-    details: [
-      'Pilih metode pembayaran (Transfer, E-Wallet, VA)',
-      'Dana masuk ke rekening escrow Kahade',
-      'Penjual menerima notifikasi dana diterima',
-      'Status transaksi diperbarui real-time'
-    ]
+    number: '02',
+    icon: CurrencyDollar,
+    title: 'Pembeli Deposit',
+    description: 'Pembeli melakukan deposit ke rekening escrow Kahade yang aman. Dana tidak dapat diakses oleh siapapun hingga transaksi selesai. Konfirmasi instan.',
+    detail: 'Tersedia berbagai metode pembayaran: transfer bank via virtual account, QRIS, dan e-wallet. Dana langsung dikonfirmasi dan status transaksi berubah ke "Dana Diterima".',
   },
   {
-    icon: PaperPlaneTilt,
-    title: 'Penjual Mengirim Barang/Jasa',
-    description: 'Penjual mengirim barang atau menyelesaikan jasa sesuai kesepakatan.',
-    details: [
-      'Unggah bukti pengiriman atau penyelesaian',
-      'Masukkan nomor resi jika ada',
-      'Pembeli menerima notifikasi',
-      'Masa penahanan dana dimulai'
-    ]
+    number: '03',
+    icon: Package,
+    title: 'Penjual Kirim',
+    description: 'Setelah dana terkonfirmasi, penjual dapat mengirimkan barang atau memulai pengerjaan jasa dengan tenang. Upload bukti pengiriman ke platform.',
+    detail: 'Penjual mendapat notifikasi bahwa dana sudah aman di escrow dan dapat segera mengirimkan barang. Semua bukti pengiriman dan tracking bisa diupload langsung ke platform.',
   },
   {
+    number: '04',
     icon: CheckCircle,
-    title: 'Konfirmasi & Lepaskan Dana',
-    description: 'Pembeli mengonfirmasi penerimaan, dana dilepaskan ke penjual.',
-    details: [
-      'Pembeli memeriksa dan mengonfirmasi barang/jasa',
-      'Dana otomatis dilepas ke penjual',
-      'Kedua pihak dapat memberi penilaian',
-      'Transaksi selesai dan tercatat'
-    ]
-  }
+    title: 'Pembeli Konfirmasi',
+    description: 'Setelah menerima barang/jasa dengan memuaskan, pembeli mengkonfirmasi di aplikasi. Proses konfirmasi mudah dan cepat.',
+    detail: 'Pembeli memeriksa barang/jasa, lalu menekan tombol "Konfirmasi Selesai". Jika ada masalah, pembeli dapat mengajukan sengketa dengan menyertakan bukti.',
+  },
+  {
+    number: '05',
+    icon: Wallet,
+    title: 'Dana Dicairkan',
+    description: 'Setelah konfirmasi, dana otomatis dicairkan ke rekening penjual dalam waktu kurang dari 12 jam. Transaksi selesai, semua pihak puas.',
+    detail: 'Dana langsung masuk ke saldo wallet penjual di Kahade. Penjual dapat menarik dana ke rekening bank kapan saja. Biaya platform (2.5%) dipotong otomatis dari jumlah pencairan.',
+  },
 ];
 
-const faqs = [
-  {
-    question: 'Berapa biaya menggunakan Kahade?',
-    answer: 'Kahade mengenakan biaya platform sebesar 1-3% dari nilai transaksi, tergantung kategori dan nominal. Biaya ini dapat ditanggung pembeli, penjual, atau dibagi sesuai kesepakatan.'
-  },
-  {
-    question: 'Bagaimana jika terjadi sengketa?',
-    answer: 'Jika terjadi sengketa, kedua pihak dapat mengajukan dispute. Tim mediator Kahade akan meninjau bukti dari kedua pihak dan mengambil keputusan yang adil. Proses sengketa biasanya selesai dalam 3-7 hari kerja.'
-  },
-  {
-    question: 'Apakah dana saya aman?',
-    answer: 'Ya, dana Anda sangat aman. Dana escrow disimpan di rekening terpisah yang diawasi dan tidak dapat diakses siapa pun kecuali melalui proses yang telah ditentukan. Semua transaksi tercatat untuk transparansi penuh.'
-  },
-  {
-    question: 'Berapa lama proses pencairan dana?',
-    answer: 'Setelah pembeli mengonfirmasi, dana akan dicairkan ke penjual dalam 1-3 hari kerja tergantung metode pencairan yang dipilih. Transfer ke bank lokal biasanya lebih cepat.'
-  },
-  {
-    question: 'Apakah verifikasi KYC wajib?',
-    answer: 'Verifikasi KYC opsional untuk transaksi kecil. Namun, untuk transaksi di atas Rp 100.000.000, verifikasi KYC wajib demi keamanan dan kepatuhan regulasi.'
-  },
-  {
-    question: 'Kategori transaksi apa saja yang didukung?',
-    answer: 'Kahade mendukung berbagai kategori termasuk: Elektronik, Jasa Digital, Barang Fisik, Layanan Profesional, dan lainnya. Beberapa kategori terlarang seperti barang ilegal tidak diperbolehkan.'
-  }
+const useCases = [
+  { icon: ShoppingCart, label: 'Belanja Online', description: 'Aman bertransaksi dengan penjual yang belum dikenal.' },
+  { icon: Laptop, label: 'Jasa Freelance', description: 'Jaminan pembayaran untuk freelancer dan klien.' },
+  { icon: House, label: 'Properti', description: 'Transaksi sewa atau jual-beli properti yang aman.' },
+  { icon: Car, label: 'Otomotif', description: 'Beli-jual kendaraan dengan perlindungan penuh.' },
 ];
 
-const securityFeatures = [
-  {
-    icon: ShieldCheck,
-    title: 'Escrow Terjamin',
-    description: 'Dana disimpan di rekening escrow terpisah yang diawasi dan diasuransikan.'
-  },
-  {
-    icon: Clock,
-    title: 'Masa Penahanan',
-    description: 'Masa penahanan dana memberi waktu untuk verifikasi sebelum dilepas.'
-  },
-  {
-    icon: Scales,
-    title: 'Penyelesaian Sengketa',
-    description: 'Tim mediator profesional siap membantu menyelesaikan sengketa secara adil.'
-  },
-  {
-    icon: Lightning,
-    title: 'Pemrosesan Cepat',
-    description: 'Pelepasan dana cepat setelah konfirmasi, biasanya dalam 24 jam.'
-  }
+const miniFaqs = [
+  { q: 'Berapa biaya menggunakan Kahade?', a: 'Biaya platform adalah 2.5% dari nilai transaksi, ditanggung oleh penjual. Tidak ada biaya tersembunyi.' },
+  { q: 'Berapa lama proses pencairan dana?', a: 'Setelah konfirmasi pembeli, dana dicairkan dalam kurang dari 12 jam pada hari kerja.' },
+  { q: 'Apa yang terjadi jika ada sengketa?', a: 'Anda bisa mengajukan sengketa, tim mediasi kami akan meninjau dan memberikan keputusan dalam 3-5 hari.' },
+  { q: 'Apakah dana saya aman?', a: 'Dana disimpan di rekening escrow terpisah yang diaudit secara berkala. Tidak bisa diakses oleh siapapun kecuali sesuai kondisi transaksi.' },
+  { q: 'Bisa digunakan untuk bisnis apa saja?', a: 'Kahade cocok untuk semua jenis transaksi online: marketplace, freelance, properti, otomotif, dan masih banyak lagi.' },
 ];
 
 export default function HowItWorks() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-32 lg:pt-40 pb-12 md:pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" aria-hidden="true" />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-gray-100 rounded-full blur-3xl" 
-        />
-        <div className="container relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4"
-            >
+
+      {/* HERO */}
+      <section className="bg-primary text-primary-foreground pt-24 pb-20">
+        <div className="container mx-auto px-4 text-center max-w-3xl">
+          <motion.div variants={staggerContainer} initial="initial" animate="animate">
+            <motion.span variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-medium mb-8">
               Cara Kerja
             </motion.span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-foreground">
-              Proses Sederhana & Aman
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-8">
-              Ikuti 5 langkah mudah ini untuk melindungi setiap transaksi.
-              Mulai hanya dalam hitungan menit.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/register" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-black text-white hover:bg-black/90 font-semibold rounded-xl btn-hover-lift">
-                  Mulai Gratis
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-                </Button>
+            <motion.h1 variants={staggerItem} className="text-4xl md:text-6xl font-bold mb-6">
+              Cara Kerja Kahade<br />dalam 5 Langkah
+            </motion.h1>
+            <motion.p variants={staggerItem} className="text-primary-foreground/70 text-lg mb-8">
+              Sistem escrow yang sederhana, transparan, dan melindungi semua pihak.
+            </motion.p>
+            <motion.div variants={staggerItem}>
+              <Link href="/register">
+                <button className="bg-white text-primary font-semibold px-6 py-3 rounded-xl hover:bg-white/90 transition-colors inline-flex items-center gap-2">
+                  Mulai Sekarang <ArrowRight size={18} />
+                </button>
               </Link>
-              <Button variant="outline" className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 font-semibold rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
-                <Play className="mr-2 w-5 h-5" aria-hidden="true" weight="fill" />
-                Lihat Demo
-              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FLOW VISUAL */}
+      <section className="py-12 border-b overflow-hidden bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center gap-0 overflow-x-auto no-scrollbar">
+            {['Pembeli', 'Buat Transaksi', 'Deposit', 'Kahade Escrow', 'Konfirmasi', 'Pencairan', 'Penjual'].map((step, i, arr) => (
+              <div key={step} className="flex items-center shrink-0">
+                <div className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap ${
+                  step === 'Kahade Escrow' ? 'bg-primary text-primary-foreground' : 'bg-background border border-border'
+                }`}>{step}</div>
+                {i < arr.length - 1 && <div className="w-6 h-px bg-border mx-1" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DETAILED STEPS */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport} className="space-y-12">
+            {steps.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <motion.div key={i} variants={staggerItem} className={`grid md:grid-cols-2 gap-8 items-center ${i % 2 === 1 ? 'md:grid-flow-dense' : ''}`}>
+                  <div className={i % 2 === 1 ? 'md:col-start-2' : ''}>
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="text-5xl font-black text-primary/20">{step.number}</span>
+                      <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                        <Icon size={24} className="text-primary" weight="duotone" />
+                      </div>
+                    </div>
+                    <h2 className="text-2xl font-bold mb-3">{step.title}</h2>
+                    <p className="text-muted-foreground leading-relaxed mb-4">{step.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed border-l-2 border-primary/30 pl-4">{step.detail}</p>
+                  </div>
+                  <div className={`bg-gradient-to-br from-primary/10 to-muted rounded-3xl aspect-video border border-border flex items-center justify-center ${i % 2 === 1 ? 'md:col-start-1 md:row-start-1' : ''}`}>
+                    <Icon size={64} className="text-primary/30" weight="thin" />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* USE CASES */}
+      <section className="section-padding-lg bg-muted/40">
+        <div className="container mx-auto px-4">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-12">
+              <span className="badge badge-secondary mb-3">Cocok Untuk</span>
+              <h2 className="text-3xl font-bold">Berbagai Kebutuhan Transaksi</h2>
+            </motion.div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {useCases.map((uc) => {
+                const Icon = uc.icon;
+                return (
+                  <motion.div key={uc.label} variants={staggerItem} className="card p-6 text-center group hover:border-primary hover:-translate-y-1 transition-all">
+                    <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Icon size={28} className="text-primary" weight="duotone" />
+                    </div>
+                    <h3 className="font-bold mb-2">{uc.label}</h3>
+                    <p className="text-sm text-muted-foreground">{uc.description}</p>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
       </section>
-      
-      {/* Steps Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-muted">
-        <div className="container">
-          <div className="max-w-4xl mx-auto">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="relative mb-6 md:mb-8 last:mb-0"
-              >
-                {/* Connector */}
-                {index < steps.length - 1 && (
-                  <div className="absolute left-5 md:left-6 top-16 md:top-20 w-0.5 h-[calc(100%-2rem)] bg-muted" aria-hidden="true" />
-                )}
-                
-                <div className="flex gap-4 md:gap-6">
-                  {/* Step Number */}
-                  <div className="shrink-0">
-                    <motion.div 
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ duration: 0.2 }}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-black text-white flex items-center justify-center font-bold text-sm md:text-base"
-                    >
-                      {String(index + 1).padStart(2, '0')}
-                    </motion.div>
-                  </div>
-                  
-                  {/* Content */}
-                  <motion.div 
-                    whileHover={{ y: -4 }}
-                    transition={{ duration: 0.2 }}
-                    className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 flex-1 border border-border hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
+
+      {/* MINI FAQ */}
+      <section className="section-padding-lg">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={viewport}>
+            <motion.div variants={staggerItem} className="text-center mb-10">
+              <span className="badge badge-secondary mb-3">FAQ</span>
+              <h2 className="text-3xl font-bold">Pertanyaan Umum</h2>
+            </motion.div>
+            <div className="space-y-2">
+              {miniFaqs.map((faq, i) => (
+                <motion.div key={i} variants={staggerItem} className="border border-border rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full text-left p-5 flex items-center justify-between gap-4 hover:text-primary transition-colors"
                   >
-                    <div className="flex items-center gap-4 mb-3">
-                      <motion.div 
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-muted flex items-center justify-center"
+                    <span className="font-semibold text-sm">{faq.q}</span>
+                    <Question size={20} className={`shrink-0 transition-transform ${openFaq === i ? 'rotate-45' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
+                        className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed"
                       >
-                        <step.icon className="w-4 h-4 md:w-5 md:h-5 text-foreground" weight="bold" />
+                        {faq.a}
                       </motion.div>
-                      <span className="text-xs md:text-sm font-mono text-muted-foreground">Langkah {index + 1}</span>
-                    </div>
-                    <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-foreground">{step.title}</h3>
-                    <p className="text-sm md:text-base text-muted-foreground mb-4">{step.description}</p>
-                    <ul className="space-y-2">
-                      {step.details.map((detail, i) => (
-                        <motion.li 
-                          key={i}
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.05 }}
-                          className="flex items-start gap-2 text-xs md:text-sm"
-                        >
-                          <Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" aria-hidden="true" weight="bold" />
-                          <span className="text-muted-foreground">{detail}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Security Features */}
-      <section className="py-12 md:py-16 lg:py-20">
-        <div className="container">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-10 md:mb-12"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              Keamanan
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Keamanan di Setiap Langkah
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-              Setiap tahap transaksi dilindungi dengan teknologi keamanan mutakhir.
-            </p>
-          </motion.div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto">
-            {securityFeatures.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
-                whileHover={{ y: -8 }}
-                className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border text-center group hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-              >
-                <motion.div 
-                  whileHover={{ scale: 1.15, rotate: 5 }}
-                  transition={{ duration: 0.2 }}
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-muted flex items-center justify-center mx-auto mb-4 group-hover:bg-black group-hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-                >
-                  <feature.icon className="w-6 h-6 md:w-7 md:h-7" weight="bold" />
-                </motion.div>
-                <h3 className="text-base md:text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* FAQ Section */}
-      <section id="faq" className="py-12 md:py-16 lg:py-20 bg-muted">
-        <div className="container">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-10 md:mb-12"
-          >
-            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold mb-4">
-              FAQ
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Pertanyaan Umum
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-              Jawaban atas pertanyaan yang sering diajukan tentang prosesnya.
-            </p>
-          </motion.div>
-          
-          <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="space-y-3 md:space-y-4">
-              {faqs.map((faq, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ y: -4 }}
-                >
-                  <AccordionItem 
-                    value={`item-${index}`}
-                    className="bg-card rounded-xl md:rounded-2xl px-4 md:px-6 border border-border hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300"
-                  >
-                    <AccordionTrigger className="text-left hover:no-underline py-4 md:py-5">
-                      <span className="font-semibold text-foreground text-sm md:text-base pr-4">{faq.question}</span>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground pb-4 md:pb-5 text-sm md:text-base leading-relaxed">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               ))}
-            </Accordion>
-            
-            <div className="text-center mt-8">
-              <Link href="/faq" className="block block">
-                <Button variant="outline" className="h-11 md:h-12 px-6 border-2 border-black/20 hover:border-neutral-900 hover:bg-black/5 font-semibold rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
-                  Lihat Semua FAQ
-                  <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" weight="bold" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* CTA Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-20" aria-hidden="true" />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-white/5 rounded-full blur-3xl" 
-        />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.div 
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.2 }}
-              className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6"
-            >
-              <ShieldCheck className="w-7 h-7 md:w-8 md:h-8 text-white" aria-hidden="true" weight="bold" />
-            </motion.div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Siap Memulai?
-            </h2>
-            <p className="text-white/70 text-sm md:text-base max-w-xl mx-auto mb-8">
-              Daftar sekarang dan nikmati transaksi aman bersama Kahade.
-              Gratis untuk memulai.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center">
-              <Link href="/register" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-card text-foreground hover:bg-gray-100 font-semibold rounded-xl btn-hover-lift">
-                  Daftar Gratis
-                  <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" weight="bold" />
-                </Button>
-              </Link>
-              <Link href="/contact" className="block block">
-                <Button className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl bg-transparent transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-200">
-                  Hubungi Kami
-                </Button>
-              </Link>
             </div>
           </motion.div>
         </div>
       </section>
-      
+
+      {/* FINAL CTA */}
+      <section className="section-padding-md bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center max-w-2xl">
+          <h2 className="text-3xl font-bold mb-4">Siap bertransaksi dengan aman?</h2>
+          <p className="text-primary-foreground/70 mb-8">Daftar gratis dan buat transaksi pertama Anda dalam 5 menit.</p>
+          <Link href="/register">
+            <button className="bg-white text-primary font-semibold px-8 py-3.5 rounded-xl hover:bg-white/90 transition-colors inline-flex items-center gap-2">
+              Mulai Gratis <ArrowRight size={18} />
+            </button>
+          </Link>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

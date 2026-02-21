@@ -1,685 +1,213 @@
-/*
- * KAHADE BLOG DETAIL PAGE - CLICKUP-INSPIRED REDESIGN
- * 
- * Design Philosophy:
- * - ClickUp-style smooth animations and micro-interactions
- * - Enhanced reading experience with better typography
- * - Floating action buttons with animations
- * - Brand color: var(--color-black)
- * 
- * SECURITY FIX [FE-SEC-001]: Replaced dangerouslySetInnerHTML with html-react-parser
- * - Safer HTML rendering with React component parsing
- * - Automatic noopener noreferrer on external links
- * - DOMPurify sanitization still applied
- */
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { TwitterLogo, LinkedinLogo, Link as LinkIcon, Clock, User, ArrowRight, ArrowLeft } from '@phosphor-icons/react';
+import { Link } from 'wouter';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
-import { useState, useEffect } from 'react';
-import { Link, useParams, useLocation } from 'wouter';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft, Clock, User, CalendarBlank, Tag, ShareNetwork,
-  TwitterLogo, FacebookLogo, LinkedinLogo, Link as LinkIcon,
-  BookmarkSimple, Heart, ChatCircle, CaretRight, Copy, Check,
-  ArrowRight, Eye, Spinner
-} from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from 'sonner';
-import DOMPurify from 'dompurify';
-import parse, { HTMLReactParserOptions, Element, domToReact } from 'html-react-parser';
-import LandingLayout from '@/components/layout/LandingLayout';
+const toc = [
+  { id: 'intro', label: 'Pendahuluan' },
+  { id: 'masalah', label: 'Masalah Utama' },
+  { id: 'solusi', label: 'Solusi Kahade' },
+  { id: 'tips', label: 'Tips Praktis' },
+  { id: 'kesimpulan', label: 'Kesimpulan' },
+];
 
-interface Author {
-  name: string;
-  avatar: string;
-  role: string;
-  bio: string;
-}
-
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  category: string;
-  tags: string[];
-  author: Author;
-  publishedAt: string;
-  readTime: number;
-  views: number;
-  likes: number;
-  commentsCount: number;
-}
-
-interface RelatedPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  coverImage: string;
-  category: string;
-  publishedAt: string;
-  readTime: number;
-}
-
-const mockPost: BlogPost = {
-  id: '1',
-  slug: 'escrow-security-best-practices',
-  title: 'Praktik Terbaik Keamanan Escrow: Melindungi Transaksi Online Anda di 2025',
-  excerpt: 'Pelajari cara melindungi diri saat membeli atau menjual online dengan praktik keamanan escrow berikut.',
-  content: `
-    <p class="lead">Di pasar digital yang berkembang cepat, mengamankan transaksi online Anda menjadi semakin krusial. Layanan escrow muncul sebagai pilar kepercayaan dalam e-commerce, memberikan jaring pengaman bagi pembeli dan penjual.</p>
-    
-    <h2>Memahami Layanan Escrow</h2>
-    <p>Layanan escrow bertindak sebagai pihak ketiga netral yang menahan dana selama transaksi. Dana hanya dilepas ke penjual setelah pembeli mengonfirmasi bahwa barang atau jasa telah diterima sesuai deskripsi. Mekanisme sederhana namun kuat ini telah merevolusi perdagangan online.</p>
-    
-    <blockquote>
-      <p>"Kepercayaan adalah fondasi semua perdagangan. Layanan escrow menyediakan kepercayaan itu di era digital."</p>
-      <cite>— Pakar Keamanan Finansial</cite>
-    </blockquote>
-    
-    <h2>Fitur Keamanan Utama yang Perlu Dicari</h2>
-    <p>Saat memilih layanan escrow, perhatikan fitur keamanan penting berikut:</p>
-    
-    <h3>1. Autentikasi Dua Faktor (2FA)</h3>
-    <p>Selalu aktifkan 2FA pada akun escrow Anda. Ini menambahkan lapisan keamanan ekstra dengan meminta verifikasi kedua selain kata sandi.</p>
-    
-    <h3>2. Enkripsi End-to-End</h3>
-    <p>Pastikan platform menggunakan enkripsi setara bank (SSL 256-bit) untuk melindungi data dan informasi finansial Anda saat transmisi.</p>
-    
-    <h3>3. Sistem Verifikasi Identitas</h3>
-    <p>Pilih platform yang menerapkan verifikasi KYC (Know Your Customer). Ini membantu memastikan Anda bertransaksi dengan pihak yang sah.</p>
-    
-    <h2>Praktik Terbaik untuk Pembeli</h2>
-    <ul>
-      <li>Selalu verifikasi reputasi dan riwayat penjual</li>
-      <li>Gunakan sistem pesan platform untuk semua komunikasi</li>
-      <li>Dokumentasikan semuanya dengan foto dan tangkapan layar</li>
-      <li>Jangan pernah melepas dana sebelum memeriksa barang secara menyeluruh</li>
-      <li>Laporkan aktivitas mencurigakan segera</li>
-    </ul>
-    
-    <h2>Praktik Terbaik untuk Penjual</h2>
-    <ul>
-      <li>Berikan deskripsi barang yang akurat dan detail</li>
-      <li>Gunakan nomor resi untuk semua pengiriman</li>
-      <li>Tanggapi pertanyaan pembeli dengan cepat</li>
-      <li>Simpan catatan semua transaksi</li>
-      <li>Bangun reputasi melalui layanan berkualitas konsisten</li>
-    </ul>
-    
-    <h2>Masa Depan Transaksi Aman</h2>
-    <p>Seiring teknologi berkembang, kita melihat inovasi baru dalam keamanan transaksi. Escrow berbasis blockchain, smart contract, dan deteksi penipuan berbasis AI membentuk masa depan perdagangan online yang aman.</p>
-    
-    <p>Di Kahade, kami berkomitmen menerapkan teknologi keamanan terbaru untuk melindungi pengguna. Platform kami menggabungkan keandalan escrow tradisional dengan fitur keamanan mutakhir untuk memberikan pengalaman transaksi paling aman.</p>
-    
-    <h2>Kesimpulan</h2>
-    <p>Keamanan dalam transaksi online adalah tanggung jawab bersama. Dengan memilih layanan escrow tepercaya dan mengikuti praktik terbaik, Anda dapat mengurangi risiko dan menikmati manfaat pasar digital dengan percaya diri.</p>
-  `,
-  coverImage: '/images/blog/escrow-security.jpg',
-  category: 'Keamanan',
-  tags: ['Keamanan', 'Escrow', 'Praktik Terbaik', 'Keamanan Online'],
-  author: {
-    name: 'Ahmad Rizky',
-    avatar: '/images/team/ahmad.jpg',
-    role: 'Analis Keamanan',
-    bio: 'Ahmad adalah pakar keamanan siber dengan pengalaman lebih dari 10 tahun di keamanan fintech. Ia memimpin inisiatif keamanan kami di Kahade.'
-  },
-  publishedAt: '2025-01-15T10:00:00Z',
-  readTime: 8,
-  views: 2456,
-  likes: 128,
-  commentsCount: 24
-};
-
-const mockRelatedPosts: RelatedPost[] = [
-  {
-    id: '2',
-    slug: 'how-escrow-works',
-    title: 'Cara Kerja Escrow: Panduan Lengkap untuk Pemula',
-    excerpt: 'Semua yang perlu Anda ketahui tentang layanan escrow dan bagaimana melindungi transaksi Anda.',
-    coverImage: '/images/blog/how-escrow-works.jpg',
-    category: 'Panduan',
-    publishedAt: '2025-01-10T10:00:00Z',
-    readTime: 6
-  },
-  {
-    id: '3',
-    slug: 'avoiding-online-scams',
-    title: '10 Tanda Bahaya untuk Mengenali Penipuan Online Sebelum Terlambat',
-    excerpt: 'Pelajari cara mengenali taktik penipuan umum dan lindungi diri dari transaksi curang.',
-    coverImage: '/images/blog/avoid-scams.jpg',
-    category: 'Keamanan',
-    publishedAt: '2025-01-05T10:00:00Z',
-    readTime: 5
-  },
-  {
-    id: '4',
-    slug: 'marketplace-success-tips',
-    title: 'Sukses di Marketplace: Tips untuk Pembeli dan Penjual',
-    excerpt: 'Maksimalkan keberhasilan Anda di marketplace online dengan strategi yang sudah terbukti.',
-    coverImage: '/images/blog/marketplace-tips.jpg',
-    category: 'Tips',
-    publishedAt: '2024-12-28T10:00:00Z',
-    readTime: 7
-  }
+const relatedPosts = [
+  { title: '7 Tips Transaksi Online yang Aman', category: 'Keamanan', date: '10 Jan 2025', readTime: 5 },
+  { title: 'Cara Menggunakan Escrow untuk Freelancer', category: 'Tips Transaksi', date: '5 Jan 2025', readTime: 8 },
+  { title: 'Kenali Modus Penipuan Online', category: 'Keamanan', date: '28 Des 2024', readTime: 7 },
 ];
 
 export default function BlogDetail() {
-  const params = useParams();
-  const [, setLocation] = useLocation();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [copied, setCopied] = useState(false);
+  const articleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      setIsLoading(true);
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setPost(mockPost);
-        setRelatedPosts(mockRelatedPosts);
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
-      }
+    const handleScroll = () => {
+      const el = articleRef.current;
+      if (!el) return;
+      const { top, height } = el.getBoundingClientRect();
+      const scrolled = Math.max(0, Math.min(1, (-top) / (height - window.innerHeight)));
+      setProgress(scrolled * 100);
     };
-    fetchPost();
-  }, [params.slug]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
-
-  const handleShare = (platform: string) => {
-    const url = window.location.href;
-    const title = post?.title || '';
-    const shareUrls: Record<string, string> = {
-      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-    };
-    if (shareUrls[platform]) {
-      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-    }
-  };
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      toast.success('Tautan disalin ke clipboard');
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      toast.error('Gagal menyalin tautan');
-    }
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    toast.success(isLiked ? 'Dihapus dari suka' : 'Ditambahkan ke suka');
-  };
-
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    toast.success(isBookmarked ? 'Dihapus dari bookmark' : 'Disimpan ke bookmark');
-  };
-
-  if (isLoading) {
-    return (
-      <LandingLayout>
-        <div className="min-h-screen flex items-center justify-center">
-          <Spinner className="w-8 h-8 md:w-10 md:h-10 animate-spin text-foreground" aria-hidden="true" weight="bold" />
-        </div>
-      </LandingLayout>
-    );
-  }
-
-  if (!post) {
-    return (
-      <LandingLayout>
-        <div className="min-h-screen flex items-center justify-center px-4">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <h1 className="text-xl md:text-2xl font-bold text-foreground mb-4">Artikel Tidak Ditemukan</h1>
-            <p className="text-sm md:text-base text-muted-foreground mb-6">Artikel yang Anda cari tidak tersedia atau telah dihapus.</p>
-            <Link href="/blog" className="block block">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button className="h-10 md:h-11 bg-black text-white hover:bg-black/90 rounded-xl">
-                  <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-                  Kembali ke Blog
-                </Button>
-              </motion.div>
-            </Link>
-          </motion.div>
-        </div>
-      </LandingLayout>
-    );
-  }
-
-  // SECURITY FIX [FE-SEC-001]: Sanitize HTML content with DOMPurify
-  const sanitizedContent = DOMPurify.sanitize(post.content, {
-    ALLOWED_TAGS: [
-      "h1", "h2", "h3", "h4", "h5", "h6",
-      "p", "br", "hr",
-      "ul", "ol", "li",
-      "blockquote", "pre", "code",
-      "em", "strong", "b", "i", "u",
-      "a", "img",
-      "table", "thead", "tbody", "tr", "th", "td",
-      "span", "div", "cite"
-    ],
-    ALLOWED_ATTR: ["href", "src", "alt", "title", "class", "id"],
-    ALLOW_DATA_ATTR: false,
-    FORBID_TAGS: ["script", "style", "iframe", "form", "input", "button", "object", "embed"],
-    FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover", "onmouseout", "onfocus", "onblur"],
-  });
-
-  // SECURITY FIX [FE-SEC-001]: Use html-react-parser instead of dangerouslySetInnerHTML
-  // Parse options to automatically add noopener noreferrer to external links
-  const parseOptions: HTMLReactParserOptions = {
-    replace: (domNode) => {
-      if (domNode instanceof Element && domNode.name === 'a') {
-        const href = domNode.attribs.href;
-        const props: Record<string, string> = { ...domNode.attribs };
-        
-        // Add security attributes to external links
-        if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
-          props.target = '_blank';
-          props.rel = 'noopener noreferrer';
-        }
-        
-        return (
-          <a {...props}>
-            {domToReact(domNode.children as any, parseOptions)}
-          </a>
-        );
-      }
-    }
-  };
-
-  // Parse sanitized HTML into React components
-  const parsedContent = parse(sanitizedContent, parseOptions);
 
   return (
-    <LandingLayout>
-      <article className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="bg-muted border-b border-border">
-          <div className="max-w-4xl mx-auto md:px-6 py-6 md:py-8">
-            {/* Breadcrumb */}
-            <motion.nav 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground mb-4 md:mb-6"
-            >
-              <Link href="/" className="block hover:text-neutral-900 transition-colors">Beranda</Link>
-              <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" />
-              <Link href="/blog" className="block hover:text-neutral-900 transition-colors">Blog</Link>
-              <CaretRight className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" weight="bold" />
-              <span className="text-foreground">{post.category}</span>
-            </motion.nav>
+    <div className="min-h-screen bg-background">
+      {/* Reading progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-muted z-50">
+        <div className="h-full bg-primary transition-all duration-75" style={{ width: `${progress}%` }} />
+      </div>
 
-            {/* Category & Meta */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              className="flex flex-wrap items-center gap-4 md:gap-4 mb-3 md:mb-4"
-            >
-              <Badge className="bg-black text-white hover:bg-black/90 text-xs">{post.category}</Badge>
-              <div className="flex items-center gap-4 md:gap-4 text-xs md:text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" aria-hidden="true" weight="regular" />
-                  {post.readTime} menit baca
-                </span>
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" aria-hidden="true" weight="regular" />
-                  {post.views.toLocaleString()} tayangan
-                </span>
-              </div>
-            </motion.div>
+      <Navbar />
 
-            {/* Title */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6 leading-tight"
-            >
-              {post.title}
-            </motion.h1>
-
-            {/* Author & Date */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-            >
-              <div className="flex items-center gap-4 md:gap-4">
-                <Avatar className="w-10 h-10 md:w-12 md:h-12" aria-hidden="true">
-                  <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                  <AvatarFallback className="bg-black text-white text-sm">
-                    {post.author.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="font-semibold text-sm md:text-base text-foreground">{post.author.name}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">
-                    {post.author.role} • {formatDate(post.publishedAt)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={handleLike}
-                    className={`h-9 border-border rounded-lg transition-all ${isLiked ? 'bg-red-50 border-red-200 text-red-600' : ''}`}
-                  >
-                    <Heart className="w-4 h-4 mr-1" aria-hidden="true" weight={isLiked ? 'fill' : 'regular'} />
-                    {post.likes + (isLiked ? 1 : 0)}
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={handleBookmark}
-                    className={`h-9 border-border rounded-lg transition-all ${isBookmarked ? 'bg-amber-50 border-amber-200 text-amber-600' : ''}`}
-                  >
-                    <BookmarkSimple className="w-4 h-4" aria-hidden="true" weight={isBookmarked ? 'fill' : 'regular'} />
-                  </Button>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Cover Image */}
-        <div className="max-w-5xl mx-auto md:px-6 -mt-2 md:-mt-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="aspect-[16/9] md:aspect-[2/1] rounded-xl md:rounded-2xl overflow-hidden bg-muted shadow-clickup"
-          >
-            <img 
-              src={post.coverImage} 
-              alt={post.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://placehold.co/1200x600/f5f5f5/737373?text=Blog+Cover';
-              }}
-            />
-          </motion.div>
-        </div>
-
-        {/* Content */}
-        <div className="max-w-4xl mx-auto md:px-6 py-8 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-8 lg:gap-12">
-            {/* Main Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              className="prose prose-sm md:prose-lg max-w-none
-                prose-headings:text-foreground prose-headings:font-bold
-                prose-h2:text-xl md:prose-h2:text-2xl prose-h2:mt-8 md:prose-h2:mt-10 prose-h2:mb-3 md:prose-h2:mb-4
-                prose-h3:text-lg md:prose-h3:text-xl prose-h3:mt-6 md:prose-h3:mt-8 prose-h3:mb-2 md:prose-h3:mb-3
-                prose-p:text-muted-foreground prose-p:leading-relaxed
-                prose-a:text-foreground prose-a:underline hover:prose-a:no-underline
-                prose-strong:text-foreground
-                prose-ul:my-3 md:prose-ul:my-4 prose-li:text-muted-foreground
-                prose-blockquote:border-l-4 prose-blockquote:border-black prose-blockquote:bg-muted prose-blockquote:py-3 md:prose-blockquote:py-4 prose-blockquote:px-4 md:prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic
-                prose-blockquote:text-muted-foreground"
-            >
-              {/* SECURITY FIX [FE-SEC-001]: Using html-react-parser instead of dangerouslySetInnerHTML */}
-              {parsedContent}
-            </motion.div>
-
-            {/* Sidebar - Desktop */}
-            <aside className="hidden lg:block">
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-                className="sticky top-24 space-y-4"
-              >
-                {/* Share */}
-                <div className="bg-muted rounded-xl p-4">
-                  <div className="text-sm font-bold text-foreground mb-3">Bagikan artikel ini</div>
-                  <div className="flex flex-col gap-2">
-                    <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.98 }}>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                        onClick={() => handleShare('twitter')}
-                      >
-                        <TwitterLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
-                        Twitter
-                      </Button>
-                    </motion.div>
-                    <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.98 }}>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                        onClick={() => handleShare('facebook')}
-                      >
-                        <FacebookLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
-                        Facebook
-                      </Button>
-                    </motion.div>
-                    <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.98 }}>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                        onClick={() => handleShare('linkedin')}
-                      >
-                        <LinkedinLogo className="w-4 h-4 mr-2" aria-hidden="true" weight="fill" />
-                        LinkedIn
-                      </Button>
-                    </motion.div>
-                    <motion.div whileHover={{ x: 3 }} whileTap={{ scale: 0.98 }}>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full justify-start border-border rounded-lg h-9 hover:bg-black hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                        onClick={handleCopyLink}
-                      >
-                        {copied ? (
-                          <>
-                            <Check className="w-4 h-4 mr-2" aria-hidden="true" weight="bold" />
-                            Tersalin!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-4 h-4 mr-2" aria-hidden="true" weight="regular" />
-                            Salin tautan
-                          </>
-                        )}
-                      </Button>
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="bg-muted rounded-xl p-4">
-                  <div className="text-sm font-bold text-foreground mb-3">Tag</div>
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag, index) => (
-                      <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.7 + index * 0.05 }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Badge variant="outline" className="border-border hover:bg-black hover:text-white transition-colors cursor-pointer text-xs">
-                            {tag}
-                          </Badge>
-                        </motion.div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </aside>
-          </div>
-
-          {/* Tags - Mobile */}
-          <div className="lg:hidden mt-6 md:mt-8 pt-6 md:pt-8 border-t border-border">
-            <div className="text-sm font-bold text-foreground mb-3">Tag</div>
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Badge variant="outline" className="border-border hover:bg-black hover:text-white transition-colors cursor-pointer text-xs">
-                      {tag}
-                    </Badge>
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Author Bio */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mt-8 md:mt-12 p-4 md:p-6 bg-muted rounded-xl md:rounded-2xl"
-          >
-            <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-4">
-              <Avatar className="w-12 h-12 md:w-16 md:h-16" aria-hidden="true">
-                <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                <AvatarFallback className="bg-black text-white text-base md:text-lg">
-                  {post.author.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="text-xs md:text-sm text-muted-foreground mb-1">Ditulis oleh</div>
-                <div className="text-base md:text-lg font-bold text-foreground">{post.author.name}</div>
-                <div className="text-xs md:text-sm text-muted-foreground mb-2 md:mb-3">{post.author.role}</div>
-                <p className="text-sm md:text-base text-muted-foreground">{post.author.bio}</p>
-              </div>
+      {/* HERO */}
+      <section className="pt-24 pb-12 border-b">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <Link href="/blog">
+              <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-8">
+                <ArrowLeft size={16} /> Kembali ke Blog
+              </button>
+            </Link>
+            <span className="badge badge-error mb-4">Keamanan</span>
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-6">
+              Panduan Lengkap Keamanan Transaksi Online di Indonesia
+            </h1>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5"><User size={14} /><span>Tim Keamanan Kahade</span></div>
+              <span>·</span><span>15 Januari 2025</span>
+              <span>·</span><div className="flex items-center gap-1"><Clock size={14} /><span>8 menit baca</span></div>
             </div>
           </motion.div>
-
-          {/* Share - Mobile */}
-          <div className="lg:hidden mt-6 md:mt-8 flex items-center justify-center gap-2 md:gap-3">
-            <span className="text-xs md:text-sm text-muted-foreground">Bagikan:</span>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={() => handleShare('twitter')}>
-                <TwitterLogo className="w-4 h-4" aria-hidden="true" weight="fill" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={() => handleShare('facebook')}>
-                <FacebookLogo className="w-4 h-4" aria-hidden="true" weight="fill" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={() => handleShare('linkedin')}>
-                <LinkedinLogo className="w-4 h-4" aria-hidden="true" weight="fill" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button variant="outline" size="icon" className="w-9 h-9 border-border rounded-lg" onClick={handleCopyLink}>
-                {copied ? <Check className="w-4 h-4" aria-hidden="true" weight="bold" /> : <Copy className="w-4 h-4" aria-hidden="true" weight="regular" />}
-              </Button>
-            </motion.div>
-          </div>
         </div>
+      </section>
 
-        {/* Related Posts */}
-        <div className="bg-muted border-t border-border py-10 md:py-12 lg:py-16">
-          <div className="max-w-6xl mx-auto md:px-6">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center justify-between mb-6 md:mb-8"
-            >
-              <h2 className="text-xl md:text-2xl font-bold text-foreground">Artikel Terkait</h2>
-              <Link href="/blog" className="block block">
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button variant="outline" className="h-9 md:h-10 border-border rounded-lg text-sm">
-                    Lihat semua
-                    <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" weight="bold" />
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
+      {/* Featured Image */}
+      <div className="w-full aspect-[21/9] bg-gradient-to-r from-primary/20 to-primary/5 max-h-96" />
 
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-              {relatedPosts.map((relatedPost, index) => (
-                <motion.article
-                  key={relatedPost.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  whileHover={{ y: -6 }}
-                  className="bg-card rounded-xl md:rounded-2xl border border-border overflow-hidden hover:shadow-clickup transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 duration-300 group"
-                >
-                  <Link href={`/blog/${relatedPost.slug}`}>
-                    <div className="aspect-[16/9] overflow-hidden bg-muted">
-                      <motion.img 
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.3 }}
-                        src={relatedPost.coverImage} 
-                        alt={relatedPost.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/f5f5f5/737373?text=Blog';
-                        }}
-                      />
-                    </div>
-                    <div className="p-4 md:p-5">
-                      <Badge variant="outline" className="mb-2 md:mb-3 border-border text-xs">{relatedPost.category}</Badge>
-                      <h3 className="font-bold text-sm md:text-base text-foreground mb-2 line-clamp-2 group-hover:text-muted-foreground transition-colors">
-                        {relatedPost.title}
-                      </h3>
-                      <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mb-3">{relatedPost.excerpt}</p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>{formatDate(relatedPost.publishedAt)}</span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" aria-hidden="true" weight="regular" />
-                          {relatedPost.readTime} menit
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.article>
-              ))}
+      {/* CONTENT LAYOUT */}
+      <div ref={articleRef} className="container mx-auto px-4 max-w-[1200px] py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr_140px] gap-12">
+          {/* TOC Sticky */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Daftar Isi</p>
+              <nav className="space-y-2">
+                {toc.map((item) => (
+                  <a key={item.id} href={`#${item.id}`} className="block text-sm text-muted-foreground hover:text-primary transition-colors py-1">
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-xs text-muted-foreground mb-2">Progress</p>
+                <div className="h-1 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Article */}
+          <article className="prose prose-neutral dark:prose-invert max-w-none" style={{ fontSize: '1.0625rem', lineHeight: 1.8 }}>
+            <section id="intro">
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '2em', marginBottom: '0.75em' }}>Pendahuluan</h2>
+              <p style={{ marginBottom: '1.5em' }}>Transaksi online di Indonesia terus berkembang pesat. Namun seiring dengan pertumbuhan ini, ancaman penipuan juga semakin canggih. Dalam panduan ini, kami akan membahas cara-cara konkret untuk melindungi diri Anda dalam bertransaksi online.</p>
+            </section>
+            <section id="masalah">
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '2em', marginBottom: '0.75em' }}>Masalah Utama</h2>
+              <p style={{ marginBottom: '1.5em' }}>Salah satu masalah terbesar dalam transaksi online adalah ketiadaan jaminan bagi kedua pihak. Pembeli takut barang tidak dikirim, penjual takut pembayaran tidak masuk. Kondisi ini menciptakan hambatan kepercayaan yang merugikan semua pihak.</p>
+              <blockquote style={{ borderLeft: '4px solid var(--color-primary)', paddingLeft: '1.5rem', fontStyle: 'italic', color: 'var(--color-muted-foreground)', margin: '2em 0' }}>
+                "Lebih dari 60% pembeli online Indonesia pernah mengalami atau menghindari transaksi karena khawatir dengan keamanannya." — Survei Internal Kahade 2024
+              </blockquote>
+            </section>
+            <section id="solusi">
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '2em', marginBottom: '0.75em' }}>Solusi Kahade</h2>
+              <p style={{ marginBottom: '1.5em' }}>Escrow adalah jawaban untuk masalah ini. Dengan escrow, dana pembeli ditahan oleh pihak ketiga yang terpercaya — dalam hal ini Kahade — hingga semua syarat transaksi terpenuhi.</p>
+              <pre style={{ backgroundColor: '#0a0a0a', color: '#f5f5f5', padding: '1.5rem', borderRadius: '0.75rem', overflow: 'auto', fontSize: '0.875rem', border: '1px solid #262626', marginBottom: '1.5em' }}>
+                <code>{`// Contoh flow transaksi Kahade
+Pembeli deposit → Dana ditahan Kahade
+Penjual kirim barang → Bukti upload
+Pembeli konfirmasi → Dana dicairkan ✓`}</code>
+              </pre>
+            </section>
+            <section id="tips">
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '2em', marginBottom: '0.75em' }}>Tips Praktis</h2>
+              <p style={{ marginBottom: '1em' }}>Beberapa langkah yang bisa Anda lakukan segera:</p>
+              <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', marginBottom: '1.5em' }}>
+                <li style={{ marginBottom: '0.5em' }}>Selalu gunakan platform escrow untuk transaksi di atas Rp 500.000</li>
+                <li style={{ marginBottom: '0.5em' }}>Verifikasi identitas penjual sebelum melakukan pembayaran</li>
+                <li style={{ marginBottom: '0.5em' }}>Simpan semua bukti komunikasi dan pembayaran</li>
+                <li style={{ marginBottom: '0.5em' }}>Aktifkan notifikasi email/SMS untuk setiap transaksi</li>
+              </ul>
+            </section>
+            <section id="kesimpulan">
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '2em', marginBottom: '0.75em' }}>Kesimpulan</h2>
+              <p style={{ marginBottom: '1.5em' }}>Keamanan transaksi online adalah tanggung jawab bersama. Dengan menggunakan alat yang tepat seperti escrow, Anda bisa bertransaksi dengan tenang. Kahade hadir untuk memastikan setiap transaksi Anda terlindungi dari awal hingga selesai.</p>
+            </section>
+          </article>
+
+          {/* Share Panel */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Bagikan</p>
+              <div className="space-y-2">
+                {[
+                  { icon: TwitterLogo, label: 'Twitter' },
+                  { icon: LinkedinLogo, label: 'LinkedIn' },
+                ].map(({ icon: Icon, label }) => (
+                  <button key={label} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary hover:text-primary transition-all text-sm">
+                    <Icon size={16} /> {label}
+                  </button>
+                ))}
+                <button onClick={copyLink} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary hover:text-primary transition-all text-sm">
+                  <LinkIcon size={16} /> {copied ? 'Disalin!' : 'Copy Link'}
+                </button>
+              </div>
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-xs text-muted-foreground">Estimasi</p>
+                <p className="text-sm font-semibold mt-1">8 mnt baca</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      {/* Author Bio */}
+      <section className="border-t py-12">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="flex items-center gap-4 p-6 bg-muted/30 rounded-2xl">
+            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <span className="text-primary font-bold text-xl">T</span>
+            </div>
+            <div>
+              <p className="font-bold">Tim Keamanan Kahade</p>
+              <p className="text-sm text-muted-foreground">Tim keamanan kami terdiri dari para ahli di bidang cybersecurity dan fintech, berkomitmen menjaga keamanan setiap transaksi pengguna Kahade.</p>
             </div>
           </div>
         </div>
-      </article>
-    </LandingLayout>
+      </section>
+
+      {/* Related Posts */}
+      <section className="section-padding-md bg-muted/30">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <h2 className="text-2xl font-bold mb-8">Artikel Terkait</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {relatedPosts.map((post) => (
+              <div key={post.title} className="card p-5 group cursor-pointer hover:border-primary transition-colors">
+                <div className="aspect-video rounded-xl bg-gradient-to-br from-primary/10 to-muted mb-4" />
+                <span className="badge badge-secondary mb-2">{post.category}</span>
+                <h3 className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-2 mb-2">{post.title}</h3>
+                <p className="text-xs text-muted-foreground">{post.date} · {post.readTime} mnt</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="section-padding-md">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h2 className="text-2xl font-bold mb-4">Mulai transaksi aman bersama Kahade</h2>
+          <p className="text-muted-foreground mb-6">Bergabung dengan 10.000+ pengguna yang sudah mempercayakan transaksinya kepada kami.</p>
+          <Link href="/register">
+            <button className="btn-primary">Daftar Gratis <ArrowRight size={16} /></button>
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
   );
 }

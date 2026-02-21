@@ -1,207 +1,166 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'wouter';
-import { Check, CreditCard } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { pricingPlans } from './HomeData';
+import { Check, ArrowRight } from '@phosphor-icons/react';
 import { cn } from '@/lib/ui-utils';
+import { staggerContainer, staggerItem, viewport } from '@/lib/animations';
+import { pricingPlans } from './HomeData';
+import { SectionLabel } from '@/components/shared/SectionLabel';
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
 
-  const formatPrice = (price: number) => {
-    if (price === 0) return 'Gratis';
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
   return (
-    <section id="pricing" className="section-padding-lg bg-muted">
+    <section className="section-padding-lg bg-background" id="pricing">
       <div className="container">
-        <div className="section-header">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="section-title"
-          >
-            Harga Transparan
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="section-description mb-8"
-          >
-            Pilih paket yang sesuai kebutuhan Anda. Tanpa biaya tersembunyi.
-          </motion.p>
-          
-          {/* Billing Toggle */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="flex items-center justify-center gap-4"
-          >
-            <span className={cn(
-              'text-sm font-medium transition-colors',
-              !isYearly ? 'text-foreground' : 'text-muted-foreground'
-            )}>
-              Bulanan
-            </span>
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewport}
+          className="section-header mb-10"
+        >
+          <SectionLabel>Harga</SectionLabel>
+          <h2 className="section-title mb-4">Harga yang Jelas & Transparan</h2>
+          <p className="text-muted-foreground text-lg">Tidak ada biaya tersembunyi. Selalu.</p>
+        </motion.div>
+
+        {/* Toggle */}
+        <div className="flex justify-center mb-12">
+          <div className="flex items-center gap-1 p-1.5 bg-muted rounded-full border border-border">
             <button
-              onClick={() => setIsYearly(!isYearly)}
+              onClick={() => setIsYearly(false)}
               className={cn(
-                'relative w-14 h-7 rounded-full transition-colors',
-                isYearly ? 'bg-primary' : 'bg-muted-foreground/20'
+                'px-5 py-2 rounded-full text-sm font-semibold transition-all',
+                !isYearly ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'
               )}
-              aria-label={`Switch to ${isYearly ? 'monthly' : 'yearly'} billing`}
             >
-              <span 
-                className={cn(
-                  'absolute top-1 w-5 h-5 rounded-full bg-background shadow-md transition-transform',
-                  isYearly ? 'left-8' : 'left-1'
-                )}
-              />
+              Bulanan
             </button>
-            <span className={cn(
-              'text-sm font-medium transition-colors',
-              isYearly ? 'text-foreground' : 'text-muted-foreground'
-            )}>
-              Tahunan
-              <span className="ml-2 badge badge-success text-xs">Hemat 20%</span>
-            </span>
-          </motion.div>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto items-start">
-          {pricingPlans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+            <button
+              onClick={() => setIsYearly(true)}
               className={cn(
-                'relative rounded-2xl p-6 md:p-8',
-                plan.popular 
-                  ? 'bg-primary text-primary-foreground ring-4 ring-primary/10' 
-                  : 'card'
+                'px-5 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2',
+                isYearly ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'
               )}
             >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2" aria-hidden="true">
-                  <span className="badge badge-secondary shadow-lg">
-                    Paling Populer
-                  </span>
-                </div>
-              )}
-              <div className={cn(
-                'text-lg font-bold mb-1',
-                plan.popular ? 'text-primary-foreground' : 'text-foreground'
-              )}>
-                {plan.name}
-              </div>
-              <p className={cn(
-                'text-sm mb-6',
-                plan.popular ? 'text-primary-foreground/70' : 'text-muted-foreground'
-              )}>
-                {plan.description}
-              </p>
-              <div className={cn(
-                'text-3xl md:text-4xl font-bold mb-1',
-                plan.popular ? 'text-primary-foreground' : 'text-foreground'
-              )}>
-                {formatPrice(isYearly ? plan.yearlyPrice : plan.monthlyPrice)}
-              </div>
-              <div className={cn(
-                'text-sm mb-6',
-                plan.popular ? 'text-primary-foreground/60' : 'text-muted-foreground'
-              )}>
-                {plan.monthlyPrice === 0 ? 'selamanya' : isYearly ? '/tahun' : '/bulan'}
-              </div>
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Check 
-                      className={cn(
-                        'w-5 h-5 shrink-0 mt-0.5',
-                        plan.popular ? 'text-primary-foreground' : 'text-foreground'
-                      )} 
-                      weight="bold" 
-                      aria-hidden="true"
-                    />
-                    <span className={cn(
-                      'text-sm',
-                      plan.popular ? 'text-primary-foreground/90' : 'text-muted-foreground'
-                    )}>
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/register" className="block block">
-                <Button className={cn(
-                  'w-full btn-lg',
-                  plan.popular 
-                    ? 'bg-primary-foreground text-primary hover:bg-primary-foreground/90' 
-                    : 'btn-primary'
-                )}>
-                  {plan.cta}
-                </Button>
-              </Link>
-            </motion.div>
-          ))}
+              Tahunan
+              <span className="text-[0.625rem] font-bold bg-success text-white px-1.5 py-0.5 rounded-full">-20%</span>
+            </button>
+          </div>
         </div>
 
-        {/* Platform Fee Info */}
+        {/* Pricing cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="mt-12 md:mt-16 max-w-3xl mx-auto"
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={viewport}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start"
         >
-          <div className="card bg-accent/50 border-accent p-6 md:p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-accent flex items-center justify-center shrink-0">
-                <CreditCard className="w-6 h-6 md:w-7 md:h-7 text-accent-foreground" aria-hidden="true" weight="duotone" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg md:text-xl font-bold mb-2">Biaya Platform Per Transaksi</h3>
-                <p className="text-sm md:text-base text-muted-foreground mb-4">
-                  Kahade mengenakan biaya layanan yang adil dan transparan untuk setiap transaksi escrow:
-                </p>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <div className="card p-4">
-                    <div className="text-xs text-muted-foreground mb-1">Persentase</div>
-                    <div className="text-2xl font-bold">2.5%</div>
-                    <div className="text-xs text-muted-foreground mt-1">dari nilai transaksi</div>
+          {pricingPlans.map((plan, i) => {
+            const isPopular = i === 1;
+            const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
+            return (
+              <motion.div
+                key={plan.name}
+                variants={staggerItem}
+                className={cn(
+                  'relative rounded-2xl border-2 p-8 flex flex-col',
+                  isPopular
+                    ? 'border-primary bg-primary/5 scale-[1.03] shadow-E4'
+                    : 'border-border bg-background'
+                )}
+              >
+                {isPopular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <span className="badge badge-primary px-4 py-1.5 shadow-md">⭐ Paling Populer</span>
                   </div>
-                  <div className="card p-4">
-                    <div className="text-xs text-muted-foreground mb-1">Minimum</div>
-                    <div className="text-2xl font-bold">Rp 2.500</div>
-                    <div className="text-xs text-muted-foreground mt-1">biaya terendah</div>
-                  </div>
-                  <div className="card p-4">
-                    <div className="text-xs text-muted-foreground mb-1">Maksimum</div>
-                    <div className="text-2xl font-bold">Rp 250.000</div>
-                    <div className="text-xs text-muted-foreground mt-1">biaya tertinggi</div>
-                  </div>
+                )}
+
+                <p className="text-sm font-bold tracking-widest uppercase text-muted-foreground mb-3">{plan.name}</p>
+                <p className="text-muted-foreground text-sm mb-6 leading-relaxed">{plan.description}</p>
+
+                {/* Price with animation */}
+                <div className="mb-8">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={isYearly ? 'yearly' : 'monthly'}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {price === 0 ? (
+                        <p className="text-4xl font-black tracking-tight">Gratis</p>
+                      ) : (
+                        <div>
+                          <span className="text-lg font-semibold text-muted-foreground">Rp </span>
+                          <span className="text-4xl font-black tracking-tight">{price.toLocaleString('id-ID')}</span>
+                          <span className="text-sm text-muted-foreground">/bulan</span>
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
-                <p className="text-xs md:text-sm text-muted-foreground mt-4 italic">
-                  * Biaya platform digunakan untuk menjaga keamanan, infrastruktur, dan dukungan pelanggan 24/7
-                </p>
+
+                {/* Features */}
+                <ul className="space-y-3 mb-8 flex-1">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm">
+                      <Check className="w-4 h-4 text-success shrink-0 mt-0.5" weight="bold" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA */}
+                <Link href={plan.monthlyPrice === 0 ? '/register' : plan.name === 'Enterprise' ? '/contact' : '/register'}>
+                  <button className={cn(
+                    'w-full flex items-center justify-center gap-2',
+                    isPopular ? 'btn-primary' : 'btn-secondary'
+                  )}>
+                    {plan.monthlyPrice === 0 ? 'Mulai Gratis' :
+                     plan.name === 'Enterprise' ? 'Hubungi Kami' : 'Coba 14 Hari Gratis'}
+                    <ArrowRight className="w-4 h-4" weight="bold" />
+                  </button>
+                </Link>
+                {isPopular && (
+                  <p className="text-xs text-muted-foreground text-center mt-3">Tidak butuh kartu kredit</p>
+                )}
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* Platform fee note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewport}
+          className="text-center text-sm text-muted-foreground mt-8"
+        >
+          Platform fee: <strong className="text-foreground">2.5% per transaksi</strong> (min. Rp 2.500, maks. Rp 250.000)
+        </motion.p>
+
+        {/* Social proof avatar stack */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewport}
+          className="flex items-center gap-3 justify-center mt-6 text-sm text-muted-foreground"
+        >
+          <div className="flex -space-x-2">
+            {['AR', 'SW', 'MB', 'DK', 'RT'].map((initials, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded-full bg-neutral-300 border-2 border-background flex items-center justify-center text-xs font-bold text-neutral-600"
+              >
+                {initials}
               </div>
-            </div>
+            ))}
           </div>
+          <span>Dipercaya <strong className="text-foreground">8.000+</strong> pengguna aktif</span>
         </motion.div>
       </div>
     </section>

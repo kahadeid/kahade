@@ -1,222 +1,164 @@
-/*
- * KAHADE FOOTER - OPTIMIZED V2.0
- * 
- * Improvements:
- * - Uses design system utilities
- * - Enhanced accessibility
- * - Better responsive design
- * - Cleaner code organization
- */
-
-import { Link, useLocation } from 'wouter';
-import { useEffect, useMemo } from 'react';
-import { 
-  TwitterLogo, 
-  InstagramLogo, 
-  LinkedinLogo, 
-  GithubLogo,
-  YoutubeLogo,
-  DiscordLogo
+import { motion } from 'framer-motion';
+import { Link } from 'wouter';
+import {
+  FacebookLogo, TwitterLogo, InstagramLogo, LinkedinLogo,
+  Lock, ShieldCheck, Certificate, FileText
 } from '@phosphor-icons/react';
-import { cn, ariaProps } from '@/lib/ui-utils';
+import { cn } from '@/lib/ui-utils';
+import { staggerContainer, staggerItem, viewport } from '@/lib/animations';
 
-// Footer data structure
 const footerLinks = {
-  product: {
-    title: 'Produk',
-    links: [
-      { label: 'Fitur', href: '/#features' },
-      { label: 'Harga', href: '/#pricing' },
-      { label: 'Aplikasi Mobile', href: '/mobile-app' },
-      { label: 'API', href: '/docs/api' },
-      { label: 'Integrasi', href: '/docs/integration' },
-    ]
-  },
-  resources: {
-    title: 'Sumber Daya',
-    links: [
-      { label: 'Blog', href: '/blog' },
-      { label: 'Cara Kerja', href: '/how-it-works' },
-      { label: 'FAQ', href: '/faq' },
-      { label: 'Pusat Bantuan', href: '/help' },
-      { label: 'Dokumentasi', href: '/docs' },
-    ]
-  },
-  company: {
-    title: 'Perusahaan',
-    links: [
-      { label: 'Tentang Kami', href: '/about' },
-      { label: 'Karier', href: '/careers' },
-      { label: 'Kontak', href: '/contact' },
-      { label: 'Pers', href: '/press' },
-      { label: 'Mitra', href: '/partners' },
-    ]
-  },
-  legal: {
-    title: 'Legal',
-    links: [
-      { label: 'Syarat Layanan', href: '/terms' },
-      { label: 'Kebijakan Privasi', href: '/privacy' },
-      { label: 'Kebijakan Cookie', href: '/cookies' },
-      { label: 'Lisensi', href: '/licenses' },
-      { label: 'Keamanan', href: '/security' },
-    ]
-  }
+  produk: [
+    { label: 'Fitur', href: '/features' },
+    { label: 'Harga', href: '/pricing' },
+    { label: 'Keamanan', href: '/security' },
+    { label: 'Integrasi', href: '/integration-docs' },
+  ],
+  perusahaan: [
+    { label: 'Tentang', href: '/about' },
+    { label: 'Karir', href: '/careers' },
+    { label: 'Kontak', href: '/contact' },
+    { label: 'Pers', href: '/press' },
+  ],
+  sumberDaya: [
+    { label: 'Blog', href: '/blog' },
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Cara Kerja', href: '/how-it-works' },
+    { label: 'Dokumentasi', href: '/api-docs' },
+  ],
+  legal: [
+    { label: 'Privasi', href: '/privacy' },
+    { label: 'Syarat', href: '/terms' },
+    { label: 'Cookie', href: '/cookies' },
+    { label: 'Lisensi', href: '/licenses' },
+  ],
 };
 
-const socialLinks = [
-  { icon: TwitterLogo, href: 'https://twitter.com/kahade', label: 'Twitter' },
-  { icon: InstagramLogo, href: 'https://instagram.com/kahade', label: 'Instagram' },
-  { icon: LinkedinLogo, href: 'https://linkedin.com/company/kahade', label: 'LinkedIn' },
-  { icon: GithubLogo, href: 'https://github.com/kahade', label: 'GitHub' },
-  { icon: YoutubeLogo, href: 'https://youtube.com/@kahade', label: 'YouTube' },
-  { icon: DiscordLogo, href: 'https://discord.gg/kahade', label: 'Discord' },
+const complianceBadges = [
+  { icon: Lock, label: 'SSL 256-bit' },
+  { icon: Certificate, label: 'OJK Compliant' },
+  { icon: ShieldCheck, label: 'Bank-grade Security' },
+  { icon: FileText, label: 'ISO 27001' },
 ];
 
-// Scroll to top link component
-interface ScrollToTopLinkProps {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}
-
-function ScrollToTopLink({ href, children, className, onClick }: ScrollToTopLinkProps) {
-  const handleClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    onClick?.();
-  };
-
-  return (
-    <Link href={href} onClick={handleClick} className={className}>
-      {children}
-    </Link>
-  );
-}
+const socialLinks = [
+  { icon: FacebookLogo, href: '#', label: 'Facebook' },
+  { icon: TwitterLogo, href: '#', label: 'Twitter/X' },
+  { icon: InstagramLogo, href: '#', label: 'Instagram' },
+  { icon: LinkedinLogo, href: '#', label: 'LinkedIn' },
+];
 
 export default function Footer() {
-  const [location] = useLocation();
-  const currentYear = useMemo(() => new Date().getFullYear(), []);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [location]);
-
   return (
-    <footer 
-      className="bg-background border-t border-border relative overflow-hidden"
-      role="contentinfo"
-      aria-label="Footer situs"
-    >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--muted)_1px,transparent_1px),linear-gradient(to_bottom,var(--muted)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" aria-hidden="true" />
-      
-      {/* Main Footer Content */}
-      <div className="relative container py-10 md:py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8">
-          {/* Logo & Description */}
-          <div className="lg:col-span-4">
-            <ScrollToTopLink href="/" className="inline-block mb-4 md:mb-6">
-              <img 
-                src="/images/logo.svg" 
-                alt="Kahade - Platform Escrow Tepercaya" 
-                className="h-7 md:h-8 w-auto"
-                width={120}
-                height={32}
-              />
-            </ScrollToTopLink>
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6 md:mb-8 max-w-sm">
-              Platform escrow P2P tepercaya di Indonesia. PT Kawal Hak Dengan Aman — melindungi pembeli dan penjual sejak 2024.
+    <footer className="bg-primary text-primary-foreground">
+      <div className="container">
+        {/* Top section: Description + Newsletter */}
+        <div className="grid md:grid-cols-2 gap-12 py-16 border-b border-primary-foreground/10">
+          {/* Left: Logo + tagline */}
+          <div>
+            <Link href="/">
+              <span className="font-display font-black text-2xl tracking-tight text-white">KAHADE</span>
+            </Link>
+            <p className="text-primary-foreground/60 text-sm leading-relaxed mt-3 max-w-xs">
+              Membangun kepercayaan di setiap transaksi. PT Kawal Hak Dengan Aman — platform escrow terpercaya Indonesia.
             </p>
           </div>
-          
-          {/* Link Columns */}
-          <div className="lg:col-span-8">
-            <nav 
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-              aria-label="Navigasi footer"
-            >
-              {Object.entries(footerLinks).map(([key, section]) => (
-                <FooterLinkSection
-                  key={key}
-                  title={section.title}
-                  links={section.links}
-                />
-              ))}
-            </nav>
+
+          {/* Right: Newsletter */}
+          <div>
+            <p className="text-sm font-semibold text-white mb-1">Tetap update</p>
+            <p className="text-xs text-primary-foreground/60 mb-4">
+              Berita keamanan & fitur terbaru Kahade, langsung ke inbox Anda.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Alamat email Anda..."
+                className="flex-1 bg-white/10 border border-white/20 text-white placeholder:text-white/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-white/50 transition-colors"
+              />
+              <button className="px-4 py-2.5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors whitespace-nowrap">
+                Berlangganan →
+              </button>
+            </div>
+            <p className="text-xs text-primary-foreground/40 mt-2">Tidak ada spam. Berhenti kapan saja.</p>
           </div>
         </div>
-      </div>
-      
-      {/* Compliance & Copyright */}
-      <div className="relative border-t border-border">
-        <div className="container py-6 md:py-8">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 md:gap-6">
-            {/* Social Links */}
-            <div 
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-2"
-              role="navigation"
-              aria-label="Tautan media sosial"
+
+        {/* Links grid */}
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={viewport}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-b border-primary-foreground/10"
+        >
+          {(Object.entries({
+            'PRODUK': footerLinks.produk,
+            'PERUSAHAAN': footerLinks.perusahaan,
+            'SUMBER DAYA': footerLinks.sumberDaya,
+            'LEGAL': footerLinks.legal,
+          })).map(([heading, links]) => (
+            <motion.div key={heading} variants={staggerItem}>
+              <p className="text-[0.6875rem] font-bold tracking-widest uppercase text-primary-foreground/50 mb-4">
+                {heading}
+              </p>
+              <ul className="space-y-2.5">
+                {links.map(({ label, href }) => (
+                  <li key={label}>
+                    <Link href={href}>
+                      <span className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors cursor-pointer">
+                        {label}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Compliance badges */}
+        <div className="flex flex-wrap gap-3 py-6 border-b border-primary-foreground/10">
+          {complianceBadges.map(({ icon: BadgeIcon, label }) => (
+            <div
+              key={label}
+              className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary-foreground/20 text-xs font-semibold text-primary-foreground/60"
             >
-              {socialLinks.map((social) => (
+              <BadgeIcon className="w-3.5 h-3.5" weight="bold" />
+              {label}
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom: Copyright + Social */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-6">
+          <p className="text-xs text-primary-foreground/40">
+            © {new Date().getFullYear()} PT Kawal Hak Dengan Aman. Hak cipta dilindungi.
+          </p>
+
+          <div className="flex items-center gap-4">
+            {/* Language switcher placeholder */}
+            <div className="flex gap-2 text-xs text-primary-foreground/40">
+              <button className="hover:text-primary-foreground transition-colors">🌐 ID</button>
+              <button className="hover:text-primary-foreground transition-colors">EN</button>
+            </div>
+
+            {/* Social links */}
+            <div className="flex gap-3">
+              {socialLinks.map(({ icon: SocialIcon, href, label }) => (
                 <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    'w-9 h-9 rounded-full flex items-center justify-center',
-                    'bg-muted text-muted-foreground',
-                    'hover:bg-primary hover:text-primary-foreground',
-                    'transition-all duration-200'
-                  )}
-                  {...ariaProps(`Kunjungi halaman ${social.label} kami`)}
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-primary-foreground/60 hover:text-primary-foreground hover:scale-110 transition-all"
                 >
-                  <social.icon className="w-4 h-4" weight="regular" aria-hidden="true" />
+                  <SocialIcon className="w-4 h-4" />
                 </a>
               ))}
-            </div>
-            
-            {/* Copyright */}
-            <div className="text-center lg:text-right">
-              <p className="text-xs md:text-sm text-muted-foreground/70">
-                © {currentYear} PT Kawal Hak Dengan Aman (Kahade). Hak cipta dilindungi undang-undang.
-              </p>
             </div>
           </div>
         </div>
       </div>
     </footer>
-  );
-}
-
-// ============================================================================
-// SUB-COMPONENTS
-// ============================================================================
-
-interface FooterLinkSectionProps {
-  title: string;
-  links: Array<{ label: string; href: string }>;
-}
-
-function FooterLinkSection({ title, links }: FooterLinkSectionProps) {
-  return (
-    <div>
-      <h4 className="section-label text-sm md:text-base mb-4 md:mb-5">
-        {title}
-      </h4>
-      <ul className="space-y-2 md:space-y-3">
-        {links.map((link) => (
-          <li key={link.href}>
-            <ScrollToTopLink 
-              href={link.href}
-              className="text-sm md:text-base text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </ScrollToTopLink>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
