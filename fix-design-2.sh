@@ -1,0 +1,512 @@
+#!/usr/bin/env bash
+# ============================================================
+# fix-design.sh — KAHADE Frontend Design Audit & Auto-Fix
+# ============================================================
+# Menjalankan semua perbaikan sekaligus:
+#  1. Perkecil button & kurangi radius (hapus shadow button)
+#  2. Hapus semua box-shadow di seluruh project
+#  3. Hapus Platform Stats dari FinalCTA
+#  4. Perbaiki Footer (tagline wrap, hapus compliance badges)
+#  5. Perbaiki About (lokasi, CEO/CTO, text overflow)
+#  6. Perbaiki Careers (text overflow hero)
+# ============================================================
+
+set -e
+FRONTEND="$(cd "$(dirname "$0")" && pwd)"
+# Jika script dijalankan dari root project, arahkan ke frontend
+if [ -d "$FRONTEND/frontend/src" ]; then
+  SRC="$FRONTEND/frontend/src"
+elif [ -d "$FRONTEND/src" ]; then
+  SRC="$FRONTEND/src"
+else
+  echo "❌  Tidak dapat menemukan folder src. Jalankan script dari root project."
+  exit 1
+fi
+
+echo ""
+echo "╔══════════════════════════════════════════════════╗"
+echo "║   KAHADE Design Fix — memulai audit & perbaikan  ║"
+echo "╚══════════════════════════════════════════════════╝"
+echo ""
+
+# ──────────────────────────────────────────────
+# HELPER: backup file sebelum dimodifikasi
+# ──────────────────────────────────────────────
+backup() {
+  local f="$1"
+  if [ ! -f "${f}.bak" ]; then
+    cp "$f" "${f}.bak"
+  fi
+}
+
+# ═══════════════════════════════════════════
+# 1. BUTTON — perkecil radius, hapus shadow
+# ═══════════════════════════════════════════
+echo "▶ [1/6] Memperbaiki Button (radius & shadow)..."
+BUTTON="$SRC/components/ui/button.tsx"
+backup "$BUTTON"
+
+python3 - "$BUTTON" <<'PYEOF'
+import re, sys
+path = sys.argv[1]
+text = open(path).read()
+
+# Ganti semua shadow-sm / shadow-md di button variants
+text = text.replace('shadow-sm rounded-xl hover:bg-primary/90 hover:-translate-y-[2px] hover:shadow-md focus-visible:ring-primary',
+                    'rounded-md hover:bg-primary/90 focus-visible:ring-primary')
+text = text.replace('shadow-sm rounded-xl hover:bg-destructive/90 hover:-translate-y-[2px] focus-visible:ring-destructive',
+                    'rounded-md hover:bg-destructive/90 focus-visible:ring-destructive')
+
+# outline, secondary, ghost — hapus hover:translate dan ganti rounded
+text = re.sub(r'rounded-xl hover:border-foreground hover:bg-foreground hover:text-background hover:-translate-y-\[2px\]',
+              'rounded-md hover:border-foreground hover:bg-foreground hover:text-background', text)
+text = re.sub(r'rounded-xl hover:border-foreground/50 hover:bg-muted',
+              'rounded-md hover:border-foreground/50 hover:bg-muted', text)
+text = re.sub(r'rounded-xl hover:text-foreground hover:bg-muted',
+              'rounded-md hover:text-foreground hover:bg-muted', text)
+
+# Sizes — rounded-xl → rounded-md, rounded-2xl → rounded-lg
+text = text.replace('h-9 px-4 py-2 text-sm rounded-xl', 'h-8 px-3 py-1.5 text-sm rounded-md')
+text = text.replace('h-11 px-6 py-3 text-[0.9375rem]', 'h-10 px-5 py-2.5 text-[0.9375rem]')
+text = text.replace('h-12 px-8 py-3 text-base rounded-xl', 'h-11 px-6 py-2.5 text-base rounded-md')
+text = text.replace('h-14 px-10 py-4 text-lg rounded-2xl', 'h-12 px-8 py-3 text-lg rounded-lg')
+text = text.replace('size-10 rounded-xl p-0', 'size-9 rounded-md p-0')
+text = text.replace('size-8 rounded-lg p-0', 'size-7 rounded-md p-0')
+text = text.replace('size-12 rounded-xl p-0', 'size-10 rounded-md p-0')
+# xs
+text = text.replace('h-7 px-3 py-1 text-xs rounded-lg gap-1', 'h-6 px-2.5 py-0.5 text-xs rounded-md gap-1')
+
+# active:scale remove shadow
+text = text.replace('active:scale-[0.99]', 'active:scale-[0.98]')
+
+open(path, 'w').write(text)
+print("   ✓ button.tsx diperbaiki")
+PYEOF
+
+# ═══════════════════════════════════════════
+# 2. HAPUS SEMUA SHADOW — index.css & TSX
+# ═══════════════════════════════════════════
+echo "▶ [2/6] Menghapus semua shadow..."
+
+CSS="$SRC/index.css"
+backup "$CSS"
+
+python3 - "$CSS" <<'PYEOF'
+import re, sys
+path = sys.argv[1]
+text = open(path).read()
+
+# Nol-kan semua box-shadow declaration di CSS (kecuali focus ring 0 0 0 3px — itu outline bukan shadow)
+# Ganti box-shadow yang ada nilai non-zero dengan none
+def zero_shadow(m):
+    val = m.group(1)
+    if '0 0 0' in val and 'rgba' not in val.split('0 0 0')[1][:3]:
+        return m.group(0)  # biarkan outline focus ring
+    return 'box-shadow: none;'
+
+text = re.sub(r'box-shadow:\s*([^;]+);', zero_shadow, text)
+
+# Juga hapus hover box-shadow dalam @layer
+text = re.sub(r'(hover:shadow-E\d)', '', text)
+
+open(path, 'w').write(text)
+print("   ✓ index.css — semua box-shadow dihapus")
+PYEOF
+
+# Hapus shadow-* dari semua TSX files (kecuali shadow-none)
+python3 - "$SRC" <<'PYEOF'
+import os, re, sys
+
+src = sys.argv[1]
+shadow_pattern = re.compile(
+    r'\b(shadow-(?:sm|md|lg|xl|2xl|E[1-6])|hover:shadow-(?:sm|md|lg|xl|2xl|E[1-6]))\b'
+)
+
+count = 0
+for root, dirs, files in os.walk(src):
+    dirs[:] = [d for d in dirs if d not in ['node_modules', '.git', 'dist']]
+    for fname in files:
+        if fname.endswith(('.tsx', '.jsx', '.ts', '.js')):
+            fpath = os.path.join(root, fname)
+            text = open(fpath).read()
+            new_text = shadow_pattern.sub('', text)
+            # Bersihkan spasi ganda
+            new_text = re.sub(r'  +', ' ', new_text)
+            if new_text != text:
+                open(fpath, 'w').write(new_text)
+                count += 1
+
+print(f"   ✓ {count} file TSX/JS dibersihkan dari class shadow-*")
+PYEOF
+
+# ═══════════════════════════════════════════
+# 3. HAPUS PLATFORM STATS dari FinalCTA
+# ═══════════════════════════════════════════
+echo "▶ [3/6] Menghapus Platform Stats dari FinalCTA..."
+FINALCTA="$SRC/components/home/FinalCTA.tsx"
+backup "$FINALCTA"
+
+cat > "$FINALCTA" << 'TSX_EOF'
+import { motion } from 'framer-motion';
+import { Link } from 'wouter';
+import { ArrowRight, CheckCircle } from '@phosphor-icons/react';
+import { staggerContainer, staggerItem, viewport } from '@/lib/animations';
+
+const trustItems = [
+  '10K+ Pengguna Aktif',
+  'Rp 50M+ Dana Aman',
+  '99.9% Uptime',
+  '< 12 Jam Pencairan',
+];
+
+export default function FinalCTA() {
+  return (
+    <section
+      className="section-padding-lg relative overflow-hidden"
+      style={{
+        background: 'radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.04) 0%, transparent 60%), #0A0A0A',
+      }}
+    >
+      {/* Subtle grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-10"
+        aria-hidden="true"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+        }}
+      />
+
+      <div className="container relative z-10">
+        <div className="max-w-3xl mx-auto text-center md:text-left">
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={viewport}
+          >
+            <motion.h2
+              variants={staggerItem}
+              className="font-black leading-[1.05] tracking-tight text-white mb-6"
+              style={{ fontSize: 'clamp(2.5rem, 4vw + 1rem, 5.5rem)' }}
+            >
+              Siap mengamankan transaksi Anda?
+            </motion.h2>
+            <motion.p variants={staggerItem} className="text-white/60 text-lg leading-relaxed mb-2">
+              Tidak butuh kartu kredit.
+            </motion.p>
+            <motion.p variants={staggerItem} className="text-white/60 text-lg leading-relaxed mb-8">
+              Setup dalam 5 menit.
+            </motion.p>
+            <motion.div variants={staggerItem} className="flex flex-wrap gap-x-6 gap-y-2 mb-10">
+              {trustItems.map((item) => (
+                <div key={item} className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 shrink-0" weight="fill" />
+                  <span className="text-sm text-white/70 font-medium">{item}</span>
+                </div>
+              ))}
+            </motion.div>
+            <motion.div variants={staggerItem} className="flex flex-col sm:flex-row gap-4">
+              <Link href="/register">
+                <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-white text-black text-base font-semibold hover:bg-neutral-100 transition-colors">
+                  Mulai Gratis
+                  <ArrowRight className="w-5 h-5" weight="bold" />
+                </button>
+              </Link>
+              <Link href="/contact">
+                <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-white/30 text-white text-base font-semibold hover:border-white/60 transition-colors">
+                  Hubungi Sales
+                </button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+TSX_EOF
+echo "   ✓ Platform Stats dihapus dari FinalCTA (full rewrite)"
+
+# ═══════════════════════════════════════════
+# 4. PERBAIKI FOOTER
+# ═══════════════════════════════════════════
+echo "▶ [4/6] Memperbaiki Footer..."
+FOOTER="$SRC/components/layout/Footer.tsx"
+backup "$FOOTER"
+
+python3 - "$FOOTER" <<'PYEOF'
+import sys, re
+path = sys.argv[1]
+text = open(path).read()
+
+# 4a. Perbaiki tagline — ganti max-w-xs dengan max-w-sm dan tambah leading yang lebih baik
+text = text.replace(
+    'Membangun kepercayaan di setiap transaksi. PT Kawal Hak Dengan Aman — platform escrow terpercaya Indonesia.',
+    'Membangun kepercayaan di setiap transaksi.\nPT Kawal Hak Dengan Aman — platform escrow terpercaya Indonesia.'
+)
+text = text.replace(
+    'text-primary-foreground/60 text-sm leading-relaxed mt-3 max-w-xs',
+    'text-primary-foreground/60 text-sm leading-relaxed mt-3 max-w-sm'
+)
+
+# 4b. Hapus bagian compliance badges sepenuhnya
+text = re.sub(
+    r'\s*\{/\* Compliance badges \*/\}.*?</div>\n\n',
+    '\n\n',
+    text,
+    flags=re.DOTALL
+)
+# Alternatif jika penanda berbeda
+text = re.sub(
+    r'\s*<div className="flex flex-wrap gap-3 py-6 border-b border-primary-foreground/10">\s*\{complianceBadges\.map.*?</div>\s*</div>\s*\n',
+    '\n',
+    text,
+    flags=re.DOTALL
+)
+
+# 4c. Hapus import Lock, ShieldCheck, Certificate, FileText yang sudah tidak terpakai
+text = re.sub(
+    r',?\s*Lock,?\s*ShieldCheck,?\s*Certificate,?\s*FileText',
+    '',
+    text
+)
+# Hapus array complianceBadges
+text = re.sub(
+    r'\nconst complianceBadges.*?\];\n',
+    '\n',
+    text,
+    flags=re.DOTALL
+)
+
+open(path, 'w').write(text)
+print("   ✓ Footer — tagline diperbaiki, compliance badges dihapus")
+PYEOF
+
+# ═══════════════════════════════════════════
+# 5. PERBAIKI HALAMAN ABOUT
+# ═══════════════════════════════════════════
+echo "▶ [5/6] Memperbaiki halaman About..."
+ABOUT="$SRC/pages/About.tsx"
+backup "$ABOUT"
+
+python3 - "$ABOUT" <<'PYEOF'
+import sys, re
+path = sys.argv[1]
+text = open(path).read()
+
+# 5a. Perbaiki hero h1 — font size lebih kecil di mobile agar tidak overflow
+text = text.replace(
+    'className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none mb-6"',
+    'className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6"'
+)
+
+# 5b. Lokasi Jakarta → Jawa Barat
+text = text.replace("{ label: 'Lokasi', value: 'Jakarta, Indonesia' }",
+                    "{ label: 'Lokasi', value: 'Jawa Barat, Indonesia' }")
+
+# 5c. Update nama CEO & CTO (hapus dua anggota lain agar tim jadi 2 orang utama)
+
+# Ganti nama tim dengan regex yang lebih fleksibel (handle whitespace variation)
+text = re.sub(
+    r"const team = \[[\s\S]*?\];",
+    """const team = [
+ { name: 'Alfiansyah Zahro', role: 'CEO & Founder', quote: 'Kepercayaan adalah fondasi dari setiap transaksi yang sukses.' },
+ { name: 'Dafenka Nielsen', role: 'CTO & Founder', quote: 'Teknologi yang kuat adalah kunci membangun kepercayaan di era digital.' },
+];""",
+    text
+)
+
+# 5d. Grid tim — ubah dari grid-cols-4 menjadi grid-cols-2 (karena cuma 2 orang)
+text = text.replace(
+    'className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"',
+    'className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto"'
+)
+
+# 5e. Perbaiki overflow section hero — pastikan overflow terkontrol
+text = text.replace(
+    '<section className="bg-primary text-primary-foreground pt-24 pb-16 md:pb-24">',
+    '<section className="bg-primary text-primary-foreground pt-24 pb-16 md:pb-24 overflow-hidden">'
+)
+
+# 5f. Perbaiki Timeline — pastikan tidak overflow
+text = text.replace(
+    '<section className="section-padding-lg bg-muted/40">',
+    '<section className="section-padding-lg bg-muted/40 overflow-hidden">',
+    1  # hanya section pertama yang cocok (timeline)
+)
+
+# 5g. Perbaiki informasi hukum — tambah overflow protection
+text = text.replace(
+    '<section className="section-padding-md bg-muted/40">',
+    '<section className="section-padding-md bg-muted/40 overflow-hidden">'
+)
+
+# 5h. Perbaiki quote CEO di Careers juga (referensi Ahmad Rizki di About tidak ada, tapi di Careers ada)
+# Tidak ada di About — lewati
+
+open(path, 'w').write(text)
+print("   ✓ About — hero, lokasi, CEO/CTO, grid tim diperbaiki")
+PYEOF
+
+# ═══════════════════════════════════════════
+# 6. PERBAIKI HALAMAN CAREERS
+# ═══════════════════════════════════════════
+echo "▶ [6/6] Memperbaiki halaman Careers..."
+CAREERS="$SRC/pages/Careers.tsx"
+backup "$CAREERS"
+
+python3 - "$CAREERS" <<'PYEOF'
+import sys, re
+path = sys.argv[1]
+text = open(path).read()
+
+# 6a. Perbaiki hero h1 — kurangi font size mobile agar tidak overflow
+text = text.replace(
+    'className="text-4xl md:text-6xl font-bold leading-tight mb-6"',
+    'className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-6"'
+)
+
+# 6b. Tambah overflow-hidden di section hero
+text = text.replace(
+    '<section className="bg-primary text-primary-foreground pt-24 pb-24">',
+    '<section className="bg-primary text-primary-foreground pt-24 pb-24 overflow-hidden">'
+)
+
+# 6c. Update quote CEO di culture section
+text = text.replace(
+    '<p className="text-muted-foreground text-lg">— Ahmad Rizki, CEO Kahade</p>',
+    '<p className="text-muted-foreground text-lg">— Alfiansyah Zahro, CEO Kahade</p>'
+)
+
+open(path, 'w').write(text)
+print("   ✓ Careers — hero text overflow diperbaiki, nama CEO diupdate")
+PYEOF
+
+# ═══════════════════════════════════════════
+# BONUS: Global overflow fix untuk semua section hero
+# ═══════════════════════════════════════════
+echo "▶ [Bonus] Menambah overflow-hidden global di semua section bg-primary..."
+
+python3 - "$SRC" <<'PYEOF'
+import os, re, sys
+
+src = sys.argv[1]
+pages_dir = os.path.join(src, 'pages')
+
+# Daftar file pages yang perlu dicek
+for root, dirs, files in os.walk(pages_dir):
+    dirs[:] = [d for d in dirs if d not in ['node_modules', '.git', 'dist']]
+    for fname in files:
+        if not fname.endswith('.tsx'):
+            continue
+        fpath = os.path.join(root, fname)
+        text = open(fpath).read()
+        # Tambah overflow-hidden ke section bg-primary yang belum punya
+        new_text = re.sub(
+            r'(<section className="bg-primary[^"]*)"(?!.*overflow-hidden)',
+            lambda m: m.group(0).rstrip('"') + ' overflow-hidden"',
+            text
+        )
+        if new_text != text:
+            open(fpath, 'w').write(new_text)
+
+print("   ✓ overflow-hidden ditambahkan ke section hero di semua halaman")
+PYEOF
+
+# ═══════════════════════════════════════════
+# SELESAI
+# ═══════════════════════════════════════════
+echo ""
+echo "╔══════════════════════════════════════════════════╗"
+echo "║   ✅  Semua perbaikan selesai!                   ║"
+echo "╠══════════════════════════════════════════════════╣"
+echo "║  Ringkasan perubahan:                            ║"
+echo "║  1. Button — radius dikurangi, shadow dihapus    ║"
+echo "║  2. Shadow — dihapus dari seluruh project        ║"
+echo "║  3. Platform Stats — dihapus dari FinalCTA       ║"
+echo "║  4. Footer — tagline & compliance badges fixed   ║"
+echo "║  5. About — lokasi, CEO/CTO, text overflow fixed ║"
+echo "║  6. Careers — hero text overflow fixed           ║"
+echo "╠══════════════════════════════════════════════════╣"
+echo "║  Backup tersimpan dengan ekstensi .bak           ║"
+echo "║  Jalankan: npm run dev  untuk melihat hasilnya   ║"
+echo "╚══════════════════════════════════════════════════╝"
+echo ""
+
+# ═══════════════════════════════════════════
+# PATCH v2 — Mobile Layout Deep Fix
+# ═══════════════════════════════════════════
+
+echo "▶ [Patch v2] Memperbaiki mobile layout (text-wrap, container, overflow)..."
+
+SRC_CSS="$SRC/index.css"
+
+python3 - "$SRC_CSS" << 'PYEOF'
+import sys
+path = sys.argv[1]
+text = open(path).read()
+
+# Fix text-wrap: unset → text-wrap: wrap (unset = inherit = can chain to balance!)
+text = text.replace('text-wrap: unset !important;\n}', 'text-wrap: wrap !important;\n}')
+text = text.replace(
+    '* { text-wrap: unset !important; -webkit-text-wrap: unset !important; }',
+    '* { text-wrap: wrap !important; word-wrap: break-word; overflow-wrap: break-word; }'
+)
+
+# Add mobile container fix if not already present
+if 'MOBILE CRITICAL WIDTH FIX' not in text:
+    text += """
+@media (max-width: 767px) {
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
+  .grid > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
+  [class*="max-w-"] { max-width: min(100%, calc(100vw - 2rem)) !important; }
+}
+"""
+
+open(path, 'w').write(text)
+print("   ✓ index.css - mobile fixes applied")
+PYEOF
+
+# Fix Footer tagline
+python3 - "$SRC/components/layout/Footer.tsx" << 'PYEOF'
+import sys
+path = sys.argv[1]
+text = open(path).read()
+import re
+# Remove any literal newline from the footer tagline
+text = re.sub(
+    r'Membangun kepercayaan di setiap transaksi\.\s*\nPT Kawal Hak Dengan Aman',
+    'Membangun kepercayaan di setiap transaksi. PT Kawal Hak Dengan Aman',
+    text
+)
+# Remove max-w-sm from tagline paragraph
+text = text.replace('leading-relaxed mt-3 max-w-sm"', 'leading-relaxed mt-3"')
+text = text.replace('leading-relaxed mt-3 max-w-xs"', 'leading-relaxed mt-3"')
+open(path, 'w').write(text)
+print("   ✓ Footer - tagline fixed")
+PYEOF
+
+# Remove double overflow-hidden across all pages
+python3 - "$SRC" << 'PYEOF'
+import os, sys
+src = sys.argv[1]
+for root, dirs, files in os.walk(src):
+    dirs[:] = [d for d in dirs if d not in ['node_modules', '.git', 'dist']]
+    for fname in files:
+        if fname.endswith('.tsx'):
+            fp = os.path.join(root, fname)
+            t = open(fp).read()
+            new = t.replace('overflow-hidden overflow-hidden', 'overflow-hidden')
+            if new != t:
+                open(fp, 'w').write(new)
+                print(f"   ✓ Fixed double overflow-hidden: {fname}")
+PYEOF
+
+echo "   ✓ Patch v2 selesai"
