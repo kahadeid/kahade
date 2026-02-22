@@ -52,9 +52,8 @@ export default function Footer() {
  <Link href="/">
  <span className="font-display font-black text-2xl tracking-tight text-white">KAHADE</span>
  </Link>
- <p className="text-primary-foreground/60 text-sm leading-relaxed mt-3 max-w-sm">
- Membangun kepercayaan di setiap transaksi.
-PT Kawal Hak Dengan Aman — platform escrow terpercaya Indonesia.
+ <p className="text-primary-foreground/60 text-sm leading-relaxed mt-3">
+ Membangun kepercayaan di setiap transaksi. PT Kawal Hak Dengan Aman — platform escrow terpercaya Indonesia.
  </p>
  </div>
 

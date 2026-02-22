@@ -45,7 +45,7 @@ export default function Careers() {
  <Navbar />
 
  {/* HERO */}
- <section className="bg-primary text-primary-foreground pt-24 pb-24 overflow-hidden overflow-hidden overflow-hidden">
+ <section className="bg-primary text-primary-foreground pt-24 pb-24 overflow-hidden overflow-hidden">
  <div className="container">
  <div className="grid lg:grid-cols-[1fr_auto] gap-16 items-center">
  <motion.div variants={staggerContainer} initial="initial" animate="animate">

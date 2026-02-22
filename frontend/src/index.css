@@ -1502,7 +1502,7 @@
    ======================================================================== */
 h1, h2, h3, h4, h5, h6,
 p, li, dt, dd, blockquote, caption, figcaption, label, span, div {
-  text-wrap: unset !important;
+  text-wrap: wrap !important;
 }
 pre {
   max-width: 100%;
@@ -1517,7 +1517,7 @@ a.block {
   display: block !important;
 }
 @media (max-width: 639px) {
-  * { text-wrap: unset !important; -webkit-text-wrap: unset !important; }
+  * { text-wrap: wrap !important; word-wrap: break-word; overflow-wrap: break-word; }
   pre, code { font-size: 0.7rem !important; max-width: 100%; white-space: pre-wrap !important; }
 }
 
@@ -2152,4 +2152,16 @@ html {
   .rounded-3xl.p-12 {
     padding: 1.25rem;
   }
+}
+
+@media (max-width: 767px) {
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
+  .grid > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
+  [class*="max-w-"] { max-width: min(100%, calc(100vw - 2rem)) !important; }
 }
