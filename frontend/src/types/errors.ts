@@ -8,20 +8,20 @@
 // ============================================================================
 
 export interface ApiErrorResponse {
-  message: string;
-  code?: string;
-  errors?: Record<string, string[]>;
-  statusCode?: number;
+ message: string;
+ code?: string;
+ errors?: Record<string, string[]>;
+ statusCode?: number;
 }
 
 export interface AxiosErrorResponse {
-  response?: {
-    data?: ApiErrorResponse | { message?: string };
-    status?: number;
-    statusText?: string;
-  };
-  message?: string;
-  code?: string;
+ response?: {
+ data?: ApiErrorResponse | { message?: string };
+ status?: number;
+ statusText?: string;
+ };
+ message?: string;
+ code?: string;
 }
 
 export type ApiError = Error | AxiosErrorResponse;
@@ -31,9 +31,9 @@ export type ApiError = Error | AxiosErrorResponse;
 // ============================================================================
 
 export interface FormErrorMessage {
-  title: string;
-  description: string;
-  action?: string;
+ title: string;
+ description: string;
+ action?: string;
 }
 
 // ============================================================================
@@ -41,8 +41,8 @@ export interface FormErrorMessage {
 // ============================================================================
 
 export interface ValidationError {
-  field: string;
-  message: string;
+ field: string;
+ message: string;
 }
 
 // ============================================================================
@@ -52,12 +52,12 @@ export interface ValidationError {
 export type ErrorHandler = (error: ApiError) => void;
 
 export type ErrorWithMessage = {
-  message: string;
-  response?: {
-    data?: {
-      message?: string;
-    };
-  };
+ message: string;
+ response?: {
+ data?: {
+ message?: string;
+ };
+ };
 };
 
 // ============================================================================
@@ -65,24 +65,24 @@ export type ErrorWithMessage = {
 // ============================================================================
 
 export function isAxiosError(error: unknown): error is AxiosErrorResponse {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'response' in error
-  );
+ return (
+ typeof error === 'object' &&
+ error !== null &&
+ 'response' in error
+ );
 }
 
 export function hasErrorMessage(error: unknown): error is ErrorWithMessage {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    ('message' in error || ('response' in error && typeof (error as ErrorWithMessage).response === 'object'))
-  );
+ return (
+ typeof error === 'object' &&
+ error !== null &&
+ ('message' in error || ('response' in error && typeof (error as ErrorWithMessage).response === 'object'))
+ );
 }
 
 export function getErrorMessage(error: unknown): string {
-  if (hasErrorMessage(error)) {
-    return error.response?.data?.message || error.message || 'An error occurred';
-  }
-  return 'An unexpected error occurred';
+ if (hasErrorMessage(error)) {
+ return error.response?.data?.message || error.message || 'An error occurred';
+ }
+ return 'An unexpected error occurred';
 }

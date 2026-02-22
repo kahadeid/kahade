@@ -724,7 +724,7 @@
     border: none;
     overflow: hidden;
     transition: all var(--duration-normal) var(--ease-out);
-    box-shadow: var(--elevation-2);
+    box-shadow: none;
   }
 
   .btn-primary--nav {
@@ -742,7 +742,7 @@
   
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: var(--elevation-4);
+    box-shadow: none;
   }
   
   .btn-primary:hover::before {
@@ -751,7 +751,7 @@
   
   .btn-primary:active {
     transform: translateY(0);
-    box-shadow: var(--elevation-2);
+    box-shadow: none;
   }
   
   .btn-secondary {
@@ -774,7 +774,7 @@
     background: var(--foreground);
     color: var(--background);
     transform: translateY(-2px);
-    box-shadow: var(--elevation-3);
+    box-shadow: none;
   }
   
   .btn-secondary:active {
@@ -800,7 +800,7 @@
     background: var(--primary);
     color: var(--primary-foreground);
     transform: translateY(-2px);
-    box-shadow: var(--elevation-4);
+    box-shadow: none;
   }
   
   .btn-outline:active {
@@ -854,7 +854,7 @@
   
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: var(--elevation-5);
+    box-shadow: none;
     border-color: var(--foreground);
   }
   
@@ -863,7 +863,7 @@
     border: 2px solid var(--border);
     border-radius: var(--radius-xl);
     padding: 2rem;
-    box-shadow: var(--elevation-3);
+    box-shadow: none;
   }
   
   .card-subtle {
@@ -970,7 +970,7 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px) saturate(160%);
     border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
     border-radius: var(--radius-lg);
   }
 
@@ -1634,7 +1634,7 @@ a.block {
     color: var(--card-foreground);
     border: 1px solid var(--border);
     border-radius: var(--radius-l, 1rem);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+    box-shadow: none;
   }
   .card-hover {
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -1642,7 +1642,7 @@ a.block {
   }
   .card-hover:hover {
     transform: translateY(-6px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 16px 48px rgba(0,0,0,0.08);
+    box-shadow: none;
     border-color: var(--neutral-300, #d4d4d4);
   }
 }
@@ -1966,12 +1966,12 @@ a.block {
    Shadow scale — @layer utilities agar bisa dipakai sebagai Tailwind className
    ──────────────────────────────────────────────────────────────────────── */
 @layer utilities {
-  .shadow-E1 { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
-  .shadow-E2 { box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04); }
-  .shadow-E3 { box-shadow: 0 4px 12px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.08); }
-  .shadow-E4 { box-shadow: 0 8px 24px rgba(0,0,0,0.15), 0 16px 48px rgba(0,0,0,0.1); }
-  .shadow-E5 { box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15); }
-  .shadow-E6 { box-shadow: 0 32px 80px rgba(0,0,0,0.25); }
+  .shadow-E1 { box-shadow: none; }
+  .shadow-E2 { box-shadow: none; }
+  .shadow-E3 { box-shadow: none; }
+  .shadow-E4 { box-shadow: none; }
+  .shadow-E5 { box-shadow: none; }
+  .shadow-E6 { box-shadow: none; }
 }
 
 /* Tailwind @theme additions */

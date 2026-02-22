@@ -14,54 +14,54 @@
  */
 
 export class SecureStorage {
-  private static readonly CSRF_TOKEN_KEY = 'csrf_token';
+ private static readonly CSRF_TOKEN_KEY = 'csrf_token';
 
-  /**
-   * Store CSRF token (not httpOnly, needs to be read by JS)
-   */
-  static setCsrfToken(token: string): void {
-    sessionStorage.setItem(this.CSRF_TOKEN_KEY, token);
-  }
+ /**
+ * Store CSRF token (not httpOnly, needs to be read by JS)
+ */
+ static setCsrfToken(token: string): void {
+ sessionStorage.setItem(this.CSRF_TOKEN_KEY, token);
+ }
 
-  /**
-   * Get CSRF token for request headers
-   * Token is sourced from response headers and stored in sessionStorage.
-   */
-  static getCsrfToken(): string | null {
-    const sessionToken = sessionStorage.getItem(this.CSRF_TOKEN_KEY);
-    if (sessionToken) {
-      return sessionToken;
-    }
+ /**
+ * Get CSRF token for request headers
+ * Token is sourced from response headers and stored in sessionStorage.
+ */
+ static getCsrfToken(): string | null {
+ const sessionToken = sessionStorage.getItem(this.CSRF_TOKEN_KEY);
+ if (sessionToken) {
+ return sessionToken;
+ }
 
-    return null;
-  }
+ return null;
+ }
 
-  /**
-   * Clear CSRF token on logout
-   */
-  static clearCsrfToken(): void {
-    sessionStorage.removeItem(this.CSRF_TOKEN_KEY);
-  }
+ /**
+ * Clear CSRF token on logout
+ */
+ static clearCsrfToken(): void {
+ sessionStorage.removeItem(this.CSRF_TOKEN_KEY);
+ }
 
-  /**
-   * Clear all stored data
-   */
-  static clearAll(): void {
-    sessionStorage.clear();
-    // Note: httpOnly cookies are cleared by backend on logout
-  }
+ /**
+ * Clear all stored data
+ */
+ static clearAll(): void {
+ sessionStorage.clear();
+ // Note: httpOnly cookies are cleared by backend on logout
+ }
 
-  /**
-   * DEPRECATED: Remove JWT from localStorage
-   * This function helps migrate existing tokens
-   */
-  static migrateFromLocalStorage(): void {
-    const oldToken = localStorage.getItem('kahade_token');
-    if (oldToken) {
-      console.warn('⚠️ JWT token found in localStorage. Please re-login for secure cookie-based authentication.');
-      localStorage.removeItem('kahade_token');
-    }
-  }
+ /**
+ * DEPRECATED: Remove JWT from localStorage
+ * This function helps migrate existing tokens
+ */
+ static migrateFromLocalStorage(): void {
+ const oldToken = localStorage.getItem('kahade_token');
+ if (oldToken) {
+ console.warn('⚠️ JWT token found in localStorage. Please re-login for secure cookie-based authentication.');
+ localStorage.removeItem('kahade_token');
+ }
+ }
 }
 
 // Run migration on module load

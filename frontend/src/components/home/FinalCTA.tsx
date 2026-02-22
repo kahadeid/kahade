@@ -29,8 +29,7 @@ export default function FinalCTA() {
       />
 
       <div className="container relative z-10">
-        <div className="grid lg:grid-cols-[1fr_auto] gap-12 lg:gap-20 items-center">
-          {/* Left: Text content */}
+        <div className="max-w-3xl mx-auto text-center md:text-left">
           <motion.div
             variants={staggerContainer}
             initial="initial"
@@ -44,70 +43,33 @@ export default function FinalCTA() {
             >
               Siap mengamankan transaksi Anda?
             </motion.h2>
-            <motion.p
-              variants={staggerItem}
-              className="text-white/60 text-lg leading-relaxed mb-2"
-            >
+            <motion.p variants={staggerItem} className="text-white/60 text-lg leading-relaxed mb-2">
               Tidak butuh kartu kredit.
             </motion.p>
-            <motion.p
-              variants={staggerItem}
-              className="text-white/60 text-lg leading-relaxed mb-10"
-            >
+            <motion.p variants={staggerItem} className="text-white/60 text-lg leading-relaxed mb-8">
               Setup dalam 5 menit.
             </motion.p>
-            <motion.div
-              variants={staggerItem}
-              className="flex flex-col sm:flex-row gap-4"
-            >
+            <motion.div variants={staggerItem} className="flex flex-wrap gap-x-6 gap-y-2 mb-10">
+              {trustItems.map((item) => (
+                <div key={item} className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 shrink-0" weight="fill" />
+                  <span className="text-sm text-white/70 font-medium">{item}</span>
+                </div>
+              ))}
+            </motion.div>
+            <motion.div variants={staggerItem} className="flex flex-col sm:flex-row gap-4">
               <Link href="/register">
-                <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl
-                                   bg-white text-black text-base font-semibold
-                                   hover:bg-neutral-100 transition-colors">
+                <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-white text-black text-base font-semibold hover:bg-neutral-100 transition-colors">
                   Mulai Gratis
                   <ArrowRight className="w-5 h-5" weight="bold" />
                 </button>
               </Link>
               <Link href="/contact">
-                <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl
-                                   border border-white/30 text-white text-base font-semibold
-                                   hover:border-white/60 transition-colors">
+                <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-white/30 text-white text-base font-semibold hover:border-white/60 transition-colors">
                   Hubungi Sales
                 </button>
               </Link>
             </motion.div>
-          </motion.div>
-
-          {/* Right: Trust stats panel */}
-          <motion.div
-            initial={{ opacity: 0, x: 32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={viewport}
-            transition={{ delay: 0.2 }}
-            className="border border-white/10 bg-white/5 rounded-2xl p-6 w-full lg:w-72"
-          >
-            <p className="text-xs font-bold tracking-widest uppercase text-white/40 mb-5">Platform Stats</p>
-            <div className="space-y-4">
-              {trustItems.map((item, i) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, x: 16 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={viewport}
-                  transition={{ delay: 0.3 + i * 0.08 }}
-                  className="flex items-center gap-3"
-                >
-                  <CheckCircle className="w-5 h-5 text-success shrink-0" weight="fill" />
-                  <span className="text-sm text-white/80 font-medium">{item}</span>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-6 pt-5 border-t border-white/10">
-              <p className="text-xs text-white/40 leading-relaxed">
-                Bergabunglah dengan ribuan pengguna yang sudah mempercayai Kahade untuk transaksi aman mereka.
-              </p>
-            </div>
           </motion.div>
         </div>
       </div>

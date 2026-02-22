@@ -26,69 +26,69 @@ const FinalCTA = lazy(() => import('@/components/home/FinalCTA'));
 
 // Loading skeleton component
 function SectionSkeleton() {
-  return (
-    <div className="py-16 md:py-20 lg:py-28">
-      <div className="container">
-        <div className="animate-pulse space-y-8">
-          <div className="h-12 bg-muted rounded-lg w-1/2 mx-auto" />
-          <div className="h-6 bg-muted rounded-lg w-2/3 mx-auto" />
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="h-64 bg-muted rounded-2xl" />
-            <div className="h-64 bg-muted rounded-2xl" />
-            <div className="h-64 bg-muted rounded-2xl" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+ return (
+ <div className="py-16 md:py-20 lg:py-28">
+ <div className="container">
+ <div className="animate-pulse space-y-8">
+ <div className="h-12 bg-muted rounded-lg w-1/2 mx-auto" />
+ <div className="h-6 bg-muted rounded-lg w-2/3 mx-auto" />
+ <div className="grid md:grid-cols-3 gap-8">
+ <div className="h-64 bg-muted rounded-2xl" />
+ <div className="h-64 bg-muted rounded-2xl" />
+ <div className="h-64 bg-muted rounded-2xl" />
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 }
 
 export default function Home() {
-  const [location] = useLocation();
+ const [location] = useLocation();
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [location]);
+ useEffect(() => {
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ }, [location]);
 
-  return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <Navbar />
-      
-      {/* Hero - Always visible, not lazy loaded */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <HeroSection />
-      </Suspense>
-      
-      {/* Lazy loaded sections */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <TrustSignals />
-      </Suspense>
-      
-      <Suspense fallback={<SectionSkeleton />}>
-        <ProblemSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionSkeleton />}>
-        <FeaturesSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionSkeleton />}>
-        <HowItWorksSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionSkeleton />}>
-        <PricingSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionSkeleton />}>
-        <TestimonialsSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionSkeleton />}>
-        <FinalCTA />
-      </Suspense>
-      
-      <Footer />
-    </div>
-  );
+ return (
+ <div className="min-h-screen bg-background overflow-x-hidden">
+ <Navbar />
+ 
+ {/* Hero - Always visible, not lazy loaded */}
+ <Suspense fallback={<SectionSkeleton />}>
+ <HeroSection />
+ </Suspense>
+ 
+ {/* Lazy loaded sections */}
+ <Suspense fallback={<SectionSkeleton />}>
+ <TrustSignals />
+ </Suspense>
+ 
+ <Suspense fallback={<SectionSkeleton />}>
+ <ProblemSection />
+ </Suspense>
+ 
+ <Suspense fallback={<SectionSkeleton />}>
+ <FeaturesSection />
+ </Suspense>
+ 
+ <Suspense fallback={<SectionSkeleton />}>
+ <HowItWorksSection />
+ </Suspense>
+ 
+ <Suspense fallback={<SectionSkeleton />}>
+ <PricingSection />
+ </Suspense>
+ 
+ <Suspense fallback={<SectionSkeleton />}>
+ <TestimonialsSection />
+ </Suspense>
+ 
+ <Suspense fallback={<SectionSkeleton />}>
+ <FinalCTA />
+ </Suspense>
+ 
+ <Footer />
+ </div>
+ );
 }

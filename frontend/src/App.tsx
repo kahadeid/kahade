@@ -25,18 +25,18 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 // Loading Fallback Component
 function PageLoader() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-4">
-        <Spinner 
-          className="w-8 h-8 animate-spin text-primary mx-auto" 
-          weight="bold" 
-          aria-hidden="true" 
-        />
-        <p className="text-sm text-muted-foreground">Memuat halaman...</p>
-      </div>
-    </div>
-  );
+ return (
+ <div className="min-h-screen flex items-center justify-center bg-background">
+ <div className="text-center space-y-4">
+ <Spinner 
+ className="w-8 h-8 animate-spin text-primary mx-auto" 
+ weight="bold" 
+ aria-hidden="true" 
+ />
+ <p className="text-sm text-muted-foreground">Memuat halaman...</p>
+ </div>
+ </div>
+ );
 }
 
 // === LAZY LOADED PAGES ===
@@ -127,310 +127,310 @@ const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
 
 // Landing Router - for domain.com
 function LandingRouter() {
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <Switch>
-        {/* Main Pages */}
-        <Route path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/how-it-works" component={HowItWorks} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/pricing" component={Pricing} />
-        <Route path="/security" component={Security} />
-        <Route path="/use-cases" component={UseCases} />
-        <Route path="/partners" component={Partners} />
-        <Route path="/compare" component={Compare} />
-        
-        {/* Product Pages */}
-        <Route path="/mobile-app" component={MobileApp} />
-        <Route path="/blog" component={Blog} />
-        <Route path="/blog/:slug" component={BlogDetail} />
-        
-        {/* Support Pages */}
-        <Route path="/help" component={Help} />
-        <Route path="/faq" component={FAQ} />
-        <Route path="/feedback" component={Feedback} />
-        
-        {/* Company Pages */}
-        <Route path="/careers" component={Careers} />
-        <Route path="/whitepaper" component={Whitepaper} />
-        <Route path="/docs/api" component={ApiDocs} />
-        <Route path="/docs/integration" component={IntegrationDocs} />
-        <Route path="/docs" component={Docs} />
-        <Route path="/press" component={Press} />
-        
-        {/* Legal Pages */}
-        <Route path="/terms" component={Terms} />
-        <Route path="/privacy" component={Privacy} />
-        <Route path="/cookies" component={Cookies} />
-        <Route path="/licenses" component={Licenses} />
-        
-        {/* Auth Pages */}
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/oauth/callback" component={OAuthCallback} />
-        
-        {/* 404 */}
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    </Suspense>
-  );
+ return (
+ <Suspense fallback={<PageLoader />}>
+ <Switch>
+ {/* Main Pages */}
+ <Route path="/" component={Home} />
+ <Route path="/about" component={About} />
+ <Route path="/how-it-works" component={HowItWorks} />
+ <Route path="/contact" component={Contact} />
+ <Route path="/pricing" component={Pricing} />
+ <Route path="/security" component={Security} />
+ <Route path="/use-cases" component={UseCases} />
+ <Route path="/partners" component={Partners} />
+ <Route path="/compare" component={Compare} />
+ 
+ {/* Product Pages */}
+ <Route path="/mobile-app" component={MobileApp} />
+ <Route path="/blog" component={Blog} />
+ <Route path="/blog/:slug" component={BlogDetail} />
+ 
+ {/* Support Pages */}
+ <Route path="/help" component={Help} />
+ <Route path="/faq" component={FAQ} />
+ <Route path="/feedback" component={Feedback} />
+ 
+ {/* Company Pages */}
+ <Route path="/careers" component={Careers} />
+ <Route path="/whitepaper" component={Whitepaper} />
+ <Route path="/docs/api" component={ApiDocs} />
+ <Route path="/docs/integration" component={IntegrationDocs} />
+ <Route path="/docs" component={Docs} />
+ <Route path="/press" component={Press} />
+ 
+ {/* Legal Pages */}
+ <Route path="/terms" component={Terms} />
+ <Route path="/privacy" component={Privacy} />
+ <Route path="/cookies" component={Cookies} />
+ <Route path="/licenses" component={Licenses} />
+ 
+ {/* Auth Pages */}
+ <Route path="/login" component={Login} />
+ <Route path="/register" component={Register} />
+ <Route path="/forgot-password" component={ForgotPassword} />
+ <Route path="/reset-password" component={ResetPassword} />
+ <Route path="/oauth/callback" component={OAuthCallback} />
+ 
+ {/* 404 */}
+ <Route path="/404" component={NotFound} />
+ <Route component={NotFound} />
+ </Switch>
+ </Suspense>
+ );
 }
 
 // App Router - for app.domain.com
 function AppRouter() {
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <Switch>
-        {/* Auth Pages */}
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/oauth/callback" component={OAuthCallback} />
-        
-        {/* Protected Routes */}
-        <Route path="/">
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/transactions">
-          <ProtectedRoute>
-            <Transactions />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/transactions/accept/:token">
-          <ProtectedRoute>
-            <AcceptTransactionInvite />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/transactions/new">
-          <ProtectedRoute>
-            <CreateTransaction />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/transactions/:id">
-          <ProtectedRoute>
-            <TransactionDetail />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/wallet">
-          <ProtectedRoute>
-            <Wallet />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/deposit">
-          <ProtectedRoute>
-            <Deposit />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/bank-accounts">
-          <ProtectedRoute>
-            <BankAccounts />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/kyc">
-          <ProtectedRoute>
-            <KYCVerification />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/referrals">
-          <ProtectedRoute>
-            <Referrals />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/disputes">
-          <ProtectedRoute>
-            <Disputes />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/disputes/:id">
-          <ProtectedRoute>
-            <DisputeDetail />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/activity">
-          <ProtectedRoute>
-            <ActivityLog />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/notifications">
-          <ProtectedRoute>
-            <Notifications />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/profile">
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/profile/edit">
-          <ProtectedRoute>
-            <EditProfile />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/rewards/points">
-          <ProtectedRoute>
-            <RewardPoints />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/rewards/rank">
-          <ProtectedRoute>
-            <RewardRank />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/rewards/missions">
-          <ProtectedRoute>
-            <RewardMissions />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/settings">
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/messages">
-          <ProtectedRoute>
-            <Messages />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/support">
-          <ProtectedRoute>
-            <SupportTickets />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/security">
-          <ProtectedRoute>
-            <MFASettings />
-          </ProtectedRoute>
-        </Route>
-        
-        {/* Public Routes */}
-        <Route path="/help" component={Help} />
-        <Route path="/terms" component={Terms} />
-        <Route path="/privacy" component={Privacy} />
-        <Route path="/cookies" component={Cookies} />
-        <Route path="/licenses" component={Licenses} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    </Suspense>
-  );
+ return (
+ <Suspense fallback={<PageLoader />}>
+ <Switch>
+ {/* Auth Pages */}
+ <Route path="/login" component={Login} />
+ <Route path="/register" component={Register} />
+ <Route path="/forgot-password" component={ForgotPassword} />
+ <Route path="/reset-password" component={ResetPassword} />
+ <Route path="/oauth/callback" component={OAuthCallback} />
+ 
+ {/* Protected Routes */}
+ <Route path="/">
+ <ProtectedRoute>
+ <Dashboard />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/transactions">
+ <ProtectedRoute>
+ <Transactions />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/transactions/accept/:token">
+ <ProtectedRoute>
+ <AcceptTransactionInvite />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/transactions/new">
+ <ProtectedRoute>
+ <CreateTransaction />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/transactions/:id">
+ <ProtectedRoute>
+ <TransactionDetail />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/wallet">
+ <ProtectedRoute>
+ <Wallet />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/deposit">
+ <ProtectedRoute>
+ <Deposit />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/bank-accounts">
+ <ProtectedRoute>
+ <BankAccounts />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/kyc">
+ <ProtectedRoute>
+ <KYCVerification />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/referrals">
+ <ProtectedRoute>
+ <Referrals />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/disputes">
+ <ProtectedRoute>
+ <Disputes />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/disputes/:id">
+ <ProtectedRoute>
+ <DisputeDetail />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/activity">
+ <ProtectedRoute>
+ <ActivityLog />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/notifications">
+ <ProtectedRoute>
+ <Notifications />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/profile">
+ <ProtectedRoute>
+ <Profile />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/profile/edit">
+ <ProtectedRoute>
+ <EditProfile />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/rewards/points">
+ <ProtectedRoute>
+ <RewardPoints />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/rewards/rank">
+ <ProtectedRoute>
+ <RewardRank />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/rewards/missions">
+ <ProtectedRoute>
+ <RewardMissions />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/settings">
+ <ProtectedRoute>
+ <Settings />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/messages">
+ <ProtectedRoute>
+ <Messages />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/support">
+ <ProtectedRoute>
+ <SupportTickets />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/security">
+ <ProtectedRoute>
+ <MFASettings />
+ </ProtectedRoute>
+ </Route>
+ 
+ {/* Public Routes */}
+ <Route path="/help" component={Help} />
+ <Route path="/terms" component={Terms} />
+ <Route path="/privacy" component={Privacy} />
+ <Route path="/cookies" component={Cookies} />
+ <Route path="/licenses" component={Licenses} />
+ <Route path="/404" component={NotFound} />
+ <Route component={NotFound} />
+ </Switch>
+ </Suspense>
+ );
 }
 
 // Admin Router - for admin.domain.com
 function AdminRouter() {
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <Switch>
-        {/* Auth Pages */}
-        <Route path="/login" component={Login} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/reset-password" component={ResetPassword} />
-        
-        {/* Admin Protected Routes */}
-        <Route path="/">
-          <ProtectedRoute requireAdmin>
-            <AdminDashboard />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/users">
-          <ProtectedRoute requireAdmin>
-            <AdminUsers />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/transactions">
-          <ProtectedRoute requireAdmin>
-            <AdminTransactions />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/disputes">
-          <ProtectedRoute requireAdmin>
-            <AdminDisputes />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/kyc">
-          <ProtectedRoute requireAdmin>
-            <AdminKYC />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/withdrawals">
-          <ProtectedRoute requireAdmin>
-            <AdminWithdrawals />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/promos">
-          <ProtectedRoute requireAdmin>
-            <AdminPromos />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/deposits">
-          <ProtectedRoute requireAdmin>
-            <AdminDeposits />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/reports">
-          <ProtectedRoute requireAdmin>
-            <AdminReports />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/audit-logs">
-          <ProtectedRoute requireAdmin>
-            <AdminAuditLogs />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/settings">
-          <ProtectedRoute requireAdmin>
-            <AdminSettings />
-          </ProtectedRoute>
-        </Route>
-        
-        {/* Public Routes */}
-        <Route path="/unauthorized" component={Unauthorized} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    </Suspense>
-  );
+ return (
+ <Suspense fallback={<PageLoader />}>
+ <Switch>
+ {/* Auth Pages */}
+ <Route path="/login" component={Login} />
+ <Route path="/forgot-password" component={ForgotPassword} />
+ <Route path="/reset-password" component={ResetPassword} />
+ 
+ {/* Admin Protected Routes */}
+ <Route path="/">
+ <ProtectedRoute requireAdmin>
+ <AdminDashboard />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/users">
+ <ProtectedRoute requireAdmin>
+ <AdminUsers />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/transactions">
+ <ProtectedRoute requireAdmin>
+ <AdminTransactions />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/disputes">
+ <ProtectedRoute requireAdmin>
+ <AdminDisputes />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/kyc">
+ <ProtectedRoute requireAdmin>
+ <AdminKYC />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/withdrawals">
+ <ProtectedRoute requireAdmin>
+ <AdminWithdrawals />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/promos">
+ <ProtectedRoute requireAdmin>
+ <AdminPromos />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/deposits">
+ <ProtectedRoute requireAdmin>
+ <AdminDeposits />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/reports">
+ <ProtectedRoute requireAdmin>
+ <AdminReports />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/audit-logs">
+ <ProtectedRoute requireAdmin>
+ <AdminAuditLogs />
+ </ProtectedRoute>
+ </Route>
+ <Route path="/settings">
+ <ProtectedRoute requireAdmin>
+ <AdminSettings />
+ </ProtectedRoute>
+ </Route>
+ 
+ {/* Public Routes */}
+ <Route path="/unauthorized" component={Unauthorized} />
+ <Route path="/404" component={NotFound} />
+ <Route component={NotFound} />
+ </Switch>
+ </Suspense>
+ );
 }
 
 // Main Router - selects based on app mode
 function Router() {
-  const appMode = getAppMode();
+ const appMode = getAppMode();
 
-  switch (appMode) {
-    case 'admin':
-      return <AdminRouter />;
-    case 'app':
-      return <AppRouter />;
-    case 'landing':
-    default:
-      return <LandingRouter />;
-  }
+ switch (appMode) {
+ case 'admin':
+ return <AdminRouter />;
+ case 'app':
+ return <AppRouter />;
+ case 'landing':
+ default:
+ return <LandingRouter />;
+ }
 }
 
 function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster 
-              position="top-right"
-              toastOptions={{
-                className: 'glass-card',
-              }}
-            />
-            <Router />
-          </TooltipProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
+ return (
+ <ErrorBoundary>
+ <ThemeProvider defaultTheme="light">
+ <AuthProvider>
+ <TooltipProvider>
+ <Toaster 
+ position="top-right"
+ toastOptions={{
+ className: 'glass-card',
+ }}
+ />
+ <Router />
+ </TooltipProvider>
+ </AuthProvider>
+ </ThemeProvider>
+ </ErrorBoundary>
+ );
 }
 
 export default App;

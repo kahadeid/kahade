@@ -5,68 +5,68 @@ import { Link } from 'wouter';
 import { fadeInUp } from '@/lib/animations';
 
 export default function ResetPassword() {
-  const [showPwd, setShowPwd] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [form, setForm] = useState({ password: '', confirm: '' });
-  const [done, setDone] = useState(false);
+ const [showPwd, setShowPwd] = useState(false);
+ const [showConfirm, setShowConfirm] = useState(false);
+ const [form, setForm] = useState({ password: '', confirm: '' });
+ const [done, setDone] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (form.password === form.confirm) setDone(true);
-  };
+ const handleSubmit = (e: React.FormEvent) => {
+ e.preventDefault();
+ if (form.password === form.confirm) setDone(true);
+ };
 
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        {!done ? (
-          <motion.div variants={fadeInUp} initial="initial" animate="animate">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-              <LockKey size={32} className="text-primary" weight="duotone" />
-            </div>
-            <h1 className="text-2xl font-bold mb-2">Reset Password</h1>
-            <p className="text-muted-foreground text-sm mb-8">Buat password baru yang kuat untuk akun Anda.</p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Password Baru</label>
-                <div className="relative">
-                  <input type={showPwd ? 'text' : 'password'} required minLength={8} placeholder="Min. 8 karakter" value={form.password} onChange={e => setForm({...form, password: e.target.value})}
-                    className="w-full h-12 px-4 pr-12 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm" />
-                  <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    {showPwd ? <EyeSlash size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Konfirmasi Password</label>
-                <div className="relative">
-                  <input type={showConfirm ? 'text' : 'password'} required placeholder="Ulangi password" value={form.confirm} onChange={e => setForm({...form, confirm: e.target.value})}
-                    className={`w-full h-12 px-4 pr-12 rounded-xl border-2 bg-background focus:outline-none focus:border-foreground transition-colors text-sm ${form.confirm && form.password !== form.confirm ? 'border-destructive' : 'border-border'}`} />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    {showConfirm ? <EyeSlash size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {form.confirm && form.password !== form.confirm && (
-                  <p className="text-xs text-destructive mt-1">Password tidak cocok</p>
-                )}
-              </div>
-              <button type="submit" className="btn-primary w-full h-12" disabled={!form.password || form.password !== form.confirm}>
-                Reset Password
-              </button>
-            </form>
-          </motion.div>
-        ) : (
-          <motion.div variants={fadeInUp} initial="initial" animate="animate" className="text-center">
-            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
-              <CheckCircle size={32} className="text-green-600" weight="fill" />
-            </div>
-            <h1 className="text-2xl font-bold mb-2">Password Berhasil Diubah!</h1>
-            <p className="text-muted-foreground text-sm mb-8">Gunakan password baru Anda untuk masuk.</p>
-            <Link href="/login">
-              <button className="btn-primary w-full">Masuk Sekarang</button>
-            </Link>
-          </motion.div>
-        )}
-      </div>
-    </div>
-  );
+ return (
+ <div className="min-h-screen bg-background flex items-center justify-center px-4">
+ <div className="w-full max-w-sm">
+ {!done ? (
+ <motion.div variants={fadeInUp} initial="initial" animate="animate">
+ <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+ <LockKey size={32} className="text-primary" weight="duotone" />
+ </div>
+ <h1 className="text-2xl font-bold mb-2">Reset Password</h1>
+ <p className="text-muted-foreground text-sm mb-8">Buat password baru yang kuat untuk akun Anda.</p>
+ <form onSubmit={handleSubmit} className="space-y-4">
+ <div>
+ <label className="text-sm font-medium mb-1.5 block">Password Baru</label>
+ <div className="relative">
+ <input type={showPwd ? 'text' : 'password'} required minLength={8} placeholder="Min. 8 karakter" value={form.password} onChange={e => setForm({...form, password: e.target.value})}
+ className="w-full h-12 px-4 pr-12 rounded-xl border-2 border-border bg-background focus:outline-none focus:border-foreground transition-colors text-sm" />
+ <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+ {showPwd ? <EyeSlash size={18} /> : <Eye size={18} />}
+ </button>
+ </div>
+ </div>
+ <div>
+ <label className="text-sm font-medium mb-1.5 block">Konfirmasi Password</label>
+ <div className="relative">
+ <input type={showConfirm ? 'text' : 'password'} required placeholder="Ulangi password" value={form.confirm} onChange={e => setForm({...form, confirm: e.target.value})}
+ className={`w-full h-12 px-4 pr-12 rounded-xl border-2 bg-background focus:outline-none focus:border-foreground transition-colors text-sm ${form.confirm && form.password !== form.confirm ? 'border-destructive' : 'border-border'}`} />
+ <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+ {showConfirm ? <EyeSlash size={18} /> : <Eye size={18} />}
+ </button>
+ </div>
+ {form.confirm && form.password !== form.confirm && (
+ <p className="text-xs text-destructive mt-1">Password tidak cocok</p>
+ )}
+ </div>
+ <button type="submit" className="btn-primary w-full h-12" disabled={!form.password || form.password !== form.confirm}>
+ Reset Password
+ </button>
+ </form>
+ </motion.div>
+ ) : (
+ <motion.div variants={fadeInUp} initial="initial" animate="animate" className="text-center">
+ <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
+ <CheckCircle size={32} className="text-green-600" weight="fill" />
+ </div>
+ <h1 className="text-2xl font-bold mb-2">Password Berhasil Diubah!</h1>
+ <p className="text-muted-foreground text-sm mb-8">Gunakan password baru Anda untuk masuk.</p>
+ <Link href="/login">
+ <button className="btn-primary w-full">Masuk Sekarang</button>
+ </Link>
+ </motion.div>
+ )}
+ </div>
+ </div>
+ );
 }

@@ -11,7 +11,7 @@ import { twMerge } from "tailwind-merge";
  * ```
  */
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+ return twMerge(clsx(inputs));
 }
 
 /**
@@ -29,38 +29,38 @@ export function cn(...inputs: ClassValue[]) {
  * @example
  * ```tsx
  * <button {...ariaProps('Close dialog', 'dialog-description', false, undefined, false)}>
- *   <X size={24} />
+ * <X size={24} />
  * </button>
  * ```
  */
 export function ariaProps(
-  label: string,
-  describedBy?: string,
-  expanded?: boolean,
-  selected?: boolean,
-  disabled?: boolean
+ label: string,
+ describedBy?: string,
+ expanded?: boolean,
+ selected?: boolean,
+ disabled?: boolean
 ) {
-  const props: Record<string, string | boolean | undefined> = {
-    'aria-label': label,
-  };
+ const props: Record<string, string | boolean | undefined> = {
+ 'aria-label': label,
+ };
 
-  if (describedBy !== undefined) {
-    props['aria-describedby'] = describedBy;
-  }
+ if (describedBy !== undefined) {
+ props['aria-describedby'] = describedBy;
+ }
 
-  if (expanded !== undefined) {
-    props['aria-expanded'] = expanded;
-  }
+ if (expanded !== undefined) {
+ props['aria-expanded'] = expanded;
+ }
 
-  if (selected !== undefined) {
-    props['aria-selected'] = selected;
-  }
+ if (selected !== undefined) {
+ props['aria-selected'] = selected;
+ }
 
-  if (disabled !== undefined) {
-    props['aria-disabled'] = disabled;
-  }
+ if (disabled !== undefined) {
+ props['aria-disabled'] = disabled;
+ }
 
-  return props;
+ return props;
 }
 
 /**
@@ -72,67 +72,67 @@ export function ariaProps(
  * @example
  * ```tsx
  * <div 
- *   tabIndex={0}
- *   onKeyDown={keyboardNav({
- *     onEnter: () => handleSelect(),
- *     onEscape: () => handleClose(),
- *     onArrowUp: () => handlePrevious(),
- *     onArrowDown: () => handleNext(),
- *   })}
+ * tabIndex={0}
+ * onKeyDown={keyboardNav({
+ * onEnter: () => handleSelect(),
+ * onEscape: () => handleClose(),
+ * onArrowUp: () => handlePrevious(),
+ * onArrowDown: () => handleNext(),
+ * })}
  * >
- *   Navigable Element
+ * Navigable Element
  * </div>
  * ```
  */
 export function keyboardNav(handlers: {
-  onEnter?: () => void;
-  onSpace?: () => void;
-  onEscape?: () => void;
-  onArrowUp?: () => void;
-  onArrowDown?: () => void;
-  onArrowLeft?: () => void;
-  onArrowRight?: () => void;
-  onHome?: () => void;
-  onEnd?: () => void;
+ onEnter?: () => void;
+ onSpace?: () => void;
+ onEscape?: () => void;
+ onArrowUp?: () => void;
+ onArrowDown?: () => void;
+ onArrowLeft?: () => void;
+ onArrowRight?: () => void;
+ onHome?: () => void;
+ onEnd?: () => void;
 }) {
-  return (e: React.KeyboardEvent) => {
-    // Prevent default for arrow keys to avoid page scroll
-    const preventDefaultKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
-    if (preventDefaultKeys.includes(e.key)) {
-      e.preventDefault();
-    }
+ return (e: React.KeyboardEvent) => {
+ // Prevent default for arrow keys to avoid page scroll
+ const preventDefaultKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+ if (preventDefaultKeys.includes(e.key)) {
+ e.preventDefault();
+ }
 
-    switch (e.key) {
-      case 'Enter':
-        handlers.onEnter?.();
-        break;
-      case ' ': // Space
-        e.preventDefault(); // Prevent page scroll
-        handlers.onSpace?.();
-        break;
-      case 'Escape':
-        handlers.onEscape?.();
-        break;
-      case 'ArrowUp':
-        handlers.onArrowUp?.();
-        break;
-      case 'ArrowDown':
-        handlers.onArrowDown?.();
-        break;
-      case 'ArrowLeft':
-        handlers.onArrowLeft?.();
-        break;
-      case 'ArrowRight':
-        handlers.onArrowRight?.();
-        break;
-      case 'Home':
-        handlers.onHome?.();
-        break;
-      case 'End':
-        handlers.onEnd?.();
-        break;
-    }
-  };
+ switch (e.key) {
+ case 'Enter':
+ handlers.onEnter?.();
+ break;
+ case ' ': // Space
+ e.preventDefault(); // Prevent page scroll
+ handlers.onSpace?.();
+ break;
+ case 'Escape':
+ handlers.onEscape?.();
+ break;
+ case 'ArrowUp':
+ handlers.onArrowUp?.();
+ break;
+ case 'ArrowDown':
+ handlers.onArrowDown?.();
+ break;
+ case 'ArrowLeft':
+ handlers.onArrowLeft?.();
+ break;
+ case 'ArrowRight':
+ handlers.onArrowRight?.();
+ break;
+ case 'Home':
+ handlers.onHome?.();
+ break;
+ case 'End':
+ handlers.onEnd?.();
+ break;
+ }
+ };
 }
 
 /**
@@ -148,102 +148,102 @@ export function keyboardNav(handlers: {
  * @example
  * ```tsx
  * function Modal() {
- *   const modalRef = useRef<HTMLDivElement>(null);
- *   
- *   useEffect(() => {
- *     const trap = focusTrap(modalRef);
- *     trap.enable();
- *     return () => trap.disable();
- *   }, []);
- *   
- *   return <div ref={modalRef}>...</div>;
+ * const modalRef = useRef<HTMLDivElement>(null);
+ * 
+ * useEffect(() => {
+ * const trap = focusTrap(modalRef);
+ * trap.enable();
+ * return () => trap.disable();
+ * }, []);
+ * 
+ * return <div ref={modalRef}>...</div>;
  * }
  * ```
  */
 export function focusTrap(containerRef: React.RefObject<HTMLElement>) {
-  let isEnabled = false;
-  let previousActiveElement: HTMLElement | null = null;
+ let isEnabled = false;
+ let previousActiveElement: HTMLElement | null = null;
 
-  /**
-   * Get all focusable elements within the container
-   */
-  const getFocusableElements = (): HTMLElement[] => {
-    if (!containerRef.current) return [];
-    
-    const focusableSelectors = [
-      'a[href]',
-      'button:not([disabled])',
-      'textarea:not([disabled])',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])',
-    ].join(', ');
+ /**
+ * Get all focusable elements within the container
+ */
+ const getFocusableElements = (): HTMLElement[] => {
+ if (!containerRef.current) return [];
+ 
+ const focusableSelectors = [
+ 'a[href]',
+ 'button:not([disabled])',
+ 'textarea:not([disabled])',
+ 'input:not([disabled])',
+ 'select:not([disabled])',
+ '[tabindex]:not([tabindex="-1"])',
+ ].join(', ');
 
-    return Array.from(
-      containerRef.current.querySelectorAll<HTMLElement>(focusableSelectors)
-    );
-  };
+ return Array.from(
+ containerRef.current.querySelectorAll<HTMLElement>(focusableSelectors)
+ );
+ };
 
-  /**
-   * Handle Tab key to trap focus
-   */
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!isEnabled || e.key !== 'Tab') return;
+ /**
+ * Handle Tab key to trap focus
+ */
+ const handleKeyDown = (e: KeyboardEvent) => {
+ if (!isEnabled || e.key !== 'Tab') return;
 
-    const focusableElements = getFocusableElements();
-    if (focusableElements.length === 0) return;
+ const focusableElements = getFocusableElements();
+ if (focusableElements.length === 0) return;
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+ const firstElement = focusableElements[0];
+ const lastElement = focusableElements[focusableElements.length - 1];
 
-    // Shift + Tab on first element → go to last
-    if (e.shiftKey && document.activeElement === firstElement) {
-      e.preventDefault();
-      lastElement?.focus();
-    } 
-    // Tab on last element → go to first
-    else if (!e.shiftKey && document.activeElement === lastElement) {
-      e.preventDefault();
-      firstElement?.focus();
-    }
-  };
+ // Shift + Tab on first element → go to last
+ if (e.shiftKey && document.activeElement === firstElement) {
+ e.preventDefault();
+ lastElement?.focus();
+ } 
+ // Tab on last element → go to first
+ else if (!e.shiftKey && document.activeElement === lastElement) {
+ e.preventDefault();
+ firstElement?.focus();
+ }
+ };
 
-  return {
-    /**
-     * Enable the focus trap
-     * Saves current focus and moves to first focusable element
-     */
-    enable: () => {
-      if (isEnabled) return;
-      
-      isEnabled = true;
-      previousActiveElement = document.activeElement as HTMLElement;
-      document.addEventListener('keydown', handleKeyDown);
-      
-      // Focus first focusable element
-      const focusableElements = getFocusableElements();
-      if (focusableElements.length > 0) {
-        focusableElements[0]?.focus();
-      }
-    },
+ return {
+ /**
+ * Enable the focus trap
+ * Saves current focus and moves to first focusable element
+ */
+ enable: () => {
+ if (isEnabled) return;
+ 
+ isEnabled = true;
+ previousActiveElement = document.activeElement as HTMLElement;
+ document.addEventListener('keydown', handleKeyDown);
+ 
+ // Focus first focusable element
+ const focusableElements = getFocusableElements();
+ if (focusableElements.length > 0) {
+ focusableElements[0]?.focus();
+ }
+ },
 
-    /**
-     * Disable the focus trap
-     * Restores focus to previously focused element
-     */
-    disable: () => {
-      if (!isEnabled) return;
-      
-      isEnabled = false;
-      document.removeEventListener('keydown', handleKeyDown);
-      
-      // Restore previous focus
-      if (previousActiveElement && previousActiveElement.focus) {
-        previousActiveElement.focus();
-      }
-      previousActiveElement = null;
-    },
-  };
+ /**
+ * Disable the focus trap
+ * Restores focus to previously focused element
+ */
+ disable: () => {
+ if (!isEnabled) return;
+ 
+ isEnabled = false;
+ document.removeEventListener('keydown', handleKeyDown);
+ 
+ // Restore previous focus
+ if (previousActiveElement && previousActiveElement.focus) {
+ previousActiveElement.focus();
+ }
+ previousActiveElement = null;
+ },
+ };
 }
 
 /**
@@ -255,12 +255,12 @@ export function focusTrap(containerRef: React.RefObject<HTMLElement>) {
  * ```
  */
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+ return new Intl.NumberFormat('id-ID', {
+ style: 'currency',
+ currency: 'IDR',
+ minimumFractionDigits: 0,
+ maximumFractionDigits: 0,
+ }).format(amount);
 }
 
 /**
@@ -272,12 +272,12 @@ export function formatCurrency(amount: number): string {
  * ```
  */
 export function formatDate(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(d);
+ const d = typeof date === 'string' ? new Date(date) : date;
+ return new Intl.DateTimeFormat('id-ID', {
+ day: 'numeric',
+ month: 'long',
+ year: 'numeric',
+ }).format(d);
 }
 
 /**
@@ -289,19 +289,19 @@ export function formatDate(date: Date | string): string {
  * ```
  */
 export function formatRelativeTime(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHour = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHour / 24);
+ const d = typeof date === 'string' ? new Date(date) : date;
+ const now = new Date();
+ const diffMs = now.getTime() - d.getTime();
+ const diffSec = Math.floor(diffMs / 1000);
+ const diffMin = Math.floor(diffSec / 60);
+ const diffHour = Math.floor(diffMin / 60);
+ const diffDay = Math.floor(diffHour / 24);
 
-  if (diffSec < 60) return 'Baru saja';
-  if (diffMin < 60) return `${diffMin} menit yang lalu`;
-  if (diffHour < 24) return `${diffHour} jam yang lalu`;
-  if (diffDay < 7) return `${diffDay} hari yang lalu`;
-  return formatDate(d);
+ if (diffSec < 60) return 'Baru saja';
+ if (diffMin < 60) return `${diffMin} menit yang lalu`;
+ if (diffHour < 24) return `${diffHour} jam yang lalu`;
+ if (diffDay < 7) return `${diffDay} hari yang lalu`;
+ return formatDate(d);
 }
 
 /**
@@ -311,22 +311,22 @@ export function formatRelativeTime(date: Date | string): string {
  * @example
  * ```tsx
  * const debouncedSearch = debounce((query: string) => {
- *   api.search(query);
+ * api.search(query);
  * }, 300);
  * ```
  */
 export function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
+ func: T,
+ wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+ let timeout: NodeJS.Timeout | null = null;
 
-  return (...args: Parameters<T>) => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      func(...args);
-    }, wait);
-  };
+ return (...args: Parameters<T>) => {
+ if (timeout) clearTimeout(timeout);
+ timeout = setTimeout(() => {
+ func(...args);
+ }, wait);
+ };
 }
 
 /**
@@ -341,18 +341,18 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
  * ```
  */
 export function throttle<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
+ func: T,
+ wait: number
 ): (...args: Parameters<T>) => void {
-  let inThrottle = false;
+ let inThrottle = false;
 
-  return (...args: Parameters<T>) => {
-    if (!inThrottle) {
-      func(...args);
-      inThrottle = true;
-      setTimeout(() => {
-        inThrottle = false;
-      }, wait);
-    }
-  };
+ return (...args: Parameters<T>) => {
+ if (!inThrottle) {
+ func(...args);
+ inThrottle = true;
+ setTimeout(() => {
+ inThrottle = false;
+ }, wait);
+ }
+ };
 }
