@@ -22,6 +22,14 @@ section() { echo -e "\n${CYAN}════════════════�
 
 [ "$EUID" -ne 0 ] && error "Jalankan sebagai root: sudo bash scripts/setup-nginx.sh"
 
+# ── Rate limiting zones (must exist before server blocks reference them) ────────
+cat > /etc/nginx/conf.d/rate-limit.conf << 'RATELIMIT'
+# Kahade rate limiting zones
+limit_req_zone  $binary_remote_addr  zone=api_limit:10m   rate=100r/m;
+limit_req_zone  $binary_remote_addr  zone=auth_limit:10m  rate=20r/m;
+RATELIMIT
+log "Rate limiting zones written"
+
 # ── Domain vars ───────────────────────────────────────────────────────────────
 DOMAIN="kahade.id"
 APP_DOMAIN="app.kahade.id"

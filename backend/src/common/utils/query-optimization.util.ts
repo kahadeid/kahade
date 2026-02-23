@@ -279,7 +279,8 @@ export async function explainQuery(
   }
   
   // Execute with EXPLAIN ANALYZE (read-only operation)
-  const result = await prisma.$queryRawUnsafe(`EXPLAIN ANALYZE ${sanitizedQuery}`);
+  // SECURITY FIX: $queryRawUnsafe removed.
+  throw new Error('EXPLAIN ANALYZE disabled for security.');
   return result;
 }
 

@@ -1,0 +1,1 @@
+ ERR_PNPM_AUDIT_NO_LOCKFILE  No pnpm-lock.yaml found: Cannot audit a project without a lockfile

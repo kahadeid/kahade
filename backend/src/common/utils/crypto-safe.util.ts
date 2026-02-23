@@ -1,4 +1,4 @@
-import { randomBytes, randomInt } from 'crypto';
+import { randomBytes, randomInt, timingSafeEqual as cryptoTimingSafeEqual } from 'crypto';
 
 
 
@@ -95,23 +95,21 @@ export function generateAPIKey(): string {
  * @returns True if equal
  */
 export function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-
+  // SECURITY FIX: Use crypto.timingSafeEqual directly (previous impl used
+  // randomBytes(0).compare() which throws ERR_INVALID_ARG_TYPE and is NOT timing-safe).
+  // Per NIST SP 800-107: compare same-length buffers in constant time.
   const bufA = Buffer.from(a, 'utf8');
   const bufB = Buffer.from(b, 'utf8');
 
-  try {
-    return randomBytes(0).compare(bufA, bufB) === 0;
-  } catch {
-    // Fallback to constant-time comparison
-    let result = 0;
-    for (let i = 0; i < bufA.length; i++) {
-      result |= bufA[i] ^ bufB[i];
-    }
-    return result === 0;
+  // Must be same length for cryptoTimingSafeEqual
+  if (bufA.length !== bufB.length) {
+    // Run a dummy comparison anyway to avoid length-based timing oracle
+    const dummy = Buffer.alloc(bufA.length);
+    cryptoTimingSafeEqual(bufA, dummy);
+    return false;
   }
+
+  return cryptoTimingSafeEqual(bufA, bufB);
 }
 
 /**
