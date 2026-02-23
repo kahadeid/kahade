@@ -1,0 +1,21 @@
+{
+  "name": "kahade",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:landing": "turbo dev --filter=@kahade/landing",
+    "dev:dashboard": "turbo dev --filter=@kahade/dashboard",
+    "dev:admin": "turbo dev --filter=@kahade/admin",
+    "build": "turbo build",
+    "build:landing": "turbo build --filter=@kahade/landing",
+    "build:dashboard": "turbo build --filter=@kahade/dashboard",
+    "build:admin": "turbo build --filter=@kahade/admin",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

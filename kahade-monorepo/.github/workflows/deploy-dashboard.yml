@@ -1,0 +1,61 @@
+name: Deploy Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/dashboard/**'
+      - 'packages/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm --filter @kahade/dashboard build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_APP_NAME: Kahade
+          VITE_LANDING_DOMAIN: ${{ secrets.VITE_LANDING_DOMAIN }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync apps/dashboard/dist s3://${{ secrets.S3_BUCKET_DASHBOARD }} \
+            --delete \
+            --cache-control "public, max-age=31536000" \
+            --exclude "*.html" \
+            --exclude "*.json"
+          aws s3 sync apps/dashboard/dist s3://${{ secrets.S3_BUCKET_DASHBOARD }} \
+            --delete \
+            --cache-control "no-cache" \
+            --include "*.html" \
+            --include "*.json"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_DASHBOARD }} \
+            --paths "/*"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
