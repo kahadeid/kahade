@@ -15,7 +15,8 @@ import * as crypto from 'crypto';
 const prisma = new PrismaClient();
 
 async function addAdmin() {
-  const email = process.env.ADMIN_EMAIL || 'dafenka@kahade.id';
+  const email = process.env.ADMIN_EMAIL;
+  if (!email) { throw new Error('ADMIN_EMAIL environment variable is required'); }
   const username = process.env.ADMIN_USERNAME || email.split('@')[0];
   const isProduction = process.env.NODE_ENV === 'production';
 
@@ -38,8 +39,9 @@ async function addAdmin() {
 
   console.log(`Adding admin user: ${email}`);
 
-  // Hash password with bcrypt (10 rounds)
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // Hash password — match app BCRYPT_ROUNDS (default 12)
+  const bcryptRounds = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
+  const hashedPassword = await bcrypt.hash(password, bcryptRounds);
 
   try {
     const admin = await prisma.user.upsert({

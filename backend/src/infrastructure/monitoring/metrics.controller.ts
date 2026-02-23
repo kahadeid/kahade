@@ -1,5 +1,7 @@
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { Controller, Get, Header } from "@nestjs/common";
+import { Controller, Get, Header, UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "@common/guards/jwt-auth.guard";
+import { AdminGuard } from "@common/guards/admin.guard";
 
 import { MetricsService } from "./metrics.service";
 
@@ -11,6 +13,7 @@ import { MetricsService } from "./metrics.service";
 
 @ApiTags("Monitoring")
 @Controller("metrics")
+@UseGuards(JwtAuthGuard, AdminGuard) // SECURITY FIX: require admin auth
 export class MetricsController {
   constructor(private readonly metricsService: MetricsService) {}
 

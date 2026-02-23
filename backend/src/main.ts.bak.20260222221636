@@ -21,13 +21,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const NODE_ENV = configService.get<string>('NODE_ENV') || 'development';
 
-  // SECURITY: Warn loudly if non-production mode is active
-  if (NODE_ENV !== 'production') {
-    logger.warn(
-      '⚠️  NODE_ENV is not "production" — CORS allows ALL origins and debug features may be active.',
-    );
-  }
-
   // Security Headers
   app.use(
     helmet({
@@ -124,7 +117,6 @@ async function bootstrap() {
       'X-Requested-With',
       'X-Request-ID',
       'X-Idempotency-Key',
-      'x-csrf-token',  // CSRF double-submit pattern
     ],
     exposedHeaders: ['X-Request-ID', 'X-RateLimit-Limit', 'X-RateLimit-Remaining'],
     maxAge: 86400,

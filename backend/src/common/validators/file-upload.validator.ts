@@ -80,10 +80,15 @@ export class FileUploadValidator implements PipeTransform {
       );
     }
 
-    // 6. Validate magic bytes (file signature) match MIME type
-    // NOTE: Implement magic byte validation - Tracked in backlog
-    // This requires reading file header and comparing with known signatures
-    // Example: JPEG should start with FF D8 FF
+    // 6. Validate magic bytes — SECURITY FIX (was previously not called)
+    if (file.buffer && file.buffer.length > 4) {
+      const signatureValid = await FileSignatureChecker.validate(file);
+      if (!signatureValid) {
+        throw new BadRequestException(
+          `File content does not match declared MIME type ${file.mimetype}. Possible file-type spoofing detected.`,
+        );
+      }
+    }
 
     return file;
   }
